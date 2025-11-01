@@ -25,7 +25,7 @@ public class AuthService
 
     public async Task<AuthResponseDto?> RegisterAsync(RegisterDto registerDto)
     {
-        if (await _context.Users.AnyAsync(u => u.Email == registerDto.Email))
+        if (await _context.Users.AsNoTracking().AnyAsync(u => u.Email == registerDto.Email))
         {
             _logger.LogWarning("Registration attempted with existing email: {Email}", registerDto.Email);
             return null;
@@ -35,29 +35,36 @@ public class AuthService
         {
             Email = registerDto.Email,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerDto.Password),
-            CreatedAt = DateTime.UtcNow
+            Role = UserRole.Personel, // Kayıt olan kullanıcılar her zaman Personel yetkisinde
+            IsApproved = false, // Yönetici onayı gerekli
+            CreatedAt = DateTime.UtcNow.AddHours(3),
+            UpdatedAt = DateTime.UtcNow.AddHours(3)
         };
 
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
 
-        _logger.LogInformation("User registered successfully: {Email}", registerDto.Email);
+        _logger.LogInformation("User registered successfully: {Email} - Waiting for approval", registerDto.Email);
 
-        return new AuthResponseDto
-        {
-            Token = GenerateToken(user),
-            Email = user.Email
-        };
+        // Onay bekliyor, token döndürme
+        return null;
     }
 
     public async Task<AuthResponseDto?> LoginAsync(LoginDto loginDto)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == loginDto.Email);
+        var user = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Email == loginDto.Email);
 
         if (user == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash))
         {
             _logger.LogWarning("Login failed for email: {Email}", loginDto.Email);
             return null;
+        }
+
+        // Yöneticiler her zaman giriş yapabilir, personel onaylanmış olmalı
+        if (user.Role == UserRole.Personel && !user.IsApproved)
+        {
+            _logger.LogWarning("Login attempt by unapproved user: {Email}", loginDto.Email);
+            return null; // Onay bekleniyor mesajı için null döndür
         }
 
         _logger.LogInformation("User logged in successfully: {Email}", loginDto.Email);
@@ -77,7 +84,8 @@ public class AuthService
             Subject = new ClaimsIdentity(new[]
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Email, user.Email)
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, user.Role.ToString())
             }),
             Expires = DateTime.UtcNow.AddHours(24),
             Issuer = _configuration["Jwt:Issuer"],
@@ -104,10 +112,122 @@ public class AuthService
         var meDto = new MeDto
         {
             UserId = user.Id.ToString(),
-            Email = user.Email
+            Email = user.Email,
+            Role = user.Role.ToString()
         };
 
         return ApiResult<MeDto>.Ok(meDto);
+    }
+
+    public async Task<bool> CheckEmailExistsAsync(string email)
+    {
+        return await _context.Users.AsNoTracking().AnyAsync(u => u.Email == email);
+    }
+
+    public async Task<bool?> CheckUserApprovalStatusAsync(string email)
+    {
+        var user = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Email == email);
+        if (user == null) return null;
+        return user.IsApproved;
+    }
+
+    // Yönetici için kullanıcı yönetimi metodları
+    public async Task<ApiResult<PagedResultDto<UserResponseDto>>> GetPendingUsersAsync(int pageNumber = 1, int pageSize = 10)
+    {
+        var query = _context.Users
+            .AsNoTracking()
+            .Where(u => u.Role == UserRole.Personel && !u.IsApproved)
+            .OrderByDescending(u => u.CreatedAt);
+
+        var totalCount = await query.CountAsync();
+        var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+
+        var users = await query
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        var items = users.Select(u => new UserResponseDto
+        {
+            Id = u.Id,
+            Email = u.Email,
+            Name = u.Name,
+            Surname = u.Surname,
+            Phone = u.Phone,
+            Role = u.Role.ToString(),
+            IsApproved = u.IsApproved,
+            ApprovedAt = u.ApprovedAt,
+            CreatedAt = u.CreatedAt
+        }).ToList();
+
+        var response = new PagedResultDto<UserResponseDto>
+        {
+            Items = items,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalCount = totalCount,
+            TotalPages = totalPages
+        };
+
+        return ApiResult<PagedResultDto<UserResponseDto>>.Ok(response);
+    }
+
+    public async Task<ApiResult<bool>> ApproveUserAsync(int userId)
+    {
+        var user = await _context.Users.FindAsync(userId);
+
+        if (user == null)
+        {
+            return ApiResult<bool>.NotFound("Kullanıcı bulunamadı");
+        }
+
+        if (user.Role != UserRole.Personel)
+        {
+            return ApiResult<bool>.BadRequest("Sadece personel kullanıcılar onaylanabilir");
+        }
+
+        if (user.IsApproved)
+        {
+            return ApiResult<bool>.BadRequest("Kullanıcı zaten onaylanmış");
+        }
+
+        user.IsApproved = true;
+        user.ApprovedAt = DateTime.UtcNow.AddHours(3);
+        user.UpdatedAt = DateTime.UtcNow.AddHours(3);
+
+        await _context.SaveChangesAsync();
+
+        _logger.LogInformation("User approved: {UserId} - {Email}", userId, user.Email);
+
+        return ApiResult<bool>.Ok(true);
+    }
+
+    public async Task<ApiResult<bool>> RejectUserAsync(int userId)
+    {
+        var user = await _context.Users.FindAsync(userId);
+
+        if (user == null)
+        {
+            return ApiResult<bool>.NotFound("Kullanıcı bulunamadı");
+        }
+
+        if (user.Role != UserRole.Personel)
+        {
+            return ApiResult<bool>.BadRequest("Sadece personel kullanıcılar reddedilebilir");
+        }
+
+        if (user.IsApproved)
+        {
+            return ApiResult<bool>.BadRequest("Onaylanmış kullanıcılar reddedilemez");
+        }
+
+        // Kullanıcıyı sil (reddetme durumunda)
+        _context.Users.Remove(user);
+        await _context.SaveChangesAsync();
+
+        _logger.LogInformation("User rejected and removed: {UserId} - {Email}", userId, user.Email);
+
+        return ApiResult<bool>.Ok(true);
     }
 }
 

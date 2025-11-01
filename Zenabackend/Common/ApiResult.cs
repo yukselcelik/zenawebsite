@@ -47,5 +47,15 @@ public class ApiResult<T>
             StatusCode = 404
         };
     }
+
+    public static ApiResult<T> Forbidden(string message = "Forbidden")
+    {
+        return new ApiResult<T>
+        {
+            Success = false,
+            Message = message,
+            StatusCode = 403
+        };
+    }
 }
 

@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -18,7 +19,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseSerilog();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    });
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -70,6 +76,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddAuthorization();
 
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<LeaveService>();
+builder.Services.AddScoped<InternshipService>();
 
 var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
     ?? new[] { "http://localhost:5133" };
@@ -123,17 +131,24 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-try
+// Seed database with default admin user
+using (var scope = app.Services.CreateScope())
 {
-    using (var scope = app.Services.CreateScope())
+    try
     {
         var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+        
         db.Database.EnsureCreated();
+        
+        // Seed default admin user if not exists
+        await DatabaseSeeder.SeedAsync(db, logger);
     }
-}
-catch (Exception ex)
-{
-    Log.Fatal(ex, "Application terminated unexpectedly");
+    catch (Exception ex)
+    {
+        Log.Fatal(ex, "Error seeding database: {Error}", ex.Message);
+        // Don't throw - allow app to continue even if seeding fails
+    }
 }
 
 if (app.Environment.IsDevelopment())

@@ -1,18 +1,18 @@
-// Çalışan giriş sayfası - Firmada çalışan kişilerin giriş yapabileceği sayfa
-// Bu sayfa çalışanların şifre ile giriş yapmasını ve izin durumlarını görmesini sağlar
+// Kayıt ol sayfası - Yeni kullanıcıların kayıt olabileceği sayfa
 
 'use client'; // Client-side bileşen - form yönetimi için
 
-import { useState, useEffect } from 'react'; // useState ve useEffect hook'ları - form state ve lifecycle yönetimi için
+import { useState, useEffect } from 'react'; // useState ve useEffect hook'ları
 import { useRouter } from 'next/navigation'; // Next.js router - sayfa yönlendirmesi için
 import Link from 'next/link'; // Next.js Link bileşeni
 import ApiService from '../../lib/api'; // API servis sınıfı
 
-export default function CalisanGirisi() {
-  // useState ile form verilerini ve giriş durumunu yönetiyoruz
-  const [loginData, setLoginData] = useState({
+export default function KayitOl() {
+  // useState ile form verilerini ve kayıt durumunu yönetiyoruz
+  const [registerData, setRegisterData] = useState({
     email: '',
-    password: ''
+    password: '',
+    confirmPassword: ''
   });
   const [isLoading, setIsLoading] = useState(false); // Yükleme durumu
   const [error, setError] = useState(''); // Hata mesajı
@@ -27,7 +27,7 @@ export default function CalisanGirisi() {
         // Token varsa çalışan paneline yönlendir
         router.push('/calisan-paneli');
       } else {
-        // Token yoksa giriş sayfasında kal
+        // Token yoksa kayıt sayfasında kal
         setIsCheckingAuth(false);
       }
     };
@@ -38,24 +38,41 @@ export default function CalisanGirisi() {
   // Form alanlarını güncelleyen fonksiyon
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setLoginData(prev => ({
+    setRegisterData(prev => ({
       ...prev,
       [name]: value
     }));
     setError(''); // Hata mesajını temizle
   };
 
-  // Giriş formunu gönderen fonksiyon
+  // Kayıt formunu gönderen fonksiyon
   const handleSubmit = async (e) => {
     e.preventDefault(); // Sayfa yenilenmesini engeller
     setIsLoading(true); // Yükleme durumunu aktif et
     setError(''); // Hata mesajını temizle
 
-    try {
-      // Backend API'ye giriş isteği gönder
-      const data = await ApiService.login(loginData.email, loginData.password);
+    // Şifre doğrulama
+    if (registerData.password !== registerData.confirmPassword) {
+      setError('Şifreler eşleşmiyor!');
+      setIsLoading(false);
+      return;
+    }
 
-      // Giriş başarılı - token'ı sakla
+    // Şifre uzunluk kontrolü
+    if (registerData.password.length < 6) {
+      setError('Şifre en az 6 karakter olmalıdır!');
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      // Backend API'ye kayıt isteği gönder
+      const data = await ApiService.register({
+        email: registerData.email,
+        password: registerData.password
+      });
+
+      // Kayıt başarılı - token'ı sakla
       localStorage.setItem('employeeToken', data.data.token);
       localStorage.setItem('userEmail', data.data.email);
       
@@ -67,10 +84,10 @@ export default function CalisanGirisi() {
         }
       } catch (profileError) {
         console.error('Profile fetch error:', profileError);
-        // Profile fetch hatası login'i engellemez
+        // Profile fetch hatası kayıtı engellemez
       }
       
-      // Role'a göre paneline yönlendir
+      // Role'a göre paneline yönlendir (yeni kullanıcılar varsayılan olarak Personel)
       const role = localStorage.getItem('userRole');
       if (role === 'Manager') {
         router.push('/yonetici-paneli');
@@ -79,7 +96,7 @@ export default function CalisanGirisi() {
       }
     } catch (error) {
       // Hata mesajını göster
-      setError(error.message || 'Giriş başarısız!');
+      setError(error.message || 'Kayıt başarısız!');
     } finally {
       setIsLoading(false); // Yükleme durumunu kapat
     }
@@ -116,10 +133,10 @@ export default function CalisanGirisi() {
             </div>
           </div>
           <h2 className="text-3xl font-bold text-gray-900">
-            Çalışan Girişi
+            Kayıt Ol
           </h2>
           <p className="mt-2 text-sm text-gray-600">
-            Çalışan paneline erişmek için giriş yapın
+            Yeni hesap oluşturun
           </p>
         </div>
       </div>
@@ -134,7 +151,7 @@ export default function CalisanGirisi() {
             </div>
           )}
 
-          {/* Giriş formu */}
+          {/* Kayıt formu */}
           <form onSubmit={handleSubmit} className="space-y-6">
             
             {/* E-posta alanı */}
@@ -149,7 +166,7 @@ export default function CalisanGirisi() {
                   type="email"
                   autoComplete="email"
                   required
-                  value={loginData.email}
+                  value={registerData.email}
                   onChange={handleInputChange}
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
                   placeholder="E-posta adresinizi girin"
@@ -167,17 +184,37 @@ export default function CalisanGirisi() {
                   id="password"
                   name="password"
                   type="password"
-                  autoComplete="current-password"
+                  autoComplete="new-password"
                   required
-                  value={loginData.password}
+                  value={registerData.password}
                   onChange={handleInputChange}
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
-                  placeholder="Şifrenizi girin"
+                  placeholder="En az 6 karakter"
                 />
               </div>
             </div>
 
-            {/* Giriş butonu */}
+            {/* Şifre tekrar alanı */}
+            <div>
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+                Şifre Tekrar
+              </label>
+              <div className="mt-1">
+                <input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type="password"
+                  autoComplete="new-password"
+                  required
+                  value={registerData.confirmPassword}
+                  onChange={handleInputChange}
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
+                  placeholder="Şifrenizi tekrar girin"
+                />
+              </div>
+            </div>
+
+            {/* Kayıt butonu */}
             <div>
               <button
                 type="submit"
@@ -194,24 +231,24 @@ export default function CalisanGirisi() {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    Giriş yapılıyor...
+                    Kayıt yapılıyor...
                   </div>
                 ) : (
-                  'Giriş Yap'
+                  'Kayıt Ol'
                 )}
               </button>
             </div>
           </form>
 
-          {/* Kayıt ol linki */}
+          {/* Giriş yap linki */}
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
-              Hesabınız yok mu?{' '}
+              Zaten hesabınız var mı?{' '}
               <Link 
-                href="/kayit-ol" 
+                href="/calisan-girisi" 
                 className="font-medium text-orange-600 hover:text-orange-500 transition-colors"
               >
-                Kayıt olun
+                Giriş yapın
               </Link>
             </p>
           </div>

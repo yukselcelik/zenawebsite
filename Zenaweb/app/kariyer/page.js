@@ -6,6 +6,7 @@
 import Header from '../components/Header'; // Header bileşenini import ediyoruz
 import Footer from '../components/Footer'; // Footer bileşenini import ediyoruz
 import { useState } from 'react'; // useState hook'u - form state yönetimi için
+import ApiService from '../../lib/api'; // API servis sınıfı
 
 export default function Kariyer() {
   // useState ile form verilerini yönetiyoruz
@@ -16,9 +17,16 @@ export default function Kariyer() {
     birthDate: '',
     education: '',
     position: '',
+    school: '',
+    department: '',
+    year: '',
+    message: '',
     cv: null,
     consent: false
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
+  const [submitSuccess, setSubmitSuccess] = useState(false);
 
   // Form alanlarını güncelleyen fonksiyon
   const handleInputChange = (e) => {
@@ -32,31 +40,27 @@ export default function Kariyer() {
   // Form gönderme fonksiyonu
   const handleSubmit = async (e) => {
     e.preventDefault(); // Sayfa yenilenmesini engeller
+    setIsSubmitting(true);
+    setSubmitError('');
+    setSubmitSuccess(false);
     
     try {
-      // API'ye başvuru gönder
-      const response = await fetch('/api/applications/submit', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        // File nesnesini göndermeden alanları normalize et
-        body: JSON.stringify({
+      // Eğer pozisyon "staj" ise staj başvurusu API'sine gönder
+      if (formData.position === 'staj') {
+        const internshipData = {
           fullName: formData.fullName,
-          phone: formData.phone,
           email: formData.email,
-          birthDate: formData.birthDate,
-          education: formData.education,
-          position: formData.position, // API'de applicationType olarak ele alınacak
-          kvkkConsent: formData.consent
-        }),
-      });
+          phone: formData.phone,
+          school: formData.school || '',
+          department: formData.department || '',
+          year: formData.year || '',
+          message: formData.message || ''
+        };
 
-      const result = await response.json();
-
-      if (response.ok) {
+        await ApiService.submitInternshipApplication(internshipData);
+        
         // Başvuru başarılı
-        alert(`Başvurunuz başarıyla gönderildi! Başvuru No: ${result.applicationId}`);
+        setSubmitSuccess(true);
         
         // Formu temizle
         setFormData({
@@ -66,16 +70,61 @@ export default function Kariyer() {
           birthDate: '',
           education: '',
           position: '',
+          school: '',
+          department: '',
+          year: '',
+          message: '',
           cv: null,
           consent: false
         });
       } else {
-        // Başvuru başarısız
-        alert(`Hata: ${result.message}`);
+        // Diğer pozisyonlar için mevcut API'ye gönder
+        const response = await fetch('/api/applications/submit', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            fullName: formData.fullName,
+            phone: formData.phone,
+            email: formData.email,
+            birthDate: formData.birthDate,
+            education: formData.education,
+            position: formData.position,
+            kvkkConsent: formData.consent
+          }),
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          // Başvuru başarılı
+          setSubmitSuccess(true);
+          
+          // Formu temizle
+          setFormData({
+            fullName: '',
+            phone: '',
+            email: '',
+            birthDate: '',
+            education: '',
+            position: '',
+            school: '',
+            department: '',
+            year: '',
+            message: '',
+            cv: null,
+            consent: false
+          });
+        } else {
+          setSubmitError(result.message || 'Başvuru gönderilirken hata oluştu');
+        }
       }
     } catch (error) {
       // Ağ hatası
-      alert('Bağlantı hatası! Lütfen tekrar deneyin.');
+      setSubmitError(error.message || 'Bağlantı hatası! Lütfen tekrar deneyin.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -106,6 +155,16 @@ export default function Kariyer() {
       {/* Başvuru formu */}
       <section className="py-16 bg-white">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+          {submitSuccess && (
+            <div className="mb-6 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded">
+              Başvurunuz başarıyla gönderildi! Teşekkür ederiz.
+            </div>
+          )}
+          {submitError && (
+            <div className="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+              {submitError}
+            </div>
+          )}
           <form onSubmit={handleSubmit} className="space-y-6">
             
             {/* Ad Soyad alanı */}
@@ -222,6 +281,73 @@ export default function Kariyer() {
               </select>
             </div>
 
+            {/* Staj için özel alanlar */}
+            {formData.position === 'staj' && (
+              <>
+                <div>
+                  <label htmlFor="school" className="block text-sm font-medium text-gray-700 mb-2">
+                    Okul <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="school"
+                    name="school"
+                    value={formData.school}
+                    onChange={handleInputChange}
+                    placeholder="Okul adı"
+                    required
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="department" className="block text-sm font-medium text-gray-700 mb-2">
+                    Bölüm <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="department"
+                    name="department"
+                    value={formData.department}
+                    onChange={handleInputChange}
+                    placeholder="Bölüm adı"
+                    required
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="year" className="block text-sm font-medium text-gray-700 mb-2">
+                    Sınıf
+                  </label>
+                  <input
+                    type="text"
+                    id="year"
+                    name="year"
+                    value={formData.year}
+                    onChange={handleInputChange}
+                    placeholder="Örn: 3. Sınıf"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+                    Mesajınız
+                  </label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    value={formData.message}
+                    onChange={handleInputChange}
+                    rows={4}
+                    placeholder="Eklemek istediğiniz bir mesaj varsa yazabilirsiniz..."
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900"
+                  />
+                </div>
+              </>
+            )}
+
             {/* CV yükleme alanı */}
             <div>
               <label htmlFor="cv" className="block text-sm font-medium text-gray-700 mb-2">
@@ -256,9 +382,10 @@ export default function Kariyer() {
             {/* Gönder butonu */}
             <button
               type="submit"
-              className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-4 px-6 rounded-lg text-lg transition-colors duration-300"
+              disabled={isSubmitting}
+              className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-4 px-6 rounded-lg text-lg transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Başvur
+              {isSubmitting ? 'Gönderiliyor...' : 'Başvur'}
             </button>
           </form>
         </div>

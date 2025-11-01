@@ -28,9 +28,46 @@ class ApiService {
 
   // Handle API response
   static async handleResponse(response) {
-    const data = await response.json();
+    // Response'u text olarak oku (sadece bir kez)
+    const text = await response.text();
     
-    if (!response.ok || !data.success) {
+    // Debug: Response'un ilk 500 karakterini logla
+    console.log('Response text (first 500 chars):', text.substring(0, 500));
+    console.log('Response status:', response.status);
+    console.log('Response ok:', response.ok);
+    
+    // Boş response kontrolü
+    if (!text || text.trim() === '') {
+      if (!response.ok) {
+        throw new Error(`Sunucu hatası: ${response.status} ${response.statusText}`);
+      }
+      throw new Error('Sunucudan yanıt alınamadı');
+    }
+
+    // JSON parse et
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (parseError) {
+      // JSON parse hatası - response'un tamamını logla
+      console.error('JSON Parse Hatası:', parseError);
+      console.error('Sunucu Yanıtı (full):', text);
+      console.error('Response URL:', response.url);
+      
+      // HTML hata sayfası mı kontrol et
+      if (text.trim().startsWith('<!DOCTYPE') || text.trim().startsWith('<html')) {
+        throw new Error(`Sunucu HTML yanıtı döndürdü. Muhtemelen backend çalışmıyor veya yanlış URL. HTTP ${response.status}`);
+      }
+      
+      throw new Error(`Sunucu yanıtı geçersiz JSON formatı. İlk 200 karakter: ${text.substring(0, 200)}`);
+    }
+    
+    // Response başarılı değilse veya data.success false ise hata fırlat
+    if (!response.ok) {
+      throw new Error(data.message || `Sunucu hatası: ${response.status} ${response.statusText}`);
+    }
+    
+    if (data.success === false) {
       throw new Error(data.message || 'API hatası');
     }
     
@@ -78,17 +115,36 @@ class ApiService {
 
   // Leave request API calls
   static async createLeaveRequest(leaveData) {
-    const response = await fetch(`${API_BASE_URL}/api/leave/request`, {
-      method: 'POST',
-      headers: this.getHeaders(),
-      body: JSON.stringify(leaveData),
-    });
+    try {
+      const headers = this.getHeaders();
+      console.log('Request URL:', `${API_BASE_URL}/api/leave/request`);
+      console.log('Request headers:', headers);
+      console.log('Request body:', JSON.stringify(leaveData));
 
-    return this.handleResponse(response);
+      const response = await fetch(`${API_BASE_URL}/api/leave/request`, {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify(leaveData),
+      });
+
+      // Debug için response'u kontrol et
+      console.log('Response status:', response.status);
+      console.log('Response statusText:', response.statusText);
+      console.log('Response ok:', response.ok);
+      console.log('Response headers:', {
+        'content-type': response.headers.get('content-type'),
+        'content-length': response.headers.get('content-length')
+      });
+
+      return this.handleResponse(response);
+    } catch (error) {
+      console.error('Fetch error:', error);
+      throw error;
+    }
   }
 
-  static async getMyLeaveRequests() {
-    const response = await fetch(`${API_BASE_URL}/api/leave/my-requests`, {
+  static async getMyLeaveRequests(pageNumber = 1, pageSize = 10) {
+    const response = await fetch(`${API_BASE_URL}/api/leave/my-requests?pageNumber=${pageNumber}&pageSize=${pageSize}`, {
       method: 'GET',
       headers: this.getHeaders(),
     });
@@ -96,8 +152,8 @@ class ApiService {
     return this.handleResponse(response);
   }
 
-  static async getAllLeaveRequests() {
-    const response = await fetch(`${API_BASE_URL}/api/leave/all-requests`, {
+  static async getAllLeaveRequests(pageNumber = 1, pageSize = 10) {
+    const response = await fetch(`${API_BASE_URL}/api/leave/all-requests?pageNumber=${pageNumber}&pageSize=${pageSize}`, {
       method: 'GET',
       headers: this.getHeaders(),
     });
@@ -144,6 +200,54 @@ class ApiService {
   static async getLeaveStats() {
     const response = await fetch(`${API_BASE_URL}/api/leave/my-stats`, {
       method: 'GET',
+      headers: this.getHeaders(),
+    });
+
+    return this.handleResponse(response);
+  }
+
+  // Internship application API calls
+  static async submitInternshipApplication(applicationData) {
+    const response = await fetch(`${API_BASE_URL}/api/internship/apply`, {
+      method: 'POST',
+      headers: this.getHeaders(false),
+      body: JSON.stringify(applicationData),
+    });
+
+    return this.handleResponse(response);
+  }
+
+  static async getAllInternshipApplications(pageNumber = 1, pageSize = 10) {
+    const response = await fetch(`${API_BASE_URL}/api/internship/applications?pageNumber=${pageNumber}&pageSize=${pageSize}`, {
+      method: 'GET',
+      headers: this.getHeaders(),
+    });
+
+    return this.handleResponse(response);
+  }
+
+  // User management API calls (Manager only)
+  static async getPendingUsers(pageNumber = 1, pageSize = 10) {
+    const response = await fetch(`${API_BASE_URL}/api/auth/pending-users?pageNumber=${pageNumber}&pageSize=${pageSize}`, {
+      method: 'GET',
+      headers: this.getHeaders(),
+    });
+
+    return this.handleResponse(response);
+  }
+
+  static async approveUser(userId) {
+    const response = await fetch(`${API_BASE_URL}/api/auth/approve-user/${userId}`, {
+      method: 'PUT',
+      headers: this.getHeaders(),
+    });
+
+    return this.handleResponse(response);
+  }
+
+  static async rejectUser(userId) {
+    const response = await fetch(`${API_BASE_URL}/api/auth/reject-user/${userId}`, {
+      method: 'DELETE',
       headers: this.getHeaders(),
     });
 

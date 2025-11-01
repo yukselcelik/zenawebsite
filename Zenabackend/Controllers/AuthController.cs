@@ -25,7 +25,14 @@ public class AuthController : ControllerBase
         var result = await _authService.RegisterAsync(registerDto);
 
         if (result == null)
-            return Ok(ApiResult<AuthResponseDto>.BadRequest("Email already exists", 400));
+        {
+            // Email kontrolü için tekrar kontrol et
+            if (await _authService.CheckEmailExistsAsync(registerDto.Email))
+                return Ok(ApiResult<AuthResponseDto>.BadRequest("Email already exists", 400));
+            
+            // Kayıt başarılı, onay bekleniyor
+            return Ok(ApiResult<AuthResponseDto>.Ok(null, "Kayıt başarılı. Yönetici onayından sonra giriş yapabilirsiniz."));
+        }
 
         return Ok(ApiResult<AuthResponseDto>.Ok(result));
     }
@@ -36,27 +43,57 @@ public class AuthController : ControllerBase
         var result = await _authService.LoginAsync(loginDto);
 
         if (result == null)
+        {
+            // Kullanıcı var ama onaylanmamış olabilir
+            var isApproved = await _authService.CheckUserApprovalStatusAsync(loginDto.Email);
+            if (!isApproved.HasValue)
+            {
+                return Ok(ApiResult<AuthResponseDto>.Unauthorized("Invalid email or password"));
+            }
+            if (!isApproved.Value)
+            {
+                return Ok(ApiResult<AuthResponseDto>.Unauthorized("Hesabınız henüz onaylanmamış. Lütfen yönetici onayı bekleyin."));
+            }
             return Ok(ApiResult<AuthResponseDto>.Unauthorized("Invalid email or password"));
+        }
 
         return Ok(ApiResult<AuthResponseDto>.Ok(result));
     }
 
     [HttpGet("me")]
     [Authorize]
-    public ActionResult<ApiResult<object>> GetMe()
+    public async Task<ActionResult<ApiResult<MeDto>>> GetMe()
     {
-        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-        var email = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
+        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
         
-        if (userId == null)
-            return Ok(ApiResult<object>.Unauthorized("Unauthorized"));
+        if (userIdClaim == null || !int.TryParse(userIdClaim, out int userId))
+            return Ok(ApiResult<MeDto>.Unauthorized("Unauthorized"));
 
-        var data = new
-        {
-            UserId = userId,
-            Email = email
-        };
+        var result = await _authService.GetMeAsync(userId);
+        return Ok(result);
+    }
 
-        return Ok(ApiResult<object>.Ok(data));
+    [HttpGet("pending-users")]
+    [Authorize(Roles = "Manager")]
+    public async Task<ActionResult<ApiResult<PagedResultDto<UserResponseDto>>>> GetPendingUsers([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+    {
+        var result = await _authService.GetPendingUsersAsync(pageNumber, pageSize);
+        return Ok(result);
+    }
+
+    [HttpPut("approve-user/{id}")]
+    [Authorize(Roles = "Manager")]
+    public async Task<ActionResult<ApiResult<bool>>> ApproveUser(int id)
+    {
+        var result = await _authService.ApproveUserAsync(id);
+        return Ok(result);
+    }
+
+    [HttpDelete("reject-user/{id}")]
+    [Authorize(Roles = "Manager")]
+    public async Task<ActionResult<ApiResult<bool>>> RejectUser(int id)
+    {
+        var result = await _authService.RejectUserAsync(id);
+        return Ok(result);
     }
 }

@@ -4,15 +4,39 @@
 'use client'; // Client-side bileşen olduğunu belirtir (React hooks kullanabilmek için)
 
 import Link from 'next/link'; // Next.js'in Link bileşeni - sayfa geçişleri için
-import { useState, useRef } from 'react'; // React'in useState hook'ları - state yönetimi için
+import { useState, useRef, useEffect } from 'react'; // React'in useState hook'ları - state yönetimi için
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
 export default function Header() {
   // useState hook'u ile dropdown menülerin açık/kapalı durumunu yönetiyoruz
   const [isServicesOpen, setIsServicesOpen] = useState(false);
   const [isAboutOpen, setIsAboutOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userRole, setUserRole] = useState(null);
   const aboutCloseTimer = useRef(null);
   const servicesCloseTimer = useRef(null);
+  const router = useRouter();
+
+  // Token kontrolü için useEffect
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('employeeToken');
+      const role = localStorage.getItem('userRole');
+      setIsLoggedIn(!!token);
+      setUserRole(role);
+    }
+  }, []);
+
+  // Çıkış yapma fonksiyonu
+  const handleLogout = () => {
+    localStorage.removeItem('employeeToken');
+    localStorage.removeItem('userEmail');
+    localStorage.removeItem('userRole');
+    setIsLoggedIn(false);
+    setUserRole(null);
+    router.push('/');
+  };
 
   const handleAboutEnter = () => {
     if (aboutCloseTimer.current) clearTimeout(aboutCloseTimer.current);
@@ -175,12 +199,45 @@ export default function Header() {
             
             {/* Giriş butonu ve dil seçici */}
             <div className="flex items-center space-x-4">
-              <a 
-                href="/calisan-girisi"
-                className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-300"
-              >
-                Giriş Yap
-              </a>
+              {isLoggedIn ? (
+                <>
+                  <Link 
+                    href="/"
+                    className="text-gray-700 hover:text-orange-500 transition-colors px-3 py-2"
+                  >
+                    Ev
+                  </Link>
+                  {userRole === 'Manager' && (
+                    <Link 
+                      href="/yonetici-paneli"
+                      className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-300"
+                    >
+                      Yönetim Paneli
+                    </Link>
+                  )}
+                  {userRole === 'Personel' && (
+                    <Link 
+                      href="/calisan-paneli"
+                      className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-300"
+                    >
+                      Çalışan Paneli
+                    </Link>
+                  )}
+                  <button
+                    onClick={handleLogout}
+                    className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-300"
+                  >
+                    Çıkış Yap
+                  </button>
+                </>
+              ) : (
+                <a 
+                  href="/calisan-girisi"
+                  className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-300"
+                >
+                  Giriş Yap
+                </a>
+              )}
               <span className="text-orange-500 font-medium bg-orange-50 px-3 py-1 rounded-md text-sm">
                 TR
               </span>
