@@ -11,6 +11,57 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    networks:
+      - zena_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d zena_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: zena_backend
+    ports:
+      - "5133:5133"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5133
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=zena_db;Username=admin;Password=12345;TrustServerCertificate=True
+      - Jwt__Key=e12126f62167195ccc74cb7309da6c03!
+      - Jwt__Issuer=ZenaBackend
+      - Jwt__Audience=ZenaBackend
+      - Cors__AllowedOrigins__0=http://localhost:3000
+      - Cors__AllowedOrigins__1=http://localhost:3001
+      - Cors__AllowedOrigins__2=http://frontend:3000
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - zena_network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_API_URL=http://localhost:5133
+    container_name: zena_frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=http://localhost:5133
+    depends_on:
+      - backend
+    networks:
+      - zena_network
+
+networks:
+  zena_network:
+    driver: bridge
 
 volumes:
   pgdata:
