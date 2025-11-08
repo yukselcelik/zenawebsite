@@ -105,7 +105,7 @@ export default function PendingUsers() {
                         <select
                           value={user.isApproved ? 'true' : 'false'}
                           onChange={(e) => handleApprovalStatusChange(user.id, e.target.value === 'true')}
-                          className={`px-3 py-2 rounded text-sm font-medium border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 ${
+                          className={`px-3 py-2 rounded text-sm font-medium border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 cursor-pointer ${
                             user.isApproved 
                               ? 'bg-green-100 text-green-800' 
                               : 'bg-yellow-100 text-yellow-800'
@@ -116,7 +116,7 @@ export default function PendingUsers() {
                         </select>
                         <button
                           onClick={() => handleDelete(user.id)}
-                          className="text-red-600 hover:text-red-900 px-3 py-2 rounded border border-red-300 hover:bg-red-50 transition-colors"
+                          className="text-red-600 hover:text-red-900 px-3 py-2 rounded border border-red-300 hover:bg-red-50 transition-colors cursor-pointer"
                         >
                           Sil
                         </button>
@@ -139,14 +139,14 @@ export default function PendingUsers() {
               <button
                 onClick={() => setPagination({ ...pagination, pageNumber: pagination.pageNumber - 1 })}
                 disabled={pagination.pageNumber === 1}
-                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 Önceki
               </button>
               <button
                 onClick={() => setPagination({ ...pagination, pageNumber: pagination.pageNumber + 1 })}
                 disabled={pagination.pageNumber >= pagination.totalPages}
-                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 Sonraki
               </button>

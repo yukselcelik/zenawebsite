@@ -54,7 +54,7 @@ export default function Navbar({ userData, onLogout, activeTab, isManager }) {
           {/* Çıkış Butonu */}
           <button
             onClick={onLogout}
-            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors text-sm font-medium"
+            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors text-sm font-medium cursor-pointer"
           >
             Çıkış Yap
           </button>

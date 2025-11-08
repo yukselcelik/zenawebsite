@@ -52,7 +52,7 @@ export default function EducationInfoSection({ educationInfos, userId, onUpdate 
         <h3 className="text-lg font-semibold text-gray-800">Eğitim Bilgileri</h3>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm"
+          className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm cursor-pointer"
         >
           {showForm ? 'İptal' : 'Yeni Ekle'}
         </button>
@@ -103,13 +103,13 @@ export default function EducationInfoSection({ educationInfos, userId, onUpdate 
                 setShowForm(false);
                 setFormData({ university: '', department: '', graduationYear: '', certification: '' });
               }}
-              className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+              className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 cursor-pointer"
             >
               İptal
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg"
+              className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg cursor-pointer"
             >
               Kaydet
             </button>

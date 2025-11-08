@@ -56,7 +56,7 @@ export default function EmploymentInfoSection({ employmentInfos, userId, onUpdat
         <h3 className="text-lg font-semibold text-gray-800">İstihdam Bilgileri</h3>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm"
+          className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm cursor-pointer"
         >
           {showForm ? 'İptal' : 'Yeni Ekle'}
         </button>
@@ -71,7 +71,7 @@ export default function EmploymentInfoSection({ employmentInfos, userId, onUpdat
               required
               value={formData.startDate}
               onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 cursor-pointer"
             />
           </div>
           <div>
@@ -80,7 +80,7 @@ export default function EmploymentInfoSection({ employmentInfos, userId, onUpdat
               type="text"
               value={formData.position}
               onChange={(e) => setFormData({ ...formData, position: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 cursor-pointer"
             />
           </div>
           <div>
@@ -88,7 +88,7 @@ export default function EmploymentInfoSection({ employmentInfos, userId, onUpdat
             <select
               value={formData.workType}
               onChange={(e) => setFormData({ ...formData, workType: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 cursor-pointer"
             >
               <option value="FullTime">Tam Zamanlı</option>
               <option value="PartTime">Yarı Zamanlı</option>
@@ -99,7 +99,7 @@ export default function EmploymentInfoSection({ employmentInfos, userId, onUpdat
             <select
               value={formData.contractType}
               onChange={(e) => setFormData({ ...formData, contractType: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 cursor-pointer"
             >
               <option value="FixedTerm">Belirli Süreli</option>
               <option value="Continuous">Sürekli</option>
@@ -111,7 +111,7 @@ export default function EmploymentInfoSection({ employmentInfos, userId, onUpdat
               type="text"
               value={formData.workplaceNumber}
               onChange={(e) => setFormData({ ...formData, workplaceNumber: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 cursor-pointer"
             />
           </div>
           <div className="flex justify-end space-x-3">
@@ -127,13 +127,13 @@ export default function EmploymentInfoSection({ employmentInfos, userId, onUpdat
                   workplaceNumber: ''
                 });
               }}
-              className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+              className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 cursor-pointer"
             >
               İptal
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg"
+              className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg cursor-pointer"
             >
               Kaydet
             </button>
@@ -157,7 +157,7 @@ export default function EmploymentInfoSection({ employmentInfos, userId, onUpdat
                 </div>
                 <button
                   onClick={() => handleDelete(emp.id)}
-                  className="text-red-600 hover:text-red-800 text-sm"
+                  className="text-red-600 hover:text-red-800 text-sm cursor-pointer"
                 >
                   Sil
                 </button>

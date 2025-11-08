@@ -124,7 +124,7 @@ export default function EmergencyContactSection({ emergencyContacts, userId, onU
           disabled={!canAdd}
           className={`px-4 py-2 rounded-lg text-sm ${
             canAdd
-              ? 'bg-orange-500 hover:bg-orange-600 text-white'
+              ? 'bg-orange-500 hover:bg-orange-600 text-white cursor-pointer'
               : 'bg-gray-300 text-gray-500 cursor-not-allowed'
           }`}
         >
@@ -173,7 +173,7 @@ export default function EmergencyContactSection({ emergencyContacts, userId, onU
                 setIsEditing(false);
                 setFormData({ fullName: '', phoneNumber: '', address: '' });
               }}
-              className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+              className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 cursor-pointer"
             >
               İptal
             </button>
@@ -182,7 +182,7 @@ export default function EmergencyContactSection({ emergencyContacts, userId, onU
               disabled={!isApproved}
               className={`px-4 py-2 rounded-lg ${
                 isApproved
-                  ? 'bg-orange-500 hover:bg-orange-600 text-white'
+                  ? 'bg-orange-500 hover:bg-orange-600 text-white cursor-pointer'
                   : 'bg-gray-300 text-gray-500 cursor-not-allowed'
               }`}
             >
@@ -208,7 +208,7 @@ export default function EmergencyContactSection({ emergencyContacts, userId, onU
                     disabled={!canEdit}
                     className={`px-3 py-1 rounded text-sm ${
                       canEdit
-                        ? 'bg-blue-500 hover:bg-blue-600 text-white'
+                        ? 'bg-blue-500 hover:bg-blue-600 text-white cursor-pointer'
                         : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                     }`}
                   >
@@ -219,7 +219,7 @@ export default function EmergencyContactSection({ emergencyContacts, userId, onU
                     disabled={!canDelete}
                     className={`px-3 py-1 rounded text-sm ${
                       canDelete
-                        ? 'bg-red-500 hover:bg-red-600 text-white'
+                        ? 'bg-red-500 hover:bg-red-600 text-white cursor-pointer'
                         : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                     }`}
                   >

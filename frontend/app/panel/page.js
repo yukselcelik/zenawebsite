@@ -21,7 +21,18 @@ export default function Panel() {
   const [userDetail, setUserDetail] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const [activeTab, setActiveTab] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const savedTab = localStorage.getItem('panelActiveTab');
+      if (savedTab) {
+        return savedTab;
+      }
+      // Personel için default 'profile', Manager için 'dashboard'
+      // Bu kontrolü userData yüklendikten sonra yapacağız
+      return 'dashboard';
+    }
+    return 'dashboard';
+  });
   const [selectedPersonnelId, setSelectedPersonnelId] = useState(null);
   const [stats, setStats] = useState(null);
   const [pendingCount, setPendingCount] = useState(0);
@@ -51,9 +62,11 @@ export default function Panel() {
           }
         }
 
-        // Personel için default tab'ı 'profile' yap
-        if (profileData.data?.role !== 'Manager') {
-          setActiveTab('profile');
+        // Personel için default tab'ı 'profile' yap (sadece localStorage'da kayıt yoksa)
+        if (profileData.data?.role !== 'Manager' && !localStorage.getItem('panelActiveTab')) {
+          const defaultTab = 'profile';
+          setActiveTab(defaultTab);
+          localStorage.setItem('panelActiveTab', defaultTab);
         }
 
         // Yönetici ise istatistikleri çek
@@ -149,7 +162,10 @@ export default function Panel() {
       {/* Sol Sidebar */}
       <Sidebar 
         activeTab={activeTab} 
-        setActiveTab={setActiveTab} 
+        setActiveTab={(tab) => {
+          setActiveTab(tab);
+          localStorage.setItem('panelActiveTab', tab);
+        }} 
         isManager={isManager}
         pendingCount={pendingCount}
         pendingLeaveCount={pendingLeaveCount}
@@ -206,7 +222,10 @@ export default function Panel() {
               key={leaveRequestsRefreshKey}
               isManager={isManager} 
               onLeaveRequestsChange={(count) => setPendingLeaveCount(count)}
-              onCreateNew={() => setActiveTab('create-leave')}
+              onCreateNew={() => {
+                setActiveTab('create-leave');
+                localStorage.setItem('panelActiveTab', 'create-leave');
+              }}
             />
           )}
 
@@ -215,9 +234,13 @@ export default function Panel() {
               onSuccess={async () => {
                 // İzin talepleri listesine dön ve yenile
                 setActiveTab('leaves');
+                localStorage.setItem('panelActiveTab', 'leaves');
                 setLeaveRequestsRefreshKey(prev => prev + 1);
               }}
-              onCancel={() => setActiveTab('leaves')}
+              onCancel={() => {
+                setActiveTab('leaves');
+                localStorage.setItem('panelActiveTab', 'leaves');
+              }}
             />
           )}
 
@@ -225,6 +248,7 @@ export default function Panel() {
             <PersonnelList onViewDetail={(userId) => {
               setSelectedPersonnelId(userId);
               setActiveTab('personnel-detail');
+              localStorage.setItem('panelActiveTab', 'personnel-detail');
             }} />
           )}
 
@@ -234,6 +258,7 @@ export default function Panel() {
               onBack={() => {
                 setSelectedPersonnelId(null);
                 setActiveTab('personnel');
+                localStorage.setItem('panelActiveTab', 'personnel');
               }}
             />
           )}

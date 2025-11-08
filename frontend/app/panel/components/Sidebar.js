@@ -91,7 +91,7 @@ export default function Sidebar({ activeTab, setActiveTab, isManager, pendingCou
                   onPersonnelTabClick();
                 }
               }}
-              className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${
+              className={`w-full text-left px-4 py-3 rounded-lg transition-colors cursor-pointer ${
                 activeTab === item.id || (item.id === 'personnel' && activeTab === 'personnel-detail')
                   ? 'bg-orange-500 text-white'
                   : 'text-gray-700 hover:bg-gray-100'

@@ -126,7 +126,7 @@ export default function LeaveRequests({ isManager, onLeaveRequestsChange, onCrea
             {!isManager && (
               <button
                 onClick={() => onCreateNew && onCreateNew()}
-                className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer"
               >
                 Yeni İzin Talebi
               </button>
@@ -168,7 +168,7 @@ export default function LeaveRequests({ isManager, onLeaveRequestsChange, onCrea
                       <select
                         value={request.status}
                         onChange={(e) => handleStatusChange(request.id, e.target.value)}
-                        className={`px-3 py-2 rounded text-sm font-medium border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 ${
+                        className={`px-3 py-2 rounded text-sm font-medium border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 cursor-pointer ${
                           request.status === 'Approved' ? 'bg-green-100 text-green-800' :
                           request.status === 'Rejected' ? 'bg-red-100 text-red-800' :
                           request.status === 'Cancelled' ? 'bg-gray-100 text-gray-800' :
@@ -184,7 +184,7 @@ export default function LeaveRequests({ isManager, onLeaveRequestsChange, onCrea
                     {!isManager && request.status === 'Pending' && (
                       <button
                         onClick={() => handleCancelLeaveRequest(request.id)}
-                        className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded text-sm font-medium transition-colors"
+                        className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded text-sm font-medium transition-colors cursor-pointer"
                       >
                         İptal Et
                       </button>
@@ -206,14 +206,14 @@ export default function LeaveRequests({ isManager, onLeaveRequestsChange, onCrea
               <button
                 onClick={() => setPagination({ ...pagination, pageNumber: pagination.pageNumber - 1 })}
                 disabled={pagination.pageNumber === 1}
-                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 Önceki
               </button>
               <button
                 onClick={() => setPagination({ ...pagination, pageNumber: pagination.pageNumber + 1 })}
                 disabled={pagination.pageNumber >= pagination.totalPages}
-                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 Sonraki
               </button>

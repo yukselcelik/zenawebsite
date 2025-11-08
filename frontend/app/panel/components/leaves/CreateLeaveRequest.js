@@ -46,7 +46,7 @@ export default function CreateLeaveRequest({ onSuccess, onCancel }) {
           <div className="flex items-center space-x-4 mb-4">
             <button
               onClick={onCancel}
-              className="text-gray-600 hover:text-gray-800 transition-colors"
+              className="text-gray-600 hover:text-gray-800 transition-colors cursor-pointer"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -118,14 +118,14 @@ export default function CreateLeaveRequest({ onSuccess, onCancel }) {
             <button
               type="button"
               onClick={onCancel}
-              className="px-5 py-2.5 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors"
+              className="px-5 py-2.5 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors cursor-pointer"
             >
               İptal
             </button>
             <button
               type="submit"
               disabled={submitting}
-              className="px-5 py-2.5 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="px-5 py-2.5 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
             >
               {submitting ? 'Gönderiliyor...' : 'Gönder'}
             </button>
