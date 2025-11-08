@@ -29,7 +29,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:5133
-      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=zena_db;Username=admin;Password=12345;TrustServerCertificate=True
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=zena_db_docker;Username=admin;Password=12345;TrustServerCertificate=True
       - Jwt__Key=e12126f62167195ccc74cb7309da6c03!
       - Jwt__Issuer=ZenaBackend
       - Jwt__Audience=ZenaBackend

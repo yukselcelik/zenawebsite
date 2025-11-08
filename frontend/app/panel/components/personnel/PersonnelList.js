@@ -55,7 +55,6 @@ export default function PersonnelList({ onViewDetail }) {
     <>
       <div className="bg-white rounded-lg shadow overflow-hidden">
         <div className="p-6">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">Personel Listesi</h2>
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">

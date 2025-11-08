@@ -52,10 +52,6 @@ export default function CreateLeaveRequest({ onSuccess, onCancel }) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
             </button>
-            <div>
-              <h2 className="text-2xl font-bold text-gray-800">Yeni İzin Talebi</h2>
-              <p className="text-sm text-gray-500 mt-1">İzin talebinizin detaylarını doldurun</p>
-            </div>
           </div>
         </div>
 

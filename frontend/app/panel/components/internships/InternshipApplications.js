@@ -49,7 +49,6 @@ export default function InternshipApplications() {
   return (
     <div className="bg-white rounded-lg shadow overflow-hidden">
       <div className="p-6">
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">Staj Başvuruları</h2>
         <div className="space-y-4">
           {applications.length === 0 ? (
             <p className="text-gray-500 text-center py-8">Henüz staj başvurusu bulunmamaktadır.</p>

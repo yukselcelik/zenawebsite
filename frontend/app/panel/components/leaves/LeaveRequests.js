@@ -119,19 +119,16 @@ export default function LeaveRequests({ isManager, onLeaveRequestsChange, onCrea
 
       <div className="bg-white rounded-lg shadow overflow-hidden">
         <div className="p-6">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold text-gray-800">
-              {isManager ? 'Tüm İzin Talepleri' : 'İzin Taleplerim'}
-            </h2>
-            {!isManager && (
+          {!isManager && (
+            <div className="flex justify-end items-center mb-4">
               <button
                 onClick={() => onCreateNew && onCreateNew()}
                 className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer"
               >
                 Yeni İzin Talebi
               </button>
-            )}
-          </div>
+            </div>
+          )}
           <div className="space-y-4">
           {leaveRequests.length === 0 ? (
             <p className="text-gray-500 text-center py-8">Henüz izin talebi bulunmamaktadır.</p>

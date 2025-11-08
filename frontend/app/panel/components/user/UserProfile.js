@@ -41,8 +41,7 @@ export default function UserProfile({ userDetail, onUpdate, onUserDetailUpdate }
     <div className="space-y-6">
       {/* Temel Bilgiler */}
       <div className="bg-white rounded-lg shadow p-6">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-semibold text-gray-800">Profil Bilgilerim</h2>
+        <div className="flex justify-end items-center mb-6">
           <button
             onClick={() => isEditing ? handleSave() : setIsEditing(true)}
             className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm cursor-pointer"

@@ -207,25 +207,15 @@ export default function Header() {
                   >
                     Ev
                   </Link>
-                  {userRole === 'Manager' && (
-                    <Link 
-                      href="/yonetici-paneli"
-                      className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-300"
-                    >
-                      Yönetim Paneli
-                    </Link>
-                  )}
-                  {userRole === 'Personel' && (
-                    <Link 
-                      href="/calisan-paneli"
-                      className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-300"
-                    >
-                      Çalışan Paneli
-                    </Link>
-                  )}
+                  <Link 
+                    href="/panel"
+                    className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-300"
+                  >
+                    {userRole === 'Manager' ? 'Yönetim Paneli' : 'Çalışan Paneli'}
+                  </Link>
                   <button
                     onClick={handleLogout}
-                    className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-300"
+                    className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-300 cursor-pointer"
                   >
                     Çıkış Yap
                   </button>
