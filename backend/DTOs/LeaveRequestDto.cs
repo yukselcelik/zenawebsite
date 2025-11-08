@@ -31,8 +31,8 @@ public class LeaveRequestResponseDto
     public DateTime UpdatedAt { get; set; }
 }
 
-public class UpdateLeaveStatusDto
-{
-    [MaxLength(500)]
-    public string? AdminNote { get; set; }
-}
+// public class UpdateLeaveStatusDto
+// {
+//     [MaxLength(500)]
+//     public string? AdminNote { get; set; }
+// }

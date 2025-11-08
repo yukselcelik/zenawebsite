@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Zenabackend.Common;
 using Zenabackend.DTOs;
+using Zenabackend.Models;
 using Zenabackend.Services;
 
 namespace Zenabackend.Controllers;
@@ -97,6 +98,25 @@ public class LeaveController : ControllerBase
     public async Task<ActionResult<ApiResult<bool>>> RejectLeaveRequest(int id)
     {
         var result = await _leaveService.RejectLeaveRequestAsync(id);
+
+        if (!result.Success)
+        {
+            return Ok(result);
+        }
+
+        return Ok(result);
+    }
+
+    [HttpPut("{id}/status")]
+    [Authorize(Roles = "Manager")]
+    public async Task<ActionResult<ApiResult<bool>>> UpdateLeaveStatus(int id, [FromBody] UpdateLeaveStatusDto dto)
+    {
+        if (!Enum.TryParse<LeaveStatus>(dto.Status, out var status))
+        {
+            return Ok(ApiResult<bool>.BadRequest("Geçersiz durum"));
+        }
+
+        var result = await _leaveService.UpdateLeaveStatusAsync(id, status);
 
         if (!result.Success)
         {

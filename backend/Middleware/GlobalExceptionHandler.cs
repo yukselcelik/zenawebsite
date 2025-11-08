@@ -33,9 +33,9 @@ public class GlobalExceptionHandler
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
+        // Kullanıcıya genel bir hata mesajı göster, detaylı exception mesajını gösterme
         var response = ApiResult<object>.BadRequest(
-            $"Bir hata oluştu: {exception.Message}" + 
-            (exception.InnerException != null ? $" ({exception.InnerException.Message})" : ""),
+            "Bir hata oluştu. Lütfen daha sonra tekrar deneyin.",
             500
         );
 

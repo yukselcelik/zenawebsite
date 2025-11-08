@@ -33,5 +33,8 @@ public class InternshipApplication
     [MaxLength(2000)]
     public string Message { get; set; } = string.Empty;
     
+    [MaxLength(500)]
+    public string? CvFilePath { get; set; }
+    
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow.AddHours(3);
 }

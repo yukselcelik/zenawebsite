@@ -16,6 +16,7 @@ export default function KayitOl() {
   });
   const [isLoading, setIsLoading] = useState(false); // Yükleme durumu
   const [error, setError] = useState(''); // Hata mesajı
+  const [successMessage, setSuccessMessage] = useState(''); // Başarı mesajı
   const [isCheckingAuth, setIsCheckingAuth] = useState(true); // Giriş kontrolü durumu
   const router = useRouter(); // Router hook'u
 
@@ -25,7 +26,7 @@ export default function KayitOl() {
       const token = localStorage.getItem('employeeToken');
       if (token) {
         // Token varsa çalışan paneline yönlendir
-        router.push('/calisan-paneli');
+        router.push('/panel');
       } else {
         // Token yoksa kayıt sayfasında kal
         setIsCheckingAuth(false);
@@ -72,27 +73,33 @@ export default function KayitOl() {
         password: registerData.password
       });
 
-      // Kayıt başarılı - token'ı sakla
-      localStorage.setItem('employeeToken', data.data.token);
-      localStorage.setItem('userEmail', data.data.email);
-      
-      // Kullanıcı bilgilerini al (role dahil)
-      try {
-        const profileData = await ApiService.getProfile();
-        if (profileData.data?.role) {
-          localStorage.setItem('userRole', profileData.data.role);
+      // Kayıt başarılı mesajını kontrol et
+      const successMessage = data.message || 'Kayıt işleminiz başarıyla tamamlandı.';
+
+      // Token varsa sakla ve giriş yap
+      if (data.data?.token) {
+        localStorage.setItem('employeeToken', data.data.token);
+        localStorage.setItem('userEmail', data.data.email);
+        
+        // Kullanıcı bilgilerini al (role dahil)
+        try {
+          const profileData = await ApiService.getProfile();
+          if (profileData.data?.role) {
+            localStorage.setItem('userRole', profileData.data.role);
+          }
+        } catch (profileError) {
+          console.error('Profile fetch error:', profileError);
+          // Profile fetch hatası kayıtı engellemez
         }
-      } catch (profileError) {
-        console.error('Profile fetch error:', profileError);
-        // Profile fetch hatası kayıtı engellemez
-      }
-      
-      // Role'a göre paneline yönlendir (yeni kullanıcılar varsayılan olarak Personel)
-      const role = localStorage.getItem('userRole');
-      if (role === 'Manager') {
-        router.push('/yonetici-paneli');
+        
+        // Başarı mesajını göster ve panele yönlendir
+        setSuccessMessage(successMessage);
+        setTimeout(() => {
+          router.push('/panel');
+        }, 2000); // 2 saniye sonra yönlendir
       } else {
-        router.push('/calisan-paneli');
+        // Token yoksa sadece mesaj göster
+        setError(successMessage);
       }
     } catch (error) {
       // Hata mesajını göster
@@ -144,6 +151,18 @@ export default function KayitOl() {
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           
+          {/* Başarı mesajı */}
+          {successMessage && (
+            <div className="mb-4 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">
+              <div className="flex items-center">
+                <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+                {successMessage}
+              </div>
+            </div>
+          )}
+
           {/* Hata mesajı */}
           {error && (
             <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">

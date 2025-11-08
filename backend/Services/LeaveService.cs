@@ -19,9 +19,9 @@ public class LeaveService
 
     public async Task<ApiResult<LeaveRequestResponseDto>> CreateLeaveRequestAsync(int userId, CreateLeaveRequestDto dto)
     {
-        // DateTime'ı sadece tarih olarak (time kısmı olmadan) kullan ve Unspecified olarak ayarla
-        var startDate = DateTime.SpecifyKind(dto.StartDate.Date, DateTimeKind.Unspecified);
-        var endDate = DateTime.SpecifyKind(dto.EndDate.Date, DateTimeKind.Unspecified);
+        // DateTime'ı UTC'ye çevir (PostgreSQL timestamp with time zone için gerekli)
+        var startDate = dto.StartDate.Date.ToUniversalTime();
+        var endDate = dto.EndDate.Date.ToUniversalTime();
 
         // Validate dates
         if (startDate >= endDate)
@@ -29,12 +29,13 @@ public class LeaveService
             return ApiResult<LeaveRequestResponseDto>.BadRequest("Başlangıç tarihi bitiş tarihinden önce olmalıdır");
         }
 
-        if (startDate < DateTime.Today)
+        var today = DateTime.UtcNow.Date;
+        if (startDate < today)
         {
             return ApiResult<LeaveRequestResponseDto>.BadRequest("Başlangıç tarihi bugünden önce olamaz");
         }
 
-        var now = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(3), DateTimeKind.Unspecified);
+        var now = DateTime.UtcNow;
 
         var leaveRequest = new LeaveRequest
         {
@@ -178,7 +179,7 @@ public class LeaveService
         }
 
         leaveRequest.Status = LeaveStatus.Cancelled;
-        leaveRequest.UpdatedAt = DateTime.UtcNow.AddHours(3);
+        leaveRequest.UpdatedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
 
@@ -202,7 +203,7 @@ public class LeaveService
         }
 
         leaveRequest.Status = LeaveStatus.Approved;
-        leaveRequest.UpdatedAt = DateTime.UtcNow.AddHours(3);
+        leaveRequest.UpdatedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
 
@@ -226,11 +227,30 @@ public class LeaveService
         }
 
         leaveRequest.Status = LeaveStatus.Rejected;
-        leaveRequest.UpdatedAt = DateTime.UtcNow.AddHours(3);
+        leaveRequest.UpdatedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
 
         _logger.LogInformation("Leave request rejected: {Id}", leaveRequestId);
+
+        return ApiResult<bool>.Ok(true);
+    }
+
+    public async Task<ApiResult<bool>> UpdateLeaveStatusAsync(int leaveRequestId, LeaveStatus newStatus)
+    {
+        var leaveRequest = await _context.LeaveRequests.FindAsync(leaveRequestId);
+
+        if (leaveRequest == null)
+        {
+            return ApiResult<bool>.NotFound("İzin talebi bulunamadı");
+        }
+
+        leaveRequest.Status = newStatus;
+        leaveRequest.UpdatedAt = DateTime.UtcNow;
+
+        await _context.SaveChangesAsync();
+
+        _logger.LogInformation("Leave request status updated: {Id} to {Status}", leaveRequestId, newStatus);
 
         return ApiResult<bool>.Ok(true);
     }

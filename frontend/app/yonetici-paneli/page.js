@@ -765,6 +765,22 @@ export default function YoneticiPaneli() {
                             </div>
                           </div>
                         </div>
+                        <div className="flex items-center space-x-3">
+                          {application.cvFilePath && (
+                            <button
+                              onClick={async () => {
+                                try {
+                                  await ApiService.downloadInternshipCv(application.id);
+                                } catch (error) {
+                                  setError(error.message || 'CV dosyası indirilemedi');
+                                }
+                              }}
+                              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                            >
+                              Görüntüle
+                            </button>
+                          )}
+                        </div>
                       </div>
                     </li>
                   ))}

@@ -24,8 +24,8 @@ export default function CalisanGirisi() {
     const checkAuth = () => {
       const token = localStorage.getItem('employeeToken');
       if (token) {
-        // Token varsa çalışan paneline yönlendir
-        router.push('/calisan-paneli');
+        // Token varsa panele yönlendir
+        router.push('/panel');
       } else {
         // Token yoksa giriş sayfasında kal
         setIsCheckingAuth(false);
@@ -70,13 +70,8 @@ export default function CalisanGirisi() {
         // Profile fetch hatası login'i engellemez
       }
       
-      // Role'a göre paneline yönlendir
-      const role = localStorage.getItem('userRole');
-      if (role === 'Manager') {
-        router.push('/yonetici-paneli');
-      } else {
-        router.push('/calisan-paneli');
-      }
+      // Tüm kullanıcıları panele yönlendir
+      router.push('/panel');
     } catch (error) {
       // Hata mesajını göster
       setError(error.message || 'Giriş başarısız!');

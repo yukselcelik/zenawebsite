@@ -31,15 +31,10 @@ class ApiService {
     // Response'u text olarak oku (sadece bir kez)
     const text = await response.text();
     
-    // Debug: Response'un ilk 500 karakterini logla
-    console.log('Response text (first 500 chars):', text.substring(0, 500));
-    console.log('Response status:', response.status);
-    console.log('Response ok:', response.ok);
-    
     // Boş response kontrolü
     if (!text || text.trim() === '') {
       if (!response.ok) {
-        throw new Error(`Sunucu hatası: ${response.status} ${response.statusText}`);
+        throw new Error('Bir hata oluştu. Lütfen daha sonra tekrar deneyin.');
       }
       throw new Error('Sunucudan yanıt alınamadı');
     }
@@ -49,26 +44,31 @@ class ApiService {
     try {
       data = JSON.parse(text);
     } catch (parseError) {
-      // JSON parse hatası - response'un tamamını logla
+      // JSON parse hatası - sadece console'a logla, kullanıcıya genel mesaj göster
       console.error('JSON Parse Hatası:', parseError);
       console.error('Sunucu Yanıtı (full):', text);
       console.error('Response URL:', response.url);
       
       // HTML hata sayfası mı kontrol et
       if (text.trim().startsWith('<!DOCTYPE') || text.trim().startsWith('<html')) {
-        throw new Error(`Sunucu HTML yanıtı döndürdü. Muhtemelen backend çalışmıyor veya yanlış URL. HTTP ${response.status}`);
+        throw new Error('Sunucu hatası oluştu. Lütfen daha sonra tekrar deneyin.');
       }
       
-      throw new Error(`Sunucu yanıtı geçersiz JSON formatı. İlk 200 karakter: ${text.substring(0, 200)}`);
+      // Kullanıcıya genel hata mesajı göster
+      throw new Error('Bir hata oluştu. Lütfen daha sonra tekrar deneyin.');
     }
     
     // Response başarılı değilse veya data.success false ise hata fırlat
     if (!response.ok) {
-      throw new Error(data.message || `Sunucu hatası: ${response.status} ${response.statusText}`);
+      // Backend'den gelen mesajı kontrol et, yoksa genel mesaj göster
+      const errorMessage = data?.message || 'Bir hata oluştu. Lütfen daha sonra tekrar deneyin.';
+      throw new Error(errorMessage);
     }
     
     if (data.success === false) {
-      throw new Error(data.message || 'API hatası');
+      // Backend'den gelen mesajı kontrol et, yoksa genel mesaj göster
+      const errorMessage = data?.message || 'Bir hata oluştu. Lütfen daha sonra tekrar deneyin.';
+      throw new Error(errorMessage);
     }
     
     return data;
@@ -197,6 +197,16 @@ class ApiService {
     return this.handleResponse(response);
   }
 
+  static async updateLeaveStatus(id, status) {
+    const response = await fetch(`${API_BASE_URL}/api/leave/${id}/status`, {
+      method: 'PUT',
+      headers: this.getHeaders(),
+      body: JSON.stringify({ status }),
+    });
+
+    return this.handleResponse(response);
+  }
+
   static async getLeaveStats() {
     const response = await fetch(`${API_BASE_URL}/api/leave/my-stats`, {
       method: 'GET',
@@ -207,14 +217,70 @@ class ApiService {
   }
 
   // Internship application API calls
-  static async submitInternshipApplication(applicationData) {
+  static async submitInternshipApplication(applicationData, cvFile = null) {
+    const formData = new FormData();
+    
+    // Application data'yı JSON string olarak ekle
+    formData.append('applicationData', JSON.stringify(applicationData));
+    
+    // Eğer dosya varsa ekle
+    if (cvFile) {
+      formData.append('cvFile', cvFile);
+    }
+
+    const token = this.getToken();
+    const headers = {};
+    
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
     const response = await fetch(`${API_BASE_URL}/api/internship/apply`, {
       method: 'POST',
-      headers: this.getHeaders(false),
-      body: JSON.stringify(applicationData),
+      headers: headers,
+      body: formData,
     });
 
     return this.handleResponse(response);
+  }
+
+  static async downloadInternshipCv(applicationId) {
+    const token = this.getToken();
+    if (!token) {
+      throw new Error('Authentication required');
+    }
+
+    const response = await fetch(`${API_BASE_URL}/api/internship/${applicationId}/cv`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('CV dosyası indirilemedi');
+    }
+
+    // Dosya adını response header'dan al
+    const contentDisposition = response.headers.get('content-disposition');
+    let fileName = `cv_${applicationId}.pdf`;
+    if (contentDisposition) {
+      const fileNameMatch = contentDisposition.match(/filename="?(.+)"?/i);
+      if (fileNameMatch) {
+        fileName = fileNameMatch[1];
+      }
+    }
+
+    // Blob olarak indir
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
   }
 
   static async getAllInternshipApplications(pageNumber = 1, pageSize = 10) {
@@ -247,6 +313,83 @@ class ApiService {
 
   static async rejectUser(userId) {
     const response = await fetch(`${API_BASE_URL}/api/auth/reject-user/${userId}`, {
+      method: 'DELETE',
+      headers: this.getHeaders(),
+    });
+
+    return this.handleResponse(response);
+  }
+
+  static async updateUserApprovalStatus(userId, isApproved) {
+    const response = await fetch(`${API_BASE_URL}/api/auth/update-user-approval/${userId}`, {
+      method: 'PUT',
+      headers: this.getHeaders(),
+      body: JSON.stringify({ isApproved }),
+    });
+
+    return this.handleResponse(response);
+  }
+
+  static async deleteUser(userId) {
+    const response = await fetch(`${API_BASE_URL}/api/auth/delete-user/${userId}`, {
+      method: 'DELETE',
+      headers: this.getHeaders(),
+    });
+
+    return this.handleResponse(response);
+  }
+
+  // User management API calls
+  static async getUserDetail(userId) {
+    const response = await fetch(`${API_BASE_URL}/api/user/${userId}`, {
+      method: 'GET',
+      headers: this.getHeaders(),
+    });
+
+    return this.handleResponse(response);
+  }
+
+  static async updateUser(userId, userData) {
+    const response = await fetch(`${API_BASE_URL}/api/user/${userId}`, {
+      method: 'PUT',
+      headers: this.getHeaders(),
+      body: JSON.stringify(userData),
+    });
+
+    return this.handleResponse(response);
+  }
+
+  static async getPersonnelList(pageNumber = 1, pageSize = 10) {
+    const response = await fetch(`${API_BASE_URL}/api/user/personnel?pageNumber=${pageNumber}&pageSize=${pageSize}`, {
+      method: 'GET',
+      headers: this.getHeaders(),
+    });
+
+    return this.handleResponse(response);
+  }
+
+  static async createEmploymentInfo(employmentData) {
+    const response = await fetch(`${API_BASE_URL}/api/user/employment-info`, {
+      method: 'POST',
+      headers: this.getHeaders(),
+      body: JSON.stringify(employmentData),
+    });
+
+    return this.handleResponse(response);
+  }
+
+  static async updateEmploymentInfo(employmentInfoId, employmentData) {
+    const response = await fetch(`${API_BASE_URL}/api/user/employment-info/${employmentInfoId}`, {
+      method: 'PUT',
+      headers: this.getHeaders(),
+      body: JSON.stringify(employmentData),
+    });
+
+    return this.handleResponse(response);
+  }
+
+  static async deleteEmploymentInfo(employmentInfoId) {
+    const response = await fetch(`${API_BASE_URL}/api/user/employment-info/${employmentInfoId}`, {
       method: 'DELETE',
       headers: this.getHeaders(),
     });

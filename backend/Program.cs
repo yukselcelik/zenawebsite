@@ -78,6 +78,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<LeaveService>();
 builder.Services.AddScoped<InternshipService>();
+builder.Services.AddScoped<UserService>();
 
 var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
     ?? new[] { "http://localhost:5133" };
@@ -139,7 +140,8 @@ using (var scope = app.Services.CreateScope())
         var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
         
-        db.Database.EnsureCreated();
+        // Apply pending migrations
+        await db.Database.MigrateAsync();
         
         // Seed default admin user if not exists
         await DatabaseSeeder.SeedAsync(db, logger);

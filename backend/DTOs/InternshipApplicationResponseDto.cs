@@ -10,6 +10,7 @@ public class InternshipApplicationResponseDto
     public string Department { get; set; } = string.Empty;
     public string Year { get; set; } = string.Empty;
     public string Message { get; set; } = string.Empty;
+    public string? CvFilePath { get; set; }
     public DateTime CreatedAt { get; set; }
 }
 

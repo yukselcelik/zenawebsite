@@ -34,7 +34,8 @@ public class AuthController : ControllerBase
             return Ok(ApiResult<AuthResponseDto>.Ok(null, "Kayıt başarılı. Yönetici onayından sonra giriş yapabilirsiniz."));
         }
 
-        return Ok(ApiResult<AuthResponseDto>.Ok(result));
+        // Kayıt başarılı, token döndür (onay bekliyor olsa bile)
+        return Ok(ApiResult<AuthResponseDto>.Ok(result, "Kayıt işleminiz başarıyla tamamlandı. Hesabınız yönetici onayı bekliyor. Onaylandıktan sonra tüm özelliklere erişebileceksiniz."));
     }
 
     [HttpPost("login")]
@@ -94,6 +95,22 @@ public class AuthController : ControllerBase
     public async Task<ActionResult<ApiResult<bool>>> RejectUser(int id)
     {
         var result = await _authService.RejectUserAsync(id);
+        return Ok(result);
+    }
+
+    [HttpPut("update-user-approval/{id}")]
+    [Authorize(Roles = "Manager")]
+    public async Task<ActionResult<ApiResult<bool>>> UpdateUserApproval(int id, [FromBody] UpdateUserApprovalDto dto)
+    {
+        var result = await _authService.UpdateUserApprovalStatusAsync(id, dto.IsApproved);
+        return Ok(result);
+    }
+
+    [HttpDelete("delete-user/{id}")]
+    [Authorize(Roles = "Manager")]
+    public async Task<ActionResult<ApiResult<bool>>> DeleteUser(int id)
+    {
+        var result = await _authService.DeleteUserAsync(id);
         return Ok(result);
     }
 }

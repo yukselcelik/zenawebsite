@@ -25,7 +25,7 @@ public class AuthService
 
     public async Task<AuthResponseDto?> RegisterAsync(RegisterDto registerDto)
     {
-        if (await _context.Users.AsNoTracking().AnyAsync(u => u.Email == registerDto.Email))
+        if (await _context.Users.AsNoTracking().AnyAsync(u => u.Email == registerDto.Email && !u.isDeleted))
         {
             _logger.LogWarning("Registration attempted with existing email: {Email}", registerDto.Email);
             return null;
@@ -46,13 +46,17 @@ public class AuthService
 
         _logger.LogInformation("User registered successfully: {Email} - Waiting for approval", registerDto.Email);
 
-        // Onay bekliyor, token döndürme
-        return null;
+        // Kayıt başarılı, kullanıcıya token döndür (onay bekliyor olsa bile giriş yapabilsin)
+        return new AuthResponseDto
+        {
+            Token = GenerateToken(user),
+            Email = user.Email
+        };
     }
 
     public async Task<AuthResponseDto?> LoginAsync(LoginDto loginDto)
     {
-        var user = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Email == loginDto.Email);
+        var user = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Email == loginDto.Email && !u.isDeleted);
 
         if (user == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash))
         {
@@ -104,7 +108,7 @@ public class AuthService
 
     public async Task<ApiResult<MeDto>> GetMeAsync(int userId)
     {
-        var user = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == userId);
+        var user = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == userId && !u.isDeleted);
 
         if (user == null)
             return ApiResult<MeDto>.NotFound("User not found");
@@ -113,6 +117,9 @@ public class AuthService
         {
             UserId = user.Id.ToString(),
             Email = user.Email,
+            Name = user.Name,
+            Surname = user.Surname,
+            PhotoPath = user.PhotoPath,
             Role = user.Role.ToString()
         };
 
@@ -121,12 +128,12 @@ public class AuthService
 
     public async Task<bool> CheckEmailExistsAsync(string email)
     {
-        return await _context.Users.AsNoTracking().AnyAsync(u => u.Email == email);
+        return await _context.Users.AsNoTracking().AnyAsync(u => u.Email == email && !u.isDeleted);
     }
 
     public async Task<bool?> CheckUserApprovalStatusAsync(string email)
     {
-        var user = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Email == email);
+        var user = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Email == email && !u.isDeleted);
         if (user == null) return null;
         return user.IsApproved;
     }
@@ -136,7 +143,7 @@ public class AuthService
     {
         var query = _context.Users
             .AsNoTracking()
-            .Where(u => u.Role == UserRole.Personel && !u.IsApproved)
+            .Where(u => u.Role == UserRole.Personel && !u.IsApproved && !u.isDeleted)
             .OrderByDescending(u => u.CreatedAt);
 
         var totalCount = await query.CountAsync();
@@ -176,7 +183,7 @@ public class AuthService
     {
         var user = await _context.Users.FindAsync(userId);
 
-        if (user == null)
+        if (user == null || user.isDeleted)
         {
             return ApiResult<bool>.NotFound("Kullanıcı bulunamadı");
         }
@@ -192,8 +199,8 @@ public class AuthService
         }
 
         user.IsApproved = true;
-        user.ApprovedAt = DateTime.UtcNow.AddHours(3);
-        user.UpdatedAt = DateTime.UtcNow.AddHours(3);
+        user.ApprovedAt = DateTime.UtcNow;
+        user.UpdatedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
 
@@ -206,7 +213,7 @@ public class AuthService
     {
         var user = await _context.Users.FindAsync(userId);
 
-        if (user == null)
+        if (user == null || user.isDeleted)
         {
             return ApiResult<bool>.NotFound("Kullanıcı bulunamadı");
         }
@@ -221,11 +228,56 @@ public class AuthService
             return ApiResult<bool>.BadRequest("Onaylanmış kullanıcılar reddedilemez");
         }
 
-        // Kullanıcıyı sil (reddetme durumunda)
-        _context.Users.Remove(user);
+        // Soft delete - kullanıcıyı silme, sadece isDeleted flag'ini true yap
+        user.isDeleted = true;
+        user.UpdatedAt = DateTime.UtcNow;
         await _context.SaveChangesAsync();
 
-        _logger.LogInformation("User rejected and removed: {UserId} - {Email}", userId, user.Email);
+        _logger.LogInformation("User rejected and soft deleted: {UserId} - {Email}", userId, user.Email);
+
+        return ApiResult<bool>.Ok(true);
+    }
+
+    public async Task<ApiResult<bool>> UpdateUserApprovalStatusAsync(int userId, bool isApproved)
+    {
+        var user = await _context.Users.FindAsync(userId);
+
+        if (user == null || user.isDeleted)
+        {
+            return ApiResult<bool>.NotFound("Kullanıcı bulunamadı");
+        }
+
+        if (user.Role != UserRole.Personel)
+        {
+            return ApiResult<bool>.BadRequest("Sadece personel kullanıcıların onay durumu değiştirilebilir");
+        }
+
+        user.IsApproved = isApproved;
+        user.ApprovedAt = isApproved ? DateTime.UtcNow : null;
+        user.UpdatedAt = DateTime.UtcNow;
+
+        await _context.SaveChangesAsync();
+
+        _logger.LogInformation("User approval status updated: {UserId} - {Email} - IsApproved: {IsApproved}", userId, user.Email, isApproved);
+
+        return ApiResult<bool>.Ok(true);
+    }
+
+    public async Task<ApiResult<bool>> DeleteUserAsync(int userId)
+    {
+        var user = await _context.Users.FindAsync(userId);
+
+        if (user == null || user.isDeleted)
+        {
+            return ApiResult<bool>.NotFound("Kullanıcı bulunamadı");
+        }
+
+        // Soft delete
+        user.isDeleted = true;
+        user.UpdatedAt = DateTime.UtcNow;
+        await _context.SaveChangesAsync();
+
+        _logger.LogInformation("User soft deleted: {UserId} - {Email}", userId, user.Email);
 
         return ApiResult<bool>.Ok(true);
     }

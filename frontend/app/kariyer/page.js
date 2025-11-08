@@ -57,7 +57,8 @@ export default function Kariyer() {
           message: formData.message || ''
         };
 
-        await ApiService.submitInternshipApplication(internshipData);
+        // Dosya varsa birlikte gönder
+        await ApiService.submitInternshipApplication(internshipData, formData.cv);
         
         // Başvuru başarılı
         setSubmitSuccess(true);

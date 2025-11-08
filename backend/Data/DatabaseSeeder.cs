@@ -15,8 +15,9 @@ public static class DatabaseSeeder
                 var adminUser = new User
                 {
                     Email = "admin@zena.com",
-                    Name = "Admin",
-                    Surname = "User",
+                    Name = "Yönetici",
+                    Surname = "Kullanıcı",
+                    Phone = "05551111111",
                     PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123!"),
                     Role = UserRole.Manager,
                     IsApproved = true, // Yöneticiler her zaman onaylı
@@ -31,7 +32,7 @@ public static class DatabaseSeeder
             }
 
             // Personel kullanıcıları ekle (2 adet)
-            var personelCount = await context.Users.CountAsync(u => u.Role == UserRole.Personel);
+            var personelCount = await context.Users.CountAsync(u => u.Role == UserRole.Personel && u.IsApproved);
             
             if (personelCount < 2)
             {
@@ -83,8 +84,8 @@ public static class DatabaseSeeder
                     leaveRequests.Add(new LeaveRequest
                     {
                         UserId = personel1Id,
-                        StartDate = DateTime.Today.AddDays(5),
-                        EndDate = DateTime.Today.AddDays(7),
+                        StartDate = DateTime.UtcNow.Date.AddDays(5),
+                        EndDate = DateTime.UtcNow.Date.AddDays(7),
                         Reason = "Aile ziyareti için izin talebi",
                         Status = LeaveStatus.Pending,
                         CreatedAt = DateTime.UtcNow.AddHours(3).AddDays(-10),
@@ -94,8 +95,8 @@ public static class DatabaseSeeder
                     leaveRequests.Add(new LeaveRequest
                     {
                         UserId = personel1Id,
-                        StartDate = DateTime.Today.AddDays(-15),
-                        EndDate = DateTime.Today.AddDays(-12),
+                        StartDate = DateTime.UtcNow.Date.AddDays(-15),
+                        EndDate = DateTime.UtcNow.Date.AddDays(-12),
                         Reason = "Sağlık kontrolü için izin",
                         Status = LeaveStatus.Approved,
                         CreatedAt = DateTime.UtcNow.AddHours(3).AddDays(-20),
@@ -105,8 +106,8 @@ public static class DatabaseSeeder
                     leaveRequests.Add(new LeaveRequest
                     {
                         UserId = personel1Id,
-                        StartDate = DateTime.Today.AddDays(-30),
-                        EndDate = DateTime.Today.AddDays(-28),
+                        StartDate = DateTime.UtcNow.Date.AddDays(-30),
+                        EndDate = DateTime.UtcNow.Date.AddDays(-28),
                         Reason = "Kişisel nedenler",
                         Status = LeaveStatus.Rejected,
                         CreatedAt = DateTime.UtcNow.AddHours(3).AddDays(-35),
@@ -118,8 +119,8 @@ public static class DatabaseSeeder
                     leaveRequests.Add(new LeaveRequest
                     {
                         UserId = personel2Id,
-                        StartDate = DateTime.Today.AddDays(10),
-                        EndDate = DateTime.Today.AddDays(12),
+                        StartDate = DateTime.UtcNow.Date.AddDays(10),
+                        EndDate = DateTime.UtcNow.Date.AddDays(12),
                         Reason = "Tatil planı için izin talebi",
                         Status = LeaveStatus.Pending,
                         CreatedAt = DateTime.UtcNow.AddHours(3).AddDays(-8),
@@ -129,8 +130,8 @@ public static class DatabaseSeeder
                     leaveRequests.Add(new LeaveRequest
                     {
                         UserId = personel2Id,
-                        StartDate = DateTime.Today.AddDays(-10),
-                        EndDate = DateTime.Today.AddDays(-8),
+                        StartDate = DateTime.UtcNow.Date.AddDays(-10),
+                        EndDate = DateTime.UtcNow.Date.AddDays(-8),
                         Reason = "Ev taşıma işlemleri",
                         Status = LeaveStatus.Approved,
                         CreatedAt = DateTime.UtcNow.AddHours(3).AddDays(-18),
@@ -140,8 +141,8 @@ public static class DatabaseSeeder
                     leaveRequests.Add(new LeaveRequest
                     {
                         UserId = personel2Id,
-                        StartDate = DateTime.Today.AddDays(-25),
-                        EndDate = DateTime.Today.AddDays(-23),
+                        StartDate = DateTime.UtcNow.Date.AddDays(-25),
+                        EndDate = DateTime.UtcNow.Date.AddDays(-23),
                         Reason = "Acil durum izni",
                         Status = LeaveStatus.Cancelled,
                         CreatedAt = DateTime.UtcNow.AddHours(3).AddDays(-28),
@@ -203,56 +204,6 @@ public static class DatabaseSeeder
                 logger.LogInformation("Dummy internship applications created: {Count}", internshipApplications.Count);
             }
 
-            // Onay bekleyen personel kullanıcıları ekle (3 adet)
-            var pendingPersonelCount = await context.Users.CountAsync(u => u.Role == UserRole.Personel && !u.IsApproved);
-            
-            if (pendingPersonelCount < 3)
-            {
-                var pendingPersonels = new List<User>
-                {
-                    new User
-                    {
-                        Email = "onaybekleyen1@zena.com",
-                        Name = "Mehmet",
-                        Surname = "Kaya",
-                        Phone = "05551111111",
-                        PasswordHash = BCrypt.Net.BCrypt.HashPassword("Personel123!"),
-                        Role = UserRole.Personel,
-                        IsApproved = false, // Onay bekliyor
-                        CreatedAt = DateTime.UtcNow.AddHours(3).AddDays(-5),
-                        UpdatedAt = DateTime.UtcNow.AddHours(3).AddDays(-5)
-                    },
-                    new User
-                    {
-                        Email = "onaybekleyen2@zena.com",
-                        Name = "Fatma",
-                        Surname = "Öz",
-                        Phone = "05552222222",
-                        PasswordHash = BCrypt.Net.BCrypt.HashPassword("Personel123!"),
-                        Role = UserRole.Personel,
-                        IsApproved = false, // Onay bekliyor
-                        CreatedAt = DateTime.UtcNow.AddHours(3).AddDays(-3),
-                        UpdatedAt = DateTime.UtcNow.AddHours(3).AddDays(-3)
-                    },
-                    new User
-                    {
-                        Email = "onaybekleyen3@zena.com",
-                        Name = "Ali",
-                        Surname = "Çelik",
-                        Phone = "05553333333",
-                        PasswordHash = BCrypt.Net.BCrypt.HashPassword("Personel123!"),
-                        Role = UserRole.Personel,
-                        IsApproved = false, // Onay bekliyor
-                        CreatedAt = DateTime.UtcNow.AddHours(3).AddDays(-1),
-                        UpdatedAt = DateTime.UtcNow.AddHours(3).AddDays(-1)
-                    }
-                };
-
-                context.Users.AddRange(pendingPersonels);
-                await context.SaveChangesAsync();
-
-                logger.LogInformation("Dummy pending personel users created: {Count}", pendingPersonels.Count);
-            }
         }
         catch (Exception ex)
         {
