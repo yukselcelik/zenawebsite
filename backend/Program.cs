@@ -81,7 +81,7 @@ builder.Services.AddScoped<InternshipService>();
 builder.Services.AddScoped<UserService>();
 
 var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
-    ?? new[] { "http://localhost:5133" };
+    ?? ["http://localhost:5133"];
 
 builder.Services.AddCors(options =>
 {
@@ -158,8 +158,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Zena Backend API v1");
-        c.RoutePrefix = string.Empty;
+        // c.SwaggerEndpoint("/swagger/v1/swagger.json", "Zena Backend API v1");
+        // c.RoutePrefix = string.Empty;
     });
 }
 
