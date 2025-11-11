@@ -24,6 +24,24 @@ export default function CalisanGirisi() {
     const checkAuth = () => {
       const token = localStorage.getItem('employeeToken');
       if (token) {
+        // Token süresi dolmuşsa girişe bırak
+        try {
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          const expMs = (payload?.exp || 0) * 1000;
+          if (Date.now() >= expMs) {
+            localStorage.removeItem('employeeToken');
+            localStorage.removeItem('userRole');
+            localStorage.removeItem('userName');
+            setIsCheckingAuth(false);
+            return;
+          }
+        } catch {
+          localStorage.removeItem('employeeToken');
+          localStorage.removeItem('userRole');
+          localStorage.removeItem('userName');
+          setIsCheckingAuth(false);
+          return;
+        }
         // Token varsa panele yönlendir
         router.push('/panel');
       } else {

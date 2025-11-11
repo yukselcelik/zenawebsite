@@ -43,6 +43,8 @@ export default function Panel() {
   const isManager = userData?.role === 'Manager';
 
   useEffect(() => {
+    let logoutTimerId = null;
+
     const fetchData = async () => {
       try {
         const token = localStorage.getItem('employeeToken');
@@ -50,6 +52,28 @@ export default function Panel() {
           router.push('/calisan-girisi');
           return;
         }
+
+        // Token süresi dolmuşsa temizle ve yönlendir
+        try {
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          const expMs = (payload?.exp || 0) * 1000;
+          if (Date.now() >= expMs) {
+            localStorage.removeItem('employeeToken');
+            localStorage.removeItem('userRole');
+            localStorage.removeItem('userName');
+            router.push('/calisan-girisi');
+            return;
+          } else {
+            // Otomatik logout için kalan süre kadar timer kur
+            const remaining = expMs - Date.now();
+            logoutTimerId = setTimeout(() => {
+              localStorage.removeItem('employeeToken');
+              localStorage.removeItem('userRole');
+              localStorage.removeItem('userName');
+              router.push('/calisan-girisi');
+            }, Math.max(remaining, 0));
+          }
+        } catch {}
 
         const profileData = await ApiService.getProfile();
         setUserData(profileData.data);
@@ -111,6 +135,10 @@ export default function Panel() {
     };
 
     fetchData();
+
+    return () => {
+      if (logoutTimerId) clearTimeout(logoutTimerId);
+    };
   }, [router]);
 
   // Pending users count for sidebar badge

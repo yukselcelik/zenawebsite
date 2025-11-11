@@ -16,6 +16,7 @@ public class AuthService
     private readonly IConfiguration _configuration;
     private readonly ILogger<AuthService> _logger;
 
+
     public AuthService(ApplicationDbContext context, IConfiguration configuration, ILogger<AuthService> logger)
     {
         _context = context;
@@ -91,7 +92,7 @@ public class AuthService
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Role, user.Role.ToString())
             }),
-            Expires = DateTime.UtcNow.AddHours(24),
+            Expires = DateTime.UtcNow.AddMinutes(10),
             Issuer = _configuration["Jwt:Issuer"],
             Audience = _configuration["Jwt:Audience"],
             SigningCredentials = new SigningCredentials(
@@ -119,7 +120,7 @@ public class AuthService
             Email = user.Email,
             Name = user.Name,
             Surname = user.Surname,
-            PhotoPath = user.PhotoPath,
+            PhotoPath = _configuration["FileStorage:BaseUrl"] + "/uploads/photos/" + user.PhotoPath,
             Role = user.Role.ToString()
         };
 

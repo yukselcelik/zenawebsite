@@ -40,7 +40,7 @@ export default function Navbar({ userData, onLogout, activeTab, isManager }) {
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
             </svg>
-            <span>Ana Sayfa</span>
+            <span>Ana Sayfas</span>
           </Link>
 
           {/* Kullanıcı Bilgisi */}
@@ -48,13 +48,10 @@ export default function Navbar({ userData, onLogout, activeTab, isManager }) {
             {userData?.photoPath ? (
               <img
                 src={userData.photoPath}
-                alt={`${userData.name} ${userData.surname}`}
                 className="w-10 h-10 rounded-full object-cover"
               />
             ) : (
-              <div className="w-10 h-10 rounded-full bg-gradient-to-r from-orange-400 to-yellow-400 flex items-center justify-center text-white font-semibold">
-                {userData?.name?.[0]?.toUpperCase() || 'U'}
-              </div>
+             <></>
             )}
             <div className="text-right">
               <p className="text-sm font-medium text-gray-800">

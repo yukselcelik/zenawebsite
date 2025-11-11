@@ -5,7 +5,31 @@ class ApiService {
   // Get auth token from localStorage
   static getToken() {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('employeeToken');
+      const token = localStorage.getItem('employeeToken');
+      if (!token) return null;
+
+      // Token süresi dolmuş mu kontrol et
+      try {
+        const payloadBase64 = token.split('.')[1];
+        const payloadJson = atob(payloadBase64);
+        const payload = JSON.parse(payloadJson);
+        const expMs = (payload?.exp || 0) * 1000;
+        if (Date.now() >= expMs) {
+          // Süresi dolduysa localStorage temizle
+          localStorage.removeItem('employeeToken');
+          localStorage.removeItem('userRole');
+          localStorage.removeItem('userName');
+          return null;
+        }
+      } catch {
+        // Parse hatasında geçersiz tokenı temizle
+        localStorage.removeItem('employeeToken');
+        localStorage.removeItem('userRole');
+        localStorage.removeItem('userName');
+        return null;
+      }
+
+      return token;
     }
     return null;
   }
