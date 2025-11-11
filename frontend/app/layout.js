@@ -14,6 +14,10 @@ const geistMono = Geist_Mono({
 export const metadata = {
   title: "Zena Enerji - Güneş Enerjisi Çözümleri",
   description: "Zena Enerji ile güneş enerjisinden elektrik üretin. Profesyonel proje ve teknik ekip ile solar enerji çözümleri.",
+  icons: {
+    icon: "/icon.svg",
+    shortcut: "/icon.svg",
+  },
 };
 
 

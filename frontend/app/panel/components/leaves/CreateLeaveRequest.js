@@ -11,6 +11,7 @@ export default function CreateLeaveRequest({ onSuccess, onCancel }) {
   });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const todayStr = new Date().toISOString().slice(0, 10);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,6 +19,23 @@ export default function CreateLeaveRequest({ onSuccess, onCancel }) {
     setError('');
 
     try {
+      // Basit doğrulamalar
+      if (!formData.startDate || !formData.endDate) {
+        throw new Error('Lütfen başlangıç ve bitiş tarihlerini seçiniz.');
+      }
+      const start = new Date(formData.startDate);
+      const end = new Date(formData.endDate);
+      const today = new Date(todayStr);
+      if (start < today) {
+        throw new Error('Başlangıç tarihi bugünden önce olamaz.');
+      }
+      if (end < start) {
+        throw new Error('Bitiş tarihi başlangıç tarihinden önce olamaz.');
+      }
+      if (!formData.reason || formData.reason.trim().length < 5) {
+        throw new Error('Lütfen geçerli bir izin sebebi giriniz (en az 5 karakter).');
+      }
+
       await ApiService.createLeaveRequest({
         startDate: formData.startDate,
         endDate: formData.endDate,
@@ -71,6 +89,7 @@ export default function CreateLeaveRequest({ onSuccess, onCancel }) {
               type="date"
               id="startDate"
               required
+            min={todayStr}
               value={formData.startDate}
               onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
               className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 bg-white"

@@ -302,6 +302,13 @@ class ApiService {
     return this.handleResponse(response);
   }
 
+  static async getAllPersonnelUsers(pageNumber = 1, pageSize = 10) {
+    const response = await fetch(`${API_BASE_URL}/api/auth/users?pageNumber=${pageNumber}&pageSize=${pageSize}`, {
+      method: 'GET',
+      headers: this.getHeaders(),
+    });
+    return this.handleResponse(response);
+  }
   static async approveUser(userId) {
     const response = await fetch(`${API_BASE_URL}/api/auth/approve-user/${userId}`, {
       method: 'PUT',
@@ -349,6 +356,7 @@ class ApiService {
     return this.handleResponse(response);
   }
 
+
   static async updateUser(userId, userData) {
     const response = await fetch(`${API_BASE_URL}/api/user/${userId}`, {
       method: 'PUT',
@@ -356,6 +364,31 @@ class ApiService {
       body: JSON.stringify(userData),
     });
 
+    return this.handleResponse(response);
+  }
+
+  static async uploadProfilePhoto(userId, file) {
+    const token = this.getToken();
+    const headers = {};
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+    const formData = new FormData();
+    formData.append('photo', file);
+
+    const response = await fetch(`${API_BASE_URL}/api/user/${userId}/photo`, {
+      method: 'POST',
+      headers,
+      body: formData,
+    });
+    return this.handleResponse(response);
+  }
+
+  static async deleteProfilePhoto(userId) {
+    const response = await fetch(`${API_BASE_URL}/api/user/${userId}/photo`, {
+      method: 'DELETE',
+      headers: this.getHeaders(),
+    });
     return this.handleResponse(response);
   }
 

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import ApiService from '../../../../lib/api';
+import ConfirmDialog from '../common/ConfirmDialog';
 
 export default function EmergencyContactSection({ emergencyContacts, userId, onUpdate, isApproved }) {
   const [showForm, setShowForm] = useState(false);
@@ -11,6 +12,8 @@ export default function EmergencyContactSection({ emergencyContacts, userId, onU
     phoneNumber: '',
     address: ''
   });
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmLoading, setConfirmLoading] = useState(false);
 
   const hasEmergencyContact = emergencyContacts && emergencyContacts.length > 0;
   const canAdd = isApproved && !hasEmergencyContact;
@@ -77,17 +80,19 @@ export default function EmergencyContactSection({ emergencyContacts, userId, onU
     }
   };
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
     if (!canDelete) return;
-    if (!confirm('Acil durum iletişim bilgisini silmek istediğinize emin misiniz?')) {
-      return;
-    }
+    setConfirmOpen(true);
+  };
 
+  const handleConfirmDelete = async () => {
     try {
+      setConfirmLoading(true);
       const updateData = {
         emergencyContacts: []
       };
       await ApiService.updateUser(userId, updateData);
+      setConfirmOpen(false);
       // Refresh user detail and notify parent
       const detailData = await ApiService.getUserDetail(userId);
       if (detailData?.data && onUpdate) {
@@ -95,6 +100,8 @@ export default function EmergencyContactSection({ emergencyContacts, userId, onU
       }
     } catch (error) {
       console.error('Error deleting emergency contact:', error);
+    } finally {
+      setConfirmLoading(false);
     }
   };
 
@@ -233,6 +240,16 @@ export default function EmergencyContactSection({ emergencyContacts, userId, onU
           <p className="text-gray-500 text-sm">Acil durum iletişim bilgisi bulunmamaktadır.</p>
         )}
       </div>
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Acil durum iletişim bilgisini silmek istediğinize emin misiniz?"
+        message="Bu işlem geri alınamaz. Acil durum iletişim bilginiz kalıcı olarak silinecektir."
+        confirmText="Evet, Sil"
+        cancelText="Vazgeç"
+        loading={confirmLoading}
+        onCancel={() => setConfirmOpen(false)}
+        onConfirm={handleConfirmDelete}
+      />
     </div>
   );
 }

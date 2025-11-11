@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using Zenabackend.Common;
 using Zenabackend.DTOs;
 using Zenabackend.Models;
@@ -93,5 +94,45 @@ public class UserController : ControllerBase
         var result = await _userService.DeleteEmploymentInfoAsync(id);
         return Ok(result);
     }
+
+    // Profil fotoğrafı yükleme
+    [HttpPost("{id}/photo")]
+    public async Task<ActionResult<ApiResult<string>>> UploadProfilePhoto(int id, IFormFile photo)
+    {
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var roleClaim = User.FindFirst(ClaimTypes.Role)?.Value;
+
+        if (userIdClaim == null || !int.TryParse(userIdClaim, out int requestingUserId))
+            return Ok(ApiResult<string>.Unauthorized("Unauthorized"));
+
+        if (!Enum.TryParse<UserRole>(roleClaim, out var requestingUserRole))
+            return Ok(ApiResult<string>.Unauthorized("Invalid role"));
+
+        if (photo == null || photo.Length == 0)
+        {
+            return Ok(ApiResult<string>.BadRequest("Geçerli bir dosya yükleyiniz"));
+        }
+
+        var result = await _userService.UploadProfilePhotoAsync(id, photo, requestingUserId, requestingUserRole);
+        return Ok(result);
+    }
+
+    // Profil fotoğrafını silme
+    [HttpDelete("{id}/photo")]
+    public async Task<ActionResult<ApiResult<bool>>> DeleteProfilePhoto(int id)
+    {
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var roleClaim = User.FindFirst(ClaimTypes.Role)?.Value;
+
+        if (userIdClaim == null || !int.TryParse(userIdClaim, out int requestingUserId))
+            return Ok(ApiResult<bool>.Unauthorized("Unauthorized"));
+
+        if (!Enum.TryParse<UserRole>(roleClaim, out var requestingUserRole))
+            return Ok(ApiResult<bool>.Unauthorized("Invalid role"));
+
+        var result = await _userService.DeleteProfilePhotoAsync(id, requestingUserId, requestingUserRole);
+        return Ok(result);
+    }
+
 }
 

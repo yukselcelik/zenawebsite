@@ -6,16 +6,22 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using Serilog.Sinks.Grafana.Loki;
 using Zenabackend.Common;
 using Zenabackend.Data;
 using Zenabackend.Services;
 
-Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console()
-    .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day)
-    .CreateLogger();
-
 var builder = WebApplication.CreateBuilder(args);
+
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.GrafanaLoki(
+                builder.Configuration["Grafana:LokiEndpoint"] ?? "http://localhost:3100",
+                [new LokiLabel { Key = "service_name", Value = "ZenaBackend" }],
+                credentials: null)
+    .Enrich.FromLogContext()
+    .Enrich.WithProperty("Application", "ZenaBackend")
+    .Enrich.WithProperty("Environment", Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production")
+    .CreateLogger();
 
 builder.Host.UseSerilog();
 
@@ -79,6 +85,7 @@ builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<LeaveService>();
 builder.Services.AddScoped<InternshipService>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 
 var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
     ?? ["http://localhost:5133"];
@@ -132,6 +139,20 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
+// Optionally configure Serilog Loki sink via code if config present
+try
+{
+    var lokiUrl = builder.Configuration["Loki:Url"];
+    if (!string.IsNullOrWhiteSpace(lokiUrl))
+    {
+        Log.Information("Loki logging configured: {LokiUrl}", lokiUrl);
+    }
+}
+catch (Exception ex)
+{
+    Log.Warning(ex, "Loki configuration check failed");
+}
+
 // Seed database with default admin user
 using (var scope = app.Services.CreateScope())
 {
@@ -163,11 +184,31 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+// Correlation ID + Request logging
+app.Use(async (context, next) =>
+{
+    // Correlation-Id yönetimi
+    var correlationIdHeader = "X-Correlation-Id";
+    var correlationId = context.Request.Headers[correlationIdHeader].FirstOrDefault()
+                        ?? Guid.NewGuid().ToString("N");
+    context.Response.Headers[correlationIdHeader] = correlationId;
+    using (Serilog.Context.LogContext.PushProperty("CorrelationId", correlationId))
+    using (Serilog.Context.LogContext.PushProperty("RequestPath", context.Request.Path))
+    using (Serilog.Context.LogContext.PushProperty("UserId", context.User?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "anonymous"))
+    using (Serilog.Context.LogContext.PushProperty("ClientIP", context.Connection.RemoteIpAddress?.ToString() ?? "unknown"))
+    {
+        await next();
+    }
+});
+
 app.UseSerilogRequestLogging();
 
 app.UseCors("MyPolicy");
 
 app.UseHttpsRedirection();
+
+// Serve static files from wwwroot for uploaded photos/CVs
+app.UseStaticFiles();
 
 app.UseAuthentication();
 app.UseAuthorization();

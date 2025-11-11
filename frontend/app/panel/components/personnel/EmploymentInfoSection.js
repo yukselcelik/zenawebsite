@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import ApiService from '../../../../lib/api';
+import ConfirmDialog from '../common/ConfirmDialog';
 
 export default function EmploymentInfoSection({ employmentInfos, userId, onUpdate }) {
   const [showForm, setShowForm] = useState(false);
@@ -12,6 +13,9 @@ export default function EmploymentInfoSection({ employmentInfos, userId, onUpdat
     contractType: 'FixedTerm',
     workplaceNumber: ''
   });
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmLoading, setConfirmLoading] = useState(false);
+  const [employmentInfoToDelete, setEmploymentInfoToDelete] = useState(null);
 
   const handleAdd = async (e) => {
     e.preventDefault();
@@ -38,15 +42,23 @@ export default function EmploymentInfoSection({ employmentInfos, userId, onUpdat
     }
   };
 
-  const handleDelete = async (employmentInfoId) => {
-    if (!confirm('Bu istihdam bilgisini silmek istediğinize emin misiniz?')) {
-      return;
-    }
+  const handleDelete = (employmentInfoId) => {
+    setEmploymentInfoToDelete(employmentInfoId);
+    setConfirmOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!employmentInfoToDelete) return;
     try {
-      await ApiService.deleteEmploymentInfo(employmentInfoId);
+      setConfirmLoading(true);
+      await ApiService.deleteEmploymentInfo(employmentInfoToDelete);
+      setConfirmOpen(false);
+      setEmploymentInfoToDelete(null);
       onUpdate();
     } catch (error) {
       console.error('Error deleting employment info:', error);
+    } finally {
+      setConfirmLoading(false);
     }
   };
 
@@ -168,6 +180,19 @@ export default function EmploymentInfoSection({ employmentInfos, userId, onUpdat
           <p className="text-gray-500 text-sm">İstihdam bilgisi bulunmamaktadır.</p>
         )}
       </div>
+      <ConfirmDialog
+        open={confirmOpen}
+        title="İstihdam bilgisini silmek istediğinize emin misiniz?"
+        message="Bu işlem geri alınamaz. İstihdam bilgisi kalıcı olarak silinecektir."
+        confirmText="Evet, Sil"
+        cancelText="Vazgeç"
+        loading={confirmLoading}
+        onCancel={() => {
+          setConfirmOpen(false);
+          setEmploymentInfoToDelete(null);
+        }}
+        onConfirm={handleConfirmDelete}
+      />
     </div>
   );
 }

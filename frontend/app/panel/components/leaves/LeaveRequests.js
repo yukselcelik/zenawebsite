@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import ApiService from '../../../../lib/api';
+import ConfirmDialog from '../common/ConfirmDialog';
 
 export default function LeaveRequests({ isManager, onLeaveRequestsChange, onCreateNew }) {
   const [leaveRequests, setLeaveRequests] = useState([]);
@@ -13,6 +14,9 @@ export default function LeaveRequests({ isManager, onLeaveRequestsChange, onCrea
   });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmLoading, setConfirmLoading] = useState(false);
+  const [leaveRequestToCancel, setLeaveRequestToCancel] = useState(null);
 
   useEffect(() => {
     fetchLeaveRequests();
@@ -73,17 +77,24 @@ export default function LeaveRequests({ isManager, onLeaveRequestsChange, onCrea
   };
 
 
-  const handleCancelLeaveRequest = async (id) => {
-    if (!confirm('Bu izin talebini iptal etmek istediğinize emin misiniz?')) {
-      return;
-    }
+  const handleCancelLeaveRequest = (id) => {
+    setLeaveRequestToCancel(id);
+    setConfirmOpen(true);
+  };
 
+  const handleConfirmCancel = async () => {
+    if (!leaveRequestToCancel) return;
     try {
-      await ApiService.deleteLeaveRequest(id);
+      setConfirmLoading(true);
+      await ApiService.deleteLeaveRequest(leaveRequestToCancel);
+      setConfirmOpen(false);
+      setLeaveRequestToCancel(null);
       await fetchLeaveRequests();
     } catch (error) {
       console.error('Error cancelling leave request:', error);
       setError(error.message || 'İzin talebi iptal edilirken hata oluştu');
+    } finally {
+      setConfirmLoading(false);
     }
   };
 
@@ -219,6 +230,19 @@ export default function LeaveRequests({ isManager, onLeaveRequestsChange, onCrea
         )}
         </div>
       </div>
+      <ConfirmDialog
+        open={confirmOpen}
+        title="İzin talebini iptal etmek istediğinize emin misiniz?"
+        message="Bu işlem geri alınamaz. İzin talebiniz iptal edilecektir."
+        confirmText="Evet, İptal Et"
+        cancelText="Vazgeç"
+        loading={confirmLoading}
+        onCancel={() => {
+          setConfirmOpen(false);
+          setLeaveRequestToCancel(null);
+        }}
+        onConfirm={handleConfirmCancel}
+      />
     </div>
   );
 }

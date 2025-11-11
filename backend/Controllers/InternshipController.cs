@@ -7,6 +7,8 @@ using System.Text.Json;
 
 namespace Zenabackend.Controllers;
 
+public record ApplyInternshipApplicationRequest(IFormFile? cvFile, string applicationData);
+
 [ApiController]
 [Route("api/[controller]")]
 public class InternshipController : ControllerBase
@@ -22,7 +24,7 @@ public class InternshipController : ControllerBase
 
     [HttpPost("apply")]
     [RequestSizeLimit(10_000_000)] // 10MB limit
-    public async Task<ActionResult<ApiResult<InternshipApplicationResponseDto>>> Apply([FromForm] IFormFile? cvFile, [FromForm] string applicationData)
+    public async Task<ActionResult<ApiResult<InternshipApplicationResponseDto>>> Apply(ApplyInternshipApplicationRequest request)
     {
         try
         {
@@ -31,7 +33,7 @@ public class InternshipController : ControllerBase
             // JSON verisini parse et
             try
             {
-                dto = JsonSerializer.Deserialize<CreateInternshipApplicationDto>(applicationData, new JsonSerializerOptions
+                dto = JsonSerializer.Deserialize<CreateInternshipApplicationDto>(request.applicationData, new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
                 });
@@ -57,11 +59,11 @@ public class InternshipController : ControllerBase
 
             // Eğer dosya varsa kaydet
             string? cvFilePath = null;
-            if (cvFile != null && cvFile.Length > 0)
+            if (request.cvFile != null && request.cvFile.Length > 0)
             {
                 try
                 {
-                    cvFilePath = await _internshipService.SaveCvFileAsync(cvFile, result.Data.Id);
+                    cvFilePath = await _internshipService.SaveCvFileAsync(request.cvFile, result.Data.Id);
                     
                     // Başvuruyu güncelle (dosya yolunu ekle)
                     var application = await _internshipService.GetApplicationByIdAsync(result.Data.Id);

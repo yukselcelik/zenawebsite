@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import ApiService from '../../../../lib/api';
+import ConfirmDialog from '../common/ConfirmDialog';
 
 export default function PendingUsers() {
   const [pendingUsers, setPendingUsers] = useState([]);
@@ -12,6 +13,9 @@ export default function PendingUsers() {
     totalPages: 0
   });
   const [isLoading, setIsLoading] = useState(true);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmLoading, setConfirmLoading] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
 
   useEffect(() => {
     fetchPendingUsers();
@@ -20,7 +24,7 @@ export default function PendingUsers() {
   const fetchPendingUsers = async () => {
     try {
       setIsLoading(true);
-      const data = await ApiService.getPendingUsers(pagination.pageNumber, pagination.pageSize);
+      const data = await ApiService.getAllPersonnelUsers(pagination.pageNumber, pagination.pageSize);
       setPendingUsers(data.data?.items || []);
       setPagination({
         pageNumber: data.data?.pageNumber || 1,
@@ -44,15 +48,23 @@ export default function PendingUsers() {
     }
   };
 
-  const handleDelete = async (userId) => {
-    if (!confirm('Bu kullanıcıyı silmek istediğinize emin misiniz?')) {
-      return;
-    }
+  const handleDelete = (userId) => {
+    setUserToDelete(userId);
+    setConfirmOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!userToDelete) return;
     try {
-      await ApiService.deleteUser(userId);
+      setConfirmLoading(true);
+      await ApiService.deleteUser(userToDelete);
+      setConfirmOpen(false);
+      setUserToDelete(null);
       fetchPendingUsers();
     } catch (error) {
       console.error('Error deleting user:', error);
+    } finally {
+      setConfirmLoading(false);
     }
   };
 
@@ -153,6 +165,19 @@ export default function PendingUsers() {
           </div>
         )}
       </div>
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Kullanıcıyı silmek istediğinize emin misiniz?"
+        message="Bu işlem geri alınamaz. Kullanıcı kalıcı olarak silinecektir."
+        confirmText="Evet, Sil"
+        cancelText="Vazgeç"
+        loading={confirmLoading}
+        onCancel={() => {
+          setConfirmOpen(false);
+          setUserToDelete(null);
+        }}
+        onConfirm={handleConfirmDelete}
+      />
     </div>
   );
 }

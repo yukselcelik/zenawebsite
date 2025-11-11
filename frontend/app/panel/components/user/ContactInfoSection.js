@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import ApiService from '../../../../lib/api';
+import ConfirmDialog from '../common/ConfirmDialog';
 
 export default function ContactInfoSection({ contactInfos, userId, onUpdate, isApproved }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -11,6 +12,8 @@ export default function ContactInfoSection({ contactInfos, userId, onUpdate, isA
     phoneNumber: '',
     mail: ''
   });
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmLoading, setConfirmLoading] = useState(false);
 
   const hasContactInfo = contactInfos && contactInfos.length > 0;
   const canAdd = isApproved && !hasContactInfo;
@@ -76,17 +79,19 @@ export default function ContactInfoSection({ contactInfos, userId, onUpdate, isA
     }
   };
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
     if (!canDelete) return;
-    if (!confirm('İletişim bilgisini silmek istediğinize emin misiniz?')) {
-      return;
-    }
+    setConfirmOpen(true);
+  };
 
+  const handleConfirmDelete = async () => {
     try {
+      setConfirmLoading(true);
       const updateData = {
         contactInfos: []
       };
       await ApiService.updateUser(userId, updateData);
+      setConfirmOpen(false);
       // Refresh user detail and notify parent
       const detailData = await ApiService.getUserDetail(userId);
       if (detailData?.data && onUpdate) {
@@ -94,6 +99,8 @@ export default function ContactInfoSection({ contactInfos, userId, onUpdate, isA
       }
     } catch (error) {
       console.error('Error deleting contact info:', error);
+    } finally {
+      setConfirmLoading(false);
     }
   };
 
@@ -231,6 +238,16 @@ export default function ContactInfoSection({ contactInfos, userId, onUpdate, isA
           <p className="text-gray-500 text-sm">İletişim bilgisi bulunmamaktadır.</p>
         )}
       </div>
+      <ConfirmDialog
+        open={confirmOpen}
+        title="İletişim bilgisini silmek istediğinize emin misiniz?"
+        message="Bu işlem geri alınamaz. İletişim bilginiz kalıcı olarak silinecektir."
+        confirmText="Evet, Sil"
+        cancelText="Vazgeç"
+        loading={confirmLoading}
+        onCancel={() => setConfirmOpen(false)}
+        onConfirm={handleConfirmDelete}
+      />
     </div>
   );
 }

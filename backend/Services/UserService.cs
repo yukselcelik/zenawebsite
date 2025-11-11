@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Zenabackend.Common;
 using Zenabackend.Data;
 using Zenabackend.DTOs;
@@ -10,11 +12,13 @@ public class UserService
 {
     private readonly ApplicationDbContext _context;
     private readonly ILogger<UserService> _logger;
+    private readonly IConfiguration _configuration;
 
-    public UserService(ApplicationDbContext context, ILogger<UserService> logger)
+    public UserService(ApplicationDbContext context, ILogger<UserService> logger, IConfiguration configuration)
     {
         _context = context;
         _logger = logger;
+        _configuration = configuration;
     }
 
     // Kullanıcı detaylarını getir (kendi bilgileri veya yönetici başkasının bilgilerini görebilir)
@@ -39,6 +43,33 @@ public class UserService
             return ApiResult<UserDetailDto>.NotFound("Kullanıcı bulunamadı");
         }
 
+        // PhotoPath'i tam URL olarak oluştur (legacy değerleri normalize et)
+        string? BuildPublicPhotoUrl(string? stored)
+        {
+            if (string.IsNullOrWhiteSpace(stored)) return null;
+            var trimmed = stored.Trim();
+            if (trimmed.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+            {
+                // Zaten tam URL
+                return trimmed;
+            }
+            var baseUrlLocal = _configuration["FileStorage:BaseUrl"]?.TrimEnd('/') ?? "http://localhost:5133";
+            if (trimmed.StartsWith("/uploads/", StringComparison.OrdinalIgnoreCase))
+            {
+                // Örn: /uploads/photos/xyz.jpg
+                return $"{baseUrlLocal}{trimmed}";
+            }
+            if (trimmed.StartsWith("uploads/", StringComparison.OrdinalIgnoreCase))
+            {
+                // Örn: uploads/photos/xyz.jpg
+                return $"{baseUrlLocal}/{trimmed}";
+            }
+            // Sadece dosya adı ise
+            return $"{baseUrlLocal}/uploads/photos/{trimmed}";
+        }
+
+        var photoPath = BuildPublicPhotoUrl(user.PhotoPath);
+
         var userDetail = new UserDetailDto
         {
             Id = user.Id,
@@ -47,7 +78,7 @@ public class UserService
             Surname = user.Surname,
             Phone = user.Phone,
             TcNo = user.TcNo,
-            PhotoPath = user.PhotoPath,
+            PhotoPath = photoPath,
             Role = user.Role.ToString(),
             IsApproved = user.IsApproved,
             ApprovedAt = user.ApprovedAt,
@@ -414,6 +445,110 @@ public class UserService
         _logger.LogInformation("EmploymentInfo deleted: {EmploymentInfoId}", employmentInfoId);
 
         return ApiResult<bool>.Ok(true);
+    }
+
+    public async Task<ApiResult<string>> UploadProfilePhotoAsync(int userId, IFormFile photo, int requestingUserId, UserRole requestingUserRole)
+    {
+        // Kullanıcı sadece kendi fotoğrafını yükleyebilir, yönetici herkes için yükleyebilir
+        if (requestingUserRole != UserRole.Manager && userId != requestingUserId)
+        {
+            return ApiResult<string>.Unauthorized("Sadece kendi profil fotoğrafınızı güncelleyebilirsiniz");
+        }
+
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId && !u.isDeleted);
+        if (user == null)
+        {
+            return ApiResult<string>.NotFound("Kullanıcı bulunamadı");
+        }
+
+        // Klasörleri hazırla
+        var uploadsRoot = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "photos");
+        if (!Directory.Exists(uploadsRoot))
+        {
+            Directory.CreateDirectory(uploadsRoot);
+        }
+
+        // Benzersiz dosya adı
+        var safeFileName = Path.GetFileNameWithoutExtension(photo.FileName);
+        var extension = Path.GetExtension(photo.FileName);
+        var uniqueName = $"{userId}_{Guid.NewGuid():N}{extension}";
+        var fullPath = Path.Combine(uploadsRoot, uniqueName);
+
+        // Kaydet
+        using (var stream = new FileStream(fullPath, FileMode.Create))
+        {
+            await photo.CopyToAsync(stream);
+        }
+
+        // Eski dosyayı temizlemek isterseniz (opsiyonel)
+        // try { if (!string.IsNullOrWhiteSpace(user.PhotoPath)) File.Delete(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", user.PhotoPath.TrimStart('/'))); } catch {}
+
+        // Sadece dosya adını sakla
+        var storedFileName = uniqueName;
+
+        user.PhotoPath = storedFileName;
+        user.UpdatedAt = DateTime.UtcNow;
+        await _context.SaveChangesAsync();
+
+        // Tam URL oluştur (static file olarak erişilebilir)
+        var baseUrl = _configuration["FileStorage:BaseUrl"]?.TrimEnd('/') ?? "http://localhost:5133";
+        var photoUrl = $"{baseUrl}/uploads/photos/{storedFileName}";
+
+        _logger.LogInformation("Profile photo updated for user {UserId}", userId);
+        return ApiResult<string>.Ok(photoUrl, "Profil fotoğrafı güncellendi");
+    }
+
+    public async Task<ApiResult<bool>> DeleteProfilePhotoAsync(int userId, int requestingUserId, UserRole requestingUserRole)
+    {
+        // Kullanıcı sadece kendi fotoğrafını silebilir, yönetici herkes için silebilir
+        if (requestingUserRole != UserRole.Manager && userId != requestingUserId)
+        {
+            return ApiResult<bool>.Unauthorized("Sadece kendi profil fotoğrafınızı silebilirsiniz");
+        }
+
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId && !u.isDeleted);
+        if (user == null)
+        {
+            return ApiResult<bool>.NotFound("Kullanıcı bulunamadı");
+        }
+
+        // Dosyayı diskte silmeye çalış
+        try
+        {
+            var stored = user.PhotoPath?.Trim();
+            if (!string.IsNullOrWhiteSpace(stored))
+            {
+                string fileNameOnly = stored!;
+                // Eğer tam URL ya da /uploads/... verilmişse dosya adını çıkar
+                if (stored!.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+                {
+                    var uri = new Uri(stored);
+                    fileNameOnly = Path.GetFileName(uri.LocalPath);
+                }
+                else if (stored.StartsWith("/uploads/", StringComparison.OrdinalIgnoreCase) ||
+                         stored.StartsWith("uploads/", StringComparison.OrdinalIgnoreCase))
+                {
+                    fileNameOnly = Path.GetFileName(stored);
+                }
+
+                var fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "photos", fileNameOnly);
+                if (File.Exists(fullPath))
+                {
+                    File.Delete(fullPath);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Profile photo file delete failed for user {UserId}", userId);
+        }
+
+        user.PhotoPath = null;
+        user.UpdatedAt = DateTime.UtcNow;
+        await _context.SaveChangesAsync();
+
+        _logger.LogInformation("Profile photo removed for user {UserId}", userId);
+        return ApiResult<bool>.Ok(true, "Profil fotoğrafı kaldırıldı");
     }
 }
 

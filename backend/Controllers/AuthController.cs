@@ -82,6 +82,14 @@ public class AuthController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("users")]
+    [Authorize(Roles = "Manager")]
+    public async Task<ActionResult<ApiResult<PagedResultDto<UserResponseDto>>>> GetAllPersonnelUsers([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+    {
+        var result = await _authService.GetAllPersonnelUsersAsync(pageNumber, pageSize);
+        return Ok(result);
+    }
+
     [HttpPut("approve-user/{id}")]
     [Authorize(Roles = "Manager")]
     public async Task<ActionResult<ApiResult<bool>>> ApproveUser(int id)

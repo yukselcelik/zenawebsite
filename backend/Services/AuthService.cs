@@ -179,6 +179,47 @@ public class AuthService
         return ApiResult<PagedResultDto<UserResponseDto>>.Ok(response);
     }
 
+    public async Task<ApiResult<PagedResultDto<UserResponseDto>>> GetAllPersonnelUsersAsync(int pageNumber = 1, int pageSize = 10)
+    {
+        var query = _context.Users
+            .AsNoTracking()
+            .Where(u => u.Role == UserRole.Personel && !u.isDeleted)
+            .OrderBy(u => u.IsApproved) // Önce onaysızlar gelsin
+            .ThenByDescending(u => u.CreatedAt);
+
+        var totalCount = await query.CountAsync();
+        var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+
+        var users = await query
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        var items = users.Select(u => new UserResponseDto
+        {
+            Id = u.Id,
+            Email = u.Email,
+            Name = u.Name,
+            Surname = u.Surname,
+            Phone = u.Phone,
+            Role = u.Role.ToString(),
+            IsApproved = u.IsApproved,
+            ApprovedAt = u.ApprovedAt,
+            CreatedAt = u.CreatedAt
+        }).ToList();
+
+        var response = new PagedResultDto<UserResponseDto>
+        {
+            Items = items,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalCount = totalCount,
+            TotalPages = totalPages
+        };
+
+        return ApiResult<PagedResultDto<UserResponseDto>>.Ok(response);
+    }
+
     public async Task<ApiResult<bool>> ApproveUserAsync(int userId)
     {
         var user = await _context.Users.FindAsync(userId);
