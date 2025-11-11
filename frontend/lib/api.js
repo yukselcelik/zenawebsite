@@ -243,21 +243,23 @@ class ApiService {
   // Internship application API calls
   static async submitInternshipApplication(applicationData, cvFile = null) {
     const formData = new FormData();
-    
-    // Application data'yı JSON string olarak ekle
-    formData.append('applicationData', JSON.stringify(applicationData));
-    
+
+    // Alanları tek tek ekle (backend DTO ile uyumlu)
+    if (applicationData?.fullName) formData.append('FullName', applicationData.fullName);
+    if (applicationData?.email) formData.append('Email', applicationData.email);
+    if (applicationData?.phone) formData.append('Phone', applicationData.phone);
+    if (applicationData?.school !== undefined) formData.append('School', applicationData.school || '');
+    if (applicationData?.department !== undefined) formData.append('Department', applicationData.department || '');
+    if (applicationData?.year !== undefined) formData.append('Year', applicationData.year || '');
+    if (applicationData?.message !== undefined) formData.append('Message', applicationData.message || '');
+    console.log(formData);
     // Eğer dosya varsa ekle
     if (cvFile) {
-      formData.append('cvFile', cvFile);
+      formData.append('CvFile', cvFile);
     }
 
-    const token = this.getToken();
+    // Bu endpoint herkese açık; CORS preflight'ını tetiklememek için Authorization göndermeyelim
     const headers = {};
-    
-    if (token) {
-      headers.Authorization = `Bearer ${token}`;
-    }
 
     const response = await fetch(`${API_BASE_URL}/api/internship/apply`, {
       method: 'POST',

@@ -23,7 +23,6 @@ public class UserController : ControllerBase
         _logger = logger;
     }
 
-    // Kullanıcı detaylarını getir
     [HttpGet("{id}")]
     public async Task<ActionResult<ApiResult<UserDetailDto>>> GetUserDetail(int id)
     {
@@ -40,7 +39,6 @@ public class UserController : ControllerBase
         return Ok(result);
     }
 
-    // Kullanıcı bilgilerini güncelle
     [HttpPut("{id}")]
     public async Task<ActionResult<ApiResult<UserDetailDto>>> UpdateUser(int id, [FromBody] UpdateUserDto updateDto)
     {
@@ -57,7 +55,6 @@ public class UserController : ControllerBase
         return Ok(result);
     }
 
-    // Yönetici için personel listesi
     [HttpGet("personnel")]
     [Authorize(Roles = "Manager")]
     public async Task<ActionResult<ApiResult<PagedResultDto<UserResponseDto>>>> GetPersonnelList(
@@ -68,7 +65,6 @@ public class UserController : ControllerBase
         return Ok(result);
     }
 
-    // Yönetici için EmploymentInfo ekleme
     [HttpPost("employment-info")]
     [Authorize(Roles = "Manager")]
     public async Task<ActionResult<ApiResult<EmploymentInfoDto>>> CreateEmploymentInfo([FromBody] CreateEmploymentInfoDto createDto)
@@ -77,7 +73,6 @@ public class UserController : ControllerBase
         return Ok(result);
     }
 
-    // Yönetici için EmploymentInfo güncelleme
     [HttpPut("employment-info/{id}")]
     [Authorize(Roles = "Manager")]
     public async Task<ActionResult<ApiResult<EmploymentInfoDto>>> UpdateEmploymentInfo(int id, [FromBody] UpdateEmploymentInfoDto updateDto)
@@ -86,7 +81,6 @@ public class UserController : ControllerBase
         return Ok(result);
     }
 
-    // Yönetici için EmploymentInfo silme
     [HttpDelete("employment-info/{id}")]
     [Authorize(Roles = "Manager")]
     public async Task<ActionResult<ApiResult<bool>>> DeleteEmploymentInfo(int id)
@@ -95,9 +89,8 @@ public class UserController : ControllerBase
         return Ok(result);
     }
 
-    // Profil fotoğrafı yükleme
     [HttpPost("{id}/photo")]
-    public async Task<ActionResult<ApiResult<string>>> UploadProfilePhoto(int id, IFormFile photo)
+    public async Task<ActionResult<ApiResult<string>>> UploadProfilePhoto(int id, IFormFile? photo)
     {
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         var roleClaim = User.FindFirst(ClaimTypes.Role)?.Value;
@@ -117,7 +110,6 @@ public class UserController : ControllerBase
         return Ok(result);
     }
 
-    // Profil fotoğrafını silme
     [HttpDelete("{id}/photo")]
     public async Task<ActionResult<ApiResult<bool>>> DeleteProfilePhoto(int id)
     {
@@ -133,6 +125,5 @@ public class UserController : ControllerBase
         var result = await _userService.DeleteProfilePhotoAsync(id, requestingUserId, requestingUserRole);
         return Ok(result);
     }
-
 }
 

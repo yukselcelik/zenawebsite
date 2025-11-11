@@ -35,7 +35,8 @@ public class LeaveController : ControllerBase
     }
 
     [HttpPost("request")]
-    public async Task<ActionResult<ApiResult<LeaveRequestResponseDto>>> CreateLeaveRequest([FromBody] CreateLeaveRequestDto dto)
+    public async Task<ActionResult<ApiResult<LeaveRequestResponseDto>>> CreateLeaveRequest(
+        [FromBody] CreateLeaveRequestDto dto)
     {
         var userId = GetUserId();
         var result = await _leaveService.CreateLeaveRequestAsync(userId, dto);
@@ -49,7 +50,8 @@ public class LeaveController : ControllerBase
     }
 
     [HttpGet("my-requests")]
-    public async Task<ActionResult<ApiResult<PagedResultDto<LeaveRequestResponseDto>>>> GetMyLeaveRequests([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+    public async Task<ActionResult<ApiResult<PagedResultDto<LeaveRequestResponseDto>>>> GetMyLeaveRequests(
+        [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
     {
         var userId = GetUserId();
         var result = await _leaveService.GetMyLeaveRequestsAsync(userId, pageNumber, pageSize);
@@ -58,7 +60,8 @@ public class LeaveController : ControllerBase
 
     [HttpGet("all-requests")]
     [Authorize(Roles = "Manager")]
-    public async Task<ActionResult<ApiResult<PagedResultDto<LeaveRequestResponseDto>>>> GetAllLeaveRequests([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+    public async Task<ActionResult<ApiResult<PagedResultDto<LeaveRequestResponseDto>>>> GetAllLeaveRequests(
+        [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
     {
         var result = await _leaveService.GetAllLeaveRequestsAsync(pageNumber, pageSize);
         return Ok(result);
@@ -71,11 +74,6 @@ public class LeaveController : ControllerBase
         var isManager = IsManager();
         var result = await _leaveService.CancelLeaveRequestAsync(id, userId, isManager);
 
-        if (!result.Success)
-        {
-            return Ok(result);
-        }
-
         return Ok(result);
     }
 
@@ -85,11 +83,6 @@ public class LeaveController : ControllerBase
     {
         var result = await _leaveService.ApproveLeaveRequestAsync(id);
 
-        if (!result.Success)
-        {
-            return Ok(result);
-        }
-
         return Ok(result);
     }
 
@@ -98,11 +91,6 @@ public class LeaveController : ControllerBase
     public async Task<ActionResult<ApiResult<bool>>> RejectLeaveRequest(int id)
     {
         var result = await _leaveService.RejectLeaveRequestAsync(id);
-
-        if (!result.Success)
-        {
-            return Ok(result);
-        }
 
         return Ok(result);
     }
@@ -117,11 +105,6 @@ public class LeaveController : ControllerBase
         }
 
         var result = await _leaveService.UpdateLeaveStatusAsync(id, status);
-
-        if (!result.Success)
-        {
-            return Ok(result);
-        }
 
         return Ok(result);
     }

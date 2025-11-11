@@ -21,10 +21,9 @@ public class UserService
         _configuration = configuration;
     }
 
-    // Kullanıcı detaylarını getir (kendi bilgileri veya yönetici başkasının bilgilerini görebilir)
-    public async Task<ApiResult<UserDetailDto>> GetUserDetailAsync(int userId, int requestingUserId, UserRole requestingUserRole)
+    public async Task<ApiResult<UserDetailDto>> GetUserDetailAsync(int userId, int requestingUserId,
+        UserRole requestingUserRole)
     {
-        // Kullanıcı sadece kendi bilgilerini görebilir, yönetici herkesi görebilir
         if (requestingUserRole != UserRole.Manager && userId != requestingUserId)
         {
             return ApiResult<UserDetailDto>.Unauthorized("Sadece kendi bilgilerinizi görüntüleyebilirsiniz");
@@ -43,28 +42,26 @@ public class UserService
             return ApiResult<UserDetailDto>.NotFound("Kullanıcı bulunamadı");
         }
 
-        // PhotoPath'i tam URL olarak oluştur (legacy değerleri normalize et)
         string? BuildPublicPhotoUrl(string? stored)
         {
             if (string.IsNullOrWhiteSpace(stored)) return null;
             var trimmed = stored.Trim();
             if (trimmed.StartsWith("http", StringComparison.OrdinalIgnoreCase))
             {
-                // Zaten tam URL
                 return trimmed;
             }
+
             var baseUrlLocal = _configuration["FileStorage:BaseUrl"]?.TrimEnd('/') ?? "http://localhost:5133";
             if (trimmed.StartsWith("/uploads/", StringComparison.OrdinalIgnoreCase))
             {
-                // Örn: /uploads/photos/xyz.jpg
                 return $"{baseUrlLocal}{trimmed}";
             }
+
             if (trimmed.StartsWith("uploads/", StringComparison.OrdinalIgnoreCase))
             {
-                // Örn: uploads/photos/xyz.jpg
                 return $"{baseUrlLocal}/{trimmed}";
             }
-            // Sadece dosya adı ise
+
             return $"{baseUrlLocal}/uploads/photos/{trimmed}";
         }
 
@@ -120,10 +117,9 @@ public class UserService
         return ApiResult<UserDetailDto>.Ok(userDetail);
     }
 
-    // Kullanıcı bilgilerini güncelle
-    public async Task<ApiResult<UserDetailDto>> UpdateUserAsync(int userId, UpdateUserDto updateDto, int requestingUserId, UserRole requestingUserRole)
+    public async Task<ApiResult<UserDetailDto>> UpdateUserAsync(int userId, UpdateUserDto updateDto,
+        int requestingUserId, UserRole requestingUserRole)
     {
-        // Kullanıcı sadece kendi bilgilerini güncelleyebilir, yönetici herkesi güncelleyebilir
         if (requestingUserRole != UserRole.Manager && userId != requestingUserId)
         {
             return ApiResult<UserDetailDto>.Unauthorized("Sadece kendi bilgilerinizi güncelleyebilirsiniz");
@@ -140,20 +136,15 @@ public class UserService
             return ApiResult<UserDetailDto>.NotFound("Kullanıcı bulunamadı");
         }
 
-        // Rol ve TcNo güncellemeleri için yetki kontrolleri yapılacak
-
-        // Güncellenebilir alanlar
         if (updateDto.Name != null) user.Name = updateDto.Name;
         if (updateDto.Surname != null) user.Surname = updateDto.Surname;
         if (updateDto.Phone != null) user.Phone = updateDto.Phone;
         if (updateDto.PhotoPath != null) user.PhotoPath = updateDto.PhotoPath;
 
-        // TcNo güncelleme: yönetici herkes için, personel sadece kendisi için
         if (updateDto.TcNo != null)
         {
             if (requestingUserRole == UserRole.Manager || userId == requestingUserId)
             {
-                // Basit doğrulama: 11 haneli numeric kontrolü (TR TCKN için)
                 var trimmed = updateDto.TcNo.Trim();
                 if (!string.IsNullOrEmpty(trimmed) && trimmed.All(char.IsDigit) && (trimmed.Length == 11))
                 {
@@ -170,7 +161,6 @@ public class UserService
             }
         }
 
-        // Rol güncelleme: sadece yönetici
         if (updateDto.Role != null)
         {
             if (requestingUserRole != UserRole.Manager)
@@ -188,35 +178,28 @@ public class UserService
 
         user.UpdatedAt = DateTime.UtcNow;
 
-        // ContactInfos güncelle
         if (updateDto.ContactInfos != null)
         {
-            // Mevcut kayıtları soft delete yap
             foreach (var existing in user.ContactInfos ?? new List<ContactInfo>())
             {
                 existing.isDeleted = true;
                 existing.UpdatedAt = DateTime.UtcNow;
             }
 
-            // Yeni kayıtları ekle
             foreach (var contactInfo in updateDto.ContactInfos)
             {
                 if (contactInfo.Id > 0)
                 {
-                    // Mevcut kaydı güncelle
                     var existing = user.ContactInfos?.FirstOrDefault(c => c.Id == contactInfo.Id);
-                    if (existing != null)
-                    {
-                        existing.Address = contactInfo.Address;
-                        existing.PhoneNumber = contactInfo.PhoneNumber;
-                        existing.Mail = contactInfo.Mail;
-                        existing.isDeleted = false;
-                        existing.UpdatedAt = DateTime.UtcNow;
-                    }
+                    if (existing == null) continue;
+                    existing.Address = contactInfo.Address;
+                    existing.PhoneNumber = contactInfo.PhoneNumber;
+                    existing.Mail = contactInfo.Mail;
+                    existing.isDeleted = false;
+                    existing.UpdatedAt = DateTime.UtcNow;
                 }
                 else
                 {
-                    // Yeni kayıt ekle
                     user.ContactInfos ??= new List<ContactInfo>();
                     user.ContactInfos.Add(new ContactInfo
                     {
@@ -232,7 +215,6 @@ public class UserService
             }
         }
 
-        // EmergencyContacts güncelle
         if (updateDto.EmergencyContacts != null)
         {
             foreach (var existing in user.EmergencyContacts ?? new List<EmergencyContact>())
@@ -246,14 +228,12 @@ public class UserService
                 if (emergencyContact.Id > 0)
                 {
                     var existing = user.EmergencyContacts?.FirstOrDefault(e => e.Id == emergencyContact.Id);
-                    if (existing != null)
-                    {
-                        existing.FullName = emergencyContact.FullName;
-                        existing.PhoneNumber = emergencyContact.PhoneNumber;
-                        existing.Address = emergencyContact.Address;
-                        existing.isDeleted = false;
-                        existing.UpdatedAt = DateTime.UtcNow;
-                    }
+                    if (existing == null) continue;
+                    existing.FullName = emergencyContact.FullName;
+                    existing.PhoneNumber = emergencyContact.PhoneNumber;
+                    existing.Address = emergencyContact.Address;
+                    existing.isDeleted = false;
+                    existing.UpdatedAt = DateTime.UtcNow;
                 }
                 else
                 {
@@ -272,7 +252,6 @@ public class UserService
             }
         }
 
-        // EducationInfos güncelle
         if (updateDto.EducationInfos != null)
         {
             foreach (var existing in user.EducationInfos ?? new List<EducationInfo>())
@@ -286,15 +265,13 @@ public class UserService
                 if (educationInfo.Id > 0)
                 {
                     var existing = user.EducationInfos?.FirstOrDefault(e => e.Id == educationInfo.Id);
-                    if (existing != null)
-                    {
-                        existing.University = educationInfo.University;
-                        existing.Department = educationInfo.Department;
-                        existing.GraduationYear = educationInfo.GraduationYear;
-                        existing.Certification = educationInfo.Certification;
-                        existing.isDeleted = false;
-                        existing.UpdatedAt = DateTime.UtcNow;
-                    }
+                    if (existing == null) continue;
+                    existing.University = educationInfo.University;
+                    existing.Department = educationInfo.Department;
+                    existing.GraduationYear = educationInfo.GraduationYear;
+                    existing.Certification = educationInfo.Certification;
+                    existing.isDeleted = false;
+                    existing.UpdatedAt = DateTime.UtcNow;
                 }
                 else
                 {
@@ -318,21 +295,17 @@ public class UserService
 
         _logger.LogInformation("User updated: {UserId}", userId);
 
-        // Güncellenmiş kullanıcıyı döndür
         return await GetUserDetailAsync(userId, requestingUserId, requestingUserRole);
     }
 
-    // Yönetici için personel listesi
-    public async Task<ApiResult<PagedResultDto<UserResponseDto>>> GetPersonnelListAsync(int pageNumber = 1, int pageSize = 10)
+    public async Task<ApiResult<PagedResultDto<UserResponseDto>>> GetPersonnelListAsync(int pageNumber = 1,
+        int pageSize = 10)
     {
         var query = _context.Users
             .AsNoTracking()
             .Where(u => !u.isDeleted)
-            // Önce yöneticiler (Manager) üstte
             .OrderByDescending(u => u.Role == UserRole.Manager)
-            // Sonra onaylılar üstte
             .ThenByDescending(u => u.IsApproved)
-            // Son olarak en yeni kayıtlar üstte
             .ThenByDescending(u => u.CreatedAt);
 
         var totalCount = await query.CountAsync();
@@ -343,7 +316,6 @@ public class UserService
             .Take(pageSize)
             .ToListAsync();
 
-        // Fotoğraf URL'ini normalize eden yardımcı
         string? BuildPublicPhotoUrl(string? stored)
         {
             if (string.IsNullOrWhiteSpace(stored)) return null;
@@ -352,15 +324,18 @@ public class UserService
             {
                 return trimmed;
             }
+
             var baseUrlLocal = _configuration["FileStorage:BaseUrl"]?.TrimEnd('/') ?? "http://localhost:5133";
             if (trimmed.StartsWith("/uploads/", StringComparison.OrdinalIgnoreCase))
             {
                 return $"{baseUrlLocal}{trimmed}";
             }
+
             if (trimmed.StartsWith("uploads/", StringComparison.OrdinalIgnoreCase))
             {
                 return $"{baseUrlLocal}/{trimmed}";
             }
+
             return $"{baseUrlLocal}/uploads/photos/{trimmed}";
         }
 
@@ -390,7 +365,6 @@ public class UserService
         return ApiResult<PagedResultDto<UserResponseDto>>.Ok(response);
     }
 
-    // Yönetici için EmploymentInfo ekleme
     public async Task<ApiResult<EmploymentInfoDto>> CreateEmploymentInfoAsync(CreateEmploymentInfoDto createDto)
     {
         var user = await _context.Users
@@ -444,8 +418,8 @@ public class UserService
         return ApiResult<EmploymentInfoDto>.Ok(result);
     }
 
-    // Yönetici için EmploymentInfo güncelleme
-    public async Task<ApiResult<EmploymentInfoDto>> UpdateEmploymentInfoAsync(int employmentInfoId, UpdateEmploymentInfoDto updateDto)
+    public async Task<ApiResult<EmploymentInfoDto>> UpdateEmploymentInfoAsync(int employmentInfoId,
+        UpdateEmploymentInfoDto updateDto)
     {
         var employmentInfo = await _context.Set<EmploymentInfo>()
             .FirstOrDefaultAsync(e => e.Id == employmentInfoId && !e.isDeleted);
@@ -461,10 +435,12 @@ public class UserService
         {
             employmentInfo.WorkType = workType;
         }
+
         if (updateDto.ContractType != null && Enum.TryParse<ContractType>(updateDto.ContractType, out var contractType))
         {
             employmentInfo.ContractType = contractType;
         }
+
         if (updateDto.WorkplaceNumber != null) employmentInfo.WorkplaceNumber = updateDto.WorkplaceNumber;
 
         employmentInfo.UpdatedAt = DateTime.UtcNow;
@@ -486,7 +462,6 @@ public class UserService
         return ApiResult<EmploymentInfoDto>.Ok(result);
     }
 
-    // Yönetici için EmploymentInfo silme (soft delete)
     public async Task<ApiResult<bool>> DeleteEmploymentInfoAsync(int employmentInfoId)
     {
         var employmentInfo = await _context.Set<EmploymentInfo>()
@@ -507,9 +482,9 @@ public class UserService
         return ApiResult<bool>.Ok(true);
     }
 
-    public async Task<ApiResult<string>> UploadProfilePhotoAsync(int userId, IFormFile photo, int requestingUserId, UserRole requestingUserRole)
+    public async Task<ApiResult<string>> UploadProfilePhotoAsync(int userId, IFormFile photo, int requestingUserId,
+        UserRole requestingUserRole)
     {
-        // Kullanıcı sadece kendi fotoğrafını yükleyebilir, yönetici herkes için yükleyebilir
         if (requestingUserRole != UserRole.Manager && userId != requestingUserId)
         {
             return ApiResult<string>.Unauthorized("Sadece kendi profil fotoğrafınızı güncelleyebilirsiniz");
@@ -521,36 +496,27 @@ public class UserService
             return ApiResult<string>.NotFound("Kullanıcı bulunamadı");
         }
 
-        // Klasörleri hazırla
         var uploadsRoot = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "photos");
         if (!Directory.Exists(uploadsRoot))
         {
             Directory.CreateDirectory(uploadsRoot);
         }
 
-        // Benzersiz dosya adı
-        var safeFileName = Path.GetFileNameWithoutExtension(photo.FileName);
         var extension = Path.GetExtension(photo.FileName);
         var uniqueName = $"{userId}_{Guid.NewGuid():N}{extension}";
         var fullPath = Path.Combine(uploadsRoot, uniqueName);
 
-        // Kaydet
-        using (var stream = new FileStream(fullPath, FileMode.Create))
+        await using (var stream = new FileStream(fullPath, FileMode.Create))
         {
             await photo.CopyToAsync(stream);
         }
 
-        // Eski dosyayı temizlemek isterseniz (opsiyonel)
-        // try { if (!string.IsNullOrWhiteSpace(user.PhotoPath)) File.Delete(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", user.PhotoPath.TrimStart('/'))); } catch {}
-
-        // Sadece dosya adını sakla
         var storedFileName = uniqueName;
 
         user.PhotoPath = storedFileName;
         user.UpdatedAt = DateTime.UtcNow;
         await _context.SaveChangesAsync();
 
-        // Tam URL oluştur (static file olarak erişilebilir)
         var baseUrl = _configuration["FileStorage:BaseUrl"]?.TrimEnd('/') ?? "http://localhost:5133";
         var photoUrl = $"{baseUrl}/uploads/photos/{storedFileName}";
 
@@ -558,9 +524,9 @@ public class UserService
         return ApiResult<string>.Ok(photoUrl, "Profil fotoğrafı güncellendi");
     }
 
-    public async Task<ApiResult<bool>> DeleteProfilePhotoAsync(int userId, int requestingUserId, UserRole requestingUserRole)
+    public async Task<ApiResult<bool>> DeleteProfilePhotoAsync(int userId, int requestingUserId,
+        UserRole requestingUserRole)
     {
-        // Kullanıcı sadece kendi fotoğrafını silebilir, yönetici herkes için silebilir
         if (requestingUserRole != UserRole.Manager && userId != requestingUserId)
         {
             return ApiResult<bool>.Unauthorized("Sadece kendi profil fotoğrafınızı silebilirsiniz");
@@ -572,14 +538,12 @@ public class UserService
             return ApiResult<bool>.NotFound("Kullanıcı bulunamadı");
         }
 
-        // Dosyayı diskte silmeye çalış
         try
         {
             var stored = user.PhotoPath?.Trim();
             if (!string.IsNullOrWhiteSpace(stored))
             {
                 string fileNameOnly = stored!;
-                // Eğer tam URL ya da /uploads/... verilmişse dosya adını çıkar
                 if (stored!.StartsWith("http", StringComparison.OrdinalIgnoreCase))
                 {
                     var uri = new Uri(stored);
@@ -591,7 +555,8 @@ public class UserService
                     fileNameOnly = Path.GetFileName(stored);
                 }
 
-                var fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "photos", fileNameOnly);
+                var fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "photos",
+                    fileNameOnly);
                 if (File.Exists(fullPath))
                 {
                     File.Delete(fullPath);
@@ -611,4 +576,3 @@ public class UserService
         return ApiResult<bool>.Ok(true, "Profil fotoğrafı kaldırıldı");
     }
 }
-

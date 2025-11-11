@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Zenabackend.Common;
 using Zenabackend.Data;
@@ -11,32 +10,35 @@ public class InternshipService
 {
     private readonly ApplicationDbContext _context;
     private readonly ILogger<InternshipService> _logger;
+    private readonly IConfiguration _configuration;
     private readonly string _uploadsPath;
 
-    public InternshipService(ApplicationDbContext context, ILogger<InternshipService> logger, IWebHostEnvironment env)
+    public InternshipService(ApplicationDbContext context, ILogger<InternshipService> logger, IWebHostEnvironment env,
+        IConfiguration configuration)
     {
         _context = context;
         _logger = logger;
-        _uploadsPath = Path.Combine(env.ContentRootPath, "uploads", "cvs");
-        
-        // Uploads klasörünü oluştur
+        _configuration = configuration;
+        _uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "cvs");
+
         if (!Directory.Exists(_uploadsPath))
         {
             Directory.CreateDirectory(_uploadsPath);
         }
     }
 
-    public async Task<ApiResult<InternshipApplicationResponseDto>> CreateApplicationAsync(CreateInternshipApplicationDto dto, string? cvFilePath = null)
+    public async Task<ApiResult<InternshipApplicationResponseDto>> CreateApplicationAsync(
+        ApplyInternshipApplicationFormDto dto, string? cvFilePath = null)
     {
         var application = new InternshipApplication
         {
             FullName = dto.FullName,
             Email = dto.Email,
             Phone = dto.Phone,
-            School = dto.School,
-            Department = dto.Department,
-            Year = dto.Year,
-            Message = dto.Message,
+            School = dto.School ?? "",
+            Department = dto.Department ?? "",
+            Year = dto.Year ?? "",
+            Message = dto.Message ?? "",
             CvFilePath = cvFilePath,
             CreatedAt = DateTime.UtcNow.AddHours(3)
         };
@@ -44,7 +46,8 @@ public class InternshipService
         _context.InternshipApplications.Add(application);
         await _context.SaveChangesAsync();
 
-        _logger.LogInformation("Internship application created: {Id} by {FullName}", application.Id, application.FullName);
+        _logger.LogInformation("Internship application created: {Id} by {FullName}", application.Id,
+            application.FullName);
 
         var response = new InternshipApplicationResponseDto
         {
@@ -56,7 +59,7 @@ public class InternshipService
             Department = application.Department,
             Year = application.Year,
             Message = application.Message,
-            CvFilePath = application.CvFilePath,
+            CvFilePath = _configuration[""] + "/uploads/cvs" + application.CvFilePath,
             CreatedAt = application.CreatedAt
         };
 
@@ -70,65 +73,29 @@ public class InternshipService
             throw new ArgumentException("File is empty");
         }
 
-        // Dosya uzantısını kontrol et
         var allowedExtensions = new[] { ".pdf", ".doc", ".docx" };
         var fileExtension = Path.GetExtension(file.FileName).ToLowerInvariant();
-        
+
         if (!allowedExtensions.Contains(fileExtension))
         {
             throw new ArgumentException("Invalid file type. Only PDF, DOC, and DOCX files are allowed.");
         }
 
-        // Dosya adını oluştur: applicationId_timestamp_originalname
         var fileName = $"{applicationId}_{DateTime.UtcNow:yyyyMMddHHmmss}_{Path.GetFileName(file.FileName)}";
         var filePath = Path.Combine(_uploadsPath, fileName);
 
-        // Dosyayı kaydet
-        using (var stream = new FileStream(filePath, FileMode.Create))
+        await using (var stream = new FileStream(filePath, FileMode.Create))
         {
             await file.CopyToAsync(stream);
         }
 
         _logger.LogInformation("CV file saved: {FilePath} for application {ApplicationId}", filePath, applicationId);
 
-        return filePath;
+        return fileName;
     }
 
-    public async Task<(byte[] fileBytes, string fileName, string contentType)> GetCvFileAsync(int applicationId)
-    {
-        var application = await _context.InternshipApplications
-            .AsNoTracking()
-            .FirstOrDefaultAsync(a => a.Id == applicationId);
-
-        if (application == null || string.IsNullOrEmpty(application.CvFilePath))
-        {
-            throw new FileNotFoundException("CV file not found for this application");
-        }
-
-        if (!File.Exists(application.CvFilePath))
-        {
-            throw new FileNotFoundException("CV file not found on disk");
-        }
-
-        var fileBytes = await File.ReadAllBytesAsync(application.CvFilePath);
-        var fileName = Path.GetFileName(application.CvFilePath);
-        var contentType = GetContentType(Path.GetExtension(fileName));
-
-        return (fileBytes, fileName, contentType);
-    }
-
-    private string GetContentType(string extension)
-    {
-        return extension.ToLowerInvariant() switch
-        {
-            ".pdf" => "application/pdf",
-            ".doc" => "application/msword",
-            ".docx" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            _ => "application/octet-stream"
-        };
-    }
-
-    public async Task<ApiResult<PagedResultDto<InternshipApplicationResponseDto>>> GetAllApplicationsAsync(int pageNumber = 1, int pageSize = 10)
+    public async Task<ApiResult<PagedResultDto<InternshipApplicationResponseDto>>> GetAllApplicationsAsync(
+        int pageNumber = 1, int pageSize = 10)
     {
         var query = _context.InternshipApplications
             .AsNoTracking()
@@ -152,7 +119,7 @@ public class InternshipService
             Department = a.Department,
             Year = a.Year,
             Message = a.Message,
-            CvFilePath = a.CvFilePath,
+            CvFilePath = _configuration["FileStorage:BaseUrl"] + "/uploads/cvs" + a.CvFilePath,
             CreatedAt = a.CreatedAt
         }).ToList();
 

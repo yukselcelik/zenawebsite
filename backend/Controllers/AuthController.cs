@@ -26,16 +26,15 @@ public class AuthController : ControllerBase
 
         if (result == null)
         {
-            // Email kontrolü için tekrar kontrol et
             if (await _authService.CheckEmailExistsAsync(registerDto.Email))
                 return Ok(ApiResult<AuthResponseDto>.BadRequest("Email already exists", 400));
-            
-            // Kayıt başarılı, onay bekleniyor
-            return Ok(ApiResult<AuthResponseDto>.Ok(null, "Kayıt başarılı. Yönetici onayından sonra giriş yapabilirsiniz."));
+
+            return Ok(ApiResult<AuthResponseDto>.Ok(null,
+                "Kayıt başarılı. Yönetici onayından sonra giriş yapabilirsiniz."));
         }
 
-        // Kayıt başarılı, token döndür (onay bekliyor olsa bile)
-        return Ok(ApiResult<AuthResponseDto>.Ok(result, "Kayıt işleminiz başarıyla tamamlandı. Hesabınız yönetici onayı bekliyor. Onaylandıktan sonra tüm özelliklere erişebileceksiniz."));
+        return Ok(ApiResult<AuthResponseDto>.Ok(result,
+            "Kayıt işleminiz başarıyla tamamlandı. Hesabınız yönetici onayı bekliyor. Onaylandıktan sonra tüm özelliklere erişebileceksiniz."));
     }
 
     [HttpPost("login")]
@@ -45,16 +44,18 @@ public class AuthController : ControllerBase
 
         if (result == null)
         {
-            // Kullanıcı var ama onaylanmamış olabilir
             var isApproved = await _authService.CheckUserApprovalStatusAsync(loginDto.Email);
             if (!isApproved.HasValue)
             {
                 return Ok(ApiResult<AuthResponseDto>.Unauthorized("Invalid email or password"));
             }
+
             if (!isApproved.Value)
             {
-                return Ok(ApiResult<AuthResponseDto>.Unauthorized("Hesabınız henüz onaylanmamış. Lütfen yönetici onayı bekleyin."));
+                return Ok(ApiResult<AuthResponseDto>.Unauthorized(
+                    "Hesabınız henüz onaylanmamış. Lütfen yönetici onayı bekleyin."));
             }
+
             return Ok(ApiResult<AuthResponseDto>.Unauthorized("Invalid email or password"));
         }
 
@@ -66,7 +67,7 @@ public class AuthController : ControllerBase
     public async Task<ActionResult<ApiResult<MeDto>>> GetMe()
     {
         var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-        
+
         if (userIdClaim == null || !int.TryParse(userIdClaim, out int userId))
             return Ok(ApiResult<MeDto>.Unauthorized("Unauthorized"));
 
@@ -76,7 +77,8 @@ public class AuthController : ControllerBase
 
     [HttpGet("pending-users")]
     [Authorize(Roles = "Manager")]
-    public async Task<ActionResult<ApiResult<PagedResultDto<UserResponseDto>>>> GetPendingUsers([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+    public async Task<ActionResult<ApiResult<PagedResultDto<UserResponseDto>>>> GetPendingUsers(
+        [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
     {
         var result = await _authService.GetPendingUsersAsync(pageNumber, pageSize);
         return Ok(result);
@@ -84,7 +86,8 @@ public class AuthController : ControllerBase
 
     [HttpGet("users")]
     [Authorize(Roles = "Manager")]
-    public async Task<ActionResult<ApiResult<PagedResultDto<UserResponseDto>>>> GetAllPersonnelUsers([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+    public async Task<ActionResult<ApiResult<PagedResultDto<UserResponseDto>>>> GetAllPersonnelUsers(
+        [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
     {
         var result = await _authService.GetAllPersonnelUsersAsync(pageNumber, pageSize);
         return Ok(result);
