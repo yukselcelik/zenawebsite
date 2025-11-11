@@ -6,7 +6,7 @@ services:
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: 12345
-      POSTGRES_DB: zena_db
+      POSTGRES_DB: zena1
     ports:
       - "5432:5432"
     volumes:
@@ -14,7 +14,7 @@ services:
     networks:
       - zena_network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U admin -d zena_db"]
+      test: ["CMD-SHELL", "pg_isready -U admin -d zena1"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -29,13 +29,16 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:5133
-      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=zena_db_docker;Username=admin;Password=12345;TrustServerCertificate=True
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=zena1;Username=admin;Password=12345;TrustServerCertificate=True
       - Jwt__Key=e12126f62167195ccc74cb7309da6c03!
       - Jwt__Issuer=ZenaBackend
       - Jwt__Audience=ZenaBackend
       - Cors__AllowedOrigins__0=http://localhost:3000
       - Cors__AllowedOrigins__1=http://localhost:3001
       - Cors__AllowedOrigins__2=http://frontend:3000
+    volumes:
+      - ./backend/wwwroot:/app/wwwroot
+      - ./backend/logs:/app/logs
     depends_on:
       db:
         condition: service_healthy

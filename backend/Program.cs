@@ -19,6 +19,7 @@ Log.Logger = new LoggerConfiguration()
                 [new LokiLabel { Key = "service_name", Value = "ZenaBackend" }],
                 credentials: null)
     .Enrich.FromLogContext()
+    .WriteTo.Console()
     .Enrich.WithProperty("Application", "ZenaBackend")
     .Enrich.WithProperty("Environment", Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production")
     .CreateLogger();

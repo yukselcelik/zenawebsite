@@ -140,18 +140,51 @@ public class UserService
             return ApiResult<UserDetailDto>.NotFound("Kullanıcı bulunamadı");
         }
 
-        // Kullanıcı kendi bilgilerini güncellerken bazı alanları değiştiremez
-        if (requestingUserRole != UserRole.Manager)
-        {
-            // Personel kullanıcılar Email, TcNo, Role, IsApproved gibi alanları değiştiremez
-            // Bu alanlar UpdateUserDto'da zaten yok, ama yine de kontrol edelim
-        }
+        // Rol ve TcNo güncellemeleri için yetki kontrolleri yapılacak
 
         // Güncellenebilir alanlar
         if (updateDto.Name != null) user.Name = updateDto.Name;
         if (updateDto.Surname != null) user.Surname = updateDto.Surname;
         if (updateDto.Phone != null) user.Phone = updateDto.Phone;
         if (updateDto.PhotoPath != null) user.PhotoPath = updateDto.PhotoPath;
+
+        // TcNo güncelleme: yönetici herkes için, personel sadece kendisi için
+        if (updateDto.TcNo != null)
+        {
+            if (requestingUserRole == UserRole.Manager || userId == requestingUserId)
+            {
+                // Basit doğrulama: 11 haneli numeric kontrolü (TR TCKN için)
+                var trimmed = updateDto.TcNo.Trim();
+                if (!string.IsNullOrEmpty(trimmed) && trimmed.All(char.IsDigit) && (trimmed.Length == 11))
+                {
+                    user.TcNo = trimmed;
+                }
+                else
+                {
+                    return ApiResult<UserDetailDto>.BadRequest("Geçerli bir TC No giriniz (11 haneli).");
+                }
+            }
+            else
+            {
+                return ApiResult<UserDetailDto>.Unauthorized("TC No güncelleme yetkiniz yok");
+            }
+        }
+
+        // Rol güncelleme: sadece yönetici
+        if (updateDto.Role != null)
+        {
+            if (requestingUserRole != UserRole.Manager)
+            {
+                return ApiResult<UserDetailDto>.Unauthorized("Rol güncelleme yetkiniz yok");
+            }
+
+            if (!Enum.TryParse<UserRole>(updateDto.Role, true, out var newRole))
+            {
+                return ApiResult<UserDetailDto>.BadRequest("Geçersiz rol");
+            }
+
+            user.Role = newRole;
+        }
 
         user.UpdatedAt = DateTime.UtcNow;
 
@@ -294,8 +327,13 @@ public class UserService
     {
         var query = _context.Users
             .AsNoTracking()
-            .Where(u => u.Role == UserRole.Personel && u.IsApproved && !u.isDeleted)
-            .OrderByDescending(u => u.CreatedAt);
+            .Where(u => !u.isDeleted)
+            // Önce yöneticiler (Manager) üstte
+            .OrderByDescending(u => u.Role == UserRole.Manager)
+            // Sonra onaylılar üstte
+            .ThenByDescending(u => u.IsApproved)
+            // Son olarak en yeni kayıtlar üstte
+            .ThenByDescending(u => u.CreatedAt);
 
         var totalCount = await query.CountAsync();
         var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
@@ -305,6 +343,27 @@ public class UserService
             .Take(pageSize)
             .ToListAsync();
 
+        // Fotoğraf URL'ini normalize eden yardımcı
+        string? BuildPublicPhotoUrl(string? stored)
+        {
+            if (string.IsNullOrWhiteSpace(stored)) return null;
+            var trimmed = stored.Trim();
+            if (trimmed.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+            {
+                return trimmed;
+            }
+            var baseUrlLocal = _configuration["FileStorage:BaseUrl"]?.TrimEnd('/') ?? "http://localhost:5133";
+            if (trimmed.StartsWith("/uploads/", StringComparison.OrdinalIgnoreCase))
+            {
+                return $"{baseUrlLocal}{trimmed}";
+            }
+            if (trimmed.StartsWith("uploads/", StringComparison.OrdinalIgnoreCase))
+            {
+                return $"{baseUrlLocal}/{trimmed}";
+            }
+            return $"{baseUrlLocal}/uploads/photos/{trimmed}";
+        }
+
         var items = users.Select(u => new UserResponseDto
         {
             Id = u.Id,
@@ -312,6 +371,7 @@ public class UserService
             Name = u.Name,
             Surname = u.Surname,
             Phone = u.Phone,
+            PhotoPath = BuildPublicPhotoUrl(u.PhotoPath),
             Role = u.Role.ToString(),
             IsApproved = u.IsApproved,
             ApprovedAt = u.ApprovedAt,

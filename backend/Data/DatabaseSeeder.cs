@@ -22,7 +22,8 @@ public static class DatabaseSeeder
                     Role = UserRole.Manager,
                     IsApproved = true, // Yöneticiler her zaman onaylı
                     CreatedAt = DateTime.UtcNow.AddHours(3),
-                    UpdatedAt = DateTime.UtcNow.AddHours(3)
+                    UpdatedAt = DateTime.UtcNow.AddHours(3),
+                    PhotoPath = "2_ad0e380b8ac54b42b4cd8305a4469331.jpg"
                 };
 
                 context.Users.Add(adminUser);
@@ -47,7 +48,8 @@ public static class DatabaseSeeder
                     IsApproved = true, // Onaylanmış personel
                     ApprovedAt = DateTime.UtcNow.AddHours(3).AddDays(-28),
                     CreatedAt = DateTime.UtcNow.AddHours(3).AddDays(-30),
-                    UpdatedAt = DateTime.UtcNow.AddHours(3).AddDays(-28)
+                    UpdatedAt = DateTime.UtcNow.AddHours(3).AddDays(-28),
+                    PhotoPath = "2_c87f251715b247e2aa4987d0cf7f407b.jpg"
                 };
 
                 var personel2 = new User

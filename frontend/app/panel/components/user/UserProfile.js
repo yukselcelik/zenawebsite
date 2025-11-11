@@ -18,7 +18,8 @@ export default function UserProfile({ userDetail, onUpdate, onUserDetailUpdate }
     name: userDetail?.name || '',
     surname: userDetail?.surname || '',
     phone: userDetail?.phone || '',
-    photoPath: userDetail?.photoPath || ''
+    photoPath: userDetail?.photoPath || '',
+    tcNo: userDetail?.tcNo || ''
   });
 
   // userDetail değişince formData'yı güncelle
@@ -28,7 +29,8 @@ export default function UserProfile({ userDetail, onUpdate, onUserDetailUpdate }
         name: userDetail.name || '',
         surname: userDetail.surname || '',
         phone: userDetail.phone || '',
-        photoPath: userDetail.photoPath || ''
+        photoPath: userDetail.photoPath || '',
+        tcNo: userDetail.tcNo || ''
       });
     }
   }, [userDetail]);
@@ -76,7 +78,8 @@ export default function UserProfile({ userDetail, onUpdate, onUserDetailUpdate }
         name: formData.name,
         surname: formData.surname,
         phone: formData.phone,
-        photoPath: formData.photoPath
+        photoPath: formData.photoPath,
+        tcNo: formData.tcNo
       });
       setIsEditing(false);
     } catch (error) {
@@ -256,6 +259,23 @@ export default function UserProfile({ userDetail, onUpdate, onUserDetailUpdate }
               />
             ) : (
               <p className="text-gray-900">{userDetail.phone || '-'}</p>
+            )}
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">TC No</label>
+            {isEditing ? (
+              <input
+                type="text"
+                value={formData.tcNo}
+                onChange={(e) => setFormData({ ...formData, tcNo: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                maxLength={11}
+                inputMode="numeric"
+                pattern="[0-9]*"
+                placeholder="11 haneli TC No"
+              />
+            ) : (
+              <p className="text-gray-900">{userDetail.tcNo || '-'}</p>
             )}
           </div>
         </div>

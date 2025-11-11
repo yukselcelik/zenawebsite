@@ -114,13 +114,40 @@ public class AuthService
         if (user == null)
             return ApiResult<MeDto>.NotFound("User not found");
 
+        // PhotoPath'i tam URL olarak oluştur (legacy değerleri normalize et)
+        string? BuildPublicPhotoUrl(string? stored)
+        {
+            if (string.IsNullOrWhiteSpace(stored)) return null;
+            var trimmed = stored.Trim();
+            if (trimmed.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+            {
+                // Zaten tam URL
+                return trimmed;
+            }
+            var baseUrlLocal = _configuration["FileStorage:BaseUrl"]?.TrimEnd('/') ?? "http://localhost:5133";
+            if (trimmed.StartsWith("/uploads/", StringComparison.OrdinalIgnoreCase))
+            {
+                // Örn: /uploads/photos/xyz.jpg
+                return $"{baseUrlLocal}{trimmed}";
+            }
+            if (trimmed.StartsWith("uploads/", StringComparison.OrdinalIgnoreCase))
+            {
+                // Örn: uploads/photos/xyz.jpg
+                return $"{baseUrlLocal}/{trimmed}";
+            }
+            // Sadece dosya adı ise
+            return $"{baseUrlLocal}/uploads/photos/{trimmed}";
+        }
+
+        var photoPath = BuildPublicPhotoUrl(user.PhotoPath);
+
         var meDto = new MeDto
         {
             UserId = user.Id.ToString(),
             Email = user.Email,
             Name = user.Name,
             Surname = user.Surname,
-            PhotoPath = _configuration["FileStorage:BaseUrl"] + "/uploads/photos/" + user.PhotoPath,
+            PhotoPath = photoPath,
             Role = user.Role.ToString()
         };
 

@@ -6,6 +6,8 @@ public class UpdateUserDto
     public string? Surname { get; set; }
     public string? Phone { get; set; }
     public string? PhotoPath { get; set; }
+    public string? TcNo { get; set; } // Personel kendi TcNo bilgisini güncelleyebilir, yönetici herkes için güncelleyebilir
+    public string? Role { get; set; } // Sadece yönetici güncelleyebilir: "Manager" | "Personel"
     public List<ContactInfoDto>? ContactInfos { get; set; }
     public List<EmergencyContactDto>? EmergencyContacts { get; set; }
     public List<EducationInfoDto>? EducationInfos { get; set; }

@@ -10,6 +10,9 @@ import EducationInfoSection from '../user/EducationInfoSection';
 export default function PersonnelDetail({ userId, onBack }) {
   const [userDetail, setUserDetail] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [roleEditing, setRoleEditing] = useState(false);
+  const [selectedRole, setSelectedRole] = useState('Personel');
+  const [roleSaving, setRoleSaving] = useState(false);
 
   useEffect(() => {
     fetchUserDetail();
@@ -21,6 +24,7 @@ export default function PersonnelDetail({ userId, onBack }) {
       const data = await ApiService.getUserDetail(userId);
       if (data?.data) {
         setUserDetail(data.data);
+        setSelectedRole(data.data.role === 'Manager' ? 'Manager' : 'Personel');
       }
     } catch (error) {
       console.error('Error fetching user detail:', error);
@@ -89,7 +93,57 @@ export default function PersonnelDetail({ userId, onBack }) {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Rol</label>
-              <p className="text-gray-900">{userDetail.role}</p>
+              {roleEditing ? (
+                <div className="flex items-center gap-3">
+                  <select
+                    value={selectedRole}
+                    onChange={(e) => setSelectedRole(e.target.value)}
+                    className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                  >
+                    <option value="Personel">Personel</option>
+                    <option value="Manager">Manager</option>
+                  </select>
+                  <button
+                    disabled={roleSaving}
+                    onClick={async () => {
+                      try {
+                        setRoleSaving(true);
+                        await ApiService.updateUser(userDetail.id, { role: selectedRole });
+                        await fetchUserDetail();
+                        setRoleEditing(false);
+                      } catch (err) {
+                        console.error('Role update error:', err);
+                        alert(err.message || 'Rol güncellenemedi');
+                      } finally {
+                        setRoleSaving(false);
+                      }
+                    }}
+                    className={`px-3 py-2 rounded-lg text-white text-sm cursor-pointer ${roleSaving ? 'bg-gray-400' : 'bg-orange-500 hover:bg-orange-600'}`}
+                  >
+                    Kaydet
+                  </button>
+                  <button
+                    disabled={roleSaving}
+                    onClick={() => {
+                      setSelectedRole(userDetail.role === 'Manager' ? 'Manager' : 'Personel');
+                      setRoleEditing(false);
+                    }}
+                    className="px-3 py-2 rounded-lg text-sm text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 cursor-pointer"
+                  >
+                    Vazgeç
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-3">
+                  <p className="text-gray-900">{userDetail.role}</p>
+                  <button
+                    onClick={() => setRoleEditing(true)}
+                    className="px-3 py-1.5 rounded-lg text-sm text-white bg-orange-500 hover:bg-orange-600 cursor-pointer"
+                  >
+                    Rolü Değiştir
+                  </button>
+                </div>
+              )}
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Onay Durumu</label>

@@ -41,7 +41,8 @@ export default function Sidebar({ activeTab, setActiveTab, isManager, pendingCou
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
         </svg>
       ),
-      visible: isManager
+      visible: isManager,
+      badge: isManager ? (pendingCount || 0) : null
     },
     {
       id: 'internships',
@@ -52,17 +53,6 @@ export default function Sidebar({ activeTab, setActiveTab, isManager, pendingCou
         </svg>
       ),
       visible: isManager
-    },
-    {
-      id: 'pending-users',
-      label: 'Onay Bekleyenler',
-      icon: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-        </svg>
-      ),
-      visible: isManager,
-      badge: isManager ? (pendingCount || 0) : null
     }
   ];
 
@@ -100,10 +90,18 @@ export default function Sidebar({ activeTab, setActiveTab, isManager, pendingCou
               <div className="flex items-center space-x-3">
                 {item.icon}
                 <span>{item.label}</span>
-                {item.badge && (
-                  <span className="ml-auto bg-red-500 text-white text-xs px-2 py-1 rounded-full">
-                    {item.badge}
+                {(item.id === 'leaves' || item.id === 'personnel') ? (
+                  <span
+                    className={`ml-auto text-xs px-2 py-1 rounded-full ${item.badge > 0 ? 'bg-red-500 text-white' : 'invisible'}`}
+                  >
+                    {item.badge || 0}
                   </span>
+                ) : (
+                  item.badge && (
+                    <span className="ml-auto bg-red-500 text-white text-xs px-2 py-1 rounded-full">
+                      {item.badge}
+                    </span>
+                  )
                 )}
               </div>
             </button>

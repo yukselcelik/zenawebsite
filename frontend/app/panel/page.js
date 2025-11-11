@@ -14,7 +14,6 @@ import CreateLeaveRequest from './components/leaves/CreateLeaveRequest';
 import PersonnelList from './components/personnel/PersonnelList';
 import PersonnelDetail from './components/personnel/PersonnelDetail';
 import InternshipApplications from './components/internships/InternshipApplications';
-import PendingUsers from './components/pending/PendingUsers';
 
 export default function Panel() {
   const [userData, setUserData] = useState(null);
@@ -141,7 +140,7 @@ export default function Panel() {
     };
   }, [router]);
 
-  // Pending users count for sidebar badge
+  // Pending users count for personnel badge
   useEffect(() => {
     if (isManager) {
       ApiService.getPendingUsers(1, 10)
@@ -295,9 +294,6 @@ export default function Panel() {
             <InternshipApplications />
           )}
 
-          {activeTab === 'pending-users' && isManager && (
-            <PendingUsers />
-          )}
         </main>
       </div>
     </div>
