@@ -1,0 +1,1 @@
+upload static files to this directory
