@@ -6,6 +6,7 @@ import ConfirmDialog from '../common/ConfirmDialog';
 import ContactInfoSection from './ContactInfoSection';
 import EmergencyContactSection from './EmergencyContactSection';
 import EducationInfoSection from './EducationInfoSection';
+import PhoneInput from '../common/PhoneInput';
 
 export default function UserProfile({ userDetail, onUpdate, onUserDetailUpdate }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -251,11 +252,10 @@ export default function UserProfile({ userDetail, onUpdate, onUserDetailUpdate }
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Telefon</label>
             {isEditing ? (
-              <input
-                type="text"
+              <PhoneInput
                 value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                onChange={(value) => setFormData({ ...formData, phone: value })}
+                placeholder="5XX XXX XX XX"
               />
             ) : (
               <p className="text-gray-900">{userDetail.phone || '-'}</p>

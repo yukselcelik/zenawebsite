@@ -141,7 +141,6 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// Optionally configure Serilog Loki sink via code if config present
 try
 {
     var lokiUrl = builder.Configuration["Loki:Url"];
@@ -155,24 +154,69 @@ catch (Exception ex)
     Log.Warning(ex, "Loki configuration check failed");
 }
 
-// Seed database with default admin user
 using (var scope = app.Services.CreateScope())
 {
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+    
+    var maxRetries = 10;
+    var retryDelay = TimeSpan.FromSeconds(3);
+    var migrationSuccess = false;
+    
+    for (int i = 0; i < maxRetries; i++)
+    {
+        try
+        {
+            Log.Information("Veritabanı bağlantısı test ediliyor... (Deneme {Attempt}/{MaxRetries})", i + 1, maxRetries);
+            
+            if (await db.Database.CanConnectAsync())
+            {
+                Log.Information("Veritabanı bağlantısı başarılı!");
+                
+                Log.Information("Veritabanı migration'ları uygulanıyor...");
+                await db.Database.MigrateAsync();
+                Log.Information("Veritabanı migration'ları başarıyla uygulandı!");
+                
+                migrationSuccess = true;
+                break;
+            }
+            else
+            {
+                Log.Warning("Veritabanı bağlantısı başarısız. {Delay} saniye sonra tekrar denenecek...", retryDelay.TotalSeconds);
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Warning(ex, "Veritabanı bağlantı hatası (Deneme {Attempt}/{MaxRetries}): {Error}", i + 1, maxRetries, ex.Message);
+            
+            if (i == maxRetries - 1)
+            {
+                Log.Fatal(ex, "Veritabanı bağlantısı {MaxRetries} denemede başarısız oldu. Uygulama başlatılamıyor.", maxRetries);
+                throw new InvalidOperationException($"Veritabanı bağlantısı kurulamadı: {ex.Message}", ex);
+            }
+        }
+        
+        if (i < maxRetries - 1)
+        {
+            await Task.Delay(retryDelay);
+        }
+    }
+    
+    if (!migrationSuccess)
+    {
+        Log.Fatal("Veritabanı migration işlemi başarısız oldu. Uygulama başlatılamıyor.");
+        throw new InvalidOperationException("Veritabanı migration işlemi başarısız oldu.");
+    }
+    
     try
     {
-        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-        
-        // Apply pending migrations
-        await db.Database.MigrateAsync();
-        
-        // Seed default admin user if not exists
+        Log.Information("Veritabanı seed işlemi başlatılıyor...");
         await DatabaseSeeder.SeedAsync(db, logger);
+        Log.Information("Veritabanı seed işlemi tamamlandı!");
     }
     catch (Exception ex)
     {
-        Log.Fatal(ex, "Error seeding database: {Error}", ex.Message);
-        // Don't throw - allow app to continue even if seeding fails
+        Log.Error(ex, "Veritabanı seed işlemi sırasında hata oluştu: {Error}", ex.Message);
     }
 }
 
@@ -181,15 +225,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
-        // c.SwaggerEndpoint("/swagger/v1/swagger.json", "Zena Backend API v1");
-        // c.RoutePrefix = string.Empty;
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Zena Backend API v1");
+        c.RoutePrefix = "/swagger";
     });
 }
 
-// Correlation ID + Request logging
 app.Use(async (context, next) =>
 {
-    // Correlation-Id yönetimi
     var correlationIdHeader = "X-Correlation-Id";
     var correlationId = context.Request.Headers[correlationIdHeader].FirstOrDefault()
                         ?? Guid.NewGuid().ToString("N");
@@ -209,7 +251,6 @@ app.UseCors("MyPolicy");
 
 app.UseHttpsRedirection();
 
-// Serve static files from wwwroot for uploaded photos/CVs
 app.UseStaticFiles();
 
 app.UseAuthentication();
@@ -221,7 +262,6 @@ try
 {
     Log.Information("Starting Zena Backend");
     Log.Information("Environment: {Environment}", app.Environment.EnvironmentName);
-    Log.Information("Connection String: {ConnectionString}", builder.Configuration.GetConnectionString("DefaultConnection"));
     app.Run();
 }
 catch (Exception ex)

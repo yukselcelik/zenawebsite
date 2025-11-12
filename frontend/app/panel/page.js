@@ -97,16 +97,29 @@ export default function Panel() {
           const [personnelData, leaveData, internshipData] = await Promise.all([
             ApiService.getPersonnelList(1, 10).catch(() => ({ data: { totalCount: 0, items: [] } })),
             ApiService.getAllLeaveRequests(1, 100).catch(() => ({ data: { items: [] } })),
-            ApiService.getAllInternshipApplications(1, 10).catch(() => ({ data: { totalCount: 0 } }))
+            ApiService.getAllInternshipApplications(1, 1000).catch(() => ({ data: { totalCount: 0, items: [] } }))
           ]);
 
           const pendingLeaves = leaveData.data?.items?.filter(r => r.status === 'Pending').length || 0;
           setPendingLeaveCount(pendingLeaves);
 
+          // Son aydaki staj başvurularını hesapla
+          const totalInternshipCount = internshipData.data?.totalCount || 0;
+          const internshipItems = internshipData.data?.items || [];
+          const oneMonthAgo = new Date();
+          oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+          
+          const lastMonthCount = internshipItems.filter(item => {
+            if (!item.createdAt) return false;
+            const createdAt = new Date(item.createdAt);
+            return createdAt >= oneMonthAgo;
+          }).length;
+
           setStats({
             personnelCount: personnelData.data?.totalCount || 0,
             pendingLeaves: pendingLeaves,
-            internshipCount: internshipData.data?.totalCount || 0
+            internshipCount: totalInternshipCount,
+            internshipLastMonthCount: lastMonthCount
           });
         } else {
           // Personel için izin taleplerini çek ve pending count'u hesapla
@@ -220,7 +233,15 @@ export default function Panel() {
           )}
 
           {activeTab === 'dashboard' && (
-            <Dashboard isManager={isManager} stats={stats} userDetail={userDetail} />
+            <Dashboard 
+              isManager={isManager} 
+              stats={stats} 
+              userDetail={userDetail}
+              onTabChange={(tab) => {
+                setActiveTab(tab);
+                localStorage.setItem('panelActiveTab', tab);
+              }}
+            />
           )}
 
           {activeTab === 'profile' && (

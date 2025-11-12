@@ -5,6 +5,7 @@
 
 import Header from '../components/Header'; // Header bileşenini import ediyoruz
 import Footer from '../components/Footer'; // Footer bileşenini import ediyoruz
+import PhoneInput from '../components/PhoneInput'; // PhoneInput bileşenini import ediyoruz
 import { useState } from 'react'; // useState hook'u - form state yönetimi için
 import ApiService from '../../lib/api'; // API servis sınıfı
 
@@ -190,15 +191,11 @@ export default function Kariyer() {
               <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
                 Telefon Numaranız <span className="text-red-500">*</span>
               </label>
-              <input
-                type="tel"
-                id="phone"
-                name="phone"
+              <PhoneInput
                 value={formData.phone}
-                onChange={handleInputChange}
-                placeholder="90 (___) ___ ____"
+                onChange={(value) => setFormData({ ...formData, phone: value })}
+                placeholder="5XX XXX XX XX"
                 required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900"
               />
             </div>
 

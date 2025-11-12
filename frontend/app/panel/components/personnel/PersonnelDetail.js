@@ -101,7 +101,7 @@ export default function PersonnelDetail({ userId, onBack }) {
                     className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
                   >
                     <option value="Personel">Personel</option>
-                    <option value="Manager">Manager</option>
+                    <option value="Manager">Yönetici</option>
                   </select>
                   <button
                     disabled={roleSaving}
@@ -135,7 +135,7 @@ export default function PersonnelDetail({ userId, onBack }) {
                 </div>
               ) : (
                 <div className="flex items-center gap-3">
-                  <p className="text-gray-900">{userDetail.role}</p>
+                  <p className="text-gray-900">{userDetail.role === 'Manager' ? 'Yönetici' : 'Personel'}</p>
                   <button
                     onClick={() => setRoleEditing(true)}
                     className="px-3 py-1.5 rounded-lg text-sm text-white bg-orange-500 hover:bg-orange-600 cursor-pointer"

@@ -150,7 +150,7 @@ export default function PersonnelList({ onViewDetail }) {
                           className="px-3 py-2 rounded text-sm font-medium border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 cursor-pointer bg-white hover:bg-gray-50"
                         >
                           <option value="Personel">Personel</option>
-                          <option value="Manager">Manager</option>
+                          <option value="Manager">Yönetici</option>
                         </select>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">

@@ -8,20 +8,13 @@ namespace Zenabackend.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class InternshipController : ControllerBase
+public class InternshipController(InternshipService internshipService, ILogger<InternshipController> logger)
+    : ControllerBase
 {
-    private readonly InternshipService _internshipService;
-    private readonly ILogger<InternshipController> _logger;
-
-    public InternshipController(InternshipService internshipService, ILogger<InternshipController> logger)
-    {
-        _internshipService = internshipService;
-        _logger = logger;
-    }
-
     [HttpPost("apply")]
     [RequestSizeLimit(10_000_000)] // 10MB limit
-    public async Task<ActionResult<ApiResult<InternshipApplicationResponseDto>>> Apply(ApplyInternshipApplicationFormDto request)
+    public async Task<ActionResult<ApiResult<InternshipApplicationResponseDto>>> Apply(
+        ApplyInternshipApplicationFormDto request)
     {
         try
         {
@@ -29,10 +22,11 @@ public class InternshipController : ControllerBase
                 string.IsNullOrWhiteSpace(request.Email) ||
                 string.IsNullOrWhiteSpace(request.Phone))
             {
-                return Ok(ApiResult<InternshipApplicationResponseDto>.BadRequest("Zorunlu alanlar eksik: Ad Soyad, E-posta, Telefon"));
+                return Ok(ApiResult<InternshipApplicationResponseDto>.BadRequest(
+                    "Zorunlu alanlar eksik: Ad Soyad, E-posta, Telefon"));
             }
 
-            var result = await _internshipService.CreateApplicationAsync(request);
+            var result = await internshipService.CreateApplicationAsync(request);
 
             if (!result.Success || result.Data == null)
             {
@@ -43,36 +37,37 @@ public class InternshipController : ControllerBase
             if (cvFile is not { Length: > 0 }) return Ok(result);
             try
             {
-                var cvFilePath = await _internshipService.SaveCvFileAsync(cvFile, result.Data.Id);
-                    
-                var application = await _internshipService.GetApplicationByIdAsync(result.Data.Id);
+                var cvFilePath = await internshipService.SaveCvFileAsync(cvFile, result.Data.Id);
+
+                var application = await internshipService.GetApplicationByIdAsync(result.Data.Id);
                 if (application != null)
                 {
                     application.CvFilePath = cvFilePath;
-                    await _internshipService.UpdateApplicationAsync(application);
+                    await internshipService.UpdateApplicationAsync(application);
                 }
-                    
+
                 result.Data.CvFilePath = cvFilePath;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to save CV file for application {ApplicationId}", result.Data.Id);
+                logger.LogError(ex, "Failed to save CV file for application {ApplicationId}", result.Data.Id);
             }
 
             return Ok(result);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error creating internship application");
+            logger.LogError(ex, "Error creating internship application");
             return Ok(ApiResult<InternshipApplicationResponseDto>.BadRequest("Başvuru oluşturulurken hata oluştu"));
         }
     }
 
     [HttpGet("applications")]
     [Authorize(Roles = "Manager")]
-    public async Task<ActionResult<ApiResult<PagedResultDto<InternshipApplicationResponseDto>>>> GetAllApplications([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+    public async Task<ActionResult<ApiResult<PagedResultDto<InternshipApplicationResponseDto>>>> GetAllApplications(
+        [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
     {
-        var result = await _internshipService.GetAllApplicationsAsync(pageNumber, pageSize);
+        var result = await internshipService.GetAllApplicationsAsync(pageNumber, pageSize);
         return Ok(result);
     }
 }

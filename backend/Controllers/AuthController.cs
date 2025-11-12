@@ -8,43 +8,34 @@ namespace Zenabackend.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AuthController : ControllerBase
+public class AuthController(AuthService authService) : ControllerBase
 {
-    private readonly AuthService _authService;
-    private readonly ILogger<AuthController> _logger;
-
-    public AuthController(AuthService authService, ILogger<AuthController> logger)
-    {
-        _authService = authService;
-        _logger = logger;
-    }
 
     [HttpPost("register")]
     public async Task<ActionResult<ApiResult<AuthResponseDto>>> Register([FromBody] RegisterDto registerDto)
     {
-        var result = await _authService.RegisterAsync(registerDto);
+        var result = await authService.RegisterAsync(registerDto);
 
-        if (result == null)
-        {
-            if (await _authService.CheckEmailExistsAsync(registerDto.Email))
-                return Ok(ApiResult<AuthResponseDto>.BadRequest("Email already exists", 400));
+        if (result != null)
+            return Ok(ApiResult<AuthResponseDto>.Ok(result,
+                "Kayıt işleminiz başarıyla tamamlandı. Hesabınız yönetici onayı bekliyor."));
+        
+        if (await authService.CheckEmailExistsAsync(registerDto.Email))
+            return Ok(ApiResult<AuthResponseDto>.BadRequest("Email already exists"));
 
-            return Ok(ApiResult<AuthResponseDto>.Ok(null,
-                "Kayıt başarılı. Yönetici onayından sonra giriş yapabilirsiniz."));
-        }
+        return Ok(ApiResult<AuthResponseDto>.Ok(null!,
+            "Kayıt başarılı. Yönetici onayından sonra giriş yapabilirsiniz."));
 
-        return Ok(ApiResult<AuthResponseDto>.Ok(result,
-            "Kayıt işleminiz başarıyla tamamlandı. Hesabınız yönetici onayı bekliyor. Onaylandıktan sonra tüm özelliklere erişebileceksiniz."));
     }
 
     [HttpPost("login")]
     public async Task<ActionResult<ApiResult<AuthResponseDto>>> Login([FromBody] LoginDto loginDto)
     {
-        var result = await _authService.LoginAsync(loginDto);
+        var result = await authService.LoginAsync(loginDto);
 
         if (result == null)
         {
-            var isApproved = await _authService.CheckUserApprovalStatusAsync(loginDto.Email);
+            var isApproved = await authService.CheckUserApprovalStatusAsync(loginDto.Email);
             if (!isApproved.HasValue)
             {
                 return Ok(ApiResult<AuthResponseDto>.Unauthorized("Invalid email or password"));
@@ -68,10 +59,10 @@ public class AuthController : ControllerBase
     {
         var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
-        if (userIdClaim == null || !int.TryParse(userIdClaim, out int userId))
-            return Ok(ApiResult<MeDto>.Unauthorized("Unauthorized"));
+        if (userIdClaim == null || !int.TryParse(userIdClaim, out var userId))
+            return Ok(ApiResult<MeDto>.Unauthorized());
 
-        var result = await _authService.GetMeAsync(userId);
+        var result = await authService.GetMeAsync(userId);
         return Ok(result);
     }
 
@@ -80,7 +71,7 @@ public class AuthController : ControllerBase
     public async Task<ActionResult<ApiResult<PagedResultDto<UserResponseDto>>>> GetPendingUsers(
         [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
     {
-        var result = await _authService.GetPendingUsersAsync(pageNumber, pageSize);
+        var result = await authService.GetPendingUsersAsync(pageNumber, pageSize);
         return Ok(result);
     }
 
@@ -89,7 +80,7 @@ public class AuthController : ControllerBase
     public async Task<ActionResult<ApiResult<PagedResultDto<UserResponseDto>>>> GetAllPersonnelUsers(
         [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
     {
-        var result = await _authService.GetAllPersonnelUsersAsync(pageNumber, pageSize);
+        var result = await authService.GetAllPersonnelUsersAsync(pageNumber, pageSize);
         return Ok(result);
     }
 
@@ -97,7 +88,7 @@ public class AuthController : ControllerBase
     [Authorize(Roles = "Manager")]
     public async Task<ActionResult<ApiResult<bool>>> ApproveUser(int id)
     {
-        var result = await _authService.ApproveUserAsync(id);
+        var result = await authService.ApproveUserAsync(id);
         return Ok(result);
     }
 
@@ -105,7 +96,7 @@ public class AuthController : ControllerBase
     [Authorize(Roles = "Manager")]
     public async Task<ActionResult<ApiResult<bool>>> RejectUser(int id)
     {
-        var result = await _authService.RejectUserAsync(id);
+        var result = await authService.RejectUserAsync(id);
         return Ok(result);
     }
 
@@ -113,7 +104,7 @@ public class AuthController : ControllerBase
     [Authorize(Roles = "Manager")]
     public async Task<ActionResult<ApiResult<bool>>> UpdateUserApproval(int id, [FromBody] UpdateUserApprovalDto dto)
     {
-        var result = await _authService.UpdateUserApprovalStatusAsync(id, dto.IsApproved);
+        var result = await authService.UpdateUserApprovalStatusAsync(id, dto.IsApproved);
         return Ok(result);
     }
 
@@ -121,7 +112,7 @@ public class AuthController : ControllerBase
     [Authorize(Roles = "Manager")]
     public async Task<ActionResult<ApiResult<bool>>> DeleteUser(int id)
     {
-        var result = await _authService.DeleteUserAsync(id);
+        var result = await authService.DeleteUserAsync(id);
         return Ok(result);
     }
 }

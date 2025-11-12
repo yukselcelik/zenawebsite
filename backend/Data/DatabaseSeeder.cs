@@ -9,7 +9,6 @@ public static class DatabaseSeeder
     {
         try
         {
-            // Admin kullanıcısı kontrolü ve ekleme
             if (!await context.Users.AnyAsync(u => u.Role == UserRole.Manager))
             {
                 var adminUser = new User
@@ -17,10 +16,10 @@ public static class DatabaseSeeder
                     Email = "admin@zena.com",
                     Name = "Yönetici",
                     Surname = "Kullanıcı",
-                    Phone = "05551111111",
+                    Phone = "5550001122",
                     PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123!"),
                     Role = UserRole.Manager,
-                    IsApproved = true, // Yöneticiler her zaman onaylı
+                    IsApproved = true, 
                     CreatedAt = DateTime.UtcNow.AddHours(3),
                     UpdatedAt = DateTime.UtcNow.AddHours(3),
                     PhotoPath = "2_ad0e380b8ac54b42b4cd8305a4469331.jpg"
@@ -32,7 +31,6 @@ public static class DatabaseSeeder
                 logger.LogInformation("Default admin user created: admin@zena.com / Admin123!");
             }
 
-            // Personel kullanıcıları ekle (2 adet)
             var personelCount = await context.Users.CountAsync(u => u.Role == UserRole.Personel && u.IsApproved);
             
             if (personelCount < 2)
@@ -42,10 +40,10 @@ public static class DatabaseSeeder
                     Email = "personel1@zena.com",
                     Name = "Ahmet",
                     Surname = "Yılmaz",
-                    Phone = "05551234567",
+                    Phone = "5649871515",
                     PasswordHash = BCrypt.Net.BCrypt.HashPassword("Personel123!"),
                     Role = UserRole.Personel,
-                    IsApproved = true, // Onaylanmış personel
+                    IsApproved = true, 
                     ApprovedAt = DateTime.UtcNow.AddHours(3).AddDays(-28),
                     CreatedAt = DateTime.UtcNow.AddHours(3).AddDays(-30),
                     UpdatedAt = DateTime.UtcNow.AddHours(3).AddDays(-28),
@@ -57,10 +55,10 @@ public static class DatabaseSeeder
                     Email = "personel2@zena.com",
                     Name = "Ayşe",
                     Surname = "Demir",
-                    Phone = "05559876543",
+                    Phone = "5551112233",
                     PasswordHash = BCrypt.Net.BCrypt.HashPassword("Personel123!"),
                     Role = UserRole.Personel,
-                    IsApproved = true, // Onaylanmış personel
+                    IsApproved = true, 
                     ApprovedAt = DateTime.UtcNow.AddHours(3).AddDays(-23),
                     CreatedAt = DateTime.UtcNow.AddHours(3).AddDays(-25),
                     UpdatedAt = DateTime.UtcNow.AddHours(3).AddDays(-23)
@@ -71,7 +69,88 @@ public static class DatabaseSeeder
 
                 logger.LogInformation("Dummy personel users created");
 
-                // Her personel için 3 izin talebi ekle
+                var contactInfo1 = new ContactInfo
+                {
+                    UserId = personel1.Id,
+                    Address = "İstanbul, Türkiye",
+                    PhoneNumber = "5550001122",
+                    Mail = "personel1@zena.com"
+                };
+                var contactInfo2 = new ContactInfo
+                {
+                    UserId = personel2.Id,
+                    Address = "İstanbul, Türkiye",
+                    PhoneNumber = "5551112233",
+                    Mail = "personel2@zena.com"
+                };
+                context.ContactInfos.AddRange(contactInfo1, contactInfo2);
+                await context.SaveChangesAsync();
+
+                logger.LogInformation("Dummy contact info created");
+
+                var emergencyContact1 = new EmergencyContact
+                {
+                    UserId = personel1.Id,
+                    FullName = "Ahmet Yılmaz",
+                    PhoneNumber = "5550001122",
+                    Address = "İstanbul, Türkiye"
+                };
+                var emergencyContact2 = new EmergencyContact
+                {
+                    UserId = personel2.Id,
+                    FullName = "Ayşe Demir",
+                    PhoneNumber = "5551112233",
+                    Address = "İstanbul, Türkiye"
+                };
+                context.EmergencyContacts.AddRange(emergencyContact1, emergencyContact2);
+                await context.SaveChangesAsync();
+
+                logger.LogInformation("Dummy emergency contact created");
+
+                var employmentInfo1 = new EmploymentInfo
+                {
+                    UserId = personel1.Id,
+                    StartDate = DateTime.UtcNow.AddHours(3).AddDays(-30),
+                    Position = "Yazılım Geliştirici",
+                    WorkType = WorkType.FullTime,
+                    ContractType = ContractType.FixedTerm,
+                    WorkplaceNumber = "1234567890"
+                };
+                var employmentInfo2 = new EmploymentInfo
+                {
+                    UserId = personel2.Id,
+                    StartDate = DateTime.UtcNow.AddHours(3).AddDays(-30),
+                    Position = "Yazılım Geliştirici",
+                    WorkType = WorkType.FullTime,
+                    ContractType = ContractType.FixedTerm,
+                    WorkplaceNumber = "1234567890"
+                };
+                context.EmploymentInfos.AddRange(employmentInfo1, employmentInfo2);
+                await context.SaveChangesAsync();
+
+                logger.LogInformation("Dummy employment info created");
+
+                var educationInfo1 = new EducationInfo
+                {
+                    UserId = personel1.Id,
+                    University = "İstanbul Teknik Üniversitesi",
+                    Department = "Yazılım Mühendisliği",
+                    GraduationYear = 2025,
+                    Certification = "Yazılım Mühendisliği"
+                };
+                var educationInfo2 = new EducationInfo
+                {
+                    UserId = personel2.Id,
+                    University = "İstanbul Teknik Üniversitesi",
+                    Department = "Yazılım Mühendisliği",
+                    GraduationYear = 2025,
+                    Certification = "Yazılım Mühendisliği"
+                };
+                context.EducationInfos.AddRange(educationInfo1, educationInfo2);
+                await context.SaveChangesAsync();
+
+                logger.LogInformation("Dummy education info created");
+
                 var personelUsers = await context.Users
                     .Where(u => u.Role == UserRole.Personel && u.IsApproved)
                     .OrderBy(u => u.CreatedAt)
@@ -81,7 +160,6 @@ public static class DatabaseSeeder
                 {
                     var leaveRequests = new List<LeaveRequest>();
 
-                    // Personel1 için 3 izin talebi
                     var personel1Id = personelUsers[0].Id;
                     leaveRequests.Add(new LeaveRequest
                     {
@@ -105,18 +183,6 @@ public static class DatabaseSeeder
                         UpdatedAt = DateTime.UtcNow.AddHours(3).AddDays(-15)
                     });
 
-                    leaveRequests.Add(new LeaveRequest
-                    {
-                        UserId = personel1Id,
-                        StartDate = DateTime.UtcNow.Date.AddDays(-30),
-                        EndDate = DateTime.UtcNow.Date.AddDays(-28),
-                        Reason = "Kişisel nedenler",
-                        Status = LeaveStatus.Rejected,
-                        CreatedAt = DateTime.UtcNow.AddHours(3).AddDays(-35),
-                        UpdatedAt = DateTime.UtcNow.AddHours(3).AddDays(-32)
-                    });
-
-                    // Personel2 için 3 izin talebi
                     var personel2Id = personelUsers[1].Id;
                     leaveRequests.Add(new LeaveRequest
                     {
@@ -127,17 +193,6 @@ public static class DatabaseSeeder
                         Status = LeaveStatus.Pending,
                         CreatedAt = DateTime.UtcNow.AddHours(3).AddDays(-8),
                         UpdatedAt = DateTime.UtcNow.AddHours(3).AddDays(-8)
-                    });
-
-                    leaveRequests.Add(new LeaveRequest
-                    {
-                        UserId = personel2Id,
-                        StartDate = DateTime.UtcNow.Date.AddDays(-10),
-                        EndDate = DateTime.UtcNow.Date.AddDays(-8),
-                        Reason = "Ev taşıma işlemleri",
-                        Status = LeaveStatus.Approved,
-                        CreatedAt = DateTime.UtcNow.AddHours(3).AddDays(-18),
-                        UpdatedAt = DateTime.UtcNow.AddHours(3).AddDays(-12)
                     });
 
                     leaveRequests.Add(new LeaveRequest
@@ -158,7 +213,6 @@ public static class DatabaseSeeder
                 }
             }
 
-            // Staj başvuruları ekle (3 adet)
             var internshipCount = await context.InternshipApplications.CountAsync();
             
             if (internshipCount < 3)
@@ -205,7 +259,6 @@ public static class DatabaseSeeder
 
                 logger.LogInformation("Dummy internship applications created: {Count}", internshipApplications.Count);
             }
-
         }
         catch (Exception ex)
         {

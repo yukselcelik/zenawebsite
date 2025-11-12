@@ -6,24 +6,13 @@ using Zenabackend.Models;
 
 namespace Zenabackend.Services;
 
-public class LeaveService
+public class LeaveService(ApplicationDbContext context, ILogger<LeaveService> logger)
 {
-    private readonly ApplicationDbContext _context;
-    private readonly ILogger<LeaveService> _logger;
-
-    public LeaveService(ApplicationDbContext context, ILogger<LeaveService> logger)
-    {
-        _context = context;
-        _logger = logger;
-    }
-
     public async Task<ApiResult<LeaveRequestResponseDto>> CreateLeaveRequestAsync(int userId, CreateLeaveRequestDto dto)
     {
-        // DateTime'ı UTC'ye çevir (PostgreSQL timestamp with time zone için gerekli)
         var startDate = dto.StartDate.Date.ToUniversalTime();
         var endDate = dto.EndDate.Date.ToUniversalTime();
 
-        // Validate dates
         if (startDate >= endDate)
         {
             return ApiResult<LeaveRequestResponseDto>.BadRequest("Başlangıç tarihi bitiş tarihinden önce olmalıdır");
@@ -48,12 +37,12 @@ public class LeaveService
             UpdatedAt = now
         };
 
-        _context.LeaveRequests.Add(leaveRequest);
-        await _context.SaveChangesAsync();
+        context.LeaveRequests.Add(leaveRequest);
+        await context.SaveChangesAsync();
 
-        _logger.LogInformation("Leave request created: {Id} by user {UserId}", leaveRequest.Id, userId);
+        logger.LogInformation("Leave request created: {Id} by user {UserId}", leaveRequest.Id, userId);
 
-        var user = await _context.Users.FindAsync(userId);
+        var user = await context.Users.FindAsync(userId);
         var response = new LeaveRequestResponseDto
         {
             Id = leaveRequest.Id,
@@ -74,7 +63,7 @@ public class LeaveService
 
     public async Task<ApiResult<PagedResultDto<LeaveRequestResponseDto>>> GetMyLeaveRequestsAsync(int userId, int pageNumber = 1, int pageSize = 10)
     {
-        var query = _context.LeaveRequests
+        var query = context.LeaveRequests
             .AsNoTracking()
             .Include(lr => lr.User)
             .Where(lr => lr.UserId == userId)
@@ -117,7 +106,7 @@ public class LeaveService
 
     public async Task<ApiResult<PagedResultDto<LeaveRequestResponseDto>>> GetAllLeaveRequestsAsync(int pageNumber = 1, int pageSize = 10)
     {
-        var query = _context.LeaveRequests
+        var query = context.LeaveRequests
             .AsNoTracking()
             .Include(lr => lr.User)
             .OrderByDescending(lr => lr.CreatedAt);
@@ -159,20 +148,18 @@ public class LeaveService
 
     public async Task<ApiResult<bool>> CancelLeaveRequestAsync(int leaveRequestId, int userId, bool isManager)
     {
-        var leaveRequest = await _context.LeaveRequests.FindAsync(leaveRequestId);
+        var leaveRequest = await context.LeaveRequests.FindAsync(leaveRequestId);
 
         if (leaveRequest == null)
         {
             return ApiResult<bool>.NotFound("İzin talebi bulunamadı");
         }
 
-        // Check if user owns the request or is manager
         if (!isManager && leaveRequest.UserId != userId)
         {
             return ApiResult<bool>.Forbidden("Bu izin talebini iptal etme yetkiniz yok");
         }
 
-        // Can only cancel pending requests
         if (leaveRequest.Status != LeaveStatus.Pending)
         {
             return ApiResult<bool>.BadRequest("Sadece bekleyen izin talepleri iptal edilebilir");
@@ -181,16 +168,16 @@ public class LeaveService
         leaveRequest.Status = LeaveStatus.Cancelled;
         leaveRequest.UpdatedAt = DateTime.UtcNow;
 
-        await _context.SaveChangesAsync();
+        await context.SaveChangesAsync();
 
-        _logger.LogInformation("Leave request cancelled: {Id} by user {UserId}", leaveRequestId, userId);
+        logger.LogInformation("Leave request cancelled: {Id} by user {UserId}", leaveRequestId, userId);
 
         return ApiResult<bool>.Ok(true);
     }
 
     public async Task<ApiResult<bool>> ApproveLeaveRequestAsync(int leaveRequestId)
     {
-        var leaveRequest = await _context.LeaveRequests.FindAsync(leaveRequestId);
+        var leaveRequest = await context.LeaveRequests.FindAsync(leaveRequestId);
 
         if (leaveRequest == null)
         {
@@ -205,16 +192,16 @@ public class LeaveService
         leaveRequest.Status = LeaveStatus.Approved;
         leaveRequest.UpdatedAt = DateTime.UtcNow;
 
-        await _context.SaveChangesAsync();
+        await context.SaveChangesAsync();
 
-        _logger.LogInformation("Leave request approved: {Id}", leaveRequestId);
+        logger.LogInformation("Leave request approved: {Id}", leaveRequestId);
 
         return ApiResult<bool>.Ok(true);
     }
 
     public async Task<ApiResult<bool>> RejectLeaveRequestAsync(int leaveRequestId)
     {
-        var leaveRequest = await _context.LeaveRequests.FindAsync(leaveRequestId);
+        var leaveRequest = await context.LeaveRequests.FindAsync(leaveRequestId);
 
         if (leaveRequest == null)
         {
@@ -229,16 +216,16 @@ public class LeaveService
         leaveRequest.Status = LeaveStatus.Rejected;
         leaveRequest.UpdatedAt = DateTime.UtcNow;
 
-        await _context.SaveChangesAsync();
+        await context.SaveChangesAsync();
 
-        _logger.LogInformation("Leave request rejected: {Id}", leaveRequestId);
+        logger.LogInformation("Leave request rejected: {Id}", leaveRequestId);
 
         return ApiResult<bool>.Ok(true);
     }
 
     public async Task<ApiResult<bool>> UpdateLeaveStatusAsync(int leaveRequestId, LeaveStatus newStatus)
     {
-        var leaveRequest = await _context.LeaveRequests.FindAsync(leaveRequestId);
+        var leaveRequest = await context.LeaveRequests.FindAsync(leaveRequestId);
 
         if (leaveRequest == null)
         {
@@ -248,9 +235,9 @@ public class LeaveService
         leaveRequest.Status = newStatus;
         leaveRequest.UpdatedAt = DateTime.UtcNow;
 
-        await _context.SaveChangesAsync();
+        await context.SaveChangesAsync();
 
-        _logger.LogInformation("Leave request status updated: {Id} to {Status}", leaveRequestId, newStatus);
+        logger.LogInformation("Leave request status updated: {Id} to {Status}", leaveRequestId, newStatus);
 
         return ApiResult<bool>.Ok(true);
     }

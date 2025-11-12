@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import ApiService from '../../../../lib/api';
 import ConfirmDialog from '../common/ConfirmDialog';
+import PhoneInput from '../common/PhoneInput';
 
 export default function EmergencyContactSection({ emergencyContacts, userId, onUpdate, isApproved }) {
   const [showForm, setShowForm] = useState(false);
@@ -154,12 +155,11 @@ export default function EmergencyContactSection({ emergencyContacts, userId, onU
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Telefon</label>
-            <input
-              type="text"
+            <PhoneInput
               value={formData.phoneNumber}
-              onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
+              onChange={(value) => setFormData({ ...formData, phoneNumber: value })}
               disabled={!isApproved}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 disabled:bg-gray-100 disabled:cursor-not-allowed text-gray-900"
+              placeholder="5XX XXX XX XX"
             />
           </div>
           <div>

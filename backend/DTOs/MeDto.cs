@@ -8,7 +8,7 @@ namespace Zenabackend.DTOs
         public string Email { get; set; }
         public string Name { get; set; }
         public string Surname { get; set; }
-        public string? PhotoPath { get; set; }
+        public string PhotoPath { get; set; } = string.Empty;
         public string Role { get; set; }
     }
 }

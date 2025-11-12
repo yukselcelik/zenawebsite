@@ -10,25 +10,13 @@ using Zenabackend.Models;
 
 namespace Zenabackend.Services;
 
-public class AuthService
+public class AuthService(ApplicationDbContext context, IConfiguration configuration, ILogger<AuthService> logger)
 {
-    private readonly ApplicationDbContext _context;
-    private readonly IConfiguration _configuration;
-    private readonly ILogger<AuthService> _logger;
-
-
-    public AuthService(ApplicationDbContext context, IConfiguration configuration, ILogger<AuthService> logger)
-    {
-        _context = context;
-        _configuration = configuration;
-        _logger = logger;
-    }
-
     public async Task<AuthResponseDto?> RegisterAsync(RegisterDto registerDto)
     {
-        if (await _context.Users.AsNoTracking().AnyAsync(u => u.Email == registerDto.Email && !u.isDeleted))
+        if (await context.Users.AsNoTracking().AnyAsync(u => u.Email == registerDto.Email && !u.isDeleted))
         {
-            _logger.LogWarning("Registration attempted with existing email: {Email}", registerDto.Email);
+            logger.LogWarning("Registration attempted with existing email: {Email}", registerDto.Email);
             return null;
         }
 
@@ -36,18 +24,17 @@ public class AuthService
         {
             Email = registerDto.Email,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerDto.Password),
-            Role = UserRole.Personel, // Kayıt olan kullanıcılar her zaman Personel yetkisinde
-            IsApproved = false, // Yönetici onayı gerekli
+            Role = UserRole.Personel,
+            IsApproved = false,
             CreatedAt = DateTime.UtcNow.AddHours(3),
             UpdatedAt = DateTime.UtcNow.AddHours(3)
         };
 
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync();
+        context.Users.Add(user);
+        await context.SaveChangesAsync();
 
-        _logger.LogInformation("User registered successfully: {Email} - Waiting for approval", registerDto.Email);
+        logger.LogInformation("User registered successfully: {Email} - Waiting for approval", registerDto.Email);
 
-        // Kayıt başarılı, kullanıcıya token döndür (onay bekliyor olsa bile giriş yapabilsin)
         return new AuthResponseDto
         {
             Token = GenerateToken(user),
@@ -57,22 +44,22 @@ public class AuthService
 
     public async Task<AuthResponseDto?> LoginAsync(LoginDto loginDto)
     {
-        var user = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Email == loginDto.Email && !u.isDeleted);
+        var user = await context.Users.AsNoTracking()
+            .FirstOrDefaultAsync(u => u.Email == loginDto.Email && !u.isDeleted);
 
         if (user == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash))
         {
-            _logger.LogWarning("Login failed for email: {Email}", loginDto.Email);
+            logger.LogWarning("Login failed for email: {Email}", loginDto.Email);
             return null;
         }
 
-        // Yöneticiler her zaman giriş yapabilir, personel onaylanmış olmalı
-        if (user.Role == UserRole.Personel && !user.IsApproved)
+        if (user is { Role: UserRole.Personel, IsApproved: false })
         {
-            _logger.LogWarning("Login attempt by unapproved user: {Email}", loginDto.Email);
-            return null; // Onay bekleniyor mesajı için null döndür
+            logger.LogWarning("Login attempt by unapproved user: {Email}", loginDto.Email);
+            return null;
         }
 
-        _logger.LogInformation("User logged in successfully: {Email}", loginDto.Email);
+        logger.LogInformation("User logged in successfully: {Email}", loginDto.Email);
 
         return new AuthResponseDto
         {
@@ -83,18 +70,17 @@ public class AuthService
 
     private string GenerateToken(User user)
     {
-        var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!);
+        var key = Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!);
         var tokenDescriptor = new SecurityTokenDescriptor
         {
-            Subject = new ClaimsIdentity(new[]
-            {
+            Subject = new ClaimsIdentity([
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Role, user.Role.ToString())
-            }),
-            Expires = DateTime.UtcNow.AddMinutes(10),
-            Issuer = _configuration["Jwt:Issuer"],
-            Audience = _configuration["Jwt:Audience"],
+            ]),
+            Expires = DateTime.UtcNow.AddMinutes(600),
+            Issuer = configuration["Jwt:Issuer"],
+            Audience = configuration["Jwt:Audience"],
             SigningCredentials = new SigningCredentials(
                 new SymmetricSecurityKey(key),
                 SecurityAlgorithms.HmacSha256Signature)
@@ -105,41 +91,14 @@ public class AuthService
         return tokenHandler.WriteToken(token);
     }
 
-    // get me
-
     public async Task<ApiResult<MeDto>> GetMeAsync(int userId)
     {
-        var user = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == userId && !u.isDeleted);
+        var user = await context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == userId && !u.isDeleted);
 
         if (user == null)
             return ApiResult<MeDto>.NotFound("User not found");
 
-        // PhotoPath'i tam URL olarak oluştur (legacy değerleri normalize et)
-        string? BuildPublicPhotoUrl(string? stored)
-        {
-            if (string.IsNullOrWhiteSpace(stored)) return null;
-            var trimmed = stored.Trim();
-            if (trimmed.StartsWith("http", StringComparison.OrdinalIgnoreCase))
-            {
-                // Zaten tam URL
-                return trimmed;
-            }
-            var baseUrlLocal = _configuration["FileStorage:BaseUrl"]?.TrimEnd('/') ?? "http://localhost:5133";
-            if (trimmed.StartsWith("/uploads/", StringComparison.OrdinalIgnoreCase))
-            {
-                // Örn: /uploads/photos/xyz.jpg
-                return $"{baseUrlLocal}{trimmed}";
-            }
-            if (trimmed.StartsWith("uploads/", StringComparison.OrdinalIgnoreCase))
-            {
-                // Örn: uploads/photos/xyz.jpg
-                return $"{baseUrlLocal}/{trimmed}";
-            }
-            // Sadece dosya adı ise
-            return $"{baseUrlLocal}/uploads/photos/{trimmed}";
-        }
-
-        var photoPath = BuildPublicPhotoUrl(user.PhotoPath);
+        var photoPath = BuildPublicPhotoUrl(user.PhotoPath) ?? string.Empty;
 
         var meDto = new MeDto
         {
@@ -152,24 +111,48 @@ public class AuthService
         };
 
         return ApiResult<MeDto>.Ok(meDto);
+
+        string? BuildPublicPhotoUrl(string? stored)
+        {
+            if (string.IsNullOrWhiteSpace(stored)) return null;
+            var trimmed = stored.Trim();
+            if (trimmed.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+            {
+                return trimmed;
+            }
+
+            var baseUrlLocal = configuration["FileStorage:BaseUrl"]?.TrimEnd('/') ?? "http://localhost:5133";
+            if (trimmed.StartsWith("/uploads/", StringComparison.OrdinalIgnoreCase))
+            {
+                return $"{baseUrlLocal}{trimmed}";
+            }
+
+            if (trimmed.StartsWith("uploads/", StringComparison.OrdinalIgnoreCase))
+            {
+                return $"{baseUrlLocal}/{trimmed}";
+            }
+
+            return $"{baseUrlLocal}/uploads/photos/{trimmed}";
+        }
     }
 
     public async Task<bool> CheckEmailExistsAsync(string email)
     {
-        return await _context.Users.AsNoTracking().AnyAsync(u => u.Email == email && !u.isDeleted);
+        return await context.Users.AsNoTracking().AnyAsync(u => u.Email == email && !u.isDeleted);
     }
 
     public async Task<bool?> CheckUserApprovalStatusAsync(string email)
     {
-        var user = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Email == email && !u.isDeleted);
+        var user = await context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Email == email && !u.isDeleted);
         if (user == null) return null;
         return user.IsApproved;
     }
 
     // Yönetici için kullanıcı yönetimi metodları
-    public async Task<ApiResult<PagedResultDto<UserResponseDto>>> GetPendingUsersAsync(int pageNumber = 1, int pageSize = 10)
+    public async Task<ApiResult<PagedResultDto<UserResponseDto>>> GetPendingUsersAsync(int pageNumber = 1,
+        int pageSize = 10)
     {
-        var query = _context.Users
+        var query = context.Users
             .AsNoTracking()
             .Where(u => u.Role == UserRole.Personel && !u.IsApproved && !u.isDeleted)
             .OrderByDescending(u => u.CreatedAt);
@@ -207,12 +190,13 @@ public class AuthService
         return ApiResult<PagedResultDto<UserResponseDto>>.Ok(response);
     }
 
-    public async Task<ApiResult<PagedResultDto<UserResponseDto>>> GetAllPersonnelUsersAsync(int pageNumber = 1, int pageSize = 10)
+    public async Task<ApiResult<PagedResultDto<UserResponseDto>>> GetAllPersonnelUsersAsync(int pageNumber = 1,
+        int pageSize = 10)
     {
-        var query = _context.Users
+        var query = context.Users
             .AsNoTracking()
             .Where(u => u.Role == UserRole.Personel && !u.isDeleted)
-            .OrderBy(u => u.IsApproved) // Önce onaysızlar gelsin
+            .OrderBy(u => u.IsApproved)
             .ThenByDescending(u => u.CreatedAt);
 
         var totalCount = await query.CountAsync();
@@ -250,7 +234,7 @@ public class AuthService
 
     public async Task<ApiResult<bool>> ApproveUserAsync(int userId)
     {
-        var user = await _context.Users.FindAsync(userId);
+        var user = await context.Users.FindAsync(userId);
 
         if (user == null || user.isDeleted)
         {
@@ -271,16 +255,16 @@ public class AuthService
         user.ApprovedAt = DateTime.UtcNow;
         user.UpdatedAt = DateTime.UtcNow;
 
-        await _context.SaveChangesAsync();
+        await context.SaveChangesAsync();
 
-        _logger.LogInformation("User approved: {UserId} - {Email}", userId, user.Email);
+        logger.LogInformation("User approved: {UserId} - {Email}", userId, user.Email);
 
         return ApiResult<bool>.Ok(true);
     }
 
     public async Task<ApiResult<bool>> RejectUserAsync(int userId)
     {
-        var user = await _context.Users.FindAsync(userId);
+        var user = await context.Users.FindAsync(userId);
 
         if (user == null || user.isDeleted)
         {
@@ -297,19 +281,18 @@ public class AuthService
             return ApiResult<bool>.BadRequest("Onaylanmış kullanıcılar reddedilemez");
         }
 
-        // Soft delete - kullanıcıyı silme, sadece isDeleted flag'ini true yap
         user.isDeleted = true;
         user.UpdatedAt = DateTime.UtcNow;
-        await _context.SaveChangesAsync();
+        await context.SaveChangesAsync();
 
-        _logger.LogInformation("User rejected and soft deleted: {UserId} - {Email}", userId, user.Email);
+        logger.LogInformation("User rejected and soft deleted: {UserId} - {Email}", userId, user.Email);
 
         return ApiResult<bool>.Ok(true);
     }
 
     public async Task<ApiResult<bool>> UpdateUserApprovalStatusAsync(int userId, bool isApproved)
     {
-        var user = await _context.Users.FindAsync(userId);
+        var user = await context.Users.FindAsync(userId);
 
         if (user == null || user.isDeleted)
         {
@@ -325,30 +308,29 @@ public class AuthService
         user.ApprovedAt = isApproved ? DateTime.UtcNow : null;
         user.UpdatedAt = DateTime.UtcNow;
 
-        await _context.SaveChangesAsync();
+        await context.SaveChangesAsync();
 
-        _logger.LogInformation("User approval status updated: {UserId} - {Email} - IsApproved: {IsApproved}", userId, user.Email, isApproved);
+        logger.LogInformation("User approval status updated: {UserId} - {Email} - IsApproved: {IsApproved}", userId,
+            user.Email, isApproved);
 
         return ApiResult<bool>.Ok(true);
     }
 
     public async Task<ApiResult<bool>> DeleteUserAsync(int userId)
     {
-        var user = await _context.Users.FindAsync(userId);
+        var user = await context.Users.FindAsync(userId);
 
         if (user == null || user.isDeleted)
         {
             return ApiResult<bool>.NotFound("Kullanıcı bulunamadı");
         }
 
-        // Soft delete
         user.isDeleted = true;
         user.UpdatedAt = DateTime.UtcNow;
-        await _context.SaveChangesAsync();
+        await context.SaveChangesAsync();
 
-        _logger.LogInformation("User soft deleted: {UserId} - {Email}", userId, user.Email);
+        logger.LogInformation("User soft deleted: {UserId} - {Email}", userId, user.Email);
 
         return ApiResult<bool>.Ok(true);
     }
 }
-

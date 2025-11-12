@@ -8,19 +8,8 @@ using Zenabackend.Models;
 
 namespace Zenabackend.Services;
 
-public class UserService
+public class UserService(ApplicationDbContext context, ILogger<UserService> logger, IConfiguration configuration)
 {
-    private readonly ApplicationDbContext _context;
-    private readonly ILogger<UserService> _logger;
-    private readonly IConfiguration _configuration;
-
-    public UserService(ApplicationDbContext context, ILogger<UserService> logger, IConfiguration configuration)
-    {
-        _context = context;
-        _logger = logger;
-        _configuration = configuration;
-    }
-
     public async Task<ApiResult<UserDetailDto>> GetUserDetailAsync(int userId, int requestingUserId,
         UserRole requestingUserRole)
     {
@@ -29,7 +18,7 @@ public class UserService
             return ApiResult<UserDetailDto>.Unauthorized("Sadece kendi bilgilerinizi görüntüleyebilirsiniz");
         }
 
-        var user = await _context.Users
+        var user = await context.Users
             .Include(u => u.ContactInfos!.Where(c => !c.isDeleted))
             .Include(u => u.EmergencyContacts!.Where(e => !e.isDeleted))
             .Include(u => u.EmploymentInfos!.Where(e => !e.isDeleted))
@@ -51,7 +40,7 @@ public class UserService
                 return trimmed;
             }
 
-            var baseUrlLocal = _configuration["FileStorage:BaseUrl"]?.TrimEnd('/') ?? "http://localhost:5133";
+            var baseUrlLocal = configuration["FileStorage:BaseUrl"]?.TrimEnd('/') ?? "http://localhost:5133";
             if (trimmed.StartsWith("/uploads/", StringComparison.OrdinalIgnoreCase))
             {
                 return $"{baseUrlLocal}{trimmed}";
@@ -125,7 +114,7 @@ public class UserService
             return ApiResult<UserDetailDto>.Unauthorized("Sadece kendi bilgilerinizi güncelleyebilirsiniz");
         }
 
-        var user = await _context.Users
+        var user = await context.Users
             .Include(u => u.ContactInfos)
             .Include(u => u.EmergencyContacts)
             .Include(u => u.EducationInfos)
@@ -291,9 +280,9 @@ public class UserService
             }
         }
 
-        await _context.SaveChangesAsync();
+        await context.SaveChangesAsync();
 
-        _logger.LogInformation("User updated: {UserId}", userId);
+        logger.LogInformation("User updated: {UserId}", userId);
 
         return await GetUserDetailAsync(userId, requestingUserId, requestingUserRole);
     }
@@ -301,7 +290,7 @@ public class UserService
     public async Task<ApiResult<PagedResultDto<UserResponseDto>>> GetPersonnelListAsync(int pageNumber = 1,
         int pageSize = 10)
     {
-        var query = _context.Users
+        var query = context.Users
             .AsNoTracking()
             .Where(u => !u.isDeleted)
             .OrderByDescending(u => u.Role == UserRole.Manager)
@@ -325,7 +314,7 @@ public class UserService
                 return trimmed;
             }
 
-            var baseUrlLocal = _configuration["FileStorage:BaseUrl"]?.TrimEnd('/') ?? "http://localhost:5133";
+            var baseUrlLocal = configuration["FileStorage:BaseUrl"]?.TrimEnd('/') ?? "http://localhost:5133";
             if (trimmed.StartsWith("/uploads/", StringComparison.OrdinalIgnoreCase))
             {
                 return $"{baseUrlLocal}{trimmed}";
@@ -367,7 +356,7 @@ public class UserService
 
     public async Task<ApiResult<EmploymentInfoDto>> CreateEmploymentInfoAsync(CreateEmploymentInfoDto createDto)
     {
-        var user = await _context.Users
+        var user = await context.Users
             .FirstOrDefaultAsync(u => u.Id == createDto.UserId && !u.isDeleted);
 
         if (user == null)
@@ -401,9 +390,9 @@ public class UserService
         user.EmploymentInfos ??= new List<EmploymentInfo>();
         user.EmploymentInfos.Add(employmentInfo);
 
-        await _context.SaveChangesAsync();
+        await context.SaveChangesAsync();
 
-        _logger.LogInformation("EmploymentInfo created for user: {UserId}", createDto.UserId);
+        logger.LogInformation("EmploymentInfo created for user: {UserId}", createDto.UserId);
 
         var result = new EmploymentInfoDto
         {
@@ -421,7 +410,7 @@ public class UserService
     public async Task<ApiResult<EmploymentInfoDto>> UpdateEmploymentInfoAsync(int employmentInfoId,
         UpdateEmploymentInfoDto updateDto)
     {
-        var employmentInfo = await _context.Set<EmploymentInfo>()
+        var employmentInfo = await context.Set<EmploymentInfo>()
             .FirstOrDefaultAsync(e => e.Id == employmentInfoId && !e.isDeleted);
 
         if (employmentInfo == null)
@@ -445,9 +434,9 @@ public class UserService
 
         employmentInfo.UpdatedAt = DateTime.UtcNow;
 
-        await _context.SaveChangesAsync();
+        await context.SaveChangesAsync();
 
-        _logger.LogInformation("EmploymentInfo updated: {EmploymentInfoId}", employmentInfoId);
+        logger.LogInformation("EmploymentInfo updated: {EmploymentInfoId}", employmentInfoId);
 
         var result = new EmploymentInfoDto
         {
@@ -464,7 +453,7 @@ public class UserService
 
     public async Task<ApiResult<bool>> DeleteEmploymentInfoAsync(int employmentInfoId)
     {
-        var employmentInfo = await _context.Set<EmploymentInfo>()
+        var employmentInfo = await context.Set<EmploymentInfo>()
             .FirstOrDefaultAsync(e => e.Id == employmentInfoId && !e.isDeleted);
 
         if (employmentInfo == null)
@@ -475,9 +464,9 @@ public class UserService
         employmentInfo.isDeleted = true;
         employmentInfo.UpdatedAt = DateTime.UtcNow;
 
-        await _context.SaveChangesAsync();
+        await context.SaveChangesAsync();
 
-        _logger.LogInformation("EmploymentInfo deleted: {EmploymentInfoId}", employmentInfoId);
+        logger.LogInformation("EmploymentInfo deleted: {EmploymentInfoId}", employmentInfoId);
 
         return ApiResult<bool>.Ok(true);
     }
@@ -490,7 +479,7 @@ public class UserService
             return ApiResult<string>.Unauthorized("Sadece kendi profil fotoğrafınızı güncelleyebilirsiniz");
         }
 
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId && !u.isDeleted);
+        var user = await context.Users.FirstOrDefaultAsync(u => u.Id == userId && !u.isDeleted);
         if (user == null)
         {
             return ApiResult<string>.NotFound("Kullanıcı bulunamadı");
@@ -515,12 +504,12 @@ public class UserService
 
         user.PhotoPath = storedFileName;
         user.UpdatedAt = DateTime.UtcNow;
-        await _context.SaveChangesAsync();
+        await context.SaveChangesAsync();
 
-        var baseUrl = _configuration["FileStorage:BaseUrl"]?.TrimEnd('/') ?? "http://localhost:5133";
+        var baseUrl = configuration["FileStorage:BaseUrl"]?.TrimEnd('/') ?? "http://localhost:5133";
         var photoUrl = $"{baseUrl}/uploads/photos/{storedFileName}";
 
-        _logger.LogInformation("Profile photo updated for user {UserId}", userId);
+        logger.LogInformation("Profile photo updated for user {UserId}", userId);
         return ApiResult<string>.Ok(photoUrl, "Profil fotoğrafı güncellendi");
     }
 
@@ -532,7 +521,7 @@ public class UserService
             return ApiResult<bool>.Unauthorized("Sadece kendi profil fotoğrafınızı silebilirsiniz");
         }
 
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId && !u.isDeleted);
+        var user = await context.Users.FirstOrDefaultAsync(u => u.Id == userId && !u.isDeleted);
         if (user == null)
         {
             return ApiResult<bool>.NotFound("Kullanıcı bulunamadı");
@@ -540,10 +529,10 @@ public class UserService
 
         try
         {
-            var stored = user.PhotoPath?.Trim();
-            if (!string.IsNullOrWhiteSpace(stored))
+            if (!string.IsNullOrWhiteSpace(user.PhotoPath))
             {
-                string fileNameOnly = stored!;
+                var stored = user.PhotoPath?.Trim();
+                var fileNameOnly = stored!;
                 if (stored!.StartsWith("http", StringComparison.OrdinalIgnoreCase))
                 {
                     var uri = new Uri(stored);
@@ -565,14 +554,14 @@ public class UserService
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Profile photo file delete failed for user {UserId}", userId);
+            logger.LogWarning(ex, "Profile photo file delete failed for user {UserId}", userId);
         }
 
         user.PhotoPath = null;
         user.UpdatedAt = DateTime.UtcNow;
-        await _context.SaveChangesAsync();
+        await context.SaveChangesAsync();
 
-        _logger.LogInformation("Profile photo removed for user {UserId}", userId);
+        logger.LogInformation("Profile photo removed for user {UserId}", userId);
         return ApiResult<bool>.Ok(true, "Profil fotoğrafı kaldırıldı");
     }
 }

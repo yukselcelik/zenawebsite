@@ -11,17 +11,8 @@ namespace Zenabackend.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class LeaveController : ControllerBase
+public class LeaveController(LeaveService leaveService) : ControllerBase
 {
-    private readonly LeaveService _leaveService;
-    private readonly ILogger<LeaveController> _logger;
-
-    public LeaveController(LeaveService leaveService, ILogger<LeaveController> logger)
-    {
-        _leaveService = leaveService;
-        _logger = logger;
-    }
-
     private int GetUserId()
     {
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -39,12 +30,7 @@ public class LeaveController : ControllerBase
         [FromBody] CreateLeaveRequestDto dto)
     {
         var userId = GetUserId();
-        var result = await _leaveService.CreateLeaveRequestAsync(userId, dto);
-
-        if (!result.Success)
-        {
-            return Ok(result);
-        }
+        var result = await leaveService.CreateLeaveRequestAsync(userId, dto);
 
         return Ok(result);
     }
@@ -54,7 +40,7 @@ public class LeaveController : ControllerBase
         [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
     {
         var userId = GetUserId();
-        var result = await _leaveService.GetMyLeaveRequestsAsync(userId, pageNumber, pageSize);
+        var result = await leaveService.GetMyLeaveRequestsAsync(userId, pageNumber, pageSize);
         return Ok(result);
     }
 
@@ -63,39 +49,39 @@ public class LeaveController : ControllerBase
     public async Task<ActionResult<ApiResult<PagedResultDto<LeaveRequestResponseDto>>>> GetAllLeaveRequests(
         [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
     {
-        var result = await _leaveService.GetAllLeaveRequestsAsync(pageNumber, pageSize);
+        var result = await leaveService.GetAllLeaveRequestsAsync(pageNumber, pageSize);
         return Ok(result);
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:int}")]
     public async Task<ActionResult<ApiResult<bool>>> CancelLeaveRequest(int id)
     {
         var userId = GetUserId();
         var isManager = IsManager();
-        var result = await _leaveService.CancelLeaveRequestAsync(id, userId, isManager);
+        var result = await leaveService.CancelLeaveRequestAsync(id, userId, isManager);
 
         return Ok(result);
     }
 
-    [HttpPut("{id}/approve")]
+    [HttpPut("{id:int}/approve")]
     [Authorize(Roles = "Manager")]
     public async Task<ActionResult<ApiResult<bool>>> ApproveLeaveRequest(int id)
     {
-        var result = await _leaveService.ApproveLeaveRequestAsync(id);
+        var result = await leaveService.ApproveLeaveRequestAsync(id);
 
         return Ok(result);
     }
 
-    [HttpPut("{id}/reject")]
+    [HttpPut("{id:int}/reject")]
     [Authorize(Roles = "Manager")]
     public async Task<ActionResult<ApiResult<bool>>> RejectLeaveRequest(int id)
     {
-        var result = await _leaveService.RejectLeaveRequestAsync(id);
+        var result = await leaveService.RejectLeaveRequestAsync(id);
 
         return Ok(result);
     }
 
-    [HttpPut("{id}/status")]
+    [HttpPut("{id:int}/status")]
     [Authorize(Roles = "Manager")]
     public async Task<ActionResult<ApiResult<bool>>> UpdateLeaveStatus(int id, [FromBody] UpdateLeaveStatusDto dto)
     {
@@ -104,7 +90,7 @@ public class LeaveController : ControllerBase
             return Ok(ApiResult<bool>.BadRequest("Geçersiz durum"));
         }
 
-        var result = await _leaveService.UpdateLeaveStatusAsync(id, status);
+        var result = await leaveService.UpdateLeaveStatusAsync(id, status);
 
         return Ok(result);
     }

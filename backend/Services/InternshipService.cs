@@ -6,27 +6,11 @@ using Zenabackend.Models;
 
 namespace Zenabackend.Services;
 
-public class InternshipService
+public class InternshipService(
+    ApplicationDbContext context,
+    ILogger<InternshipService> logger,
+    IConfiguration configuration)
 {
-    private readonly ApplicationDbContext _context;
-    private readonly ILogger<InternshipService> _logger;
-    private readonly IConfiguration _configuration;
-    private readonly string _uploadsPath;
-
-    public InternshipService(ApplicationDbContext context, ILogger<InternshipService> logger, IWebHostEnvironment env,
-        IConfiguration configuration)
-    {
-        _context = context;
-        _logger = logger;
-        _configuration = configuration;
-        _uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "cvs");
-
-        if (!Directory.Exists(_uploadsPath))
-        {
-            Directory.CreateDirectory(_uploadsPath);
-        }
-    }
-
     public async Task<ApiResult<InternshipApplicationResponseDto>> CreateApplicationAsync(
         ApplyInternshipApplicationFormDto dto, string? cvFilePath = null)
     {
@@ -43,10 +27,10 @@ public class InternshipService
             CreatedAt = DateTime.UtcNow.AddHours(3)
         };
 
-        _context.InternshipApplications.Add(application);
-        await _context.SaveChangesAsync();
+        context.InternshipApplications.Add(application);
+        await context.SaveChangesAsync();
 
-        _logger.LogInformation("Internship application created: {Id} by {FullName}", application.Id,
+        logger.LogInformation("Internship application created: {Id} by {FullName}", application.Id,
             application.FullName);
 
         var response = new InternshipApplicationResponseDto
@@ -59,7 +43,7 @@ public class InternshipService
             Department = application.Department,
             Year = application.Year,
             Message = application.Message,
-            CvFilePath = _configuration[""] + "/uploads/cvs" + application.CvFilePath,
+            CvFilePath = configuration["FileStorage:BaseUrl"] + "/uploads/cvs" + application.CvFilePath,
             CreatedAt = application.CreatedAt
         };
 
@@ -81,15 +65,21 @@ public class InternshipService
             throw new ArgumentException("Invalid file type. Only PDF, DOC, and DOCX files are allowed.");
         }
 
+        var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "cvs");
         var fileName = $"{applicationId}_{DateTime.UtcNow:yyyyMMddHHmmss}_{Path.GetFileName(file.FileName)}";
-        var filePath = Path.Combine(_uploadsPath, fileName);
+        var filePath = Path.Combine(uploadsPath, fileName);
+        
+        if (!Directory.Exists(uploadsPath))
+        {
+            Directory.CreateDirectory(uploadsPath);
+        }
 
         await using (var stream = new FileStream(filePath, FileMode.Create))
         {
             await file.CopyToAsync(stream);
         }
 
-        _logger.LogInformation("CV file saved: {FilePath} for application {ApplicationId}", filePath, applicationId);
+        logger.LogInformation("CV file saved: {FilePath} for application {ApplicationId}", filePath, applicationId);
 
         return fileName;
     }
@@ -97,7 +87,7 @@ public class InternshipService
     public async Task<ApiResult<PagedResultDto<InternshipApplicationResponseDto>>> GetAllApplicationsAsync(
         int pageNumber = 1, int pageSize = 10)
     {
-        var query = _context.InternshipApplications
+        var query = context.InternshipApplications
             .AsNoTracking()
             .OrderByDescending(a => a.CreatedAt);
 
@@ -119,7 +109,7 @@ public class InternshipService
             Department = a.Department,
             Year = a.Year,
             Message = a.Message,
-            CvFilePath = _configuration["FileStorage:BaseUrl"] + "/uploads/cvs" + a.CvFilePath,
+            CvFilePath = configuration["FileStorage:BaseUrl"] + "/uploads/cvs" + a.CvFilePath,
             CreatedAt = a.CreatedAt
         }).ToList();
 
@@ -137,13 +127,13 @@ public class InternshipService
 
     public async Task<InternshipApplication?> GetApplicationByIdAsync(int id)
     {
-        return await _context.InternshipApplications
+        return await context.InternshipApplications
             .FirstOrDefaultAsync(a => a.Id == id);
     }
 
     public async Task UpdateApplicationAsync(InternshipApplication application)
     {
-        _context.InternshipApplications.Update(application);
-        await _context.SaveChangesAsync();
+        context.InternshipApplications.Update(application);
+        await context.SaveChangesAsync();
     }
 }
