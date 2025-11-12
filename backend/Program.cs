@@ -6,32 +6,17 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
-using Serilog.Sinks.Grafana.Loki;
+using Zenabackend;
 using Zenabackend.Common;
 using Zenabackend.Data;
 using Zenabackend.Services;
+using Prometheus;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
+using OpenTelemetry.Logs;
 
 var builder = WebApplication.CreateBuilder(args);
-
-var lokiUrl = builder.Configuration["Loki:Url"] ?? builder.Configuration["Grafana:LokiEndpoint"] ?? "http://localhost:3100";
-var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production";
-
-Log.Logger = new LoggerConfiguration()
-    .WriteTo.GrafanaLoki(
-        lokiUrl,
-        [
-            new LokiLabel { Key = "service_name", Value = "ZenaBackend" },
-            new LokiLabel { Key = "app", Value = builder.Configuration["Loki:Labels:app"] ?? "zena-backend" },
-            new LokiLabel { Key = "env", Value = builder.Configuration["Loki:Labels:env"] ?? environment.ToLower() }
-        ],
-        credentials: null)
-    .Enrich.FromLogContext()
-    .WriteTo.Console()
-    .Enrich.WithProperty("Application", "ZenaBackend")
-    .Enrich.WithProperty("Environment", environment)
-    .CreateLogger();
-
-builder.Host.UseSerilog();
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -146,18 +131,34 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+// builder.Services.AddAppObservability(builder.Configuration, builder.Host, builder.Environment);
+
+builder.Services.AddOpenTelemetry()
+    .ConfigureResource(resource => resource.AddService("zena-backend"))
+    .WithTracing(tracerProviderBuilder =>
+        tracerProviderBuilder
+            .AddAspNetCoreInstrumentation()
+            .AddHttpClientInstrumentation()
+            .AddOtlpExporter())
+    .WithMetrics(metricsProviderBuilder =>
+        metricsProviderBuilder
+            .AddAspNetCoreInstrumentation()
+            .AddHttpClientInstrumentation()
+            .AddOtlpExporter());
+
+builder.Logging.AddOpenTelemetry(logging => logging.AddOtlpExporter());
 var app = builder.Build();
 
 try
 {
-    var configuredLokiUrl = builder.Configuration["Loki:Url"] ?? builder.Configuration["Grafana:LokiEndpoint"];
+    var configuredLokiUrl = builder.Configuration["Loki:Url"] ?? builder.Configuration["Grafana:LokiEndpoint"] ?? "http://localhost:3100";
     if (!string.IsNullOrWhiteSpace(configuredLokiUrl))
     {
         Log.Information("Loki logging configured: {LokiUrl}", configuredLokiUrl);
     }
     else
     {
-        Log.Warning("Loki URL not configured, using default: {DefaultUrl}", lokiUrl);
+        Log.Warning("Loki URL not configured, using default: http://localhost:3100");
     }
 }
 catch (Exception ex)
@@ -241,32 +242,37 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.Use(async (context, next) =>
-{
-    var correlationIdHeader = "X-Correlation-Id";
-    var correlationId = context.Request.Headers[correlationIdHeader].FirstOrDefault()
-                        ?? Guid.NewGuid().ToString("N");
-    context.Response.Headers[correlationIdHeader] = correlationId;
-    using (Serilog.Context.LogContext.PushProperty("CorrelationId", correlationId))
-    using (Serilog.Context.LogContext.PushProperty("RequestPath", context.Request.Path))
-    using (Serilog.Context.LogContext.PushProperty("UserId", context.User?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "anonymous"))
-    using (Serilog.Context.LogContext.PushProperty("ClientIP", context.Connection.RemoteIpAddress?.ToString() ?? "unknown"))
-    {
-        await next();
-    }
-});
+// app.Use(async (context, next) =>
+// {
+//     var correlationIdHeader = "X-Correlation-Id";
+//     var correlationId = context.Request.Headers[correlationIdHeader].FirstOrDefault()
+//                         ?? Guid.NewGuid().ToString("N");
+//     context.Response.Headers[correlationIdHeader] = correlationId;
+//     using (Serilog.Context.LogContext.PushProperty("CorrelationId", correlationId))
+//     using (Serilog.Context.LogContext.PushProperty("RequestPath", context.Request.Path))
+//     using (Serilog.Context.LogContext.PushProperty("UserId", context.User?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "anonymous"))
+//     using (Serilog.Context.LogContext.PushProperty("ClientIP", context.Connection.RemoteIpAddress?.ToString() ?? "unknown"))
+//     {
+//         await next();
+//     }
+// });
 
-app.UseSerilogRequestLogging();
-
-app.UseCors("MyPolicy");
+// app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 
+app.UseRouting();
+
+app.UseCors("MyPolicy");
+
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseHttpMetrics();
+
+app.MapMetrics();
 app.MapControllers();
 
 try
