@@ -36,6 +36,8 @@ services:
       - Cors__AllowedOrigins__0=http://localhost:3000
       - Cors__AllowedOrigins__1=http://localhost:3001
       - Cors__AllowedOrigins__2=http://frontend:3000
+      - Loki__Url=http://loki:3100
+      - Grafana__LokiEndpoint=http://loki:3100
     volumes:
       - ./backend/wwwroot:/app/wwwroot
       - ./backend/logs:/app/logs

@@ -13,15 +13,22 @@ using Zenabackend.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var lokiUrl = builder.Configuration["Loki:Url"] ?? builder.Configuration["Grafana:LokiEndpoint"] ?? "http://localhost:3100";
+var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production";
+
 Log.Logger = new LoggerConfiguration()
     .WriteTo.GrafanaLoki(
-                builder.Configuration["Grafana:LokiEndpoint"] ?? "http://localhost:3100",
-                [new LokiLabel { Key = "service_name", Value = "ZenaBackend" }],
-                credentials: null)
+        lokiUrl,
+        [
+            new LokiLabel { Key = "service_name", Value = "ZenaBackend" },
+            new LokiLabel { Key = "app", Value = builder.Configuration["Loki:Labels:app"] ?? "zena-backend" },
+            new LokiLabel { Key = "env", Value = builder.Configuration["Loki:Labels:env"] ?? environment.ToLower() }
+        ],
+        credentials: null)
     .Enrich.FromLogContext()
     .WriteTo.Console()
     .Enrich.WithProperty("Application", "ZenaBackend")
-    .Enrich.WithProperty("Environment", Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production")
+    .Enrich.WithProperty("Environment", environment)
     .CreateLogger();
 
 builder.Host.UseSerilog();
@@ -143,15 +150,19 @@ var app = builder.Build();
 
 try
 {
-    var lokiUrl = builder.Configuration["Loki:Url"];
-    if (!string.IsNullOrWhiteSpace(lokiUrl))
+    var configuredLokiUrl = builder.Configuration["Loki:Url"] ?? builder.Configuration["Grafana:LokiEndpoint"];
+    if (!string.IsNullOrWhiteSpace(configuredLokiUrl))
     {
-        Log.Information("Loki logging configured: {LokiUrl}", lokiUrl);
+        Log.Information("Loki logging configured: {LokiUrl}", configuredLokiUrl);
+    }
+    else
+    {
+        Log.Warning("Loki URL not configured, using default: {DefaultUrl}", lokiUrl);
     }
 }
 catch (Exception ex)
 {
-    Log.Warning(ex, "Loki configuration check failed");
+    Log.Warning(ex, "Loki configuration check failed: {Error}", ex.Message);
 }
 
 using (var scope = app.Services.CreateScope())
