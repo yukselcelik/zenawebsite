@@ -1,0 +1,77 @@
+services:
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.95.0
+    command: ["--config=/etc/otel-collector.yml"]
+    container_name: otel-collector
+    ports:
+      - "4317:4317"
+      - "8889:8889"
+    volumes:
+      - ./config/otel-collector.yml:/etc/otel-collector.yml
+    networks:
+      - monitoring
+
+  loki:
+    image: grafana/loki:2.9.4
+    container_name: loki
+    ports:
+      - "3100:3100"
+    networks:
+      - monitoring
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+    volumes:
+      - ./config/tempo.yml:/etc/tempo.yml
+      - ./config/dataSource.yml:/etc/grafana/provisioning/datasources/datasource.yml
+      
+    networks:
+      - monitoring
+
+  tempo:
+    image: grafana/tempo:latest
+    container_name: tempo
+    command: ["-config.file=/etc/tempo.yml"]
+    ports:
+      - "3200:3200"     # HTTP API
+    volumes:
+      - ./config/tempo.yml:/etc/tempo.yml
+    networks:
+      - monitoring
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - 9090:9090
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
+      # - prometheus:/prometheus-data
+    networks:
+      - monitoring
+  
+  node_exporter:
+    image: quay.io/prometheus/node-exporter:v1.5.0
+    container_name: node_exporter
+    command: '--path.rootfs=/host'
+    pid: host
+    restart: unless-stopped
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    networks:
+      - monitoring
+
+networks:
+  fairfinans-network:
+    driver: bridge
+  monitoring:
