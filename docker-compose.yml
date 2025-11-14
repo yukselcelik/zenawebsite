@@ -37,6 +37,7 @@ services:
       - Cors__AllowedOrigins__1=http://localhost:3001
       - Cors__AllowedOrigins__2=http://frontend:3000
       - Loki__Url=http://loki:3100
+      - OpenTelemetry__OtlpEndpoint=http://otel-collector:4317
     volumes:
       - ./backend/wwwroot:/app/wwwroot
       - ./backend/logs:/app/logs
@@ -45,6 +46,7 @@ services:
         condition: service_healthy
     networks:
       - zena_network
+      - monitoring
 
   frontend:
     build:
@@ -66,6 +68,8 @@ services:
 networks:
   zena_network:
     driver: bridge
+  monitoring:
+    external: true
 
 volumes:
   pgdata:

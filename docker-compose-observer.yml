@@ -75,3 +75,4 @@ networks:
   fairfinans-network:
     driver: bridge
   monitoring:
+    driver: bridge
