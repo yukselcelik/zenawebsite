@@ -131,22 +131,8 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-// builder.Services.AddAppObservability(builder.Configuration, builder.Host, builder.Environment);
+builder.Services.AddAppObservability(builder.Configuration, builder.Environment, "zena-backend");
 
-builder.Services.AddOpenTelemetry()
-    .ConfigureResource(resource => resource.AddService("zena-backend"))
-    .WithTracing(tracerProviderBuilder =>
-        tracerProviderBuilder
-            .AddAspNetCoreInstrumentation()
-            .AddHttpClientInstrumentation()
-            .AddOtlpExporter())
-    .WithMetrics(metricsProviderBuilder =>
-        metricsProviderBuilder
-            .AddAspNetCoreInstrumentation()
-            .AddHttpClientInstrumentation()
-            .AddOtlpExporter());
-
-builder.Logging.AddOpenTelemetry(logging => logging.AddOtlpExporter());
 var app = builder.Build();
 
 try
@@ -241,23 +227,6 @@ if (app.Environment.IsDevelopment())
         c.RoutePrefix = "/swagger";
     });
 }
-
-// app.Use(async (context, next) =>
-// {
-//     var correlationIdHeader = "X-Correlation-Id";
-//     var correlationId = context.Request.Headers[correlationIdHeader].FirstOrDefault()
-//                         ?? Guid.NewGuid().ToString("N");
-//     context.Response.Headers[correlationIdHeader] = correlationId;
-//     using (Serilog.Context.LogContext.PushProperty("CorrelationId", correlationId))
-//     using (Serilog.Context.LogContext.PushProperty("RequestPath", context.Request.Path))
-//     using (Serilog.Context.LogContext.PushProperty("UserId", context.User?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "anonymous"))
-//     using (Serilog.Context.LogContext.PushProperty("ClientIP", context.Connection.RemoteIpAddress?.ToString() ?? "unknown"))
-//     {
-//         await next();
-//     }
-// });
-
-// app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();
 
