@@ -5,9 +5,8 @@ using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Serilog;
-using Serilog.Sinks.Grafana.Loki;
 using Serilog.Sinks.OpenTelemetry;
-using Zenabackend.Enrichers;
+
 
 namespace Zenabackend;
 
