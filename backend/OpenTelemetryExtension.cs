@@ -71,7 +71,7 @@ public static class OpenTelemetryExtensions
                 .AddAttributes(new Dictionary<string, object>
                 {
                     ["environment.name"] = environment.EnvironmentName, // Add environment name
-                    ["app.group"] = "finans" // Custom application group attribute
+                    ["app.group"] = "zena" // Custom application group attribute
                 });
         }
 
