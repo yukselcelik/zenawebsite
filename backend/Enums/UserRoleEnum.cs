@@ -1,8 +1,8 @@
 using System.ComponentModel;
 
-namespace Zenabackend.Models;
+namespace Zenabackend.Enums;
 
-public enum UserRole
+public enum UserRoleEnum
 {
     [Description("Personel")]
     Personel = 0,

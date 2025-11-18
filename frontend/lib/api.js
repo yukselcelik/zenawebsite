@@ -455,6 +455,56 @@ class ApiService {
 
     return this.handleResponse(response);
   }
+
+  // Social Security API calls
+  static async getSocialSecurity(userId) {
+    const response = await fetch(`${API_BASE_URL}/api/user/${userId}/social-security`, {
+      method: 'GET',
+      headers: this.getHeaders(),
+    });
+
+    return this.handleResponse(response);
+  }
+
+  static async createOrUpdateSocialSecurity(data) {
+    const response = await fetch(`${API_BASE_URL}/api/user/social-security`, {
+      method: 'POST',
+      headers: this.getHeaders(),
+      body: JSON.stringify(data),
+    });
+
+    return this.handleResponse(response);
+  }
+
+  static async uploadSocialSecurityDocument(userId, documentType, file) {
+    const token = this.getToken();
+    const headers = {};
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+    
+    const formData = new FormData();
+    formData.append('userId', userId.toString());
+    formData.append('documentType', documentType.toString());
+    formData.append('file', file);
+
+    const response = await fetch(`${API_BASE_URL}/api/user/social-security/document`, {
+      method: 'POST',
+      headers,
+      body: formData,
+    });
+
+    return this.handleResponse(response);
+  }
+
+  static async deleteSocialSecurityDocument(documentId) {
+    const response = await fetch(`${API_BASE_URL}/api/user/social-security/document/${documentId}`, {
+      method: 'DELETE',
+      headers: this.getHeaders(),
+    });
+
+    return this.handleResponse(response);
+  }
 }
 
 export default ApiService;

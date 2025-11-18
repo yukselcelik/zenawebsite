@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Zenabackend.Models;
 
-public class InternshipApplication
+public class InternshipApplication : BaseEntity
 {
     public int Id { get; set; }
     
@@ -35,6 +35,4 @@ public class InternshipApplication
     
     [MaxLength(500)]
     public string? CvFilePath { get; set; }
-    
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow.AddHours(3);
 }

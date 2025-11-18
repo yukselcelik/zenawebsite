@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Zenabackend.Enums;
 using Zenabackend.Models;
 
 namespace Zenabackend.Data;
@@ -9,7 +10,7 @@ public static class DatabaseSeeder
     {
         try
         {
-            if (!await context.Users.AnyAsync(u => u.Role == UserRole.Manager))
+            if (!await context.Users.AnyAsync(u => u.Role == UserRoleEnum.Manager))
             {
                 var adminUser = new User
                 {
@@ -18,7 +19,7 @@ public static class DatabaseSeeder
                     Surname = "Kullanıcı",
                     Phone = "5550001122",
                     PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123!"),
-                    Role = UserRole.Manager,
+                    Role = UserRoleEnum.Manager,
                     IsApproved = true, 
                     CreatedAt = DateTime.UtcNow.AddHours(3),
                     UpdatedAt = DateTime.UtcNow.AddHours(3),
@@ -31,7 +32,7 @@ public static class DatabaseSeeder
                 logger.LogInformation("Default admin user created: admin@zena.com / Admin123!");
             }
 
-            var personelCount = await context.Users.CountAsync(u => u.Role == UserRole.Personel && u.IsApproved);
+            var personelCount = await context.Users.CountAsync(u => u.Role == UserRoleEnum.Personel && u.IsApproved);
             
             if (personelCount < 2)
             {
@@ -42,7 +43,7 @@ public static class DatabaseSeeder
                     Surname = "Yılmaz",
                     Phone = "5649871515",
                     PasswordHash = BCrypt.Net.BCrypt.HashPassword("Personel123!"),
-                    Role = UserRole.Personel,
+                    Role = UserRoleEnum.Personel,
                     IsApproved = true, 
                     ApprovedAt = DateTime.UtcNow.AddHours(3).AddDays(-28),
                     CreatedAt = DateTime.UtcNow.AddHours(3).AddDays(-30),
@@ -57,7 +58,7 @@ public static class DatabaseSeeder
                     Surname = "Demir",
                     Phone = "5551112233",
                     PasswordHash = BCrypt.Net.BCrypt.HashPassword("Personel123!"),
-                    Role = UserRole.Personel,
+                    Role = UserRoleEnum.Personel,
                     IsApproved = true, 
                     ApprovedAt = DateTime.UtcNow.AddHours(3).AddDays(-23),
                     CreatedAt = DateTime.UtcNow.AddHours(3).AddDays(-25),
@@ -112,8 +113,8 @@ public static class DatabaseSeeder
                     UserId = personel1.Id,
                     StartDate = DateTime.UtcNow.AddHours(3).AddDays(-30),
                     Position = "Yazılım Geliştirici",
-                    WorkType = WorkType.FullTime,
-                    ContractType = ContractType.FixedTerm,
+                    WorkType = WorkTypeEnum.FullTime,
+                    ContractType = ContractTypeEnum.FixedTerm,
                     WorkplaceNumber = "1234567890"
                 };
                 var employmentInfo2 = new EmploymentInfo
@@ -121,8 +122,8 @@ public static class DatabaseSeeder
                     UserId = personel2.Id,
                     StartDate = DateTime.UtcNow.AddHours(3).AddDays(-30),
                     Position = "Yazılım Geliştirici",
-                    WorkType = WorkType.FullTime,
-                    ContractType = ContractType.FixedTerm,
+                    WorkType = WorkTypeEnum.FullTime,
+                    ContractType = ContractTypeEnum.FixedTerm,
                     WorkplaceNumber = "1234567890"
                 };
                 context.EmploymentInfos.AddRange(employmentInfo1, employmentInfo2);
@@ -152,7 +153,7 @@ public static class DatabaseSeeder
                 logger.LogInformation("Dummy education info created");
 
                 var personelUsers = await context.Users
-                    .Where(u => u.Role == UserRole.Personel && u.IsApproved)
+                    .Where(u => u.Role == UserRoleEnum.Personel && u.IsApproved)
                     .OrderBy(u => u.CreatedAt)
                     .ToListAsync();
 
@@ -167,7 +168,7 @@ public static class DatabaseSeeder
                         StartDate = DateTime.UtcNow.Date.AddDays(5),
                         EndDate = DateTime.UtcNow.Date.AddDays(7),
                         Reason = "Aile ziyareti için izin talebi",
-                        Status = LeaveStatus.Pending,
+                        Status = LeaveStatusEnum.Pending,
                         CreatedAt = DateTime.UtcNow.AddHours(3).AddDays(-10),
                         UpdatedAt = DateTime.UtcNow.AddHours(3).AddDays(-10)
                     });
@@ -178,7 +179,7 @@ public static class DatabaseSeeder
                         StartDate = DateTime.UtcNow.Date.AddDays(-15),
                         EndDate = DateTime.UtcNow.Date.AddDays(-12),
                         Reason = "Sağlık kontrolü için izin",
-                        Status = LeaveStatus.Approved,
+                        Status = LeaveStatusEnum.Approved,
                         CreatedAt = DateTime.UtcNow.AddHours(3).AddDays(-20),
                         UpdatedAt = DateTime.UtcNow.AddHours(3).AddDays(-15)
                     });
@@ -190,7 +191,7 @@ public static class DatabaseSeeder
                         StartDate = DateTime.UtcNow.Date.AddDays(10),
                         EndDate = DateTime.UtcNow.Date.AddDays(12),
                         Reason = "Tatil planı için izin talebi",
-                        Status = LeaveStatus.Pending,
+                        Status = LeaveStatusEnum.Pending,
                         CreatedAt = DateTime.UtcNow.AddHours(3).AddDays(-8),
                         UpdatedAt = DateTime.UtcNow.AddHours(3).AddDays(-8)
                     });
@@ -201,7 +202,7 @@ public static class DatabaseSeeder
                         StartDate = DateTime.UtcNow.Date.AddDays(-25),
                         EndDate = DateTime.UtcNow.Date.AddDays(-23),
                         Reason = "Acil durum izni",
-                        Status = LeaveStatus.Cancelled,
+                        Status = LeaveStatusEnum.Cancelled,
                         CreatedAt = DateTime.UtcNow.AddHours(3).AddDays(-28),
                         UpdatedAt = DateTime.UtcNow.AddHours(3).AddDays(-26)
                     });

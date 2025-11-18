@@ -1,6 +1,6 @@
-namespace Zenabackend.Models;
+namespace Zenabackend.Enums;
 
-public enum LeaveStatus
+public enum LeaveStatusEnum
 {
     Pending = 0,
     Approved = 1,

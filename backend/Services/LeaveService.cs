@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Zenabackend.Common;
 using Zenabackend.Data;
 using Zenabackend.DTOs;
+using Zenabackend.Enums;
 using Zenabackend.Models;
 
 namespace Zenabackend.Services;
@@ -32,7 +33,7 @@ public class LeaveService(ApplicationDbContext context, ILogger<LeaveService> lo
             StartDate = startDate,
             EndDate = endDate,
             Reason = dto.Reason,
-            Status = LeaveStatus.Pending,
+            Status = LeaveStatusEnum.Pending,
             CreatedAt = now,
             UpdatedAt = now
         };
@@ -160,12 +161,12 @@ public class LeaveService(ApplicationDbContext context, ILogger<LeaveService> lo
             return ApiResult<bool>.Forbidden("Bu izin talebini iptal etme yetkiniz yok");
         }
 
-        if (leaveRequest.Status != LeaveStatus.Pending)
+        if (leaveRequest.Status != LeaveStatusEnum.Pending)
         {
             return ApiResult<bool>.BadRequest("Sadece bekleyen izin talepleri iptal edilebilir");
         }
 
-        leaveRequest.Status = LeaveStatus.Cancelled;
+        leaveRequest.Status = LeaveStatusEnum.Cancelled;
         leaveRequest.UpdatedAt = DateTime.UtcNow;
 
         await context.SaveChangesAsync();
@@ -184,12 +185,12 @@ public class LeaveService(ApplicationDbContext context, ILogger<LeaveService> lo
             return ApiResult<bool>.NotFound("İzin talebi bulunamadı");
         }
 
-        if (leaveRequest.Status != LeaveStatus.Pending)
+        if (leaveRequest.Status != LeaveStatusEnum.Pending)
         {
             return ApiResult<bool>.BadRequest("Sadece bekleyen izin talepleri onaylanabilir");
         }
 
-        leaveRequest.Status = LeaveStatus.Approved;
+        leaveRequest.Status = LeaveStatusEnum.Approved;
         leaveRequest.UpdatedAt = DateTime.UtcNow;
 
         await context.SaveChangesAsync();
@@ -208,12 +209,12 @@ public class LeaveService(ApplicationDbContext context, ILogger<LeaveService> lo
             return ApiResult<bool>.NotFound("İzin talebi bulunamadı");
         }
 
-        if (leaveRequest.Status != LeaveStatus.Pending)
+        if (leaveRequest.Status != LeaveStatusEnum.Pending)
         {
             return ApiResult<bool>.BadRequest("Sadece bekleyen izin talepleri reddedilebilir");
         }
 
-        leaveRequest.Status = LeaveStatus.Rejected;
+        leaveRequest.Status = LeaveStatusEnum.Rejected;
         leaveRequest.UpdatedAt = DateTime.UtcNow;
 
         await context.SaveChangesAsync();
@@ -223,7 +224,7 @@ public class LeaveService(ApplicationDbContext context, ILogger<LeaveService> lo
         return ApiResult<bool>.Ok(true);
     }
 
-    public async Task<ApiResult<bool>> UpdateLeaveStatusAsync(int leaveRequestId, LeaveStatus newStatus)
+    public async Task<ApiResult<bool>> UpdateLeaveStatusAsync(int leaveRequestId, LeaveStatusEnum newStatus)
     {
         var leaveRequest = await context.LeaveRequests.FindAsync(leaveRequestId);
 

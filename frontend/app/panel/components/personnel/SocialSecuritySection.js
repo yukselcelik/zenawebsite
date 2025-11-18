@@ -1,0 +1,368 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import ApiService from '../../../../lib/api';
+import ConfirmDialog from '../common/ConfirmDialog';
+
+export default function SocialSecuritySection({ socialSecurity: initialSocialSecurity, userId, onUpdate }) {
+  const [socialSecurity, setSocialSecurity] = useState(initialSocialSecurity);
+  const [socialSecurityNumber, setSocialSecurityNumber] = useState('');
+  const [taxNumber, setTaxNumber] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [showDocumentForm, setShowDocumentForm] = useState(false);
+  const [documentFormData, setDocumentFormData] = useState({
+    documentType: '1', // HealthDocument
+    file: null
+  });
+  const [uploading, setUploading] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmLoading, setConfirmLoading] = useState(false);
+  const [documentToDelete, setDocumentToDelete] = useState(null);
+
+  // Update local state when prop changes
+  useEffect(() => {
+    setSocialSecurity(initialSocialSecurity);
+  }, [initialSocialSecurity]);
+
+  // All available document types
+  const allDocumentTypeOptions = [
+    { value: '1', label: 'Sağlık Raporları' },
+    { value: '2', label: 'Engellilik/İşe Uygunluk Belgesi' },
+    { value: '3', label: 'Özel Sağlık Sigortası' }
+  ];
+
+  useEffect(() => {
+    if (socialSecurity) {
+      setSocialSecurityNumber(socialSecurity.socialSecurityNumber || '');
+      setTaxNumber(socialSecurity.taxNumber || '');
+    }
+  }, [socialSecurity]);
+
+  // Update document type when available options change
+  useEffect(() => {
+    const existingDocumentTypes = socialSecurity?.documents?.map(doc => doc.documentType.toString()) || [];
+    const availableOptions = allDocumentTypeOptions.filter(
+      option => !existingDocumentTypes.includes(option.value)
+    );
+    
+    // If current selected type is no longer available, select first available option
+    if (availableOptions.length > 0 && !availableOptions.find(opt => opt.value === documentFormData.documentType)) {
+      setDocumentFormData(prev => ({ ...prev, documentType: availableOptions[0].value }));
+    }
+  }, [socialSecurity?.documents]);
+
+  const refreshSocialSecurity = async () => {
+    try {
+      const response = await ApiService.getSocialSecurity(userId);
+      if (response?.data) {
+        setSocialSecurity(response.data);
+        setSocialSecurityNumber(response.data.socialSecurityNumber || '');
+        setTaxNumber(response.data.taxNumber || '');
+      }
+    } catch (error) {
+      console.error('Error refreshing social security:', error);
+    }
+  };
+
+  const handleSave = async () => {
+    try {
+      setSaving(true);
+      const response = await ApiService.createOrUpdateSocialSecurity({
+        userId: userId,
+        socialSecurityNumber: socialSecurityNumber || null,
+        taxNumber: taxNumber || ''
+      });
+      if (response?.data) {
+        setSocialSecurity(response.data);
+      }
+    } catch (error) {
+      console.error('Error saving social security:', error);
+      alert(error.message || 'Sosyal güvenlik bilgileri kaydedilemedi');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDocumentUpload = async (e) => {
+    e.preventDefault();
+    if (!documentFormData.file) {
+      alert('Lütfen bir dosya seçin');
+      return;
+    }
+
+    try {
+      setUploading(true);
+      await ApiService.uploadSocialSecurityDocument(
+        userId,
+        parseInt(documentFormData.documentType),
+        documentFormData.file
+      );
+      setShowDocumentForm(false);
+      setDocumentFormData({
+        documentType: '1',
+        file: null
+      });
+      // Refresh only social security data
+      await refreshSocialSecurity();
+    } catch (error) {
+      console.error('Error uploading document:', error);
+      alert(error.message || 'Belge yüklenemedi');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleDelete = (documentId) => {
+    setDocumentToDelete(documentId);
+    setConfirmOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!documentToDelete) return;
+    try {
+      setConfirmLoading(true);
+      await ApiService.deleteSocialSecurityDocument(documentToDelete);
+      setConfirmOpen(false);
+      setDocumentToDelete(null);
+      // Refresh only social security data
+      await refreshSocialSecurity();
+    } catch (error) {
+      console.error('Error deleting document:', error);
+      alert(error.message || 'Belge silinemedi');
+    } finally {
+      setConfirmLoading(false);
+    }
+  };
+
+  const handleViewDocument = (documentUrl) => {
+    if (documentUrl) {
+      window.open(documentUrl, '_blank');
+    }
+  };
+
+  // Filter out document types that already exist for this user
+  const existingDocumentTypes = socialSecurity?.documents?.map(doc => doc.documentType.toString()) || [];
+  const documentTypeOptions = allDocumentTypeOptions.filter(
+    option => !existingDocumentTypes.includes(option.value)
+  );
+
+  return (
+    <div className="mb-6">
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-lg font-semibold text-gray-800">Sosyal Güvenlik Bilgileri</h3>
+      </div>
+
+      {/* Social Security Number and Tax Number Inputs */}
+      <div className="mb-6 p-4 bg-gray-50 rounded-lg space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Sosyal Güvenlik Numarası</label>
+            <input
+              type="text"
+              value={socialSecurityNumber}
+              onChange={(e) => setSocialSecurityNumber(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 cursor-pointer"
+              placeholder="Sosyal güvenlik numarası"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Vergi Numarası</label>
+            <input
+              type="text"
+              value={taxNumber}
+              onChange={(e) => setTaxNumber(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 cursor-pointer"
+              placeholder="Vergi numarası"
+            />
+          </div>
+        </div>
+        <div className="flex justify-end">
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className={`px-4 py-2 rounded-lg text-white text-sm cursor-pointer ${
+              saving ? 'bg-gray-400' : 'bg-orange-500 hover:bg-orange-600'
+            }`}
+          >
+            {saving ? 'Kaydediliyor...' : 'Kaydet'}
+          </button>
+        </div>
+      </div>
+
+      {/* Document Management */}
+      <div className="mb-4">
+        <div className="flex justify-between items-center mb-4">
+          <h4 className="text-md font-semibold text-gray-700">Belgeler</h4>
+          <button
+            onClick={() => setShowDocumentForm(!showDocumentForm)}
+            className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm cursor-pointer"
+          >
+            {showDocumentForm ? 'İptal' : 'Yeni Belge Ekle'}
+          </button>
+        </div>
+
+        {showDocumentForm && (
+          <form onSubmit={handleDocumentUpload} className="mb-6 p-4 bg-gray-50 rounded-lg space-y-4">
+            {documentTypeOptions.length === 0 ? (
+              <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <p className="text-sm text-blue-800">
+                  Tüm belge tipleri zaten eklenmiş. Yeni belge eklemek için mevcut belgelerden birini silmeniz gerekmektedir.
+                </p>
+              </div>
+            ) : (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Belge Tipi</label>
+                <select
+                  value={documentFormData.documentType}
+                  onChange={(e) => setDocumentFormData({ ...documentFormData, documentType: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 cursor-pointer"
+                >
+                  {documentTypeOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Dosya</label>
+              <input
+                type="file"
+                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                onChange={(e) => setDocumentFormData({ ...documentFormData, file: e.target.files[0] })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 cursor-pointer"
+              />
+            </div>
+            <div className="flex justify-end space-x-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowDocumentForm(false);
+                  setDocumentFormData({
+                    documentType: '1',
+                    file: null
+                  });
+                }}
+                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 cursor-pointer"
+              >
+                İptal
+              </button>
+              <button
+                type="submit"
+                disabled={uploading || !documentFormData.file || documentTypeOptions.length === 0}
+                className={`px-4 py-2 rounded-lg text-white cursor-pointer ${
+                  uploading || !documentFormData.file || documentTypeOptions.length === 0
+                    ? 'bg-gray-400'
+                    : 'bg-orange-500 hover:bg-orange-600'
+                }`}
+              >
+                {uploading ? 'Yükleniyor...' : 'Yükle'}
+              </button>
+            </div>
+          </form>
+        )}
+
+        {/* Documents Grid */}
+        <div className="mt-4">
+          {socialSecurity?.documents && socialSecurity.documents.length > 0 ? (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {socialSecurity.documents.map((doc) => {
+                const getFileIcon = (url) => {
+                  if (!url) return '📄';
+                  const extension = url.split('.').pop()?.toLowerCase();
+                  if (['pdf'].includes(extension)) return '📕';
+                  if (['doc', 'docx'].includes(extension)) return '📘';
+                  if (['jpg', 'jpeg', 'png', 'gif'].includes(extension)) return '🖼️';
+                  return '📄';
+                };
+
+                const getFileExtension = (url) => {
+                  if (!url) return '';
+                  const extension = url.split('.').pop()?.toUpperCase();
+                  return extension || '';
+                };
+
+                return (
+                  <div
+                    key={doc.id}
+                    className="relative bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                  >
+                    {/* Delete Button - Top Right */}
+                    <button
+                      onClick={() => handleDelete(doc.id)}
+                      className="absolute top-2 right-2 text-red-600 hover:text-red-800 cursor-pointer bg-white rounded-full p-1 shadow-sm hover:bg-red-50 transition-colors"
+                      title="Sil"
+                    >
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
+                    </button>
+
+                    {/* File Icon - Clickable */}
+                    <div
+                      onClick={() => handleViewDocument(doc.documentUrl)}
+                      className="flex flex-col items-center cursor-pointer group"
+                    >
+                      <div className="text-6xl mb-2 group-hover:scale-110 transition-transform">
+                        {getFileIcon(doc.documentUrl)}
+                      </div>
+                      
+                      {/* File Type */}
+                      <div className="text-sm font-medium text-gray-700 text-center mb-1 line-clamp-2">
+                        {doc.documentTypeName}
+                      </div>
+                      
+                      {/* Upload Date */}
+                      <div className="text-xs text-gray-500 text-center mb-1">
+                        {new Date(doc.createdAt).toLocaleDateString('tr-TR', {
+                          day: '2-digit',
+                          month: '2-digit',
+                          year: 'numeric'
+                        })}
+                      </div>
+                      
+                      {/* File Extension */}
+                      <div className="text-xs text-gray-400 text-center">
+                        {getFileExtension(doc.documentUrl)}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="text-center py-8 text-gray-500 text-sm">
+              Belge bulunmamaktadır.
+            </div>
+          )}
+        </div>
+      </div>
+
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Belgeyi silmek istediğinize emin misiniz?"
+        message="Bu işlem geri alınamaz. Belge kalıcı olarak silinecektir."
+        confirmText="Evet, Sil"
+        cancelText="Vazgeç"
+        loading={confirmLoading}
+        onCancel={() => {
+          setConfirmOpen(false);
+          setDocumentToDelete(null);
+        }}
+        onConfirm={handleConfirmDelete}
+      />
+    </div>
+  );
+}
+

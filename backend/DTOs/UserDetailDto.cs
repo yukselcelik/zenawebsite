@@ -18,6 +18,8 @@ public class UserDetailDto
     public List<EmergencyContactDto>? EmergencyContacts { get; set; }
     public List<EmploymentInfoDto>? EmploymentInfos { get; set; }
     public List<EducationInfoDto>? EducationInfos { get; set; }
+    public SocialSecurityDto? SocialSecurity { get; set; }
+    public List<SocialSecurityDocumentDto>? SocialSecurityDocuments { get; set; }
 }
 
 public class ContactInfoDto

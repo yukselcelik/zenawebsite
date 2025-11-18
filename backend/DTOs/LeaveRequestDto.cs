@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Zenabackend.Enums;
 using Zenabackend.Models;
 
 namespace Zenabackend.DTOs;
@@ -26,7 +27,7 @@ public class LeaveRequestResponseDto
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
     public string Reason { get; set; } = string.Empty;
-    public LeaveStatus Status { get; set; }
+    public LeaveStatusEnum Status { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 }

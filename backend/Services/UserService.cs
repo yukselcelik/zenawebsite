@@ -5,15 +5,16 @@ using Zenabackend.Common;
 using Zenabackend.Data;
 using Zenabackend.DTOs;
 using Zenabackend.Models;
+using Zenabackend.Enums;
 
 namespace Zenabackend.Services;
 
 public class UserService(ApplicationDbContext context, ILogger<UserService> logger, IConfiguration configuration)
 {
     public async Task<ApiResult<UserDetailDto>> GetUserDetailAsync(int userId, int requestingUserId,
-        UserRole requestingUserRole)
+        UserRoleEnum requestingUserRole)
     {
-        if (requestingUserRole != UserRole.Manager && userId != requestingUserId)
+        if (requestingUserRole != UserRoleEnum.Manager && userId != requestingUserId)
         {
             return ApiResult<UserDetailDto>.Unauthorized("Sadece kendi bilgilerinizi görüntüleyebilirsiniz");
         }
@@ -23,6 +24,7 @@ public class UserService(ApplicationDbContext context, ILogger<UserService> logg
             .Include(u => u.EmergencyContacts!.Where(e => !e.isDeleted))
             .Include(u => u.EmploymentInfos!.Where(e => !e.isDeleted))
             .Include(u => u.EducationInfos!.Where(e => !e.isDeleted))
+            .Include(u => u.SocialSecurityDocuments!.Where(d => !d.isDeleted))
             .AsNoTracking()
             .FirstOrDefaultAsync(u => u.Id == userId && !u.isDeleted);
 
@@ -100,16 +102,94 @@ public class UserService(ApplicationDbContext context, ILogger<UserService> logg
                 Department = e.Department,
                 GraduationYear = e.GraduationYear,
                 Certification = e.Certification
-            }).ToList()
+            }).ToList(),
+            SocialSecurity = new SocialSecurityDto
+            {
+                UserId = user.Id,
+                SocialSecurityNumber = user.SocialSecurityNumber,
+                TaxNumber = user.TaxNumber,
+                Documents = user.SocialSecurityDocuments?.Select(d =>
+                {
+                    var docPath = d.DocumentPath;
+                    var docUrl = string.Empty;
+                    if (!string.IsNullOrWhiteSpace(docPath))
+                    {
+                        var trimmed = docPath.Trim();
+                        var baseUrlLocal = configuration["FileStorage:BaseUrl"]?.TrimEnd('/') ?? "http://localhost:5133";
+                        if (trimmed.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+                        {
+                            docUrl = trimmed;
+                        }
+                        else if (trimmed.StartsWith("/uploads/", StringComparison.OrdinalIgnoreCase))
+                        {
+                            docUrl = $"{baseUrlLocal}{trimmed}";
+                        }
+                        else if (trimmed.StartsWith("uploads/", StringComparison.OrdinalIgnoreCase))
+                        {
+                            docUrl = $"{baseUrlLocal}/{trimmed}";
+                        }
+                        else
+                        {
+                            docUrl = $"{baseUrlLocal}/uploads/social-security/{trimmed}";
+                        }
+                    }
+                    return new SocialSecurityDocumentDto
+                    {
+                        Id = d.Id,
+                        DocumentPath = d.DocumentPath,
+                        DocumentUrl = docUrl,
+                        DocumentType = d.DocumentType,
+                        DocumentTypeName = d.DocumentTypeName,
+                        UserId = d.UserId,
+                        CreatedAt = d.CreatedAt
+                    };
+                }).ToList() ?? new List<SocialSecurityDocumentDto>()
+            },
+            SocialSecurityDocuments = user.SocialSecurityDocuments?.Select(d =>
+            {
+                var docPath = d.DocumentPath;
+                var docUrl = string.Empty;
+                if (!string.IsNullOrWhiteSpace(docPath))
+                {
+                    var trimmed = docPath.Trim();
+                    var baseUrlLocal = configuration["FileStorage:BaseUrl"]?.TrimEnd('/') ?? "http://localhost:5133";
+                    if (trimmed.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+                    {
+                        docUrl = trimmed;
+                    }
+                    else if (trimmed.StartsWith("/uploads/", StringComparison.OrdinalIgnoreCase))
+                    {
+                        docUrl = $"{baseUrlLocal}{trimmed}";
+                    }
+                    else if (trimmed.StartsWith("uploads/", StringComparison.OrdinalIgnoreCase))
+                    {
+                        docUrl = $"{baseUrlLocal}/{trimmed}";
+                    }
+                    else
+                    {
+                        docUrl = $"{baseUrlLocal}/uploads/social-security/{trimmed}";
+                    }
+                }
+                return new SocialSecurityDocumentDto
+                {
+                    Id = d.Id,
+                    DocumentPath = d.DocumentPath,
+                    DocumentUrl = docUrl,
+                    DocumentType = d.DocumentType,
+                    DocumentTypeName = d.DocumentTypeName,
+                    UserId = d.UserId,
+                    CreatedAt = d.CreatedAt
+                };
+            }).ToList() ?? null
         };
 
         return ApiResult<UserDetailDto>.Ok(userDetail);
     }
 
     public async Task<ApiResult<UserDetailDto>> UpdateUserAsync(int userId, UpdateUserDto updateDto,
-        int requestingUserId, UserRole requestingUserRole)
+        int requestingUserId, UserRoleEnum requestingUserRole)
     {
-        if (requestingUserRole != UserRole.Manager && userId != requestingUserId)
+        if (requestingUserRole != UserRoleEnum.Manager && userId != requestingUserId)
         {
             return ApiResult<UserDetailDto>.Unauthorized("Sadece kendi bilgilerinizi güncelleyebilirsiniz");
         }
@@ -132,7 +212,7 @@ public class UserService(ApplicationDbContext context, ILogger<UserService> logg
 
         if (updateDto.TcNo != null)
         {
-            if (requestingUserRole == UserRole.Manager || userId == requestingUserId)
+            if (requestingUserRole == UserRoleEnum.Manager || userId == requestingUserId)
             {
                 var trimmed = updateDto.TcNo.Trim();
                 if (!string.IsNullOrEmpty(trimmed) && trimmed.All(char.IsDigit) && (trimmed.Length == 11))
@@ -152,12 +232,12 @@ public class UserService(ApplicationDbContext context, ILogger<UserService> logg
 
         if (updateDto.Role != null)
         {
-            if (requestingUserRole != UserRole.Manager)
+            if (requestingUserRole != UserRoleEnum.Manager)
             {
                 return ApiResult<UserDetailDto>.Unauthorized("Rol güncelleme yetkiniz yok");
             }
 
-            if (!Enum.TryParse<UserRole>(updateDto.Role, true, out var newRole))
+            if (!Enum.TryParse<UserRoleEnum>(updateDto.Role, true, out var newRole))
             {
                 return ApiResult<UserDetailDto>.BadRequest("Geçersiz rol");
             }
@@ -293,7 +373,7 @@ public class UserService(ApplicationDbContext context, ILogger<UserService> logg
         var query = context.Users
             .AsNoTracking()
             .Where(u => !u.isDeleted)
-            .OrderByDescending(u => u.Role == UserRole.Manager)
+            .OrderByDescending(u => u.Role == UserRoleEnum.Manager)
             .ThenByDescending(u => u.IsApproved)
             .ThenByDescending(u => u.CreatedAt);
 
@@ -364,12 +444,12 @@ public class UserService(ApplicationDbContext context, ILogger<UserService> logg
             return ApiResult<EmploymentInfoDto>.NotFound("Kullanıcı bulunamadı");
         }
 
-        if (!Enum.TryParse<WorkType>(createDto.WorkType, out var workType))
+        if (!Enum.TryParse<WorkTypeEnum>(createDto.WorkType, out var workType))
         {
             return ApiResult<EmploymentInfoDto>.BadRequest("Geçersiz WorkType");
         }
 
-        if (!Enum.TryParse<ContractType>(createDto.ContractType, out var contractType))
+        if (!Enum.TryParse<ContractTypeEnum>(createDto.ContractType, out var contractType))
         {
             return ApiResult<EmploymentInfoDto>.BadRequest("Geçersiz ContractType");
         }
@@ -420,12 +500,12 @@ public class UserService(ApplicationDbContext context, ILogger<UserService> logg
 
         if (updateDto.StartDate.HasValue) employmentInfo.StartDate = updateDto.StartDate.Value;
         if (updateDto.Position != null) employmentInfo.Position = updateDto.Position;
-        if (updateDto.WorkType != null && Enum.TryParse<WorkType>(updateDto.WorkType, out var workType))
+        if (updateDto.WorkType != null && Enum.TryParse<WorkTypeEnum>(updateDto.WorkType, out var workType))
         {
             employmentInfo.WorkType = workType;
         }
 
-        if (updateDto.ContractType != null && Enum.TryParse<ContractType>(updateDto.ContractType, out var contractType))
+        if (updateDto.ContractType != null && Enum.TryParse<ContractTypeEnum>(updateDto.ContractType, out var contractType))
         {
             employmentInfo.ContractType = contractType;
         }
@@ -472,9 +552,9 @@ public class UserService(ApplicationDbContext context, ILogger<UserService> logg
     }
 
     public async Task<ApiResult<string>> UploadProfilePhotoAsync(int userId, IFormFile photo, int requestingUserId,
-        UserRole requestingUserRole)
+        UserRoleEnum requestingUserRole)
     {
-        if (requestingUserRole != UserRole.Manager && userId != requestingUserId)
+        if (requestingUserRole != UserRoleEnum.Manager && userId != requestingUserId)
         {
             return ApiResult<string>.Unauthorized("Sadece kendi profil fotoğrafınızı güncelleyebilirsiniz");
         }
@@ -514,9 +594,9 @@ public class UserService(ApplicationDbContext context, ILogger<UserService> logg
     }
 
     public async Task<ApiResult<bool>> DeleteProfilePhotoAsync(int userId, int requestingUserId,
-        UserRole requestingUserRole)
+        UserRoleEnum requestingUserRole)
     {
-        if (requestingUserRole != UserRole.Manager && userId != requestingUserId)
+        if (requestingUserRole != UserRoleEnum.Manager && userId != requestingUserId)
         {
             return ApiResult<bool>.Unauthorized("Sadece kendi profil fotoğrafınızı silebilirsiniz");
         }

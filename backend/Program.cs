@@ -79,6 +79,7 @@ builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<LeaveService>();
 builder.Services.AddScoped<InternshipService>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<SocialSecurityService>();
 builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 
 var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()

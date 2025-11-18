@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Zenabackend.Common;
 using Zenabackend.DTOs;
+using Zenabackend.Enums;
 using Zenabackend.Models;
 using Zenabackend.Services;
 
@@ -85,7 +86,7 @@ public class LeaveController(LeaveService leaveService) : ControllerBase
     [Authorize(Roles = "Manager")]
     public async Task<ActionResult<ApiResult<bool>>> UpdateLeaveStatus(int id, [FromBody] UpdateLeaveStatusDto dto)
     {
-        if (!Enum.TryParse<LeaveStatus>(dto.Status, out var status))
+        if (!Enum.TryParse<LeaveStatusEnum>(dto.Status, out var status))
         {
             return Ok(ApiResult<bool>.BadRequest("Geçersiz durum"));
         }

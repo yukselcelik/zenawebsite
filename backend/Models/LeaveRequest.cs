@@ -1,11 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Zenabackend.Enums;
 
 namespace Zenabackend.Models;
 
-public class LeaveRequest
+public class LeaveRequest : BaseEntity
 {
-    public int Id { get; set; }
     
     [Required]
     public int UserId { get; set; }
@@ -24,8 +24,5 @@ public class LeaveRequest
     public string Reason { get; set; } = string.Empty;
     
     [Required]
-    public LeaveStatus Status { get; set; } = LeaveStatus.Pending;
-    
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow.AddHours(3);
-    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow.AddHours(3);
+    public LeaveStatusEnum Status { get; set; } = LeaveStatusEnum.Pending;
 }

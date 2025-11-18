@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using Zenabackend.Common;
 using Zenabackend.Data;
 using Zenabackend.DTOs;
+using Zenabackend.Enums;
 using Zenabackend.Models;
 
 namespace Zenabackend.Services;
@@ -24,7 +25,7 @@ public class AuthService(ApplicationDbContext context, IConfiguration configurat
         {
             Email = registerDto.Email,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerDto.Password),
-            Role = UserRole.Personel,
+            Role = UserRoleEnum.Personel,
             IsApproved = false,
             CreatedAt = DateTime.UtcNow.AddHours(3),
             UpdatedAt = DateTime.UtcNow.AddHours(3)
@@ -53,7 +54,7 @@ public class AuthService(ApplicationDbContext context, IConfiguration configurat
             return null;
         }
 
-        if (user is { Role: UserRole.Personel, IsApproved: false })
+        if (user is { Role: UserRoleEnum.Personel, IsApproved: false })
         {
             logger.LogWarning("Login attempt by unapproved user: {Email}", loginDto.Email);
             return null;
@@ -154,7 +155,7 @@ public class AuthService(ApplicationDbContext context, IConfiguration configurat
     {
         var query = context.Users
             .AsNoTracking()
-            .Where(u => u.Role == UserRole.Personel && !u.IsApproved && !u.isDeleted)
+            .Where(u => u.Role == UserRoleEnum.Personel && !u.IsApproved && !u.isDeleted)
             .OrderByDescending(u => u.CreatedAt);
 
         var totalCount = await query.CountAsync();
@@ -195,7 +196,7 @@ public class AuthService(ApplicationDbContext context, IConfiguration configurat
     {
         var query = context.Users
             .AsNoTracking()
-            .Where(u => u.Role == UserRole.Personel && !u.isDeleted)
+            .Where(u => u.Role == UserRoleEnum.Personel && !u.isDeleted)
             .OrderBy(u => u.IsApproved)
             .ThenByDescending(u => u.CreatedAt);
 
@@ -241,7 +242,7 @@ public class AuthService(ApplicationDbContext context, IConfiguration configurat
             return ApiResult<bool>.NotFound("Kullanıcı bulunamadı");
         }
 
-        if (user.Role != UserRole.Personel)
+        if (user.Role != UserRoleEnum.Personel)
         {
             return ApiResult<bool>.BadRequest("Sadece personel kullanıcılar onaylanabilir");
         }
@@ -271,7 +272,7 @@ public class AuthService(ApplicationDbContext context, IConfiguration configurat
             return ApiResult<bool>.NotFound("Kullanıcı bulunamadı");
         }
 
-        if (user.Role != UserRole.Personel)
+        if (user.Role != UserRoleEnum.Personel)
         {
             return ApiResult<bool>.BadRequest("Sadece personel kullanıcılar reddedilebilir");
         }
@@ -299,7 +300,7 @@ public class AuthService(ApplicationDbContext context, IConfiguration configurat
             return ApiResult<bool>.NotFound("Kullanıcı bulunamadı");
         }
 
-        if (user.Role != UserRole.Personel)
+        if (user.Role != UserRoleEnum.Personel)
         {
             return ApiResult<bool>.BadRequest("Sadece personel kullanıcıların onay durumu değiştirilebilir");
         }

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Zenabackend.Data;
@@ -11,9 +12,11 @@ using Zenabackend.Data;
 namespace Zenabackend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251118143809_Documents")]
+    partial class Documents
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -315,6 +318,40 @@ namespace Zenabackend.Migrations
                     b.ToTable("LegalDocuments");
                 });
 
+            modelBuilder.Entity("Zenabackend.Models.SocialSecurity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("SocialSecurityNumber")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TaxNumber")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("isDeleted")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("SocialSecurities");
+                });
+
             modelBuilder.Entity("Zenabackend.Models.SocialSecurityDocument", b =>
                 {
                     b.Property<int>("Id")
@@ -336,6 +373,9 @@ namespace Zenabackend.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int?>("SocialSecurityId")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -346,6 +386,8 @@ namespace Zenabackend.Migrations
                         .HasColumnType("boolean");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("SocialSecurityId");
 
                     b.HasIndex("UserId");
 
@@ -391,14 +433,7 @@ namespace Zenabackend.Migrations
                     b.Property<int>("Role")
                         .HasColumnType("integer");
 
-                    b.Property<string>("SocialSecurityNumber")
-                        .HasColumnType("text");
-
                     b.Property<string>("Surname")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("TaxNumber")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -482,15 +517,35 @@ namespace Zenabackend.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Zenabackend.Models.SocialSecurityDocument", b =>
+            modelBuilder.Entity("Zenabackend.Models.SocialSecurity", b =>
                 {
                     b.HasOne("Zenabackend.Models.User", "User")
-                        .WithMany("SocialSecurityDocuments")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Zenabackend.Models.SocialSecurityDocument", b =>
+                {
+                    b.HasOne("Zenabackend.Models.SocialSecurity", null)
+                        .WithMany("Documents")
+                        .HasForeignKey("SocialSecurityId");
+
+                    b.HasOne("Zenabackend.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Zenabackend.Models.SocialSecurity", b =>
+                {
+                    b.Navigation("Documents");
                 });
 
             modelBuilder.Entity("Zenabackend.Models.User", b =>
@@ -502,8 +557,6 @@ namespace Zenabackend.Migrations
                     b.Navigation("EmergencyContacts");
 
                     b.Navigation("EmploymentInfos");
-
-                    b.Navigation("SocialSecurityDocuments");
                 });
 #pragma warning restore 612, 618
         }

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import ApiService from '../../../../lib/api';
 import EmploymentInfoSection from './EmploymentInfoSection';
+import SocialSecuritySection from './SocialSecuritySection';
 import ContactInfoSection from '../user/ContactInfoSection';
 import EmergencyContactSection from '../user/EmergencyContactSection';
 import EducationInfoSection from '../user/EducationInfoSection';
@@ -196,6 +197,15 @@ export default function PersonnelDetail({ userId, onBack }) {
       <div className="bg-white rounded-lg shadow p-6">
         <EmploymentInfoSection 
           employmentInfos={userDetail.employmentInfos || []} 
+          userId={userDetail.id}
+          onUpdate={fetchUserDetail}
+        />
+      </div>
+
+      {/* Sosyal Güvenlik Bilgileri - Sadece yönetici için */}
+      <div className="bg-white rounded-lg shadow p-6">
+        <SocialSecuritySection 
+          socialSecurity={userDetail.socialSecurity} 
           userId={userDetail.id}
           onUpdate={fetchUserDetail}
         />

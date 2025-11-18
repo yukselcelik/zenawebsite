@@ -17,6 +17,8 @@ public class ApplicationDbContext : DbContext
     public DbSet<EmergencyContact> EmergencyContacts { get; set; }
     public DbSet<EmploymentInfo> EmploymentInfos { get; set; }
     public DbSet<EducationInfo> EducationInfos { get; set; }
+    public DbSet<LegalDocument> LegalDocuments { get; set; }
+    public DbSet<SocialSecurityDocument> SocialSecurityDocuments { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
