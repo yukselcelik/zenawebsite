@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import ApiService from '../../../../lib/api';
 import EmploymentInfoSection from './EmploymentInfoSection';
 import SocialSecuritySection from './SocialSecuritySection';
+import LegalDocumentsSection from './LegalDocumentsSection';
 import ContactInfoSection from '../user/ContactInfoSection';
 import EmergencyContactSection from '../user/EmergencyContactSection';
 import EducationInfoSection from '../user/EducationInfoSection';
@@ -209,6 +210,15 @@ export default function PersonnelDetail({ userId, onBack }) {
           userId={userDetail.id}
           onUpdate={fetchUserDetail}
         />
+        
+        {/* Yasal Belgeler - Sosyal Güvenlik Bilgileri altında */}
+        <div className="mt-6 pt-6 border-t border-gray-200">
+          <LegalDocumentsSection 
+            legalDocuments={userDetail.legalDocuments} 
+            userId={userDetail.id}
+            onUpdate={fetchUserDetail}
+          />
+        </div>
       </div>
     </div>
   );

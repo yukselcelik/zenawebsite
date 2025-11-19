@@ -134,9 +134,12 @@ export default function SocialSecuritySection({ socialSecurity: initialSocialSec
     }
   };
 
-  const handleViewDocument = (documentUrl) => {
-    if (documentUrl) {
-      window.open(documentUrl, '_blank');
+  const handleDownloadDocument = async (doc) => {
+    try {
+      await ApiService.downloadSocialSecurityDocument(doc.id);
+    } catch (error) {
+      console.error('Error downloading document:', error);
+      alert(error.message || 'Dosya indirilemedi');
     }
   };
 
@@ -192,7 +195,7 @@ export default function SocialSecuritySection({ socialSecurity: initialSocialSec
       {/* Document Management */}
       <div className="mb-4">
         <div className="flex justify-between items-center mb-4">
-          <h4 className="text-md font-semibold text-gray-700">Belgeler</h4>
+          <h4 className="text-md font-semibold text-gray-700">Sosyal Güvenlik Belgeleri</h4>
           <button
             onClick={() => setShowDocumentForm(!showDocumentForm)}
             className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm cursor-pointer"
@@ -309,12 +312,9 @@ export default function SocialSecuritySection({ socialSecurity: initialSocialSec
                       </svg>
                     </button>
 
-                    {/* File Icon - Clickable */}
-                    <div
-                      onClick={() => handleViewDocument(doc.documentUrl)}
-                      className="flex flex-col items-center cursor-pointer group"
-                    >
-                      <div className="text-6xl mb-2 group-hover:scale-110 transition-transform">
+                    {/* File Icon */}
+                    <div className="flex flex-col items-center">
+                      <div className="text-6xl mb-2">
                         {getFileIcon(doc.documentUrl)}
                       </div>
                       
@@ -323,8 +323,17 @@ export default function SocialSecuritySection({ socialSecurity: initialSocialSec
                         {doc.documentTypeName}
                       </div>
                       
+                      {/* Original File Name */}
+                      {doc.originalFileName && (
+                        <div className="text-xs text-gray-600 text-center mb-1 line-clamp-1" title={doc.originalFileName}>
+                          {doc.originalFileName.length > 20 
+                            ? doc.originalFileName.substring(0, 20) + '...' 
+                            : doc.originalFileName}
+                        </div>
+                      )}
+                      
                       {/* Upload Date */}
-                      <div className="text-xs text-gray-500 text-center mb-1">
+                      <div className="text-xs text-gray-500 text-center mb-2">
                         {new Date(doc.createdAt).toLocaleDateString('tr-TR', {
                           day: '2-digit',
                           month: '2-digit',
@@ -333,9 +342,31 @@ export default function SocialSecuritySection({ socialSecurity: initialSocialSec
                       </div>
                       
                       {/* File Extension */}
-                      <div className="text-xs text-gray-400 text-center">
-                        {getFileExtension(doc.documentUrl)}
+                      <div className="text-xs text-gray-400 text-center mb-3">
+                        {getFileExtension(doc.originalFileName || doc.documentUrl)}
                       </div>
+
+                      {/* Download Button */}
+                      <button
+                        onClick={() => handleDownloadDocument(doc)}
+                        className="w-full bg-orange-500 hover:bg-orange-600 text-white px-3 py-1.5 rounded-lg text-xs cursor-pointer flex items-center justify-center gap-1"
+                        title="İndir"
+                      >
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                          />
+                        </svg>
+                        İndir
+                      </button>
                     </div>
                   </div>
                 );

@@ -11,7 +11,7 @@ namespace Zenabackend.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class UserController(UserService userService, SocialSecurityService socialSecurityService) : ControllerBase
+public class UserController(UserService userService, SocialSecurityService socialSecurityService, LegalDocumentService legalDocumentService) : ControllerBase
 {
 
     [HttpGet("{id:int}")]
@@ -159,6 +159,71 @@ public class UserController(UserService userService, SocialSecurityService socia
     {
         var result = await socialSecurityService.DeleteSocialSecurityDocumentAsync(id);
         return Ok(result);
+    }
+
+    [HttpGet("social-security/document/{id:int}/download")]
+    [Authorize(Roles = "Manager")]
+    public async Task<IActionResult> DownloadSocialSecurityDocument(int id)
+    {
+        var result = await socialSecurityService.DownloadSocialSecurityDocumentAsync(id);
+        
+        if (result.Data == null)
+        {
+            return NotFound(result.Message ?? "Belge bulunamadı");
+        }
+
+        Response.Headers.Append("Content-Disposition", $"attachment; filename=\"{result.Data.FileName}\"");
+        return File(result.Data.FileBytes, result.Data.ContentType, result.Data.FileName);
+    }
+
+    [HttpGet("{userId:int}/legal-documents")]
+    [Authorize(Roles = "Manager")]
+    public async Task<ActionResult<ApiResult<LegalDocumentDto>>> GetLegalDocuments(int userId)
+    {
+        var result = await legalDocumentService.GetLegalDocumentsByUserIdAsync(userId);
+        return Ok(result);
+    }
+
+    [HttpPost("legal-documents/document")]
+    [Authorize(Roles = "Manager")]
+    [RequestSizeLimit(10_000_000)] // 10MB limit
+    public async Task<ActionResult<ApiResult<LegalDocumentItemDto>>> UploadLegalDocument(
+        [FromForm] int userId,
+        [FromForm] LegalDocumentTypeEnum legalDocumentType,
+        [FromForm] IFormFile file)
+    {
+        var dto = new CreateLegalDocumentDto
+        {
+            UserId = userId,
+            LegalDocumentType = legalDocumentType,
+            File = file
+        };
+
+        var result = await legalDocumentService.CreateLegalDocumentAsync(dto, file);
+        return Ok(result);
+    }
+
+    [HttpDelete("legal-documents/document/{id:int}")]
+    [Authorize(Roles = "Manager")]
+    public async Task<ActionResult<ApiResult<bool>>> DeleteLegalDocument(int id)
+    {
+        var result = await legalDocumentService.DeleteLegalDocumentAsync(id);
+        return Ok(result);
+    }
+
+    [HttpGet("legal-documents/document/{id:int}/download")]
+    [Authorize(Roles = "Manager")]
+    public async Task<IActionResult> DownloadLegalDocument(int id)
+    {
+        var result = await legalDocumentService.DownloadLegalDocumentAsync(id);
+        
+        if (result.Data == null)
+        {
+            return NotFound(result.Message ?? "Belge bulunamadı");
+        }
+
+        Response.Headers.Append("Content-Disposition", $"attachment; filename=\"{result.Data.FileName}\"");
+        return File(result.Data.FileBytes, result.Data.ContentType, result.Data.FileName);
     }
 }
 

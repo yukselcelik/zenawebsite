@@ -25,6 +25,7 @@ public class UserService(ApplicationDbContext context, ILogger<UserService> logg
             .Include(u => u.EmploymentInfos!.Where(e => !e.isDeleted))
             .Include(u => u.EducationInfos!.Where(e => !e.isDeleted))
             .Include(u => u.SocialSecurityDocuments!.Where(d => !d.isDeleted))
+            .Include(u => u.LegalDocuments!.Where(d => !d.isDeleted))
             .AsNoTracking()
             .FirstOrDefaultAsync(u => u.Id == userId && !u.isDeleted);
 
@@ -138,6 +139,7 @@ public class UserService(ApplicationDbContext context, ILogger<UserService> logg
                         Id = d.Id,
                         DocumentPath = d.DocumentPath,
                         DocumentUrl = docUrl,
+                        OriginalFileName = d.OriginalFileName,
                         DocumentType = d.DocumentType,
                         DocumentTypeName = d.DocumentTypeName,
                         UserId = d.UserId,
@@ -180,7 +182,48 @@ public class UserService(ApplicationDbContext context, ILogger<UserService> logg
                     UserId = d.UserId,
                     CreatedAt = d.CreatedAt
                 };
-            }).ToList() ?? null
+            }).ToList() ?? null,
+            LegalDocuments = new LegalDocumentDto
+            {
+                UserId = user.Id,
+                Documents = user.LegalDocuments?.Select(d =>
+                {
+                    var docPath = d.DocumentPath;
+                    var docUrl = string.Empty;
+                    if (!string.IsNullOrWhiteSpace(docPath))
+                    {
+                        var trimmed = docPath.Trim();
+                        var baseUrlLocal = configuration["FileStorage:BaseUrl"]?.TrimEnd('/') ?? "http://localhost:5133";
+                        if (trimmed.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+                        {
+                            docUrl = trimmed;
+                        }
+                        else if (trimmed.StartsWith("/uploads/", StringComparison.OrdinalIgnoreCase))
+                        {
+                            docUrl = $"{baseUrlLocal}{trimmed}";
+                        }
+                        else if (trimmed.StartsWith("uploads/", StringComparison.OrdinalIgnoreCase))
+                        {
+                            docUrl = $"{baseUrlLocal}/{trimmed}";
+                        }
+                        else
+                        {
+                            docUrl = $"{baseUrlLocal}/uploads/legal-documents/{trimmed}";
+                        }
+                    }
+                    return new LegalDocumentItemDto
+                    {
+                        Id = d.Id,
+                        DocumentPath = d.DocumentPath,
+                        DocumentUrl = docUrl,
+                        OriginalFileName = d.OriginalFileName,
+                        LegalDocumentType = d.LegalDocumentType,
+                        LegalDocumentTypeName = d.LegalDocumentTypeName,
+                        UserId = d.UserId,
+                        CreatedAt = d.CreatedAt
+                    };
+                }).ToList() ?? new List<LegalDocumentItemDto>()
+            }
         };
 
         return ApiResult<UserDetailDto>.Ok(userDetail);

@@ -20,6 +20,7 @@ public class UserDetailDto
     public List<EducationInfoDto>? EducationInfos { get; set; }
     public SocialSecurityDto? SocialSecurity { get; set; }
     public List<SocialSecurityDocumentDto>? SocialSecurityDocuments { get; set; }
+    public LegalDocumentDto? LegalDocuments { get; set; }
 }
 
 public class ContactInfoDto

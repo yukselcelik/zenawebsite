@@ -5,6 +5,7 @@ namespace Zenabackend.Models;
 public class LegalDocument : BaseEntity
 {   
     public string? DocumentPath { get; set; }
+    public string? OriginalFileName { get; set; }
     public LegalDocumentTypeEnum LegalDocumentType { get; set; }
     public string LegalDocumentTypeName { get; set; } = string.Empty;
     public int UserId { get; set; }

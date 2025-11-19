@@ -5,6 +5,7 @@ namespace Zenabackend.Models;
 public class SocialSecurityDocument : BaseEntity
 {
     public string? DocumentPath { get; set; }
+    public string? OriginalFileName { get; set; }
     public SocialSecurityDocumentType DocumentType { get; set; }
     public string DocumentTypeName { get; set; } = string.Empty;
     public int UserId { get; set; }
