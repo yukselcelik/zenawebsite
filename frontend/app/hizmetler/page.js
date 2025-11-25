@@ -1,193 +1,117 @@
-// Hizmetler sayfası - Zena Enerji'nin sunduğu 6 ana hizmeti gösterir
-// Bu sayfa şirketin hizmetlerini detaylı olarak açıklar
+// Hizmetler sayfası - Zena Enerji'nin sunduğu hizmetleri görsellerle gösterir
+// Her hizmet kartı hover animasyonu ile kararma efekti içerir
 
-'use client'; // Client-side bileşen - state yönetimi için
+'use client';
 
-import Header from '../components/Header'; // Header bileşenini import ediyoruz
-import Footer from '../components/Footer'; // Footer bileşenini import ediyoruz
-import { useState } from 'react'; // useState hook'u - aktif tab yönetimi için
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import { useState } from 'react';
 
 export default function Hizmetler() {
-  // useState ile hangi hizmet kartının aktif olduğunu yönetiyoruz
-  const [activeService, setActiveService] = useState(null);
+  const [hoveredService, setHoveredService] = useState(null);
 
-  // Hizmetler verisi - 6 ana hizmet
+  // Hizmetler verisi - görseller ve içerikler
   const services = [
     {
       id: 1,
-      title: "Proje Geliştirme",
-      icon: (
-        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-        </svg>
-      ),
-      description: "Güneş enerjisi projelerinizi baştan sona planlar ve geliştiririz."
+      title: "GES Proje Geliştirme İşlemleri",
+      description: "GES projelerinde sağlam bir altyapının oluşturulması, proje geliştirme sürecinin doğru yönetilmesine bağlıdır. Bu süreç, projenin en temel ve en kritik aşamasını oluşturur. Firmamız, proje geliştirme sürecini yürürlükteki mevzuatlara tam uyumlu şekilde, alanında uzman kadrosuyla titizlikle gerçekleştirmektedir. Her adımı özenle planlanan bu süreçle, projelerinizi güvenle hayata geçiriyoruz.",
+      backgroundImage: "/1.jpg"           // 1. görsel
     },
     {
       id: 2,
-      title: "İmar Uygulamaları",
-      icon: (
-        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-        </svg>
-      ),
-      description: "Tüm resmi izin ve onay süreçlerini yürütürüz."
+      title: "Danışmanlık Ve Teknik İnceleme",
+      description: "Zena Enerji, mevcut veya yeni güneş santralleri için 300'e yakın kriteri inceleyerek verim, raporlama ve fizibilite analizleri sunmaktadır. Bu hizmet sayesinde yatırımcılar, santrallerine ait gerçek teknik ve finansal verilere güvenilir şekilde ulaşabilmektedir.",
+      backgroundImage: "/2.jpg"           // 2. görsel
     },
     {
       id: 3,
-      title: "Saha Kurulumları",
-      icon: (
-        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-        </svg>
-      ),
-      description: "Profesyonel ekip ile güvenli ve kaliteli kurulum yaparız."
+      title: "Yapay Zeka Destekli Termal Test Ve Raporlama",
+      description: "Güneş enerji sistemlerinde oluşan \"hot spot\" sıcak noktaları, İHA'larımızdaki termal kameralarla hızlıca tespit edilmekte, ardından Büyük Veri Analitiği, Yapay Zeka ve Makine Öğrenimi ile doğru, hızlı ve maliyet avantajlı çözümler sunulmaktadır.",
+      backgroundImage: "/3.jpg"           // 3. görsel
     },
     {
       id: 4,
-      title: "İHA İle Termal Test",
-      icon: (
-        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-        </svg>
-      ),
-      description: "Drone teknolojisi ile termal analiz ve test hizmetleri sunuyoruz."
+      title: "İşletme Ve Bakım Hizmetleri",
+      description: "Zena Enerji, işletme ve bakım (O&M) hizmetleriyle güneş enerji santrallerinizin performansını artırarak sürdürülebilir ve verimli enerji üretimi sağlar. Bakım, onarım, izleme ve yönetim faaliyetlerimizle yatırımınızın fizibilite aşamasındaki hedef değerlere ulaşmasına destek oluyoruz.",
+      backgroundImage: "/4.jpg"           // 4. görsel
     },
     {
       id: 5,
-      title: "İşletme Ve Bakım",
-      icon: (
-        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-        </svg>
-      ),
-      description: "Santrallerinizin sürekli verimli çalışmasını sağlarız."
-    },
-    {
-      id: 6,
-      title: "Danışmanlık Ve Teknik İnceleme",
-      icon: (
-        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-        </svg>
-      ),
-      description: "Uzman ekibimizle teknik danışmanlık ve inceleme hizmetleri veriyoruz."
+      title: "Anahtar Teslim GES Kurulum İşlemleri",
+      description: "Zena Enerji, lisanslı ve lisanssız güneş enerjisi tesislerinde tüm izinlerden kurulum ve kabul işlemlerine kadar süreci yöneterek santral kurulumunu anahtar teslim olarak gerçekleştirmektedir.",
+      backgroundImage: "/5.jpg"           // 5. görsel
     }
   ];
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header bileşeni */}
       <Header />
       
       {/* Sayfa başlığı */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+          <h1 className="text-4xl md:text-5xl font-bold text-orange-500 mb-6">
             Hizmetlerimiz
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Güneş enerjisi sektöründe kapsamlı hizmetlerimiz ile yanınızdayız.
+          <p className="text-xl text-gray-700 max-w-3xl mx-auto">
+            Zena Enerji olarak, güneş enerjisi sektöründe proje geliştirme, proje uygulama, imar uygulamaları, saha kurulumu, geçici kabul işlemleri, danışmanlık ve müşterilerimizin portföy verimliliğini en üst düzeye çıkarmak için kapsamlı hizmet sunuyoruz. Güneş PV tesislerindeki sorunları anlamaya yardımcı olmak amacıyla İHA'lar ile inceleme ve İHA'larda bulunan termal kamera ile havadan güneş enerjisi tesislerinin denetimi yapılmaktadır.
           </p>
         </div>
       </section>
 
-      {/* Hizmetler grid - 2x3 düzeninde */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {/* Hizmetler kartları - Her biri tam genişlikte hero section gibi */}
+      <section className="py-0">
+        {services.map((service, index) => (
+          <div
+            key={service.id}
+            className="relative w-full min-h-[600px] md:min-h-[700px] overflow-hidden"
+            onMouseEnter={() => setHoveredService(service.id)}
+            onMouseLeave={() => setHoveredService(null)}
+          >
+            {/* Arka plan görseli */}
+            <div 
+              className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-700"
+              style={{ 
+                backgroundImage: `url(${service.backgroundImage})`,
+                transform: hoveredService === service.id ? 'scale(1.05)' : 'scale(1)'
+              }}
+            />
             
-            {/* Hizmet kartları - map fonksiyonu ile otomatik oluşturuluyor */}
-            {services.map((service) => (
-              <div
-                key={service.id} // React için unique key
-                className={`bg-gray-50 border-2 rounded-lg p-6 text-center transition-all duration-300 cursor-pointer ${
-                  activeService === service.id 
-                    ? 'border-orange-500 bg-orange-50 shadow-lg' 
-                    : 'border-orange-200 hover:border-orange-300 hover:shadow-md'
-                }`}
-                onClick={() => setActiveService(activeService === service.id ? null : service.id)}
-                onMouseEnter={() => setActiveService(service.id)}
-                onMouseLeave={() => setActiveService(null)}
-              >
-                {/* İkon */}
-                <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <div className="text-orange-500">
-                    {service.icon}
-                  </div>
-                </div>
-                
-                {/* Başlık */}
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            {/* Kararma overlay - hover'da daha koyu */}
+            <div 
+              className={`absolute inset-0 transition-all duration-500 ${
+                hoveredService === service.id ? 'bg-black/70' : 'bg-black/50'
+              }`}
+            />
+            
+            {/* İçerik container */}
+            <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full min-h-[600px] md:min-h-[700px] flex items-center">
+              <div className="w-full text-center max-w-4xl mx-auto text-white">
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 text-orange-500">
                   {service.title}
-                </h3>
-                
-                {/* Açıklama */}
-                <p className="text-gray-600">
+                </h2>
+                <p className="text-lg md:text-xl text-white/90 mb-8 leading-relaxed">
                   {service.description}
                 </p>
                 
-                {/* Hover efekti için detay butonu */}
-                {activeService === service.id && (
-                  <button className="mt-4 bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-300">
-                    Detayları Gör
+                <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                  <button className="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 px-8 rounded-lg text-lg transition-colors duration-300 shadow-lg">
+                    Daha Fazla Bilgi
                   </button>
-                )}
+                  <button className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-gray-900 font-semibold py-3 px-8 rounded-lg text-lg transition-all duration-300 flex items-center gap-2">
+                    Bize Ulaşın
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </div>
               </div>
-            ))}
+            </div>
           </div>
-        </div>
+        ))}
       </section>
 
-      {/* Hizmetler hakkında detay metni */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-6">
-              Neden Zena Enerji?
-            </h2>
-            <p className="text-lg text-gray-600 max-w-4xl mx-auto leading-relaxed">
-              Zena Enerji, güneş enerjisi sektöründe proje geliştirme, uygulama, imar, saha kurulumu, geçici kabul işlemleri, danışmanlık ve müşteri portföyü verimliliğini artırma konularında uzmanlaşmıştır. Ayrıca, güneş PV tesislerindeki sorunları tespit etmek amacıyla İHA'lar (insansız hava araçları) ve termal kameralar kullanılarak havadan denetim yapmaktadır.
-            </p>
-          </div>
-          
-          {/* Özellikler listesi */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Profesyonel Ekip</h3>
-              <p className="text-gray-600">Alanında uzman mühendis ve teknisyen kadromuz</p>
-            </div>
-            
-            <div className="text-center">
-              <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Hızlı Çözüm</h3>
-              <p className="text-gray-600">Etkin proje yönetimi ile zamanında teslimat</p>
-            </div>
-            
-            <div className="text-center">
-              <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Güvenilir Hizmet</h3>
-              <p className="text-gray-600">Kaliteli malzeme ve güvenilir kurulum</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer bileşeni */}
       <Footer />
     </div>
   );

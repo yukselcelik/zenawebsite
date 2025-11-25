@@ -95,6 +95,17 @@ export default function Header() {
 
           {/* Ana navigasyon menüsü */}
           <nav className="hidden md:flex gap-6">
+            <Link 
+              href="/" 
+              className={`font-bold transition-colors ${
+                isScrolled 
+                  ? 'text-white hover:text-orange-400' 
+                  : 'text-gray-900 hover:text-orange-500'
+              }`}
+            >
+              Ana Sayfa
+            </Link>
+
             {/* Hakkımızda dropdown menüsü */}
             <div 
               className="relative"
@@ -134,10 +145,10 @@ export default function Header() {
                     }`}
                     onClick={() => setIsAboutOpen(false)}
                   >
-                    Biz Kimiz
+                    Biz Kimiz?
                   </Link>
                   <Link 
-                    href="/hakkimizda" 
+                    href="/referanslarimiz" 
                     className={`block px-4 py-2 text-sm transition-colors ${
                       isScrolled 
                         ? 'text-white hover:bg-white/10 hover:text-orange-400' 
@@ -145,10 +156,10 @@ export default function Header() {
                     }`}
                     onClick={() => setIsAboutOpen(false)}
                   >
-                    Misyon & Vizyon
+                    Referanslarımız
                   </Link>
                   <Link 
-                    href="/hakkimizda" 
+                    href="/subelerimiz" 
                     className={`block px-4 py-2 text-sm transition-colors ${
                       isScrolled 
                         ? 'text-white hover:bg-white/10 hover:text-orange-400' 
@@ -156,7 +167,7 @@ export default function Header() {
                     }`}
                     onClick={() => setIsAboutOpen(false)}
                   >
-                    Değerlerimiz
+                    Şubelerimiz
                   </Link>
                 </div>
               )}
@@ -201,10 +212,10 @@ export default function Header() {
                     }`}
                     onClick={() => setIsServicesOpen(false)}
                   >
-                    Tüm Hizmetler
+                    Hizmetlerimiz
                   </Link>
                   <Link 
-                    href="/hizmetler" 
+                    href="/simulasyon" 
                     className={`block px-4 py-2 text-sm transition-colors ${
                       isScrolled 
                         ? 'text-white hover:bg-white/10 hover:text-orange-400' 
@@ -212,29 +223,7 @@ export default function Header() {
                     }`}
                     onClick={() => setIsServicesOpen(false)}
                   >
-                    Referanslarımız
-                  </Link>
-                  <Link 
-                    href="/hizmetler" 
-                    className={`block px-4 py-2 text-sm transition-colors ${
-                      isScrolled 
-                        ? 'text-white hover:bg-white/10 hover:text-orange-400' 
-                        : 'text-gray-700 hover:bg-orange-50 hover:text-orange-500'
-                    }`}
-                    onClick={() => setIsServicesOpen(false)}
-                  >
-                    Şubelerimiz
-                  </Link>
-                  <Link 
-                    href="/hizmetler" 
-                    className={`block px-4 py-2 text-sm transition-colors ${
-                      isScrolled 
-                        ? 'text-white hover:bg-white/10 hover:text-orange-400' 
-                        : 'text-gray-700 hover:bg-orange-50 hover:text-orange-500'
-                    }`}
-                    onClick={() => setIsServicesOpen(false)}
-                  >
-                    Galeri
+                    Solar Güç Hesaplama
                   </Link>
                 </div>
               )}
