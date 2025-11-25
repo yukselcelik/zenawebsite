@@ -26,7 +26,7 @@ export default function KayitOl() {
       const token = localStorage.getItem('employeeToken');
       if (token) {
         // Token varsa çalışan paneline yönlendir
-        router.push('/calisan-paneli');
+        router.push('/panel');
       } else {
         // Token yoksa kayıt sayfasında kal
         setIsCheckingAuth(false);
@@ -95,7 +95,7 @@ export default function KayitOl() {
         // Başarı mesajını göster ve panele yönlendir
         setSuccessMessage(successMessage);
         setTimeout(() => {
-          router.push('/calisan-paneli');
+          router.push('/panel');
         }, 2000); // 2 saniye sonra yönlendir
       } else {
         // Token yoksa sadece mesaj göster

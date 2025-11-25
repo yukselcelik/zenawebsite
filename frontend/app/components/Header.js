@@ -296,7 +296,7 @@ export default function Header() {
             {isLoggedIn && (
               <>
                 <Link 
-                  href="/calisan-paneli"
+                  href="/panel"
                   className={`font-bold transition-colors ${
                     isScrolled 
                       ? 'text-white hover:text-orange-400' 

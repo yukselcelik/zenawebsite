@@ -7,7 +7,7 @@ export default function CalisanPaneli() {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace('/calisan-paneli');
+    router.replace('/panel');
   }, [router]);
 
   return (
