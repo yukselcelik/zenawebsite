@@ -30,9 +30,9 @@ export default function Home() {
       <Header />
       
       {/* Hero Section - Ana görsel ve başlık alanı (solar-banner burada) */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden">
+      <section className="relative h-screen flex items-center justify-center overflow-hidden z-0 -mt-20">
         <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0"
           style={{ backgroundImage: 'url("/solar-banner.jpg")' }}
         >
           <div className="absolute inset-0 bg-black/50"></div>
