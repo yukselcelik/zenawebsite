@@ -6,7 +6,7 @@ import ApiService from '../../lib/api';
 
 // Components
 import Sidebar from './components/Sidebar';
-import Navbar from './components/Navbar';
+import Navbar from './components/AdminNavbar';
 import Dashboard from './components/Dashboard';
 import UserProfile from './components/user/UserProfile';
 import LeaveRequests from './components/leaves/LeaveRequests';
