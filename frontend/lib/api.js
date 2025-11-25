@@ -50,6 +50,21 @@ class ApiService {
     return headers;
   }
 
+  // Network hatalarını yakala ve Türkçe mesaj döndür
+  static handleNetworkError(error) {
+    if (error instanceof TypeError && error.message.includes('fetch')) {
+      throw new Error('Sunucuya bağlanılamadı. İnternet bağlantınızı kontrol edin.');
+    }
+    if (error.name === 'NetworkError' || error.message.includes('NetworkError')) {
+      throw new Error('Ağ hatası oluştu. İnternet bağlantınızı kontrol edin ve tekrar deneyin.');
+    }
+    if (error.message.includes('Failed to fetch')) {
+      throw new Error('Sunucuya bağlanılamadı. Lütfen daha sonra tekrar deneyin.');
+    }
+    // Diğer hataları olduğu gibi fırlat
+    throw error;
+  }
+
   // Handle API response
   static async handleResponse(response) {
     // Response'u text olarak oku (sadece bir kez)
@@ -100,32 +115,44 @@ class ApiService {
 
   // Authentication API calls
   static async login(email, password) {
-    const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
-      method: 'POST',
-      headers: this.getHeaders(false),
-      body: JSON.stringify({ email, password }),
-    });
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: this.getHeaders(false),
+        body: JSON.stringify({ email, password }),
+      });
 
-    return this.handleResponse(response);
+      return this.handleResponse(response);
+    } catch (error) {
+      this.handleNetworkError(error);
+    }
   }
 
   static async register(userData) {
-    const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
-      method: 'POST',
-      headers: this.getHeaders(false),
-      body: JSON.stringify(userData),
-    });
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
+        method: 'POST',
+        headers: this.getHeaders(false),
+        body: JSON.stringify(userData),
+      });
 
-    return this.handleResponse(response);
+      return this.handleResponse(response);
+    } catch (error) {
+      this.handleNetworkError(error);
+    }
   }
 
   static async getProfile() {
-    const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
-      method: 'GET',
-      headers: this.getHeaders(),
-    });
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
+        method: 'GET',
+        headers: this.getHeaders(),
+      });
 
-    return this.handleResponse(response);
+      return this.handleResponse(response);
+    } catch (error) {
+      this.handleNetworkError(error);
+    }
   }
 
   static async logout() {
@@ -242,32 +269,36 @@ class ApiService {
 
   // Internship application API calls
   static async submitInternshipApplication(applicationData, cvFile = null) {
-    const formData = new FormData();
+    try {
+      const formData = new FormData();
 
-    // Alanları tek tek ekle (backend DTO ile uyumlu)
-    if (applicationData?.fullName) formData.append('FullName', applicationData.fullName);
-    if (applicationData?.email) formData.append('Email', applicationData.email);
-    if (applicationData?.phone) formData.append('Phone', applicationData.phone);
-    if (applicationData?.school !== undefined) formData.append('School', applicationData.school || '');
-    if (applicationData?.department !== undefined) formData.append('Department', applicationData.department || '');
-    if (applicationData?.year !== undefined) formData.append('Year', applicationData.year || '');
-    if (applicationData?.message !== undefined) formData.append('Message', applicationData.message || '');
-    console.log(formData);
-    // Eğer dosya varsa ekle
-    if (cvFile) {
-      formData.append('CvFile', cvFile);
+      // Alanları tek tek ekle (backend DTO ile uyumlu)
+      if (applicationData?.fullName) formData.append('FullName', applicationData.fullName);
+      if (applicationData?.email) formData.append('Email', applicationData.email);
+      if (applicationData?.phone) formData.append('Phone', applicationData.phone);
+      if (applicationData?.school !== undefined) formData.append('School', applicationData.school || '');
+      if (applicationData?.department !== undefined) formData.append('Department', applicationData.department || '');
+      if (applicationData?.year !== undefined) formData.append('Year', applicationData.year || '');
+      if (applicationData?.message !== undefined) formData.append('Message', applicationData.message || '');
+      console.log(formData);
+      // Eğer dosya varsa ekle
+      if (cvFile) {
+        formData.append('CvFile', cvFile);
+      }
+
+      // Bu endpoint herkese açık; CORS preflight'ını tetiklememek için Authorization göndermeyelim
+      const headers = {};
+
+      const response = await fetch(`${API_BASE_URL}/api/internship/apply`, {
+        method: 'POST',
+        headers: headers,
+        body: formData,
+      });
+
+      return this.handleResponse(response);
+    } catch (error) {
+      this.handleNetworkError(error);
     }
-
-    // Bu endpoint herkese açık; CORS preflight'ını tetiklememek için Authorization göndermeyelim
-    const headers = {};
-
-    const response = await fetch(`${API_BASE_URL}/api/internship/apply`, {
-      method: 'POST',
-      headers: headers,
-      body: formData,
-    });
-
-    return this.handleResponse(response);
   }
 
   static async downloadInternshipCv(applicationId) {

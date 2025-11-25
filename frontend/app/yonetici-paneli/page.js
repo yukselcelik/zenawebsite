@@ -7,7 +7,7 @@ export default function YoneticiPaneli() {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace('/panel');
+    router.replace('/yonetici-paneli');
   }, [router]);
 
   return (

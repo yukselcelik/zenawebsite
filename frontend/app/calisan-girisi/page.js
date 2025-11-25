@@ -43,7 +43,7 @@ export default function CalisanGirisi() {
           return;
         }
         // Token varsa panele yönlendir
-        router.push('/panel');
+        router.push('/calisan-paneli');
       } else {
         // Token yoksa giriş sayfasında kal
         setIsCheckingAuth(false);
@@ -89,7 +89,7 @@ export default function CalisanGirisi() {
       }
       
       // Tüm kullanıcıları panele yönlendir
-      router.push('/panel');
+      router.push('/calisan-paneli');
     } catch (error) {
       // Hata mesajını göster
       setError(error.message || 'Giriş başarısız!');
