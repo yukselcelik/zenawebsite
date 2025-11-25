@@ -59,16 +59,16 @@ export default function Header() {
   return (
     <header className="bg-white shadow-sm sticky top-0 z-50">
       {/* Ana container - içeriği ortalar ve maksimum genişlik verir */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-6">
         <div className="flex justify-between items-center h-16">
           
           {/* Logo kısmı - Sol üst köşe */}
-          <Link href="/" className="flex items-center">
+          <Link href="/" className="flex items-center -ml-3 sm:-ml-5">
             <Image
               src="/zena-logo.png"
               alt="Zena Enerji"
-              width={130}
-              height={40}
+              width={96}
+              height={30}
               priority
             />
           </Link>
@@ -197,37 +197,8 @@ export default function Header() {
               İletişim
             </Link>
             
-            {/* Giriş butonu ve dil seçici */}
-            <div className="flex items-center space-x-4">
-              {isLoggedIn ? (
-                <>
-                  <Link 
-                    href="/"
-                    className="text-gray-700 hover:text-orange-500 transition-colors px-3 py-2"
-                  >
-                    Ev
-                  </Link>
-                  <Link 
-                    href="/panel"
-                    className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-300"
-                  >
-                    {userRole === 'Manager' ? 'Yönetim Paneli' : 'Çalışan Paneli'}
-                  </Link>
-                  <button
-                    onClick={handleLogout}
-                    className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-300 cursor-pointer"
-                  >
-                    Çıkış Yap
-                  </button>
-                </>
-              ) : (
-                <a 
-                  href="/calisan-girisi"
-                  className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-300"
-                >
-                  Giriş Yap
-                </a>
-              )}
+          {/* Dil seçici */}
+          <div className="flex items-center justify-end">
               <span className="text-orange-500 font-medium bg-orange-50 px-3 py-1 rounded-md text-sm">
                 TR
               </span>

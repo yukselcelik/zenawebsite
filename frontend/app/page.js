@@ -6,26 +6,62 @@
 
 import Header from './components/Header'; // Header bileşenini import ediyoruz
 import Footer from './components/Footer'; // Footer bileşenini import ediyoruz
-import { motion, useScroll, useTransform } from 'framer-motion'; // Framer Motion - animasyonlar için
-import { useEffect, useState, useRef } from 'react';
+import { motion } from 'framer-motion'; // Framer Motion - animasyonlar için
+
+const serviceCards = [
+  {
+    title: 'Proje Geliştirme',
+    icon: (
+      <svg className="w-8 h-8 text-orange-500" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m6-6H6m12-7H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2z" />
+      </svg>
+    ),
+  },
+  {
+    title: 'İmar Uygulamaları',
+    icon: (
+      <svg className="w-8 h-8 text-orange-500" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 22V12m0 0l8-5-8-5-8 5 8 5zm0 0v10m0-10l8-5M12 12L4 7" />
+      </svg>
+    ),
+  },
+  {
+    title: 'Saha Kurulumları',
+    icon: (
+      <svg className="w-8 h-8 text-orange-500" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M4 7h16M4 15h16M10 11h4m-9 8h14l-2 3H7l-2-3z" />
+      </svg>
+    ),
+  },
+  {
+    title: 'İHA ile Termal Test',
+    icon: (
+      <svg className="w-8 h-8 text-orange-500" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M5 12L3 9m2 3l-2 3m14-3l2-3m-2 3l2 3M9 5l3-2 3 2M9 19l3 2 3-2" />
+      </svg>
+    ),
+  },
+  {
+    title: 'İşletme ve Bakım',
+    icon: (
+      <svg className="w-8 h-8 text-orange-500" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M11 2v4m2 0V2m7 9h-4m0 2h4m-4 2h2.5a1.5 1.5 0 010 3H19m-8 4v-4m-2 4H7a3 3 0 01-3-3v-1m0 0H2m2 0h4m1-4H6m0 0V8a4 4 0 014-4h4a4 4 0 014 4v4" />
+      </svg>
+    ),
+  },
+  {
+    title: 'Danışmanlık ve Teknik İnceleme',
+    icon: (
+      <svg className="w-8 h-8 text-orange-500" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 14l2-2 4 4m-6-2l-4-4-4 4m8-10l4 4-4 4-4-4 4-4zm0 0V2m0 6v6" />
+      </svg>
+    ),
+  },
+];
 
 export default function Home() {
-  const [countsStarted, setCountsStarted] = useState(false);
-  useEffect(() => {
-    // İstatistikler bölümü görünür olduğunda sayım animasyonlarını başlatmak için IntersectionObserver
-    const section = document.getElementById('istatistikler');
-    if (!section) return;
-    const obs = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting) {
-        setCountsStarted(true);
-        obs.disconnect();
-      }
-    }, { threshold: 0.3 });
-    obs.observe(section);
-    return () => obs.disconnect();
-  }, []);
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white">
       {/* Header bileşeni - tüm sayfalarda ortak */}
       <Header />
       
@@ -73,35 +109,27 @@ export default function Home() {
       </section>
 
       {/* Zena Enerji ile Tam Hizmet + Drone görselli bölüm (drone görseli kalsın) */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-gradient-to-b from-white via-gray-50/80 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Zena Enerji ile Tam Hizmet</h2>
-            <p className="text-lg text-gray-700 mb-10">
+          <div className="flex flex-col items-center text-center lg:items-center lg:text-center w-full">
+            <div className="max-w-3xl">
+              <h2 className="text-xl md:text-2xl font-semibold text-gray-900 mb-4">Zena Enerji ile Tam Hizmet</h2>
+              <p className="text-sm md:text-base text-gray-700 mb-8">
               Zena Enerji olarak, güneş enerjisi sektöründe proje geliştirme, proje uygulama, imar uygulamaları, saha kurulumu,
               geçici kabul işlemleri, danışmanlık ve müşterilerimizin portföy verimliliğini en üst düzeye çıkarmak için
               kapsamlı hizmet sunuyoruz. Güneş PV tesislerindeki sorunları anlamaya yardımcı olmak amacıyla İHA’lar ile
               inceleme ve İHA’larda bulunan termal kamera ile havadan denetim yapılmaktadır.
-            </p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-6">
-              <div className="border border-orange-200 rounded-lg p-4 text-center">
-                <div className="text-orange-500 font-semibold mb-2">Proje Geliştirme</div>
-              </div>
-              <div className="border border-orange-200 rounded-lg p-4 text-center">
-                <div className="text-orange-500 font-semibold mb-2">İmar Uygulamaları</div>
-              </div>
-              <div className="border border-orange-200 rounded-lg p-4 text-center">
-                <div className="text-orange-500 font-semibold mb-2">Saha Kurulumları</div>
-              </div>
-              <div className="border border-orange-200 rounded-lg p-4 text-center">
-                <div className="text-orange-500 font-semibold mb-2">İHA ile Termal Test</div>
-              </div>
-              <div className="border border-orange-200 rounded-lg p-4 text-center">
-                <div className="text-orange-500 font-semibold mb-2">İşletme ve Bakım</div>
-              </div>
-              <div className="border border-orange-200 rounded-lg p-4 text-center">
-                <div className="text-orange-500 font-semibold mb-2">Danışmanlık</div>
-              </div>
+              </p>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-8 w-full max-w-3xl mx-auto justify-items-center">
+              {serviceCards.map((card) => (
+                <div key={card.title} className="flex flex-col items-center text-center space-y-3">
+                  <div className="w-18 h-18 sm:w-20 sm:h-20 rounded-2xl border border-orange-200 flex items-center justify-center bg-orange-50/40 shadow-sm">
+                    {card.icon}
+                  </div>
+                  <p className="text-gray-800 font-semibold text-[11px] sm:text-xs tracking-wide">{card.title}</p>
+                </div>
+              ))}
             </div>
           </div>
           <div className="relative w-full h-80 md:h-[420px] rounded-xl overflow-hidden shadow-lg">
@@ -114,7 +142,7 @@ export default function Home() {
       <StatsScrollReveal />
 
       {/* Solar Güç Hesaplama CTA (görselli banner) */}
-      <section className="py-16">
+      <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="relative rounded-2xl overflow-hidden">
             <img src="/solar-hesabi.jpg" alt="Solar güç hesabı" className="w-full h-[360px] object-cover" />
@@ -137,114 +165,45 @@ export default function Home() {
   );
 }
 
-// Basit sayı saydırma bileşeni
-function Counter({ end }) {
-  const [value, setValue] = useState(0);
-  useEffect(() => {
-    let start = 0;
-    const durationMs = 1200; // 1.2s
-    const stepMs = 16;
-    const steps = Math.ceil(durationMs / stepMs);
-    const increment = end / steps;
-    const id = setInterval(() => {
-      start += increment;
-      if (start >= end) {
-        setValue(end);
-        clearInterval(id);
-      } else {
-        setValue(Math.round(start));
-      }
-    }, stepMs);
-    return () => clearInterval(id);
-  }, [end]);
-
-  return new Intl.NumberFormat('tr-TR').format(value);
-}
-
-// Kaydırdıkça yanlara açılan 4 sekmeli istatistik tasarımı
 function StatsScrollReveal() {
-  const containerRef = useRef(null);
-  const [hovered, setHovered] = useState(false);
+  const stats = [
+    { value: '108861', suffix: 'MW', label: "Türkiye'nin Kurulu Gücü" },
+    { value: '13602', suffix: 'MW', label: 'Güneş Enerji Santralleri Kurulu Gücü' },
+    { value: '11933', suffix: 'Adet', label: 'Güneş Enerjisi Santralleri Sayısı' },
+    { value: '18000', suffix: 'MW', label: '2025 Minimum Kurulu Güç Hedefi' },
+  ];
 
   return (
-    <section id="istatistikler" className="py-24 bg-gray-50">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div 
-          ref={containerRef}
-          onMouseEnter={() => setHovered(true)}
-          onMouseLeave={() => setHovered(false)}
-          className="relative mx-auto h-72 md:h-80 flex items-center justify-center"
-        >
-          {/* Merkez güneş */}
-          <motion.div 
-            animate={{ scale: hovered ? 1.05 : 1 }}
-            transition={{ type: 'spring', stiffness: 200, damping: 12 }}
-            className="w-24 h-24 md:w-28 md:h-28 bg-orange-100 rounded-full flex items-center justify-center shadow-xl"
-          >
-            <svg className="w-12 h-12 text-orange-500" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clipRule="evenodd" />
-            </svg>
-          </motion.div>
-
-          {/* Işınlar + etiketler */}
-          {/* Üst */}
-          <motion.div 
-            className="absolute top-6 left-1/2 -translate-x-1/2 flex flex-col items-center"
-            initial={{ opacity: 0, y: 0 }}
-            animate={{ opacity: hovered ? 1 : 0, y: hovered ? -40 : 0 }}
-            transition={{ duration: 0.35 }}
-          >
-            <motion.div className="bg-orange-400 h-8 w-0.5 rounded-full" initial={{ scaleY: 0 }} animate={{ scaleY: hovered ? 1 : 0 }} transition={{ duration: 0.35 }} />
-            <div className="mt-3 text-center">
-              <div className="text-2xl font-bold text-gray-900">{new Intl.NumberFormat('tr-TR').format(108861)}</div>
-              <div className="text-orange-500 font-semibold text-sm">MW</div>
-              <div className="text-gray-600 text-sm">Türkiye'nin Kurulu Gücü</div>
-            </div>
-          </motion.div>
-
-          {/* Sağ */}
-          <motion.div 
-            className="absolute right-6 top-1/2 -translate-y-1/2 flex items-center"
-            initial={{ opacity: 0, x: 0 }}
-            animate={{ opacity: hovered ? 1 : 0, x: hovered ? 40 : 0 }}
-            transition={{ duration: 0.35 }}
-          >
-            <motion.div className="bg-orange-400 h-0.5 w-10 md:w-16 rounded-full" initial={{ scaleX: 0 }} animate={{ scaleX: hovered ? 1 : 0 }} transition={{ duration: 0.35 }} />
-            <div className="ml-3 text-left">
-              <div className="text-2xl font-bold text-gray-900">{new Intl.NumberFormat('tr-TR').format(11933)}</div>
-              <div className="text-gray-600 text-sm">GES Sayısı</div>
-            </div>
-          </motion.div>
-
-          {/* Alt */}
-          <motion.div 
-            className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center"
-            initial={{ opacity: 0, y: 0 }}
-            animate={{ opacity: hovered ? 1 : 0, y: hovered ? 40 : 0 }}
-            transition={{ duration: 0.35 }}
-          >
-            <motion.div className="bg-orange-400 h-8 w-0.5 rounded-full" initial={{ scaleY: 0 }} animate={{ scaleY: hovered ? 1 : 0 }} transition={{ duration: 0.35 }} />
-            <div className="mt-3 text-center">
-              <div className="text-2xl font-bold text-gray-900">{new Intl.NumberFormat('tr-TR').format(18000)}</div>
-              <div className="text-orange-500 font-semibold text-sm">MW</div>
-              <div className="text-gray-600 text-sm">2025 Hedefi</div>
-            </div>
-          </motion.div>
-
-          {/* Sol */}
-          <motion.div 
-            className="absolute left-6 top-1/2 -translate-y-1/2 flex items-center"
-            initial={{ opacity: 0, x: 0 }}
-            animate={{ opacity: hovered ? 1 : 0, x: hovered ? -40 : 0 }}
-            transition={{ duration: 0.35 }}
-          >
-            <div className="mr-3 text-right">
-              <div className="text-2xl font-bold text-gray-900">{new Intl.NumberFormat('tr-TR').format(13602)}</div>
-              <div className="text-orange-500 font-semibold text-sm">MW</div>
-              <div className="text-gray-600 text-sm">GES Kurulu Gücü</div>
-            </div>
-            <motion.div className="bg-orange-400 h-0.5 w-10 md:w-16 rounded-full" initial={{ scaleX: 0 }} animate={{ scaleX: hovered ? 1 : 0 }} transition={{ duration: 0.35 }} />
-          </motion.div>
+    <section id="istatistikler" className="py-20 bg-gray-50">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="bg-white rounded-[32px] shadow-xl border border-gray-100 px-6 py-10 md:px-12 md:py-12">
+          <div className="text-center max-w-3xl mx-auto">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">Türkiye'de Güneş Enerjisi</h2>
+            <p className="text-gray-600 text-sm md:text-base">
+              Enerji Bakanlığı'nın güneş enerjisi potansiyel atlasına göre Türkiye'de yıllık toplam güneşlenme süresi 2.737 saat,
+              yıllık toplam gelen güneş enerjisi 1.527 kWh/m²·yıl olarak hesaplanıyor. Bu potansiyeli en verimli şekilde değerlendirmek için çalışıyoruz.
+            </p>
+          </div>
+          <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {stats.map((stat) => (
+              <div key={stat.label} className="flex flex-col items-center text-center space-y-3">
+                <div className="w-16 h-16 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center shadow-md">
+                  <svg className="w-10 h-10" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      fillRule="evenodd"
+                      d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </div>
+                <div className="text-2xl font-bold text-gray-900">
+                  {new Intl.NumberFormat('tr-TR').format(Number(stat.value))}
+                  <span className="text-orange-500 text-base font-semibold ml-1">{stat.suffix}</span>
+                </div>
+                <p className="text-xs md:text-sm text-gray-600">{stat.label}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>

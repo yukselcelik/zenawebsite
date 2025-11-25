@@ -15,7 +15,7 @@ export default function Navbar({ userData, onLogout, activeTab, isManager }) {
 
   return (
     <header className="bg-white shadow-sm">
-      <div className="px-6 py-4 flex justify-between items-center">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col gap-4 lg:flex-row lg:justify-between lg:items-center">
         <div className="flex items-center space-x-3">
           <h1 className="text-2xl font-bold text-gray-800">
             {tabTitles[activeTab] || 'Panel'}
