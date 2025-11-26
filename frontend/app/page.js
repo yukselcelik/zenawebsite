@@ -62,7 +62,7 @@ const serviceCards = [
     title: 'Proje Geliştirme',
     iconBg: 'bg-[#f9a826]',
     icon: (
-      <svg className="w-8 h-8 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg className="w-7 h-7 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <rect x="3.5" y="3.5" width="7" height="7" rx="1.5" />
         <rect x="13.5" y="3.5" width="7" height="7" rx="1.5" />
         <rect x="3.5" y="13.5" width="7" height="7" rx="1.5" />
@@ -75,7 +75,7 @@ const serviceCards = [
     title: 'İmar Uygulamaları',
     iconBg: 'bg-[#2fafa2]',
     icon: (
-      <svg className="w-8 h-8 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg className="w-7 h-7 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M12 21s5-5.2 5-9.2a5 5 0 10-10 0c0 4 5 9.2 5 9.2z" />
         <path d="M9.5 11.5h5" />
         <path d="M12 9v5" />
@@ -86,7 +86,7 @@ const serviceCards = [
     title: 'Saha Kurulumları',
     iconBg: 'bg-[#1f68a5]',
     icon: (
-      <svg className="w-8 h-8 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg className="w-7 h-7 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M3 11h18l-2 7H5z" />
         <path d="M7 11l2-5h6l2 5" />
         <path d="M8 15h8" />
@@ -97,7 +97,7 @@ const serviceCards = [
     title: 'İHA ile Termal Test',
     iconBg: 'bg-[#f9a826]',
     icon: (
-      <svg className="w-8 h-8 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg className="w-7 h-7 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="2.2" />
         <path d="M4 9h5l1.5-3h3L15 9h5" />
         <path d="M4 15h5l1.5 3h3l1.5-3h5" />
@@ -109,7 +109,7 @@ const serviceCards = [
     title: 'İşletme ve Bakım',
     iconBg: 'bg-[#f06b5b]',
     icon: (
-      <svg className="w-8 h-8 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg className="w-7 h-7 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M10 3h4l-1 4h-2z" />
         <path d="M8 8h8l1 5v5H7v-5z" />
         <path d="M7 18l-1.5 3M17 18l1.5 3" />
@@ -121,7 +121,7 @@ const serviceCards = [
     title: 'Danışmanlık ve Teknik İnceleme',
     iconBg: 'bg-[#14395b]',
     icon: (
-      <svg className="w-8 h-8 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg className="w-7 h-7 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M8 9a3 3 0 116 0v1.5" />
         <path d="M5 13l4 4c.8.8 2.2.8 3 0l2-2" />
         <path d="M19 11l-4 4" />
@@ -252,8 +252,8 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="flex flex-col items-center text-center lg:items-center lg:text-center w-full">
             <div className="max-w-2xl">
-              <h2 className="text-lg md:text-xl font-semibold text-gray-900 mb-3">Zena Enerji ile Tam Hizmet</h2>
-              <p className="text-xs md:text-sm text-gray-700 mb-10 leading-relaxed">
+              <h2 className="text-lg md:text-xl font-semibold text-gray-900 mb-5">Zena Enerji ile Tam Hizmet</h2>
+              <p className="text-xs md:text-sm text-gray-700 mb-8 leading-relaxed">
               Zena Enerji olarak, güneş enerjisi sektöründe proje geliştirme, proje uygulama, imar uygulamaları, saha kurulumu,
               geçici kabul işlemleri, danışmanlık ve müşterilerimizin portföy verimliliğini en üst düzeye çıkarmak için
               kapsamlı hizmet sunuyoruz. Güneş PV tesislerindeki sorunları anlamaya yardımcı olmak amacıyla İHA’lar ile
@@ -263,10 +263,10 @@ export default function Home() {
             <div className="grid grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-2xl mx-auto justify-items-center mt-2">
               {serviceCards.map((card) => (
                 <div key={card.title} className="flex flex-col items-center text-center gap-3">
-                  <div className={`w-20 h-20 sm:w-20 sm:h-20 rounded-full flex items-center justify-center shadow-[0_12px_30px_rgba(0,0,0,0.08)] ${card.iconBg}`}>
+                  <div className={`w-16 h-16 sm:w-16 sm:h-16 rounded-full flex items-center justify-center shadow-[0_8px_20px_rgba(0,0,0,0.06)] ${card.iconBg}`}>
                     {card.icon}
                   </div>
-                  <p className="text-gray-900 font-semibold text-[11px] sm:text-xs tracking-wide">{card.title}</p>
+                  <p className="text-gray-900 font-semibold text-[10px] sm:text-[11px] tracking-wide">{card.title}</p>
                 </div>
               ))}
             </div>
