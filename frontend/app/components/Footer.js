@@ -22,8 +22,8 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-gray-800 text-white relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <footer className="bg-gray-800 text-white relative before:absolute before:top-0 before:left-0 before:right-0 before:h-3 before:bg-gradient-to-b before:from-transparent before:to-gray-800">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-[72px] pb-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           
           {/* Zena Enerji - Sol kolon */}
@@ -52,7 +52,7 @@ export default function Footer() {
                 Bağdat Caddesi No:200/6<br />
                 Kadıköy/İstanbul Türkiye
               </p>
-              <p>Telefon: <a href="tel:+902166064458" className="hover:text-green-500 transition-colors">+90 (216) 606 44 58</a></p>
+              <p>Telefon: <a href="tel:+905441572201" className="hover:text-green-500 transition-colors">0544 157 22 01</a></p>
               <p>Email: <a href="mailto:info@zenaenerji.com" className="hover:text-green-500 transition-colors">info@zenaenerji.com</a></p>
               
               {/* Sosyal medya ikonları */}

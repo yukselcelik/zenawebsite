@@ -50,11 +50,11 @@ export default function Hizmetler() {
       
       {/* Sayfa başlığı */}
       <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-orange-500 mb-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h1 className="text-4xl md:text-5xl font-bold text-orange-500 mb-6 text-center">
             Hizmetlerimiz
           </h1>
-          <p className="text-xl text-gray-700 max-w-3xl mx-auto">
+          <p className="text-base md:text-lg text-gray-700 text-center max-w-7xl mx-auto">
             Zena Enerji olarak, güneş enerjisi sektöründe proje geliştirme, proje uygulama, imar uygulamaları, saha kurulumu, geçici kabul işlemleri, danışmanlık ve müşterilerimizin portföy verimliliğini en üst düzeye çıkarmak için kapsamlı hizmet sunuyoruz. Güneş PV tesislerindeki sorunları anlamaya yardımcı olmak amacıyla İHA'lar ile inceleme ve İHA'larda bulunan termal kamera ile havadan güneş enerjisi tesislerinin denetimi yapılmaktadır.
           </p>
         </div>
@@ -88,24 +88,32 @@ export default function Hizmetler() {
             {/* İçerik container */}
             <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full min-h-[600px] md:min-h-[700px] flex items-center">
               <div className="w-full text-center max-w-4xl mx-auto text-white">
-                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 text-orange-500">
+                <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-5 text-orange-500">
                   {service.title}
                 </h2>
-                <p className="text-lg md:text-xl text-white/90 mb-8 leading-relaxed">
+                <p className="text-base md:text-lg text-white/90 mb-7 leading-relaxed">
                   {service.description}
                 </p>
                 
-                <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                  <button className="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 px-8 rounded-lg text-lg transition-colors duration-300 shadow-lg">
-                    Daha Fazla Bilgi
-                  </button>
-                  <button className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-gray-900 font-semibold py-3 px-8 rounded-lg text-lg transition-all duration-300 flex items-center gap-2">
-                    Bize Ulaşın
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </button>
-                </div>
+                {service.id === 3 && (
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <a 
+                      href="/termal-test"
+                      className="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 px-8 rounded-lg text-lg transition-colors duration-300 shadow-lg"
+                    >
+                      Daha Fazla Bilgi
+                    </a>
+                    <a 
+                      href="/iletisim"
+                      className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-gray-900 font-semibold py-3 px-8 rounded-lg text-lg transition-all duration-300 flex items-center gap-2"
+                    >
+                      Bize Ulaşın
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </a>
+                  </div>
+                )}
               </div>
             </div>
           </div>

@@ -248,12 +248,12 @@ export default function Home() {
         </div>
       </section>
       {/* Zena Enerji ile Tam Hizmet + Drone görselli bölüm (drone görseli kalsın) */}
-      <section className="py-16 bg-[#f9f6f0]">
+      <section className="py-16 bg-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div className="flex flex-col items-center text-center lg:items-center lg:text-center w-full">
-            <div className="max-w-2xl">
+          <div className="flex flex-col items-center text-center lg:items-start lg:text-left w-full">
+            <div className="w-full lg:max-w-none">
               <h2 className="text-lg md:text-xl font-semibold text-gray-900 mb-5">Zena Enerji ile Tam Hizmet</h2>
-              <p className="text-xs md:text-sm text-gray-700 mb-8 leading-relaxed">
+              <p className="text-[0.78rem] md:text-sm text-gray-700 mb-8 leading-relaxed">
               Zena Enerji olarak, güneş enerjisi sektöründe proje geliştirme, proje uygulama, imar uygulamaları, saha kurulumu,
               geçici kabul işlemleri, danışmanlık ve müşterilerimizin portföy verimliliğini en üst düzeye çıkarmak için
               kapsamlı hizmet sunuyoruz. Güneş PV tesislerindeki sorunları anlamaya yardımcı olmak amacıyla İHA’lar ile
@@ -262,11 +262,11 @@ export default function Home() {
             </div>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-2xl mx-auto justify-items-center mt-2">
               {serviceCards.map((card) => (
-                <div key={card.title} className="flex flex-col items-center text-center gap-3">
-                  <div className={`w-16 h-16 sm:w-16 sm:h-16 rounded-full flex items-center justify-center shadow-[0_8px_20px_rgba(0,0,0,0.06)] ${card.iconBg}`}>
+                <div key={card.title} className="flex flex-col items-center text-center gap-2.5">
+                  <div className={`w-12 h-12 sm:w-12 sm:h-12 rounded-full flex items-center justify-center shadow-[0_6px_16px_rgba(0,0,0,0.06)] ${card.iconBg}`}>
                     {card.icon}
                   </div>
-                  <p className="text-gray-900 font-semibold text-[10px] sm:text-[11px] tracking-wide">{card.title}</p>
+                  <p className="text-gray-900 font-semibold text-[9px] sm:text-[10px] tracking-wide">{card.title}</p>
                 </div>
               ))}
             </div>
@@ -281,16 +281,88 @@ export default function Home() {
       <StatsScrollReveal />
 
       {/* Solar Güç Hesaplama CTA (görselli banner) */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="relative rounded-2xl overflow-hidden">
-            <img src="/solar-hesabi.jpg" alt="Solar güç hesabı" className="w-full h-[360px] object-cover" />
+      <section className="py-16 bg-gray-50 px-0">
+        <div className="w-full">
+          <div className="relative rounded-none lg:rounded-2xl overflow-hidden">
+            <img src="/solar-hesabi.jpg" alt="Solar güç hesabı" className="w-full h-[400px] object-cover" />
             <div className="absolute inset-0 bg-black/45"></div>
             <div className="absolute inset-0 flex items-center">
               <div className="px-8 md:px-14 max-w-xl">
                 <h3 className="text-3xl md:text-4xl font-bold text-white mb-4">Solar Güç Simulasyonu Hesabı</h3>
                 <p className="text-white/90 mb-6">Kurulu gücünüzü, panel sayınızı, kurtarılan ağaç sayınızı hesaplayabilirsiniz...</p>
                 <a href="/simulasyon" className="inline-block bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 px-6 rounded-lg">Şimdi Hesapla</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Zena Enerji Hakkında */}
+      <section className="py-16 bg-white text-center">
+        <div className="max-w-6xl mx-auto px-6">
+          <p className="text-xs font-semibold tracking-[0.6em] text-orange-500 mb-4">HAKKIMIZDA</p>
+          <div className="inline-flex items-center justify-center gap-4 mb-6">
+            <span className="w-12 h-px bg-gray-300" />
+            <h3 className="text-3xl md:text-4xl font-bold text-gray-900 uppercase">Zena Enerji Hakkında</h3>
+            <span className="w-12 h-px bg-gray-300" />
+          </div>
+          <div className="space-y-5 text-sm md:text-base text-gray-700 leading-relaxed">
+            <p>
+              2015 yılından itibaren güneş enerjisi sektöründe faaliyet gösteren firmamız, sahip olduğumuz bilgi birikimini uzman iş gücüyle birleştirerek
+              Türkiye'de güneş enerjisi santrali yatırımları konusunda birçok projeyi başarıyla hayata geçirmiştir.
+            </p>
+            <p>
+              Proje çizimi, proje geliştirme ve uygulama süreçlerinde sektörün önde gelen firmalarından olan Zena Enerji, Türkiye'de ki ilk ve en büyük Endüstriyel Çatı Güneş Elektrik Santralini ve Türkiye'nin ilk ve tek kurulum için tüm özellikleri yansıtan Test Güneş Elektrik Santralini kurmuştur.
+              Dünyaca ünlü firmaların projelerini tamamlayan firmamız, her bir projede farklı bir deneyim sürecinden geçmiş, edindiği profesyonellik ve disiplini çalışma prensipleri haline getirmiştir.
+            </p>
+            <p>
+              Bununla birlikte müşteri bağlılığına verdiği değerle alınan işleri zamanında tamamlayarak güven ve dürüstlük ilkelerine sahip çıkmış ve aynı ilkelerle yoluna devam eden bir şirket olmuştur.
+            </p>
+            <p>
+              Türkiye'de güneş enerjisi santralleri kurulması ile ilgili olarak ilk projeleri gerçekleştiren Zena Enerji'nin bünyesinde sektörün en tecrübeli mühendis ve teknikerleri görev almaktadır.
+              Zena Enerji olarak edindiğimiz tecrübelere, birlikte çalıştığımız uzman iş gücüne ve sektördeki saygın bilinirliliğimize dayanarak ülkemiz ve dünyamız adına daha yeşil bir gelecek için çalışmalarımıza devam etmekteyiz.
+            </p>
+          </div>
+          <a
+            href="/hakkimizda"
+            className="inline-flex items-center gap-2 px-5 py-2.5 mt-10 rounded-full bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold transition"
+          >
+            Daha Fazla Bilgi
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M13 5l7 7-7 7" />
+            </svg>
+          </a>
+        </div>
+      </section>
+
+      {/* İletişim CTA */}
+      <section className="pb-16 px-4">
+        <div className="max-w-6xl mx-auto">
+          <div className="relative rounded-[28px] overflow-hidden shadow-xl">
+            <img
+              src="https://images.unsplash.com/photo-1500536311302-3756c5a7b4b3?auto=format&fit=crop&w=1600&q=80"
+              alt="Güneş batımı"
+              className="w-full h-64 md:h-72 object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-transparent" />
+            <div className="absolute inset-0 flex items-center px-8 md:px-12">
+              <div className="text-white max-w-lg space-y-4">
+                <p className="text-xs md:text-sm font-semibold tracking-[0.35em] text-orange-300">İLETİŞİME GEÇİN</p>
+                <h4 className="text-2xl md:text-3xl font-bold leading-snug">
+                  Hemen bize ulaşın ve size özel <span className="text-orange-300">hizmetleri keşfedin!</span>
+                </h4>
+                <p className="text-sm md:text-base text-white/90">
+                  Projelerinizi hızla hayata geçirmek için mühendislik, saha kurulumu ve danışmanlık ekibimiz hazır.
+                </p>
+                <a
+                  href="/iletisim"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold transition shadow-lg shadow-orange-500/30"
+                >
+                  Bize Ulaşın
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M13 5l7 7-7 7" />
+                  </svg>
+                </a>
               </div>
             </div>
           </div>
@@ -313,7 +385,22 @@ function StatsScrollReveal() {
   ];
 
   return (
-    <section id="istatistikler" className="py-16 bg-gray-50">
+    <section id="istatistikler" className="py-16 bg-gray-50 relative overflow-hidden">
+      <div className="absolute -left-24 md:-left-12 top-1/2 -translate-y-1/2 w-[220px] h-[220px] md:w-[320px] md:h-[320px] text-[#ffc666] opacity-40 pointer-events-none select-none">
+        <svg viewBox="0 0 200 200" fill="none" stroke="currentColor" className="w-full h-full drop-shadow-[0_8px_24px_rgba(255,160,55,0.25)]">
+          <circle cx="100" cy="100" r="48" strokeWidth="14" />
+          <g strokeWidth="14" strokeLinecap="round">
+            <line x1="100" y1="10" x2="100" y2="0" />
+            <line x1="100" y1="200" x2="100" y2="190" />
+            <line x1="10" y1="100" x2="0" y2="100" />
+            <line x1="200" y1="100" x2="190" y2="100" />
+            <line x1="31" y1="31" x2="17" y2="17" />
+            <line x1="169" y1="169" x2="183" y2="183" />
+            <line x1="31" y1="169" x2="17" y2="183" />
+            <line x1="169" y1="31" x2="183" y2="17" />
+          </g>
+        </svg>
+      </div>
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-[28px] shadow-xl border border-gray-100 px-6 py-9 md:px-10 md:py-10">
           <div className="text-center max-w-2xl mx-auto">
@@ -325,19 +412,27 @@ function StatsScrollReveal() {
           </div>
           <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {stats.map((stat) => (
-              <div key={stat.label} className="flex flex-col items-center text-center space-y-3">
-                <div className="w-14 h-14 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center shadow-md">
-                  <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-                    <path
-                      fillRule="evenodd"
-                      d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
-                      clipRule="evenodd"
-                    />
+                <div key={stat.label} className="flex flex-col items-center text-center space-y-2.5">
+                <div className="w-12 h-12 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center shadow-md">
+                  <svg className="w-7 h-7 text-orange-500" viewBox="0 0 32 32" aria-hidden="true">
+                    <circle cx="16" cy="16" r="6.5" fill="currentColor" />
+                    <circle cx="16" cy="16" r="4.6" fill="#fff6eb" />
+                    <circle cx="16" cy="16" r="3.4" fill="#f28c1a" />
+                    <g stroke="#f7a138" strokeWidth="1.7" strokeLinecap="round">
+                      <line x1="16" y1="3" x2="16" y2="7" />
+                      <line x1="16" y1="25" x2="16" y2="29" />
+                      <line x1="3" y1="16" x2="7" y2="16" />
+                      <line x1="25" y1="16" x2="29" y2="16" />
+                      <line x1="6.2" y1="6.2" x2="9.2" y2="9.2" />
+                      <line x1="22.8" y1="22.8" x2="25.8" y2="25.8" />
+                      <line x1="6.2" y1="25.8" x2="9.2" y2="22.8" />
+                      <line x1="22.8" y1="9.2" x2="25.8" y2="6.2" />
+                    </g>
                   </svg>
                 </div>
-                <div className="text-xl font-bold text-gray-900">
+                <div className="text-lg font-semibold text-gray-900">
                   {new Intl.NumberFormat('tr-TR').format(Number(stat.value))}
-                  <span className="text-orange-500 text-sm font-semibold ml-1">{stat.suffix}</span>
+                  <span className="text-orange-500 text-xs font-semibold ml-1">{stat.suffix}</span>
                 </div>
                 <p className="text-[11px] md:text-xs text-gray-600">{stat.label}</p>
               </div>
