@@ -256,14 +256,14 @@ export default function Home() {
               <p className="text-[0.78rem] md:text-sm text-gray-700 mb-8 leading-relaxed">
               Zena Enerji olarak, güneş enerjisi sektöründe proje geliştirme, proje uygulama, imar uygulamaları, saha kurulumu,
               geçici kabul işlemleri, danışmanlık ve müşterilerimizin portföy verimliliğini en üst düzeye çıkarmak için
-              kapsamlı hizmet sunuyoruz. Güneş PV tesislerindeki sorunları anlamaya yardımcı olmak amacıyla İHA’lar ile
-              inceleme ve İHA’larda bulunan termal kamera ile havadan denetim yapılmaktadır.
+              kapsamlı hizmet sunuyoruz. Güneş PV tesislerindeki sorunları anlamaya yardımcı olmak amacıyla İHA'lar ile
+              inceleme ve İHA'larda bulunan termal kamera ile havadan denetim yapılmaktadır.
             </p>
               </div>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-2xl mx-auto justify-items-center mt-2">
               {serviceCards.map((card) => (
                 <div key={card.title} className="flex flex-col items-center text-center gap-2.5">
-                  <div className={`w-12 h-12 sm:w-12 sm:h-12 rounded-full flex items-center justify-center shadow-[0_6px_16px_rgba(0,0,0,0.06)] ${card.iconBg}`}>
+                  <div className={`w-12 h-12 sm:w-12 sm:h-12 rounded-full flex items-center justify-center shadow-[0_6px_16px_rgba(0,0,0,0.3)] bg-gray-700 hover:bg-gray-600 transition-colors`}>
                     {card.icon}
               </div>
                   <p className="text-gray-900 font-semibold text-[9px] sm:text-[10px] tracking-wide">{card.title}</p>
