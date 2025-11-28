@@ -56,17 +56,22 @@ export default function Projelerimiz() {
           cityIds.forEach(cityId => {
             const cityGroup = element.querySelector(`#${cityId}`);
             if (cityGroup) {
-              const path = cityGroup.querySelector('path');
-              if (path) {
-                // Varsayılan turuncu renk (daha açık)
-                path.style.fill = '#fb923c'; // orange-400
-                path.setAttribute('data-has-project', 'true');
+              // Tüm path'leri bul (bazı illerde birden fazla path olabilir)
+              const paths = cityGroup.querySelectorAll('path');
+              if (paths.length > 0) {
+                // Tüm path'leri turuncu renklendir
+                paths.forEach(path => {
+                  // Varsayılan turuncu renk (daha açık) - hem style hem attribute olarak
+                  path.style.fill = '#fb923c'; // orange-400
+                  path.setAttribute('fill', '#fb923c');
+                  path.setAttribute('data-has-project', 'true');
+                });
                 
-                // İl adını ekle
+                // İl adını ekle (sadece bir kez, tüm grubun merkezini kullan)
                 const ilAdi = cityGroup.getAttribute('data-iladi');
                 if (ilAdi) {
-                  // Path'in bounding box'ını al
-                  const bbox = path.getBBox();
+                  // Grup bounding box'ını al (birden fazla path olsa bile)
+                  const bbox = cityGroup.getBBox();
                   const centerX = bbox.x + bbox.width / 2;
                   const centerY = bbox.y + bbox.height / 2;
                   
@@ -77,7 +82,7 @@ export default function Projelerimiz() {
                   text.setAttribute('text-anchor', 'middle');
                   text.setAttribute('dominant-baseline', 'middle');
                   text.setAttribute('fill', '#ffffff');
-                  text.setAttribute('font-size', '12');
+                  text.setAttribute('font-size', '10');
                   text.setAttribute('font-weight', '600');
                   text.setAttribute('pointer-events', 'none');
                   text.setAttribute('style', 'text-shadow: 1px 1px 2px rgba(0,0,0,0.5);');
@@ -142,8 +147,10 @@ export default function Projelerimiz() {
               // Eğer proje olan bir il ise turuncu rengi koru, değilse eski haline getir
               if (path.getAttribute('data-has-project') === 'true') {
                 path.style.fill = '#fb923c'; // orange-400 - varsayılan turuncu
+                path.setAttribute('fill', '#fb923c');
               } else {
                 path.style.fill = '';
+                path.removeAttribute('fill');
               }
             }
           };
@@ -227,7 +234,7 @@ export default function Projelerimiz() {
           <div className="flex justify-center space-x-8">
             <button
               onClick={() => setActiveTab('harita')}
-              className={`py-2 px-4 text-lg font-medium border-b-2 transition-colors ${
+              className={`py-2 px-4 text-lg font-medium border-b-2 transition-colors hover:cursor-pointer ${
                 activeTab === 'harita'
                   ? 'border-orange-500 text-orange-500'
                   : 'border-transparent text-gray-500 hover:text-gray-700'
@@ -237,7 +244,7 @@ export default function Projelerimiz() {
             </button>
             <button
               onClick={() => setActiveTab('liste')}
-              className={`py-2 px-4 text-lg font-medium border-b-2 transition-colors ${
+              className={`py-2 px-4 text-lg font-medium border-b-2 transition-colors hover:cursor-pointer ${
                 activeTab === 'liste'
                   ? 'border-orange-500 text-orange-500'
                   : 'border-transparent text-gray-500 hover:text-gray-700'
@@ -278,6 +285,9 @@ export default function Projelerimiz() {
                   .svg-map-container #svg-turkiye-haritasi path {
                     transition: fill 0.2s ease, opacity 0.2s ease;
                     cursor: pointer;
+                  }
+                  .svg-map-container #svg-turkiye-haritasi path[data-has-project="true"] {
+                    fill: #fb923c !important; /* orange-400 - proje olan iller için varsayılan turuncu */
                   }
                   .svg-map-container #svg-turkiye-haritasi path:hover {
                     fill: #ea580c !important; /* orange-600 - daha koyu turuncu */

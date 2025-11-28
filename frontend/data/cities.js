@@ -80,6 +80,139 @@ export const citiesData = [
         ]
     },
     {
+        "id": "sivas",
+        "name": "Sivas",
+        "projects": [
+            {
+                "id": 1,
+                "ProjeAdi": "Sivas 4.8 MW",
+                "ProjeYeri": "Sivas / Ulaş",
+                "ProjeGucu": "4.8 MW",
+                "ProjeTuru": "Lisanssız",
+                "ProjeTarihi": "2015",
+                "Yatirimci": "Hanwha Qcells"
+            },
+            {
+                "id": 2,
+                "ProjeAdi": "Sivas 3.6 MW",
+                "ProjeYeri": "Sivas / Dikmencik",
+                "ProjeGucu": "3.6 MW",
+                "ProjeTuru": "Lisanssız",
+                "ProjeTarihi": "2015",
+                "Yatirimci": "Hanwha Qcells"
+            },
+            {
+                "id": 3,
+                "ProjeAdi": "Sivas 3 MW",
+                "ProjeYeri": "Sivas",
+                "ProjeGucu": "3 MW",
+                "ProjeTuru": "Lisanssız",
+                "ProjeTarihi": "2015",
+                "Yatirimci": "Muhtelif"
+            },
+            {
+                "id": 4,
+                "ProjeAdi": "Sivas 2.4 MW",
+                "ProjeYeri": "Sivas / Hasbey",
+                "ProjeGucu": "2.4 MW",
+                "ProjeTuru": "Lisanssız",
+                "ProjeTarihi": "2015",
+                "Yatirimci": "Hanwha Qcells"
+            },
+            {
+                "id": 5,
+                "ProjeAdi": "Sivas 1.2 MW",
+                "ProjeYeri": "Sivas / Merkez",
+                "ProjeGucu": "1.2 MW",
+                "ProjeTuru": "Lisanssız (5.1.h)",
+                "ProjeTarihi": "2022",
+                "Yatirimci": "Elektroaktif"
+            },
+            {
+                "id": 6,
+                "ProjeAdi": "Sivas 1.2 MW",
+                "ProjeYeri": "Sivas / Altınyayla",
+                "ProjeGucu": "1.2 MW",
+                "ProjeTuru": "Lisanssız (5.1.h)",
+                "ProjeTarihi": "2022",
+                "Yatirimci": "Altınorda"
+            },
+            {
+                "id": 7,
+                "ProjeAdi": "Sivas 1.15 MW",
+                "ProjeYeri": "Sivas / Zara",
+                "ProjeGucu": "1.15 MW",
+                "ProjeTuru": "Lisanssız (5.1.h)",
+                "ProjeTarihi": "2022",
+                "Yatirimci": "Has Beton"
+            },
+            {
+                "id": 8,
+                "ProjeAdi": "Sivas 1.15 MW",
+                "ProjeYeri": "Sivas / Suşehri",
+                "ProjeGucu": "1.15 MW",
+                "ProjeTuru": "Lisanssız (5.1.h)",
+                "ProjeTarihi": "2022",
+                "Yatirimci": "Has Beton"
+            },
+            {
+                "id": 9,
+                "ProjeAdi": "Sivas 800 kW",
+                "ProjeYeri": "Sivas / Zara",
+                "ProjeGucu": "800 kW",
+                "ProjeTuru": "Lisanssız (5.1.h)",
+                "ProjeTarihi": "2022",
+                "Yatirimci": "Erfa Yapı"
+            },
+            {
+                "id": 10,
+                "ProjeAdi": "Sivas 800 kW",
+                "ProjeYeri": "Sivas / Zara",
+                "ProjeGucu": "800 kW",
+                "ProjeTuru": "Lisanssız (5.1.h)",
+                "ProjeTarihi": "2022",
+                "Yatirimci": "Zeus Enerji"
+            },
+            {
+                "id": 11,
+                "ProjeAdi": "Sivas 648 kW",
+                "ProjeYeri": "Sivas / Zara",
+                "ProjeGucu": "648 kW",
+                "ProjeTuru": "Lisanssız",
+                "ProjeTarihi": "2015",
+                "Yatirimci": "Muhtelif"
+            },
+            {
+                "id": 12,
+                "ProjeAdi": "Sivas 500 kW",
+                "ProjeYeri": "Sivas / Zara",
+                "ProjeGucu": "500 kW",
+                "ProjeTuru": "Lisanssız (5.1.h)",
+                "ProjeTarihi": "2022",
+                "Yatirimci": "Gökorda"
+            },
+            {
+                "id": 13,
+                "ProjeAdi": "Sivas 400 kW",
+                "ProjeYeri": "Sivas / Kangal",
+                "ProjeGucu": "400 kW",
+                "ProjeTuru": "Lisanssız (5.1.h)",
+                "ProjeTarihi": "2022",
+                "Yatirimci": "Kuman"
+            },
+            {
+                "id": 14,
+                "ProjeAdi": "Sivas 250 kW",
+                "ProjeYeri": "Sivas / Kangal",
+                "ProjeGucu": "250 kW",
+                "ProjeTuru": "Lisanssız (5.1.h)",
+                "ProjeTarihi": "2022",
+                "Yatirimci": "Bilge"
+            }
+        ]
+    }
+    ,
+    {
         id: "yozgat", name: "Yozgat", projects: [
             {
                 id: 1,
