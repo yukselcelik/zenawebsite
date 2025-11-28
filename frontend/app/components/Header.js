@@ -68,19 +68,17 @@ export default function Header() {
   };
 
   return (
-    <header 
-      className={`sticky top-0 z-[100] transition-all duration-300 pt-4 ${
-        isScrolled 
-          ? 'bg-black/90 shadow-lg' 
+    <header
+      className={`sticky top-0 z-[100] transition-all duration-300 pt-4 ${isScrolled
+          ? 'bg-black/90 shadow-lg'
           : 'bg-transparent'
-      }`}
+        }`}
     >
       {/* Ana container - içeriği ortalar ve maksimum genişlik verir */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className={`flex justify-around items-center transition-all duration-300 ${
-          isScrolled ? 'h-14' : 'h-16'
-        }`}>
-          
+        <div className={`flex justify-around items-center transition-all duration-300 ${isScrolled ? 'h-14' : 'h-16'
+          }`}>
+
           {/* Logo kısmı - Sol üst köşe */}
           <Link href="/" className="flex items-center -ml-3 sm:-ml-5">
             <Image
@@ -95,29 +93,21 @@ export default function Header() {
 
           {/* Ana navigasyon menüsü */}
           <nav className="hidden md:flex gap-6">
-            <Link 
-              href="/" 
-              className={`font-bold transition-colors ${
-                isScrolled 
-                  ? 'text-white hover:text-orange-400' 
-                  : 'text-gray-900 hover:text-orange-500'
-              }`}
+            <Link
+              href="/"
+              className={`font-bold transition-colors hover:text-orange-400`}
             >
               Ana Sayfa
             </Link>
 
             {/* Hakkımızda dropdown menüsü */}
-            <div 
+            <div
               className="relative"
               onMouseEnter={handleAboutEnter}
               onMouseLeave={handleAboutLeave}
             >
-              <button 
-                className={`flex items-center font-bold transition-colors ${
-                  isScrolled 
-                    ? 'text-white hover:text-orange-400' 
-                    : 'text-gray-900 hover:text-orange-500'
-                }`}
+              <button
+                className={`flex items-center font-bold transition-colors hover:text-orange-400`}
                 aria-haspopup="menu"
                 aria-expanded={isAboutOpen}
               >
@@ -126,45 +116,41 @@ export default function Header() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
-              
+
               {/* Dropdown menü - tıklama ve hover ile açılır */}
               {isAboutOpen && (
-                <div 
-                  className={`absolute top-full left-0 mt-2 w-48 rounded-md shadow-lg py-1 z-50 ${
-                    isScrolled ? 'bg-black/95' : 'bg-white'
-                  }`}
+                <div
+                  className={`absolute top-full left-0 mt-2 w-48 rounded-md shadow-lg py-1 z-50 ${isScrolled ? 'bg-black/95' : 'bg-white'
+                    }`}
                   onMouseEnter={handleAboutEnter}
                   onMouseLeave={handleAboutLeave}
                 >
-                  <Link 
-                    href="/hakkimizda" 
-                    className={`block px-4 py-2 text-sm transition-colors ${
-                      isScrolled 
-                        ? 'text-white hover:bg-white/10 hover:text-orange-400' 
+                  <Link
+                    href="/hakkimizda"
+                    className={`block px-4 py-2 text-sm transition-colors ${isScrolled
+                        ? ' hover:bg-white/10 hover:text-orange-400'
                         : 'text-gray-700 hover:bg-orange-50 hover:text-orange-500'
-                    }`}
+                      }`}
                     onClick={() => setIsAboutOpen(false)}
                   >
                     Biz Kimiz?
                   </Link>
-                  <Link 
-                    href="/referanslarimiz" 
-                    className={`block px-4 py-2 text-sm transition-colors ${
-                      isScrolled 
-                        ? 'text-white hover:bg-white/10 hover:text-orange-400' 
+                  <Link
+                    href="/referanslarimiz"
+                    className={`block px-4 py-2 text-sm transition-colors ${isScrolled
+                        ? ' hover:bg-white/10 hover:text-orange-400'
                         : 'text-gray-700 hover:bg-orange-50 hover:text-orange-500'
-                    }`}
+                      }`}
                     onClick={() => setIsAboutOpen(false)}
                   >
                     Referanslarımız
                   </Link>
-                  <Link 
-                    href="/subelerimiz" 
-                    className={`block px-4 py-2 text-sm transition-colors ${
-                      isScrolled 
-                        ? 'text-white hover:bg-white/10 hover:text-orange-400' 
+                  <Link
+                    href="/subelerimiz"
+                    className={`block px-4 py-2 text-sm transition-colors ${isScrolled
+                        ? ' hover:bg-white/10 hover:text-orange-400'
                         : 'text-gray-700 hover:bg-orange-50 hover:text-orange-500'
-                    }`}
+                      }`}
                     onClick={() => setIsAboutOpen(false)}
                   >
                     Şubelerimiz
@@ -174,17 +160,13 @@ export default function Header() {
             </div>
 
             {/* Hizmetler dropdown menüsü */}
-            <div 
+            <div
               className="relative"
               onMouseEnter={handleServicesEnter}
               onMouseLeave={handleServicesLeave}
             >
-              <button 
-                className={`flex items-center font-bold transition-colors ${
-                  isScrolled 
-                    ? 'text-white hover:text-orange-400' 
-                    : 'text-gray-900 hover:text-orange-500'
-                }`}
+              <button
+                className={`flex items-center font-bold transition-colors hover:text-orange-400`}
                 aria-haspopup="menu"
                 aria-expanded={isServicesOpen}
               >
@@ -193,34 +175,31 @@ export default function Header() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
-              
+
               {/* Dropdown menü - tıklama ve hover ile açılır */}
               {isServicesOpen && (
-                <div 
-                  className={`absolute top-full left-0 mt-2 w-48 rounded-md shadow-lg py-1 z-50 ${
-                    isScrolled ? 'bg-black/95' : 'bg-white'
-                  }`}
+                <div
+                  className={`absolute top-full left-0 mt-2 w-48 rounded-md shadow-lg py-1 z-50 ${isScrolled ? 'bg-black/95' : 'bg-white'
+                    }`}
                   onMouseEnter={handleServicesEnter}
                   onMouseLeave={handleServicesLeave}
                 >
-                  <Link 
-                    href="/hizmetler" 
-                    className={`block px-4 py-2 text-sm transition-colors ${
-                      isScrolled 
-                        ? 'text-white hover:bg-white/10 hover:text-orange-400' 
+                  <Link
+                    href="/hizmetler"
+                    className={`block px-4 py-2 text-sm transition-colors ${isScrolled
+                        ? ' hover:bg-white/10 hover:text-orange-400'
                         : 'text-gray-700 hover:bg-orange-50 hover:text-orange-500'
-                    }`}
+                      }`}
                     onClick={() => setIsServicesOpen(false)}
                   >
                     Hizmetlerimiz
                   </Link>
-                  <Link 
-                    href="/simulasyon" 
-                    className={`block px-4 py-2 text-sm transition-colors ${
-                      isScrolled 
-                        ? 'text-white hover:bg-white/10 hover:text-orange-400' 
+                  <Link
+                    href="/simulasyon"
+                    className={`block px-4 py-2 text-sm transition-colors ${isScrolled
+                        ? ' hover:bg-white/10 hover:text-orange-400'
                         : 'text-gray-700 hover:bg-orange-50 hover:text-orange-500'
-                    }`}
+                      }`}
                     onClick={() => setIsServicesOpen(false)}
                   >
                     Solar Güç Hesaplama
@@ -230,91 +209,59 @@ export default function Header() {
             </div>
 
             {/* Diğer menü öğeleri */}
-            <Link 
-              href="/projelerimiz" 
-              className={`font-bold transition-colors ${
-                isScrolled 
-                  ? 'text-white hover:text-orange-400' 
-                  : 'text-gray-900 hover:text-orange-500'
-              }`}
+            <Link
+              href="/projelerimiz"
+              className={`font-bold transition-colors hover:text-orange-400`}
             >
               Projelerimiz
             </Link>
-            <Link 
-              href="/haberler" 
-              className={`font-bold transition-colors ${
-                isScrolled 
-                  ? 'text-white hover:text-orange-400' 
-                  : 'text-gray-900 hover:text-orange-500'
-              }`}
+            <Link
+              href="/haberler"
+              className={`font-bold transition-colors hover:text-orange-400`}
             >
               Haberler
             </Link>
-            <Link 
-              href="/blog" 
-              className={`font-bold transition-colors ${
-                isScrolled 
-                  ? 'text-white hover:text-orange-400' 
-                  : 'text-gray-900 hover:text-orange-500'
-              }`}
+            <Link
+              href="/blog"
+              className={`font-bold transition-colors hover:text-orange-400`}
             >
               Blog
             </Link>
-            <Link 
-              href="/kariyer" 
-              className={`font-bold transition-colors ${
-                isScrolled 
-                  ? 'text-white hover:text-orange-400' 
-                  : 'text-gray-900 hover:text-orange-500'
-              }`}
+            <Link
+              href="/kariyer"
+              className={`font-bold transition-colors hover:text-orange-400`}
             >
               Kariyer
             </Link>
-            <Link 
-              href="/iletisim" 
-              className={`font-bold transition-colors ${
-                isScrolled 
-                  ? 'text-white hover:text-orange-400' 
-                  : 'text-gray-900 hover:text-orange-500'
-              }`}
+            <Link
+              href="/iletisim"
+              className={`font-bold transition-colors hover:text-orange-400`}
             >
               İletişim
             </Link>
-            
+
             {/* Giriş butonu ve dil seçici */}
             {isLoggedIn && (
-                <>
-                  <Link 
-                    href="/panel"
-                  className={`font-bold transition-colors ${
-                    isScrolled 
-                      ? 'text-white hover:text-orange-400' 
-                      : 'text-gray-900 hover:text-orange-500'
-                  }`}
+              <>
+                <Link
+                  href="/panel"
+                  className={`font-bold transition-colors hover:text-orange-400`}
                 >
                   Panel
-                  </Link>
-                  <button
-                    onClick={handleLogout}
-                  className={`font-bold transition-colors ${
-                    isScrolled 
-                      ? 'text-white hover:text-orange-400' 
-                      : 'text-gray-900 hover:text-orange-500'
-                  }`}
-                  >
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className={`font-bold transition-colors hover:text-orange-400`}
+                >
                   Çıkış
-                  </button>
-                </>
+                </button>
+              </>
             )}
           </nav>
 
           {/* Mobil menü butonu - sadece mobilde görünür */}
-          <button 
-            className={`md:hidden p-2 transition-colors ${
-              isScrolled 
-                ? 'text-white hover:text-orange-400' 
-                : 'text-gray-900 hover:text-orange-500'
-            }`}
+          <button
+            className={`md:hidden p-2 transition-colors hover:text-orange-400`}
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />

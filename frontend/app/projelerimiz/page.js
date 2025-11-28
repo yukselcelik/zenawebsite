@@ -5,11 +5,13 @@
 
 import Header from '../components/Header'; // Header bileşenini import ediyoruz
 import Footer from '../components/Footer'; // Footer bileşenini import ediyoruz
-import { useState } from 'react'; // useState hook'u - tab yönetimi için
+import { useState, useEffect, useRef } from 'react'; // useState, useEffect ve useRef hook'ları
 
 export default function Projelerimiz() {
   // useState ile hangi tab'ın aktif olduğunu yönetiyoruz
   const [activeTab, setActiveTab] = useState('harita');
+  const svgContainerRef = useRef(null);
+  const infoRef = useRef(null);
 
   // Örnek proje verileri
   const projects = [
@@ -42,20 +44,135 @@ export default function Projelerimiz() {
     }
   ];
 
+  // SVG Türkiye haritası yükleme ve event listener'ları ekleme
+  useEffect(() => {
+    if (activeTab !== 'harita' || !svgContainerRef.current) return;
+
+    let element = null;
+    let info = null;
+    let cleanup = null;
+
+    // SVG'yi yükle
+    fetch('/turkey.svg')
+      .then(res => res.text())
+      .then(svgText => {
+        if (svgContainerRef.current) {
+          svgContainerRef.current.innerHTML = svgText;
+          
+          // SVG yüklendikten sonra event listener'ları ekle
+          element = svgContainerRef.current.querySelector('#svg-turkiye-haritasi');
+          info = infoRef.current;
+
+          if (!element || !info) return;
+
+          const handleMouseOver = (event) => {
+            if (event.target.tagName === 'path' && event.target.parentNode.id !== 'guney-kibris') {
+              const parent = event.target.parentNode;
+              
+              // Tooltip göster
+              info.innerHTML = [
+                '<div>',
+                parent.getAttribute('data-iladi'),
+                '</div>'
+              ].join('');
+              info.style.display = 'block';
+            }
+          };
+
+          const handleMouseMove = (event) => {
+            if (info.style.display === 'block') {
+              // Tooltip'i mouse'un hemen yanında göster (15px offset)
+              // Fixed position kullandığımız için clientY ve clientX kullanıyoruz
+              info.style.top = (event.clientY + 15) + 'px';
+              info.style.left = (event.clientX + 15) + 'px';
+            }
+          };
+
+          const handleMouseOut = (event) => {
+            if (event.target.tagName === 'path' && event.target.parentNode.id !== 'guney-kibris') {
+              const path = event.target;
+              
+              // Tooltip'i gizle
+              info.innerHTML = '';
+              info.style.display = 'none';
+              
+              // Path rengini eski haline getir
+              path.style.fill = '';
+              path.style.cursor = '';
+            }
+          };
+
+          const handleClick = (event) => {
+            if (event.target.tagName === 'path') {
+              const parent = event.target.parentNode;
+              const id = parent.getAttribute('id');
+
+              if (id === 'guney-kibris') {
+                return;
+              }
+
+              // İl tıklandığında yapılacak işlem
+              const ilAdi = parent.getAttribute('data-iladi');
+              const plakaKodu = parent.getAttribute('data-plakakodu');
+              
+              // Burada il'e göre projeleri filtreleyebilir veya başka bir işlem yapabilirsiniz
+              console.log('Seçilen il:', ilAdi, 'Plaka:', plakaKodu);
+              
+              // Örnek: URL hash ile yönlendirme
+              window.location.href = '#' + id + '-' + plakaKodu;
+            }
+          };
+
+          element.addEventListener('mouseover', handleMouseOver);
+          element.addEventListener('mousemove', handleMouseMove);
+          element.addEventListener('mouseout', handleMouseOut);
+          element.addEventListener('click', handleClick);
+
+          // Cleanup function'ı sakla
+          cleanup = () => {
+            if (element) {
+              element.removeEventListener('mouseover', handleMouseOver);
+              element.removeEventListener('mousemove', handleMouseMove);
+              element.removeEventListener('mouseout', handleMouseOut);
+              element.removeEventListener('click', handleClick);
+            }
+          };
+        }
+      })
+      .catch(err => console.error('SVG yüklenirken hata:', err));
+
+    // Cleanup function
+    return () => {
+      if (cleanup) cleanup();
+      if (svgContainerRef.current) {
+        svgContainerRef.current.innerHTML = '';
+      }
+    };
+  }, [activeTab]);
+
   return (
     <div className="min-h-screen bg-white">
       {/* Header bileşeni */}
       <Header />
       
-      {/* Sayfa başlığı */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Projelerimiz
-          </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Zena Enerji olarak tamamladığımız başarılı güneş enerjisi projelerimizi keşfedin.
-          </p>
+      {/* Hero Section - Header arkasında küçük banner */}
+      <section className="relative h-[300px] overflow-hidden -mt-20">
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=1600&q=80)` }}
+        >
+          <div className="absolute inset-0 bg-black/60" />
+        </div>
+
+        <div className="relative z-10 flex h-full items-center justify-center px-6">
+          <div className="text-center text-white max-w-4xl px-4">
+            <h1 className="text-3xl md:text-4xl font-bold mb-3 text-orange-500">
+              Projelerimiz
+            </h1>
+            <p className="text-sm md:text-base text-white/90 leading-relaxed">
+              Zena Enerji olarak tamamladığımız başarılı güneş enerjisi projelerimizi keşfedin.
+            </p>
+          </div>
         </div>
       </section>
 
@@ -94,41 +211,37 @@ export default function Projelerimiz() {
           {/* Harita görünümü */}
           {activeTab === 'harita' && (
             <div>
-              <div className="text-center mb-8">
-                <p className="text-gray-600">
-                  Proje görüntülemek için haritadan bir il seçiniz.
-                </p>
-              </div>
               
-              {/* Basit harita görseli */}
-              <div className="bg-gray-100 rounded-lg p-8 text-center">
-                <div className="text-gray-500 mb-4">
-                  <svg className="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  <p className="text-lg">Türkiye Haritası</p>
-                  <p className="text-sm">Gerçek harita entegrasyonu için Google Maps API kullanılacak</p>
-                </div>
+              
+              {/* Türkiye haritası */}
+              <div className="relative">
+                {/* İl isimleri tooltip */}
+                <div 
+                  ref={infoRef}
+                  className="il-isimleri fixed z-50 bg-orange-500 text-white px-3 py-2 rounded-lg shadow-lg pointer-events-none text-sm font-medium"
+                  style={{ display: 'none' }}
+                ></div>
+                
+                {/* Türkiye SVG haritası */}
+                <div 
+                  ref={svgContainerRef}
+                  className="flex justify-center items-center svg-map-container"
+                ></div>
+                
+                {/* SVG hover stilleri */}
+                <style dangerouslySetInnerHTML={{__html: `
+                  .svg-map-container #svg-turkiye-haritasi path {
+                    transition: fill 0.2s ease, opacity 0.2s ease;
+                    cursor: pointer;
+                  }
+                  .svg-map-container #svg-turkiye-haritasi path:hover {
+                    fill: #f97316 !important;
+                    opacity: 0.9;
+                  }
+                `}} />
                 
                 {/* Örnek proje bilgisi */}
-                <div className="bg-white rounded-lg p-4 max-w-sm mx-auto shadow-sm">
-                  <h3 className="font-semibold text-gray-900 mb-2">Samsun</h3>
-                  <div className="space-y-1 text-sm text-gray-600">
-                    <div className="flex items-center">
-                      <div className="w-3 h-3 bg-red-500 rounded-full mr-2"></div>
-                      <span>Samsun 8.4 MW</span>
-                    </div>
-                    <div className="flex items-center">
-                      <div className="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
-                      <span>Samsun 8.4 MW</span>
-                    </div>
-                    <div className="flex items-center">
-                      <div className="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
-                      <span>Samsun 8.4 MW</span>
-                    </div>
-                  </div>
-                </div>
+                
               </div>
             </div>
           )}

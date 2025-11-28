@@ -70,15 +70,24 @@ export default function Iletisim() {
       {/* Header bileşeni */}
       <Header />
       
-      {/* Sayfa başlığı */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            İletişim
-          </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Her türlü soru, öneri veya geri bildiriminiz için bizimle iletişime geçebilirsiniz. Aşağıdaki formu doldurarak mesajınızı iletebilir, ayrıca telefon, e-posta ve adres bilgilerimiz üzerinden doğrudan bize ulaşabilirsiniz. Size en kısa sürede dönüş yapacağız.
-          </p>
+      {/* Hero Section - Header arkasında küçük banner */}
+      <section className="relative h-[300px] overflow-hidden -mt-20">
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=1600&q=80)` }}
+        >
+          <div className="absolute inset-0 bg-black/60" />
+        </div>
+
+        <div className="relative z-10 flex h-full items-center justify-center px-6">
+          <div className="text-center text-white max-w-4xl px-4">
+            <h1 className="text-3xl md:text-4xl font-bold mb-3 text-orange-500">
+              İletişim
+            </h1>
+            <p className="text-sm md:text-base text-white/90 leading-relaxed">
+              Her türlü soru, öneri veya geri bildiriminiz için bizimle iletişime geçebilirsiniz. Aşağıdaki formu doldurarak mesajınızı iletebilir, ayrıca telefon, e-posta ve adres bilgilerimiz üzerinden doğrudan bize ulaşabilirsiniz. Size en kısa sürede dönüş yapacağız.
+            </p>
+          </div>
         </div>
       </section>
 

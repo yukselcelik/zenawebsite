@@ -48,15 +48,24 @@ export default function Hizmetler() {
     <div className="min-h-screen bg-white">
       <Header />
       
-      {/* Sayfa başlığı */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl md:text-5xl font-bold text-orange-500 mb-6 text-center">
-            Hizmetlerimiz
-          </h1>
-          <p className="text-base md:text-lg text-gray-700 text-center max-w-7xl mx-auto">
-            Zena Enerji olarak, güneş enerjisi sektöründe proje geliştirme, proje uygulama, imar uygulamaları, saha kurulumu, geçici kabul işlemleri, danışmanlık ve müşterilerimizin portföy verimliliğini en üst düzeye çıkarmak için kapsamlı hizmet sunuyoruz. Güneş PV tesislerindeki sorunları anlamaya yardımcı olmak amacıyla İHA'lar ile inceleme ve İHA'larda bulunan termal kamera ile havadan güneş enerjisi tesislerinin denetimi yapılmaktadır.
-          </p>
+      {/* Hero Section - Header arkasında küçük banner */}
+      <section className="relative h-[300px] overflow-hidden -mt-20">
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=1600&q=80)` }}
+        >
+          <div className="absolute inset-0 bg-black/60" />
+        </div>
+
+        <div className="relative z-10 flex h-full items-center justify-center px-6">
+          <div className="text-center text-white max-w-4xl px-4">
+            <h1 className="text-3xl md:text-4xl font-bold mb-3 text-orange-500">
+              Hizmetlerimiz
+            </h1>
+            <p className="text-sm md:text-base text-white/90 leading-relaxed">
+              Zena Enerji olarak, güneş enerjisi sektöründe proje geliştirme, proje uygulama, imar uygulamaları, saha kurulumu, geçici kabul işlemleri, danışmanlık ve müşterilerimizin portföy verimliliğini en üst düzeye çıkarmak için kapsamlı hizmet sunuyoruz.
+            </p>
+          </div>
         </div>
       </section>
 
