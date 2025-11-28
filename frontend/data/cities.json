@@ -1,0 +1,354 @@
+{
+    "Nigde": [
+        {
+            "ProjeAdi": "Niğde 6.6 MW",
+            "ProjeYeri": "Niğde / Hasaköy",
+            "ProjeGucu": "6.6 MW",
+            "ProjeTuru": "Lisanssız",
+            "ProjeTarihi": "2015",
+            "Yatirimci": "Merk Solar"
+        },
+        {
+            "ProjeAdi": "Niğde 6 MW",
+            "ProjeYeri": "Niğde",
+            "ProjeGucu": "6 MW",
+            "ProjeTuru": "Lisanslı",
+            "ProjeTarihi": "2015",
+            "Yatirimci": "Muhtelif"
+        },
+        {
+            "ProjeAdi": "Niğde 6 MW",
+            "ProjeYeri": "Niğde / Yeşilgölcük",
+            "ProjeGucu": "6 MW",
+            "ProjeTuru": "Lisanssız",
+            "ProjeTarihi": "2015",
+            "Yatirimci": "Merk Solar"
+        },
+        {
+            "ProjeAdi": "Niğde 4.8 MW",
+            "ProjeYeri": "Niğde / Aktaş",
+            "ProjeGucu": "4.8 MW",
+            "ProjeTuru": "Lisanssız",
+            "ProjeTarihi": "2015",
+            "Yatirimci": "Espe Grup"
+        },
+        {
+            "ProjeAdi": "Niğde 4.8 MW",
+            "ProjeYeri": "Niğde / Hasaköy",
+            "ProjeGucu": "4.8 MW",
+            "ProjeTuru": "Lisanssız",
+            "ProjeTarihi": "2015",
+            "Yatirimci": "Espe Grup"
+        },
+        {
+            "ProjeAdi": "Niğde 530 kW",
+            "ProjeYeri": "Niğde / Kahta",
+            "ProjeGucu": "530 kW",
+            "ProjeTuru": "Lisanssız",
+            "ProjeTarihi": "2014",
+            "Yatirimci": "Muhtelif"
+        }
+    ],
+    "Kirsehir": [
+        {
+            "ProjeAdi": "Kırşehir 10 MW",
+            "ProjeYeri": "Kırşehir",
+            "ProjeGucu": "10 MW",
+            "ProjeTuru": "Yeka",
+            "ProjeTarihi": "2021",
+            "Yatirimci": "Muhtelif"
+        },
+        {
+            "ProjeAdi": "Kırşehir 6 MW",
+            "ProjeYeri": "Kırşehir / Kaman",
+            "ProjeGucu": "6 MW",
+            "ProjeTuru": "Lisanssız",
+            "ProjeTarihi": "2015",
+            "Yatirimci": "Espe Grup"
+        }
+    ],
+    "Yozgat": [
+        {
+            "ProjeAdi": "Yozgat 25 MW",
+            "ProjeYeri": "Yozgat",
+            "ProjeGucu": "25 MW",
+            "ProjeTuru": "Yeka",
+            "ProjeTarihi": "2021",
+            "Yatirimci": "Muhtelif"
+        },
+        {
+            "ProjeAdi": "Yozgat 8 MW",
+            "ProjeYeri": "Yozgat",
+            "ProjeGucu": "8 MW",
+            "ProjeTuru": "Lisanssız",
+            "ProjeTarihi": "2015",
+            "Yatirimci": "Muhtelif"
+        }
+    ],
+    "Giresun": [
+        {
+            "ProjeAdi": "Giresun 7 MW",
+            "ProjeYeri": "Giresun",
+            "ProjeGucu": "7 MW",
+            "ProjeTuru": "Lisanssız",
+            "ProjeTarihi": "2015",
+            "Yatirimci": "Muhtelif"
+        },
+        {
+            "ProjeAdi": "Giresun 5.85 MW",
+            "ProjeYeri": "Giresun / Şebinkarahisar",
+            "ProjeGucu": "5.85 MW",
+            "ProjeTuru": "Lisanssız",
+            "ProjeTarihi": "2016",
+            "Yatirimci": "Muhtelif"
+        }
+    ],
+    "Erzincan": [
+        {
+            "ProjeAdi": "Erzincan 2 MW",
+            "ProjeYeri": "Erzincan",
+            "ProjeGucu": "2 MW",
+            "ProjeTuru": "Lisanssız",
+            "ProjeTarihi": "2015",
+            "Yatirimci": "Muhtelif"
+        }
+    ],
+    "Kars": [
+        {
+            "ProjeAdi": "Kars 6 MW",
+            "ProjeYeri": "Kars",
+            "ProjeGucu": "6 MW",
+            "ProjeTuru": "Lisanssız",
+            "ProjeTarihi": "2015",
+            "Yatirimci": "Muhtelif"
+        },
+        {
+            "ProjeAdi": "Kars 5.35 MW",
+            "ProjeYeri": "Kars / Azat",
+            "ProjeGucu": "5.35 MW",
+            "ProjeTuru": "Lisanssız",
+            "ProjeTarihi": "2015",
+            "Yatirimci": "Muhtelif"
+        }
+    ],
+    "Malatya": [
+        {
+            "ProjeAdi": "Malatya 41 MW",
+            "ProjeYeri": "Malatya",
+            "ProjeGucu": "41 MW",
+            "ProjeTuru": "Lisanssız",
+            "ProjeTarihi": "2015",
+            "Yatirimci": "Muhtelif"
+        }
+    ],
+    "Elazig": [
+        {
+            "ProjeAdi": "Elazığ 30 MW",
+            "ProjeYeri": "Elazığ",
+            "ProjeGucu": "30 MW",
+            "ProjeTuru": "Lisanssız",
+            "ProjeTarihi": "2015",
+            "Yatirimci": "Muhtelif"
+        }
+    ],
+    "Siirt": [
+        {
+            "ProjeAdi": "Siirt 9 MW",
+            "ProjeYeri": "Siirt",
+            "ProjeGucu": "9 MW",
+            "ProjeTuru": "Lisanslı",
+            "ProjeTarihi": "2015",
+            "Yatirimci": "Muhtelif"
+        }
+    ],
+    "Adiyaman": [
+        {
+            "ProjeAdi": "Adıyaman 10 MW",
+            "ProjeYeri": "Adıyaman",
+            "ProjeGucu": "10 MW",
+            "ProjeTuru": "Lisanssız",
+            "ProjeTarihi": "2015",
+            "Yatirimci": "Muhtelif"
+        },
+        {
+            "ProjeAdi": "Adıyaman 8.4 MW",
+            "ProjeYeri": "Adıyaman / Merkez",
+            "ProjeGucu": "8.4 MW",
+            "ProjeTuru": "Lisanssız",
+            "ProjeTarihi": "2015",
+            "Yatirimci": "Muhtelif"
+        },
+        {
+            "ProjeAdi": "Adıyaman 3.6 MW",
+            "ProjeYeri": "Adıyaman / Kahta",
+            "ProjeGucu": "3.6 MW",
+            "ProjeTuru": "Lisanssız",
+            "ProjeTarihi": "2015",
+            "Yatirimci": "Merk Solar"
+        }
+    ],
+    "Kahramanmaras": [
+        {
+            "ProjeAdi": "Kahramanmaraş 17 MW",
+            "ProjeYeri": "Kahramanmaraş",
+            "ProjeGucu": "17 MW",
+            "ProjeTuru": "Lisanssız",
+            "ProjeTarihi": "2015",
+            "Yatirimci": "Muhtelif"
+        },
+        {
+            "ProjeAdi": "Kahramanmaraş 12 MW",
+            "ProjeYeri": "Kahramanmaraş / Elbistan",
+            "ProjeGucu": "12 MW",
+            "ProjeTuru": "Lisanssız",
+            "ProjeTarihi": "2015",
+            "Yatirimci": "Merk Solar"
+        }
+    ],
+    "Burdur": [
+        {
+            "ProjeAdi": "Burdur 8 MW",
+            "ProjeYeri": "Burdur",
+            "ProjeGucu": "8 MW",
+            "ProjeTuru": "Lisanslı",
+            "ProjeGelistirmeTarihi": "2015",
+            "Yatirimci": "Muhtelif"
+        },
+        {
+            "ProjeAdi": "Burdur 6 MW",
+            "ProjeYeri": "Burdur / Yeşilova",
+            "ProjeGucu": "6 MW",
+            "ProjeTuru": "Lisanssız",
+            "ProjeGelistirmeTarihi": "2015",
+            "Yatirimci": "Espe Grup"
+        }
+    ],
+    "Muğla": [
+        {
+            "ProjeAdi": "Muğla 9 MW",
+            "ProjeYeri": "Muğla",
+            "ProjeGucu": "9 MW",
+            "ProjeTuru": "Lisanslı",
+            "ProjeGelistirmeTarihi": "2015",
+            "Yatirimci": "Muhtelif"
+        }
+    ],
+    "Aydın": [
+        {
+            "ProjeAdi": "Aydın 1 MW",
+            "ProjeYeri": "Aydın",
+            "ProjeGucu": "1 MW",
+            "ProjeTuru": "Lisanssız",
+            "ProjeGelistirmeTarihi": "2015",
+            "Yatirimci": "Muhtelif"
+        }
+    ],
+    "İzmir": [
+        {
+            "ProjeAdi": "İzmir 1 MW",
+            "ProjeYeri": "İzmir",
+            "ProjeGucu": "1 MW",
+            "ProjeTuru": "Lisanssız",
+            "ProjeGelistirmeTarihi": "2015",
+            "Yatirimci": "Muhtelif"
+        },
+        {
+            "ProjeAdi": "İzmir 500 kW",
+            "ProjeYeri": "İzmir / Menderes",
+            "ProjeGucu": "500 kW",
+            "ProjeTuru": "Lisanssız",
+            "ProjeGelistirmeTarihi": "2013",
+            "Yatirimci": "Ege Orman Vakfı"
+        },
+        {
+            "ProjeAdi": "İzmir 400 kW",
+            "ProjeYeri": "İzmir / Torbalı",
+            "ProjeGucu": "400 kW",
+            "ProjeTuru": "Lisanssız",
+            "ProjeGelistirmeTarihi": "2013",
+            "Yatirimci": "Cemer Kent"
+        }
+    ],
+    "Balıkesir": [
+        {
+            "ProjeAdi": "Balıkesir 3.3 MW",
+            "ProjeYeri": "Balıkesir / Susurluk",
+            "ProjeGucu": "3.3 MW",
+            "ProjeTuru": "Lisanssız",
+            "ProjeGelistirmeTarihi": "2015",
+            "Yatirimci": "Rofa Solar"
+        }
+    ],
+    "Kütahya": [
+        {
+            "ProjeAdi": "Kütahya 5 MW",
+            "ProjeYeri": "Kütahya",
+            "ProjeGucu": "5 MW",
+            "ProjeTuru": "Lisanssız",
+            "ProjeGelistirmeTarihi": "2015",
+            "Yatirimci": "Muhtelif"
+        }
+    ],
+    "Bursa": [
+        {
+            "ProjeAdi": "Bursa 1 MW",
+            "ProjeYeri": "Bursa",
+            "ProjeGucu": "1 MW",
+            "ProjeTuru": "Lisanslı",
+            "ProjeGelistirmeTarihi": "2015",
+            "Yatirimci": "Muhtelif"
+        }
+    ],
+    "Kocaeli": [
+        {
+            "ProjeAdi": "Kocaeli 6 MW",
+            "ProjeYeri": "Kocaeli",
+            "ProjeGucu": "6 MW",
+            "ProjeTuru": "Lisanssız",
+            "ProjeGelistirmeTarihi": "2022",
+            "Yatirimci": "Reysaş Lojistik"
+        },
+        {
+            "ProjeAdi": "Kocaeli 2.2 MW",
+            "ProjeYeri": "Kocaeli / Gebze",
+            "ProjeGucu": "2.2 MW",
+            "ProjeTuru": "Lisanssız",
+            "ProjeGelistirmeTarihi": "2022",
+            "Yatirimci": "Toyotetsu"
+        }
+    ],
+    "Konya": [
+        {
+            "ProjeAdi": "Konya 22 MW",
+            "ProjeYeri": "Konya",
+            "ProjeGucu": "22 MW",
+            "ProjeTuru": "Lisanssız",
+            "ProjeGelistirmeTarihi": "2015",
+            "Yatirimci": "Muhtelif"
+        },
+        {
+            "ProjeAdi": "Konya 6.5 MW",
+            "ProjeYeri": "Konya / Cihanbeyli",
+            "ProjeGucu": "6.5 MW",
+            "ProjeTuru": "Lisanssız",
+            "ProjeGelistirmeTarihi": "2015",
+            "Yatirimci": "Espe Grup"
+        },
+        {
+            "ProjeAdi": "Konya 6.25 MW",
+            "ProjeYeri": "Konya / Kulu",
+            "ProjeGucu": "6.25 MW",
+            "ProjeTuru": "Lisanssız",
+            "ProjeGelistirmeTarihi": "2015",
+            "Yatirimci": "Espe Grup"
+        },
+        {
+            "ProjeAdi": "Konya 6 MW",
+            "ProjeYeri": "Konya / Derbent",
+            "ProjeGucu": "6 MW",
+            "ProjeTuru": "Lisanssız",
+            "ProjeGelistirmeTarihi": "2015",
+            "Yatirimci": "Espe Grup"
+        }
+    ]
+}
