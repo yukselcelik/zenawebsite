@@ -6,134 +6,273 @@
 
 import Header from './components/Header'; // Header bileşenini import ediyoruz
 import Footer from './components/Footer'; // Footer bileşenini import ediyoruz
-import { motion } from 'framer-motion'; // Framer Motion - animasyonlar için
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion'; // Framer Motion - animasyonlar için
+
+const sliderItems = [
+  {
+    id: 1,
+    title: 'Güneş Enerjisinden Elektrik Üretin!',
+    description:
+      'Güneş enerjisi ile yüksek elektrik maliyetinden kurtulabilirsiniz. Zena Enerji profesyonel proje ve teknik ekibi ile bu sorunlara çözüm kaynağı olmaktadır.',
+    buttonLabel: 'Daha fazla bilgi için',
+    href: '/iletisim',
+    image: '/slider/solar-banner.jpg',
+  },
+  {
+    id: 2,
+    title: 'Veriminizi Maksimuma Çıkarın!',
+    description:
+      "Güneş enerjisi paneli ve santralinizin verimini ölçmek ve raporlamalarını yapmak amacıyla insansız hava aracı ile termal testlerini gerçekleştiriyoruz. Bu verileri Singapur'lu iş ve çözüm ortağımız AVA Asia ile paylaşarak görüntü işleme ve yapay zekayla birlikte kısa sürede raporluyoruz.",
+    buttonLabel: 'Daha fazla bilgi için',
+    href: '/hizmetler',
+    image: '/slider/2.png?v=2',
+  },
+  {
+    id: 3,
+    title: 'Proje Geliştirme',
+    description:
+      'Zena Enerji; güneş enerji sektöründe proje geliştirme, imar uygulamaları, saha kurulumu, geçici kabul işlemleri konusunda uluslararası saygın firmalar ile çalışarak Lisanslı, Lisanssız birçok büyük ve ses getiren projelerin mimarı olmuştur.',
+    buttonLabel: 'Daha fazla bilgi için',
+    href: '/projelerimiz',
+    image: '/slider/1.jpg',
+  },
+  {
+    id: 4,
+    title: 'Fizibilite ve Teknik Raporlama',
+    description:
+      'Fizibilite uygulama ve teknik raporlama süreçleri, konusunda uzman mühendis ve deneyimli tekniker ekibimiz ile birlikte tamamlanarak, tarafınıza sunulmaktadır.',
+    buttonLabel: 'Daha fazla bilgi için',
+    href: '/hizmetler',
+    image: '/slider/Fizibilite.jpg',
+  },
+  {
+    id: 5,
+    title: 'Danışmanlık Hizmetleri',
+    description:
+      'Ön fizibilite çalışmalarını yaparak güneş enerjisi kaynaklarının belirlenmesini, teknik ve çevresel faktörlerin tespit edilmesini ve santralın maliyetinin hesaplanmasını yapan şirketimiz ardından fizibilite çalışmalarını yaparak güneş enerjisi santrali sektörüne girmek isteyen yatırımcılara kapsamlı bir danışmanlık hizmeti vermektedir.',
+    buttonLabel: 'Daha fazla bilgi için',
+    href: '/hakkimizda',
+    image: '/slider/4.jpg',
+  },
+];
 
 const serviceCards = [
   {
     title: 'Proje Geliştirme',
+    iconBg: 'bg-[#f9a826]',
     icon: (
-      <svg className="w-8 h-8 text-orange-500" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m6-6H6m12-7H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2z" />
+      <svg className="w-7 h-7 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3.5" y="3.5" width="7" height="7" rx="1.5" />
+        <rect x="13.5" y="3.5" width="7" height="7" rx="1.5" />
+        <rect x="3.5" y="13.5" width="7" height="7" rx="1.5" />
+        <path d="M13.5 13.5h7v7h-7z" />
+        <path d="M13.5 13.5l7 7" />
       </svg>
     ),
   },
   {
     title: 'İmar Uygulamaları',
+    iconBg: 'bg-[#2fafa2]',
     icon: (
-      <svg className="w-8 h-8 text-orange-500" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M12 22V12m0 0l8-5-8-5-8 5 8 5zm0 0v10m0-10l8-5M12 12L4 7" />
+      <svg className="w-7 h-7 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 21s5-5.2 5-9.2a5 5 0 10-10 0c0 4 5 9.2 5 9.2z" />
+        <path d="M9.5 11.5h5" />
+        <path d="M12 9v5" />
       </svg>
     ),
   },
   {
     title: 'Saha Kurulumları',
+    iconBg: 'bg-[#1f68a5]',
     icon: (
-      <svg className="w-8 h-8 text-orange-500" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M4 7h16M4 15h16M10 11h4m-9 8h14l-2 3H7l-2-3z" />
+      <svg className="w-7 h-7 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 11h18l-2 7H5z" />
+        <path d="M7 11l2-5h6l2 5" />
+        <path d="M8 15h8" />
       </svg>
     ),
   },
   {
     title: 'İHA ile Termal Test',
+    iconBg: 'bg-[#f9a826]',
     icon: (
-      <svg className="w-8 h-8 text-orange-500" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M5 12L3 9m2 3l-2 3m14-3l2-3m-2 3l2 3M9 5l3-2 3 2M9 19l3 2 3-2" />
+      <svg className="w-7 h-7 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="2.2" />
+        <path d="M4 9h5l1.5-3h3L15 9h5" />
+        <path d="M4 15h5l1.5 3h3l1.5-3h5" />
+        <path d="M6 9l-2-2M6 15l-2 2M18 9l2-2M18 15l2 2" />
       </svg>
     ),
   },
   {
     title: 'İşletme ve Bakım',
+    iconBg: 'bg-[#f06b5b]',
     icon: (
-      <svg className="w-8 h-8 text-orange-500" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M11 2v4m2 0V2m7 9h-4m0 2h4m-4 2h2.5a1.5 1.5 0 010 3H19m-8 4v-4m-2 4H7a3 3 0 01-3-3v-1m0 0H2m2 0h4m1-4H6m0 0V8a4 4 0 014-4h4a4 4 0 014 4v4" />
+      <svg className="w-7 h-7 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M10 3h4l-1 4h-2z" />
+        <path d="M8 8h8l1 5v5H7v-5z" />
+        <path d="M7 18l-1.5 3M17 18l1.5 3" />
+        <path d="M9 12h6" />
       </svg>
     ),
   },
   {
     title: 'Danışmanlık ve Teknik İnceleme',
+    iconBg: 'bg-[#14395b]',
     icon: (
-      <svg className="w-8 h-8 text-orange-500" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M12 14l2-2 4 4m-6-2l-4-4-4 4m8-10l4 4-4 4-4-4 4-4zm0 0V2m0 6v6" />
+      <svg className="w-7 h-7 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M8 9a3 3 0 116 0v1.5" />
+        <path d="M5 13l4 4c.8.8 2.2.8 3 0l2-2" />
+        <path d="M19 11l-4 4" />
+        <path d="M4 9l-1 3 4 4" />
+        <path d="M13 5h4l4 4v4" />
       </svg>
     ),
   },
 ];
 
 export default function Home() {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [dragStartX, setDragStartX] = useState(null);
+
+  const goToSlide = (index) => {
+    const total = sliderItems.length;
+    setCurrentSlide((index + total) % total);
+  };
+
+  const handlePrev = () => goToSlide(currentSlide - 1);
+  const handleNext = () => goToSlide(currentSlide + 1);
+
+  const startDrag = (x) => setDragStartX(x);
+  const endDrag = (x) => {
+    if (dragStartX === null) return;
+    const distance = x - dragStartX;
+    if (distance > 60) {
+      handlePrev();
+    } else if (distance < -60) {
+      handleNext();
+    }
+    setDragStartX(null);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white">
       {/* Header bileşeni - tüm sayfalarda ortak */}
       <Header />
       
-      {/* Hero Section - Ana görsel ve başlık alanı (solar-banner burada) */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden z-0 -mt-20">
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0"
-          style={{ backgroundImage: 'url("/solar-banner.jpg")' }}
+      {/* Hero Slider Section */}
+      <section className="relative h-screen overflow-hidden -mt-20">
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(${sliderItems[currentSlide].image})` }}
         >
-          <div className="absolute inset-0 bg-black/50"></div>
+          <div className="absolute inset-0 bg-black/60" />
         </div>
-        
-        {/* Hero içeriği - görselin üzerine yerleştirilmiş */}
-        <div className="relative z-10 text-center text-white px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
-          <motion.h1 
-            className="text-4xl md:text-6xl font-bold mb-6"
-            initial={{ opacity: 0, y: 50 }} // Başlangıç durumu - görünmez ve aşağıda
-            animate={{ opacity: 1, y: 0 }} // Animasyon sonrası - görünür ve normal pozisyonda
-            transition={{ duration: 1, delay: 0.2 }} // 1 saniye süre, 0.2 saniye gecikme
+
+        <div
+          className="relative z-10 flex h-full items-center justify-center px-6"
+          onMouseDown={(e) => startDrag(e.clientX)}
+          onMouseUp={(e) => endDrag(e.clientX)}
+          onMouseLeave={() => setDragStartX(null)}
+          onTouchStart={(e) => startDrag(e.touches[0].clientX)}
+          onTouchEnd={(e) => endDrag(e.changedTouches[0].clientX)}
+        >
+          <button
+            onClick={handlePrev}
+            aria-label="Önceki slayt"
+            className="absolute left-6 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 rounded-full p-3 transition"
           >
-            Güneş Enerjisinden Elektrik Üretin!
-          </motion.h1>
-          
-          <motion.p 
-            className="text-lg md:text-xl mb-8 leading-relaxed"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.5 }}
+            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={sliderItems[currentSlide].id}
+              className="text-center text-white max-w-3xl px-4"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -30 }}
+              transition={{ duration: 0.35 }}
+            >
+              <motion.h1
+                className="text-3xl md:text-4xl font-bold mb-5"
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.35, delay: 0.05 }}
+              >
+                {sliderItems[currentSlide].title}
+              </motion.h1>
+              <motion.p
+                className="text-base md:text-lg mb-7 leading-relaxed text-white/85"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.35, delay: 0.12 }}
+              >
+                {sliderItems[currentSlide].description}
+              </motion.p>
+              <motion.a
+                href={sliderItems[currentSlide].href}
+                className="inline-flex items-center justify-center bg-green-500 hover:bg-green-600 text-white font-semibold py-2.5 px-7 rounded-full text-sm md:text-base transition"
+                initial={{ opacity: 0, scale: 0.92 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.35, delay: 0.18 }}
+              >
+                {sliderItems[currentSlide].buttonLabel}
+              </motion.a>
+            </motion.div>
+          </AnimatePresence>
+
+          <button
+            onClick={handleNext}
+            aria-label="Sonraki slayt"
+            className="absolute right-6 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 rounded-full p-3 transition"
           >
-            Güneş enerjisi ile yüksek elektrik maliyetinden kurtulabilirsiniz. Zena Enerji profesyonel proje ve teknik ekibi ile bu sorunlara çözüm kaynağı olmaktadır.
-          </motion.p>
-          
-          {/* Call-to-action butonu */}
-          <motion.button 
-            className="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 px-8 rounded-lg text-lg transition-colors duration-300"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.8 }}
-            whileHover={{ scale: 1.05 }} // Hover animasyonu - büyütme
-            whileTap={{ scale: 0.95 }} // Tıklama animasyonu - küçültme
-          >
-            Daha Fazla Bilgi
-          </motion.button>
+            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+
+        <div className="absolute bottom-12 inset-x-0 flex justify-center flex-wrap gap-3 z-10">
+          {sliderItems.map((item, index) => (
+            <button
+              key={item.id}
+              onClick={() => goToSlide(index)}
+              className={`h-1.5 w-8 rounded-full transition-all ${index === currentSlide ? 'bg-white' : 'bg-white/40'}`}
+              aria-label={`${item.title} slaytı`}
+            />
+          ))}
         </div>
       </section>
-
       {/* Zena Enerji ile Tam Hizmet + Drone görselli bölüm (drone görseli kalsın) */}
-      <section className="py-20 bg-gradient-to-b from-white via-gray-50/80 to-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div className="flex flex-col items-center text-center lg:items-center lg:text-center w-full">
-            <div className="max-w-3xl">
-              <h2 className="text-xl md:text-2xl font-semibold text-gray-900 mb-4">Zena Enerji ile Tam Hizmet</h2>
-              <p className="text-sm md:text-base text-gray-700 mb-8">
+      <section className="py-16 bg-white">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="flex flex-col items-center text-center lg:items-start lg:text-left w-full">
+            <div className="w-full lg:max-w-none">
+              <h2 className="text-lg md:text-xl font-semibold text-gray-900 mb-5">Zena Enerji ile Tam Hizmet</h2>
+              <p className="text-[0.78rem] md:text-sm text-gray-700 mb-8 leading-relaxed">
               Zena Enerji olarak, güneş enerjisi sektöründe proje geliştirme, proje uygulama, imar uygulamaları, saha kurulumu,
               geçici kabul işlemleri, danışmanlık ve müşterilerimizin portföy verimliliğini en üst düzeye çıkarmak için
               kapsamlı hizmet sunuyoruz. Güneş PV tesislerindeki sorunları anlamaya yardımcı olmak amacıyla İHA’lar ile
               inceleme ve İHA’larda bulunan termal kamera ile havadan denetim yapılmaktadır.
               </p>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-8 w-full max-w-3xl mx-auto justify-items-center">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-2xl mx-auto justify-items-center mt-2">
               {serviceCards.map((card) => (
-                <div key={card.title} className="flex flex-col items-center text-center space-y-3">
-                  <div className="w-18 h-18 sm:w-20 sm:h-20 rounded-2xl border border-orange-200 flex items-center justify-center bg-orange-50/40 shadow-sm">
+                <div key={card.title} className="flex flex-col items-center text-center gap-2.5">
+                  <div className={`w-12 h-12 sm:w-12 sm:h-12 rounded-full flex items-center justify-center shadow-[0_6px_16px_rgba(0,0,0,0.06)] ${card.iconBg}`}>
                     {card.icon}
                   </div>
-                  <p className="text-gray-800 font-semibold text-[11px] sm:text-xs tracking-wide">{card.title}</p>
+                  <p className="text-gray-900 font-semibold text-[9px] sm:text-[10px] tracking-wide">{card.title}</p>
                 </div>
               ))}
             </div>
           </div>
-          <div className="relative w-full h-80 md:h-[420px] rounded-xl overflow-hidden shadow-lg">
-            <img src="/drone-operator.jpg" alt="Drone ile denetim" className="absolute inset-0 w-full h-full object-cover" />
+          <div className="relative w-full h-72 md:h-[380px] rounded-xl overflow-hidden shadow-lg lg:ml-10 xl:ml-16">
+            <img src="/dron-operator.jpg" alt="Drone ile denetim" className="absolute inset-0 w-full h-full object-cover" />
           </div>
         </div>
       </section>
@@ -142,16 +281,88 @@ export default function Home() {
       <StatsScrollReveal />
 
       {/* Solar Güç Hesaplama CTA (görselli banner) */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="relative rounded-2xl overflow-hidden">
-            <img src="/solar-hesabi.jpg" alt="Solar güç hesabı" className="w-full h-[360px] object-cover" />
+      <section className="py-16 bg-gray-50 px-0">
+        <div className="w-full">
+          <div className="relative rounded-none lg:rounded-2xl overflow-hidden">
+            <img src="/solar-hesabi.jpg" alt="Solar güç hesabı" className="w-full h-[400px] object-cover" />
             <div className="absolute inset-0 bg-black/45"></div>
             <div className="absolute inset-0 flex items-center">
               <div className="px-8 md:px-14 max-w-xl">
                 <h3 className="text-3xl md:text-4xl font-bold text-white mb-4">Solar Güç Simulasyonu Hesabı</h3>
                 <p className="text-white/90 mb-6">Kurulu gücünüzü, panel sayınızı, kurtarılan ağaç sayınızı hesaplayabilirsiniz...</p>
                 <a href="/simulasyon" className="inline-block bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 px-6 rounded-lg">Şimdi Hesapla</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Zena Enerji Hakkında */}
+      <section className="py-16 bg-white text-center">
+        <div className="max-w-6xl mx-auto px-6">
+          <p className="text-xs font-semibold tracking-[0.6em] text-orange-500 mb-4">HAKKIMIZDA</p>
+          <div className="inline-flex items-center justify-center gap-4 mb-6">
+            <span className="w-12 h-px bg-gray-300" />
+            <h3 className="text-3xl md:text-4xl font-bold text-gray-900 uppercase">Zena Enerji Hakkında</h3>
+            <span className="w-12 h-px bg-gray-300" />
+          </div>
+          <div className="space-y-5 text-sm md:text-base text-gray-700 leading-relaxed">
+            <p>
+              2015 yılından itibaren güneş enerjisi sektöründe faaliyet gösteren firmamız, sahip olduğumuz bilgi birikimini uzman iş gücüyle birleştirerek
+              Türkiye'de güneş enerjisi santrali yatırımları konusunda birçok projeyi başarıyla hayata geçirmiştir.
+            </p>
+            <p>
+              Proje çizimi, proje geliştirme ve uygulama süreçlerinde sektörün önde gelen firmalarından olan Zena Enerji, Türkiye'de ki ilk ve en büyük Endüstriyel Çatı Güneş Elektrik Santralini ve Türkiye'nin ilk ve tek kurulum için tüm özellikleri yansıtan Test Güneş Elektrik Santralini kurmuştur.
+              Dünyaca ünlü firmaların projelerini tamamlayan firmamız, her bir projede farklı bir deneyim sürecinden geçmiş, edindiği profesyonellik ve disiplini çalışma prensipleri haline getirmiştir.
+            </p>
+            <p>
+              Bununla birlikte müşteri bağlılığına verdiği değerle alınan işleri zamanında tamamlayarak güven ve dürüstlük ilkelerine sahip çıkmış ve aynı ilkelerle yoluna devam eden bir şirket olmuştur.
+            </p>
+            <p>
+              Türkiye'de güneş enerjisi santralleri kurulması ile ilgili olarak ilk projeleri gerçekleştiren Zena Enerji'nin bünyesinde sektörün en tecrübeli mühendis ve teknikerleri görev almaktadır.
+              Zena Enerji olarak edindiğimiz tecrübelere, birlikte çalıştığımız uzman iş gücüne ve sektördeki saygın bilinirliliğimize dayanarak ülkemiz ve dünyamız adına daha yeşil bir gelecek için çalışmalarımıza devam etmekteyiz.
+            </p>
+          </div>
+          <a
+            href="/hakkimizda"
+            className="inline-flex items-center gap-2 px-5 py-2.5 mt-10 rounded-full bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold transition"
+          >
+            Daha Fazla Bilgi
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M13 5l7 7-7 7" />
+            </svg>
+          </a>
+        </div>
+      </section>
+
+      {/* İletişim CTA */}
+      <section className="pb-16 px-4">
+        <div className="max-w-6xl mx-auto">
+          <div className="relative rounded-[28px] overflow-hidden shadow-xl">
+            <img
+              src="https://images.unsplash.com/photo-1500536311302-3756c5a7b4b3?auto=format&fit=crop&w=1600&q=80"
+              alt="Güneş batımı"
+              className="w-full h-64 md:h-72 object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-transparent" />
+            <div className="absolute inset-0 flex items-center px-8 md:px-12">
+              <div className="text-white max-w-lg space-y-4">
+                <p className="text-xs md:text-sm font-semibold tracking-[0.35em] text-orange-300">İLETİŞİME GEÇİN</p>
+                <h4 className="text-2xl md:text-3xl font-bold leading-snug">
+                  Hemen bize ulaşın ve size özel <span className="text-orange-300">hizmetleri keşfedin!</span>
+                </h4>
+                <p className="text-sm md:text-base text-white/90">
+                  Projelerinizi hızla hayata geçirmek için mühendislik, saha kurulumu ve danışmanlık ekibimiz hazır.
+                </p>
+                <a
+                  href="/iletisim"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold transition shadow-lg shadow-orange-500/30"
+                >
+                  Bize Ulaşın
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M13 5l7 7-7 7" />
+                  </svg>
+                </a>
               </div>
             </div>
           </div>
@@ -174,33 +385,56 @@ function StatsScrollReveal() {
   ];
 
   return (
-    <section id="istatistikler" className="py-20 bg-gray-50">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-white rounded-[32px] shadow-xl border border-gray-100 px-6 py-10 md:px-12 md:py-12">
-          <div className="text-center max-w-3xl mx-auto">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">Türkiye'de Güneş Enerjisi</h2>
-            <p className="text-gray-600 text-sm md:text-base">
+    <section id="istatistikler" className="py-16 bg-gray-50 relative overflow-hidden">
+      <div className="absolute -left-24 md:-left-12 top-1/2 -translate-y-1/2 w-[220px] h-[220px] md:w-[320px] md:h-[320px] text-[#ffc666] opacity-40 pointer-events-none select-none">
+        <svg viewBox="0 0 200 200" fill="none" stroke="currentColor" className="w-full h-full drop-shadow-[0_8px_24px_rgba(255,160,55,0.25)]">
+          <circle cx="100" cy="100" r="48" strokeWidth="14" />
+          <g strokeWidth="14" strokeLinecap="round">
+            <line x1="100" y1="10" x2="100" y2="0" />
+            <line x1="100" y1="200" x2="100" y2="190" />
+            <line x1="10" y1="100" x2="0" y2="100" />
+            <line x1="200" y1="100" x2="190" y2="100" />
+            <line x1="31" y1="31" x2="17" y2="17" />
+            <line x1="169" y1="169" x2="183" y2="183" />
+            <line x1="31" y1="169" x2="17" y2="183" />
+            <line x1="169" y1="31" x2="183" y2="17" />
+          </g>
+        </svg>
+      </div>
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="bg-white rounded-[28px] shadow-xl border border-gray-100 px-6 py-9 md:px-10 md:py-10">
+          <div className="text-center max-w-2xl mx-auto">
+            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">Türkiye'de Güneş Enerjisi</h2>
+            <p className="text-gray-600 text-xs md:text-sm leading-relaxed">
               Enerji Bakanlığı'nın güneş enerjisi potansiyel atlasına göre Türkiye'de yıllık toplam güneşlenme süresi 2.737 saat,
               yıllık toplam gelen güneş enerjisi 1.527 kWh/m²·yıl olarak hesaplanıyor. Bu potansiyeli en verimli şekilde değerlendirmek için çalışıyoruz.
             </p>
           </div>
-          <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {stats.map((stat) => (
-              <div key={stat.label} className="flex flex-col items-center text-center space-y-3">
-                <div className="w-16 h-16 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center shadow-md">
-                  <svg className="w-10 h-10" fill="currentColor" viewBox="0 0 20 20">
-                    <path
-                      fillRule="evenodd"
-                      d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
-                      clipRule="evenodd"
-                    />
+                <div key={stat.label} className="flex flex-col items-center text-center space-y-2.5">
+                <div className="w-12 h-12 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center shadow-md">
+                  <svg className="w-7 h-7 text-orange-500" viewBox="0 0 32 32" aria-hidden="true">
+                    <circle cx="16" cy="16" r="6.5" fill="currentColor" />
+                    <circle cx="16" cy="16" r="4.6" fill="#fff6eb" />
+                    <circle cx="16" cy="16" r="3.4" fill="#f28c1a" />
+                    <g stroke="#f7a138" strokeWidth="1.7" strokeLinecap="round">
+                      <line x1="16" y1="3" x2="16" y2="7" />
+                      <line x1="16" y1="25" x2="16" y2="29" />
+                      <line x1="3" y1="16" x2="7" y2="16" />
+                      <line x1="25" y1="16" x2="29" y2="16" />
+                      <line x1="6.2" y1="6.2" x2="9.2" y2="9.2" />
+                      <line x1="22.8" y1="22.8" x2="25.8" y2="25.8" />
+                      <line x1="6.2" y1="25.8" x2="9.2" y2="22.8" />
+                      <line x1="22.8" y1="9.2" x2="25.8" y2="6.2" />
+                    </g>
                   </svg>
                 </div>
-                <div className="text-2xl font-bold text-gray-900">
+                <div className="text-lg font-semibold text-gray-900">
                   {new Intl.NumberFormat('tr-TR').format(Number(stat.value))}
-                  <span className="text-orange-500 text-base font-semibold ml-1">{stat.suffix}</span>
+                  <span className="text-orange-500 text-xs font-semibold ml-1">{stat.suffix}</span>
                 </div>
-                <p className="text-xs md:text-sm text-gray-600">{stat.label}</p>
+                <p className="text-[11px] md:text-xs text-gray-600">{stat.label}</p>
               </div>
             ))}
           </div>

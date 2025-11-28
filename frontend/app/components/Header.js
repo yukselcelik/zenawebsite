@@ -283,9 +283,9 @@ export default function Header() {
             
             {/* Giriş butonu ve dil seçici */}
             {isLoggedIn && (
-              <>
-                <Link 
-                  href="/panel"
+                <>
+                  <Link 
+                    href="/panel"
                   className={`font-bold transition-colors ${
                     isScrolled 
                       ? 'text-white hover:text-orange-400' 
@@ -293,18 +293,18 @@ export default function Header() {
                   }`}
                 >
                   Panel
-                </Link>
-                <button
-                  onClick={handleLogout}
+                  </Link>
+                  <button
+                    onClick={handleLogout}
                   className={`font-bold transition-colors ${
                     isScrolled 
                       ? 'text-white hover:text-orange-400' 
                       : 'text-gray-900 hover:text-orange-500'
                   }`}
-                >
+                  >
                   Çıkış
-                </button>
-              </>
+                  </button>
+                </>
             )}
           </nav>
 
