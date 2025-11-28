@@ -45,7 +45,7 @@ export default function Footer() {
                 <div className="flex-1 h-0.5 bg-gray-600"></div>
               </div>
               <h3 className="text-lg font-semibold text-white mt-2">İLETİŞİM</h3>
-            </div>
+              </div>
             <div className="space-y-3 text-gray-300 text-sm">
               <p>
                 Fenerbahçe Mahallesi<br />
@@ -54,8 +54,8 @@ export default function Footer() {
               </p>
               <p>Telefon: <a href="tel:+905441572201" className="hover:text-green-500 transition-colors">0544 157 22 01</a></p>
               <p>Email: <a href="mailto:info@zenaenerji.com" className="hover:text-green-500 transition-colors">info@zenaenerji.com</a></p>
-              
-              {/* Sosyal medya ikonları */}
+            
+            {/* Sosyal medya ikonları */}
               <div className="flex items-center gap-3 mt-4">
                 <a
                   href="https://instagram.com"
@@ -65,8 +65,8 @@ export default function Footer() {
                 >
                   <svg className="w-5 h-5 text-white hover:text-gray-900 transition-colors" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-                  </svg>
-                </a>
+                </svg>
+              </a>
                 <a
                   href="https://twitter.com"
                   target="_blank"
@@ -75,8 +75,8 @@ export default function Footer() {
                 >
                   <svg className="w-5 h-5 text-white hover:text-gray-900 transition-colors" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.085-6.647-5.824 6.647H1.95l7.73-8.821L1.5 2.25h6.08l4.517 5.987 5.147-5.987zm-1.161 17.52h1.833L7.084 4.634H5.117l11.966 15.136z" />
-                  </svg>
-                </a>
+                </svg>
+              </a>
                 <a
                   href="https://youtube.com"
                   target="_blank"
@@ -85,8 +85,8 @@ export default function Footer() {
                 >
                   <svg className="w-5 h-5 text-white hover:text-gray-900 transition-colors" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M23.5 6.18a2.86 2.86 0 00-2-2C19.42 4 12 4 12 4s-7.42 0-9.5.18a2.86 2.86 0 00-2 2A29.94 29.94 0 000 12a29.94 29.94 0 00.5 5.82 2.86 2.86 0 002 2C2.58 20 12 20 12 20s7.42 0 9.5-.18a2.86 2.86 0 002-2A29.94 29.94 0 0024 12a29.94 29.94 0 00-.5-5.82zM9.75 15.02V8.98L15.5 12z" />
-                  </svg>
-                </a>
+                </svg>
+              </a>
                 <a
                   href="https://linkedin.com"
                   target="_blank"
@@ -95,10 +95,10 @@ export default function Footer() {
                 >
                   <svg className="w-5 h-5 text-white hover:text-gray-900 transition-colors" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M20.447 20.452H17.2v-5.569c0-1.328-.026-3.036-1.852-3.036-1.853 0-2.136 1.447-2.136 2.94v5.665H9.964V9.001h3.1v1.561h.044c.432-.818 1.49-1.68 3.064-1.68 3.276 0 3.883 2.157 3.883 4.963v6.607zM5.337 7.433a2.063 2.063 0 110-4.126 2.063 2.063 0 010 4.126zM6.916 20.452H3.758V9h3.158v11.452z" />
-                  </svg>
-                </a>
-              </div>
+                </svg>
+              </a>
             </div>
+          </div>
           </div>
 
           {/* ÇALIŞMA SAATLERİMİZ - Dördüncü kolon */}
