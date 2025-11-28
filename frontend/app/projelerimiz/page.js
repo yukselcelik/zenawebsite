@@ -6,43 +6,29 @@
 import Header from '../components/Header'; // Header bileşenini import ediyoruz
 import Footer from '../components/Footer'; // Footer bileşenini import ediyoruz
 import { useState, useEffect, useRef } from 'react'; // useState, useEffect ve useRef hook'ları
+import { citiesData } from '../../data/cities'; // Şehir ve proje verileri
 
 export default function Projelerimiz() {
   // useState ile hangi tab'ın aktif olduğunu yönetiyoruz
   const [activeTab, setActiveTab] = useState('harita');
+  const [selectedCity, setSelectedCity] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const svgContainerRef = useRef(null);
   const infoRef = useRef(null);
 
-  // Örnek proje verileri
-  const projects = [
-    {
-      id: 1,
-      name: "Adıyaman 8.4 MW",
-      location: "Adıyaman",
-      power: "8.4 MW",
-      date: "2015",
-      type: "Lisanssız",
-      investor: "Muhtelif"
-    },
-    {
-      id: 2,
-      name: "Samsun 8.4 MW",
-      location: "Samsun",
-      power: "8.4 MW",
-      date: "2016",
-      type: "Lisanssız",
-      investor: "Muhtelif"
-    },
-    {
-      id: 3,
-      name: "Kayseri 5.2 MW",
-      location: "Kayseri",
-      power: "5.2 MW",
-      date: "2017",
-      type: "Lisanslı",
-      investor: "Muhtelif"
-    }
-  ];
+  // cities.js'deki tüm projeleri düz liste haline getir
+  const allProjects = citiesData.flatMap(city => 
+    city.projects.map(project => ({
+      id: `${city.id}-${project.id}`,
+      name: project.ProjeAdi,
+      location: project.ProjeYeri || city.name,
+      power: project.ProjeGucu,
+      date: project.ProjeTarihi || project.ProjeGelistirmeTarihi,
+      type: project.ProjeTuru,
+      investor: project.Yatirimci,
+      cityName: city.name
+    }))
+  );
 
   // SVG Türkiye haritası yükleme ve event listener'ları ekleme
   useEffect(() => {
@@ -65,16 +51,73 @@ export default function Projelerimiz() {
 
           if (!element || !info) return;
 
+          // cities.js'deki illeri turuncu renklendir ve il adlarını ekle
+          const cityIds = citiesData.map(city => city.id);
+          cityIds.forEach(cityId => {
+            const cityGroup = element.querySelector(`#${cityId}`);
+            if (cityGroup) {
+              const path = cityGroup.querySelector('path');
+              if (path) {
+                // Varsayılan turuncu renk (daha açık)
+                path.style.fill = '#fb923c'; // orange-400
+                path.setAttribute('data-has-project', 'true');
+                
+                // İl adını ekle
+                const ilAdi = cityGroup.getAttribute('data-iladi');
+                if (ilAdi) {
+                  // Path'in bounding box'ını al
+                  const bbox = path.getBBox();
+                  const centerX = bbox.x + bbox.width / 2;
+                  const centerY = bbox.y + bbox.height / 2;
+                  
+                  // Text elementi oluştur
+                  const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                  text.setAttribute('x', centerX);
+                  text.setAttribute('y', centerY);
+                  text.setAttribute('text-anchor', 'middle');
+                  text.setAttribute('dominant-baseline', 'middle');
+                  text.setAttribute('fill', '#ffffff');
+                  text.setAttribute('font-size', '12');
+                  text.setAttribute('font-weight', '600');
+                  text.setAttribute('pointer-events', 'none');
+                  text.setAttribute('style', 'text-shadow: 1px 1px 2px rgba(0,0,0,0.5);');
+                  text.textContent = ilAdi;
+                  
+                  // Text'i il grubuna ekle
+                  cityGroup.appendChild(text);
+                }
+              }
+            }
+          });
+
           const handleMouseOver = (event) => {
             if (event.target.tagName === 'path' && event.target.parentNode.id !== 'guney-kibris') {
               const parent = event.target.parentNode;
+              const cityId = parent.getAttribute('id');
               
-              // Tooltip göster
-              info.innerHTML = [
-                '<div>',
-                parent.getAttribute('data-iladi'),
-                '</div>'
-              ].join('');
+              // cities.js'den il bilgilerini bul
+              const cityData = citiesData.find(city => city.id === cityId);
+              const ilAdi = parent.getAttribute('data-iladi');
+              
+              if (cityData) {
+                const projectCount = cityData.projects.length;
+                const totalPower = cityData.projects.reduce((sum, p) => {
+                  const powerStr = p.ProjeGucu || '';
+                  const power = parseFloat(powerStr.replace(' MW', '').replace(' kW', '').replace(' ', ''));
+                  if (isNaN(power)) return sum;
+                  return sum + (powerStr.includes('MW') ? power : power / 1000);
+                }, 0);
+                
+                // Tooltip göster - il adı, proje sayısı ve toplam güç
+                info.innerHTML = [
+                  '<div style="font-weight: 600; margin-bottom: 4px;">' + ilAdi + '</div>',
+                  '<div style="font-size: 11px; margin-bottom: 2px;">' + projectCount + ' Proje</div>',
+                  '<div style="font-size: 11px;">Toplam: ' + totalPower.toFixed(1) + ' MW</div>'
+                ].join('');
+              } else {
+                // Proje yoksa sadece il adı
+                info.innerHTML = '<div>' + ilAdi + '</div>';
+              }
               info.style.display = 'block';
             }
           };
@@ -96,30 +139,32 @@ export default function Projelerimiz() {
               info.innerHTML = '';
               info.style.display = 'none';
               
-              // Path rengini eski haline getir
-              path.style.fill = '';
-              path.style.cursor = '';
+              // Eğer proje olan bir il ise turuncu rengi koru, değilse eski haline getir
+              if (path.getAttribute('data-has-project') === 'true') {
+                path.style.fill = '#fb923c'; // orange-400 - varsayılan turuncu
+              } else {
+                path.style.fill = '';
+              }
             }
           };
 
           const handleClick = (event) => {
             if (event.target.tagName === 'path') {
               const parent = event.target.parentNode;
-              const id = parent.getAttribute('id');
+              const cityId = parent.getAttribute('id');
 
-              if (id === 'guney-kibris') {
+              if (cityId === 'guney-kibris') {
                 return;
               }
 
-              // İl tıklandığında yapılacak işlem
-              const ilAdi = parent.getAttribute('data-iladi');
-              const plakaKodu = parent.getAttribute('data-plakakodu');
+              // cities.js'den il bilgilerini bul
+              const cityData = citiesData.find(city => city.id === cityId);
               
-              // Burada il'e göre projeleri filtreleyebilir veya başka bir işlem yapabilirsiniz
-              console.log('Seçilen il:', ilAdi, 'Plaka:', plakaKodu);
-              
-              // Örnek: URL hash ile yönlendirme
-              window.location.href = '#' + id + '-' + plakaKodu;
+              if (cityData) {
+                // Modal'ı aç ve seçili şehri set et
+                setSelectedCity(cityData);
+                setIsModalOpen(true);
+              }
             }
           };
 
@@ -219,7 +264,7 @@ export default function Projelerimiz() {
                 <div 
                   ref={infoRef}
                   className="il-isimleri fixed z-50 bg-orange-500 text-white px-3 py-2 rounded-lg shadow-lg pointer-events-none text-sm font-medium"
-                  style={{ display: 'none' }}
+                  style={{ display: 'none', minWidth: '120px', maxWidth: '200px' }}
                 ></div>
                 
                 {/* Türkiye SVG haritası */}
@@ -235,8 +280,11 @@ export default function Projelerimiz() {
                     cursor: pointer;
                   }
                   .svg-map-container #svg-turkiye-haritasi path:hover {
-                    fill: #f97316 !important;
-                    opacity: 0.9;
+                    fill: #ea580c !important; /* orange-600 - daha koyu turuncu */
+                    opacity: 1;
+                  }
+                  .svg-map-container #svg-turkiye-haritasi path[data-has-project="true"]:hover {
+                    fill: #c2410c !important; /* orange-700 - proje olan iller için daha da koyu */
                   }
                 `}} />
                 
@@ -249,26 +297,37 @@ export default function Projelerimiz() {
           {/* Liste görünümü */}
           {activeTab === 'liste' && (
             <div>
+              <div className="mb-6">
+                <p className="text-gray-600 text-center">
+                  Toplam <span className="font-semibold text-orange-500">{allProjects.length}</span> proje bulundu
+                </p>
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {projects.map((project) => (
-                  <div key={project.id} className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                {allProjects.map((project) => (
+                  <div key={project.id} className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow relative">
                     {/* Proje görseli */}
-                    <div className="aspect-w-16 aspect-h-9">
+                    <div className="aspect-w-16 aspect-h-9 relative">
                       <img 
                         src="https://images.unsplash.com/photo-1509391366360-2e959784a276?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" 
                         alt={project.name}
                         className="w-full h-48 object-cover"
                       />
+                      
+                      {/* Proje türü etiketi */}
+                      {project.type && (
+                        <div className="absolute top-4 left-4">
+                          <span className={`px-2 py-1 rounded text-sm font-medium ${
+                            project.type === 'Lisanssız' 
+                              ? 'bg-orange-500 text-white' 
+                              : project.type === 'Lisanslı'
+                              ? 'bg-blue-500 text-white'
+                              : 'bg-green-500 text-white'
+                          }`}>
+                            {project.type}
+                          </span>
+                        </div>
+                      )}
                     </div>
-                    
-                    {/* Lisanssız etiketi */}
-                    {project.type === 'Lisanssız' && (
-                      <div className="absolute top-4 left-4">
-                        <span className="bg-orange-500 text-white px-2 py-1 rounded text-sm font-medium">
-                          Lisanssız
-                        </span>
-                      </div>
-                    )}
                     
                     {/* Proje bilgileri */}
                     <div className="p-6">
@@ -276,23 +335,54 @@ export default function Projelerimiz() {
                         {project.name}
                       </h3>
                       
-                      <div className="space-y-2 text-gray-600">
-                        <div className="flex justify-between">
-                          <span className="font-medium">Proje Geliştirme Tarihi:</span>
-                          <span>{project.date}</span>
+                      <div className="space-y-2 text-gray-600 mb-4">
+                        <div className="flex items-start">
+                          <svg className="w-4 h-4 mr-2 mt-0.5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                          </svg>
+                          <span className="text-sm">{project.location}</span>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="font-medium">Proje Gücü:</span>
-                          <span>{project.power}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="font-medium">Yatırımcı:</span>
-                          <span>{project.investor}</span>
-                        </div>
+                        
+                        {project.date && (
+                          <div className="flex items-center">
+                            <svg className="w-4 h-4 mr-2 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            <span className="text-sm">{project.date}</span>
+                          </div>
+                        )}
+                        
+                        {project.power && (
+                          <div className="flex items-center">
+                            <svg className="w-4 h-4 mr-2 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                            <span className="text-sm font-medium">{project.power}</span>
+                          </div>
+                        )}
+                        
+                        {project.investor && (
+                          <div className="flex items-center">
+                            <svg className="w-4 h-4 mr-2 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+                            <span className="text-sm">{project.investor}</span>
+                          </div>
+                        )}
                       </div>
                       
                       {/* Detay butonu */}
-                      <button className="w-full mt-4 bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-300">
+                      <button 
+                        onClick={() => {
+                          const cityData = citiesData.find(city => city.name === project.cityName);
+                          if (cityData) {
+                            setSelectedCity(cityData);
+                            setIsModalOpen(true);
+                          }
+                        }}
+                        className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-300"
+                      >
                         Detayları Gör
                       </button>
                     </div>
@@ -333,6 +423,115 @@ export default function Projelerimiz() {
           </div>
         </div>
       </section>
+
+      {/* Proje Detay Modal */}
+      {isModalOpen && selectedCity && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+          onClick={() => setIsModalOpen(false)}
+        >
+          <div 
+            className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="bg-orange-500 text-white px-6 py-4 flex justify-between items-center">
+              <h2 className="text-2xl font-bold">{selectedCity.name} - Projeler</h2>
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="text-white hover:text-gray-200 transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Modal Content */}
+            <div className="p-6 overflow-y-auto flex-1">
+              <div className="mb-4">
+                <p className="text-gray-600">
+                  <span className="font-semibold">{selectedCity.projects.length}</span> proje bulundu
+                </p>
+              </div>
+
+              {/* Projeler Listesi */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {selectedCity.projects.map((project) => (
+                  <div 
+                    key={project.id} 
+                    className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                  >
+                    <div className="flex justify-between items-start mb-2">
+                      <h3 className="text-lg font-semibold text-gray-900">{project.ProjeAdi}</h3>
+                      {project.ProjeTuru && (
+                        <span className={`px-2 py-1 rounded text-xs font-medium ${
+                          project.ProjeTuru === 'Lisanssız' 
+                            ? 'bg-orange-100 text-orange-700' 
+                            : project.ProjeTuru === 'Lisanslı'
+                            ? 'bg-blue-100 text-blue-700'
+                            : 'bg-green-100 text-green-700'
+                        }`}>
+                          {project.ProjeTuru}
+                        </span>
+                      )}
+                    </div>
+                    
+                    <div className="space-y-1 text-sm text-gray-600">
+                      {project.ProjeYeri && (
+                        <div className="flex items-center">
+                          <svg className="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                          </svg>
+                          <span>{project.ProjeYeri}</span>
+                        </div>
+                      )}
+                      
+                      {project.ProjeGucu && (
+                        <div className="flex items-center">
+                          <svg className="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                          </svg>
+                          <span className="font-medium">{project.ProjeGucu}</span>
+                        </div>
+                      )}
+                      
+                      {(project.ProjeTarihi || project.ProjeGelistirmeTarihi) && (
+                        <div className="flex items-center">
+                          <svg className="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                          <span>{project.ProjeTarihi || project.ProjeGelistirmeTarihi}</span>
+                        </div>
+                      )}
+                      
+                      {project.Yatirimci && (
+                        <div className="flex items-center">
+                          <svg className="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                          </svg>
+                          <span>{project.Yatirimci}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="bg-gray-50 px-6 py-4 border-t">
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-6 rounded-lg transition-colors"
+              >
+                Kapat
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Footer bileşeni */}
       <Footer />
