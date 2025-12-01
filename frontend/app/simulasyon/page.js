@@ -40,7 +40,7 @@ export default function SimulationPage() {
         </div>
 
         <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-white">
-          <div className="bg-white/10 border border-white/20 rounded-[32px] shadow-[0_10px_60px_rgba(0,0,0,0.45)] backdrop-blur-xl px-6 sm:px-10 py-10">
+          <div className="bg-gray-900/90 border border-gray-700/50 rounded-[32px] shadow-[0_10px_60px_rgba(0,0,0,0.7)] backdrop-blur-xl px-6 sm:px-10 py-10">
             <div className="text-center mb-10">
               <h1 className="text-3xl md:text-4xl font-semibold tracking-[0.25em]">SOLAR GÜÇ HESAPLAMA</h1>
               <p className="text-white/80 text-sm md:text-base mt-2">
@@ -52,7 +52,7 @@ export default function SimulationPage() {
             <div className="space-y-6">
               {/* Subscriber type */}
               <div>
-                <label className="block text-sm font-semibold uppercase tracking-wide text-white/70 mb-3">
+                <label className="block text-sm font-semibold uppercase tracking-wide text-white/80 mb-3">
                   Abone Türünü Seçiniz
                 </label>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -63,7 +63,7 @@ export default function SimulationPage() {
                       className={`flex flex-col items-center gap-1 rounded-2xl py-4 border text-sm font-semibold transition-all ${
                         subscriberType === type.id
                           ? 'bg-pink-500 text-white border-pink-400 shadow-lg'
-                          : 'border-white/30 text-white hover:bg-white/10'
+                          : 'border-gray-600 bg-gray-800/60 text-white hover:bg-gray-700/60'
                       }`}
                     >
                       <span className="text-2xl">{type.icon}</span>
@@ -75,7 +75,7 @@ export default function SimulationPage() {
 
               {/* Installation area */}
               <div>
-                <label className="block text-sm font-semibold uppercase tracking-wide text-white/70 mb-3">
+                <label className="block text-sm font-semibold uppercase tracking-wide text-white/80 mb-3">
                   Kurulum Sahasını Seçiniz
                 </label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -86,7 +86,7 @@ export default function SimulationPage() {
                       className={`flex items-center justify-center gap-2 rounded-2xl py-4 border text-sm font-semibold transition-all ${
                         installationArea === area.id
                           ? 'bg-indigo-500 text-white border-indigo-400 shadow-lg'
-                          : 'border-white/30 text-white hover:bg-white/10'
+                          : 'border-gray-600 bg-gray-800/60 text-white hover:bg-gray-700/60'
                       }`}
                     >
                       <span className="text-2xl">{area.icon}</span>
@@ -98,7 +98,7 @@ export default function SimulationPage() {
 
               {/* Area input */}
               <div>
-                <label className="block text-sm font-semibold uppercase tracking-wide text-white/70 mb-2">
+                <label className="block text-sm font-semibold uppercase tracking-wide text-white/80 mb-2">
                   Çatı veya Arazi Alanını Giriniz
                 </label>
                 <div className="relative">
@@ -108,7 +108,7 @@ export default function SimulationPage() {
                     value={areaSize}
                     placeholder="m²"
                     onChange={(e) => setAreaSize(e.target.value)}
-                    className="w-full rounded-2xl border border-white/30 bg-white/5 px-4 py-3 text-white placeholder:text-white/50 focus:outline-none focus:border-pink-400"
+                    className="w-full rounded-2xl border border-gray-600 bg-gray-800/60 px-4 py-3 text-white placeholder:text-white/50 focus:outline-none focus:border-pink-400"
                   />
                   <span className="absolute right-4 top-1/2 -translate-y-1/2 text-white/60 text-sm">m²</span>
                 </div>
@@ -116,13 +116,13 @@ export default function SimulationPage() {
 
               {/* City */}
               <div>
-                <label className="block text-sm font-semibold uppercase tracking-wide text-white/70 mb-2">
+                <label className="block text-sm font-semibold uppercase tracking-wide text-white/80 mb-2">
                   Bulunduğunuz Şehri Seçiniz
                 </label>
                 <select
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
-                  className="w-full rounded-2xl border border-white/30 bg-white/5 px-4 py-3 text-white focus:outline-none focus:border-blue-400"
+                  className="w-full rounded-2xl border border-gray-600 bg-gray-800/60 px-4 py-3 text-white focus:outline-none focus:border-blue-400"
                 >
                   <option value="">Şehir seçiniz</option>
                   {cities.map((cityName) => (
@@ -135,7 +135,7 @@ export default function SimulationPage() {
 
               {/* Bill slider */}
               <div>
-                <label className="block text-sm font-semibold uppercase tracking-wide text-white/70 mb-4">
+                <label className="block text-sm font-semibold uppercase tracking-wide text-white/80 mb-4">
                   Elektrik Fatura Tutarını Giriniz
                 </label>
                 <input
