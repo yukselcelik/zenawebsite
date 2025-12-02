@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 
-const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || 'AIzaSyDChRKjxn6llwxuWU5QWxMjeKnp-8SPu0c';
 
 export default function GoogleMap({
   center,

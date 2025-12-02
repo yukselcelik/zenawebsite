@@ -168,23 +168,11 @@ class ApiService {
   static async createLeaveRequest(leaveData) {
     try {
       const headers = this.getHeaders();
-      console.log('Request URL:', `${API_BASE_URL}/api/leave/request`);
-      console.log('Request headers:', headers);
-      console.log('Request body:', JSON.stringify(leaveData));
 
       const response = await fetch(`${API_BASE_URL}/api/leave/request`, {
         method: 'POST',
         headers: headers,
         body: JSON.stringify(leaveData),
-      });
-
-      // Debug için response'u kontrol et
-      console.log('Response status:', response.status);
-      console.log('Response statusText:', response.statusText);
-      console.log('Response ok:', response.ok);
-      console.log('Response headers:', {
-        'content-type': response.headers.get('content-type'),
-        'content-length': response.headers.get('content-length')
       });
 
       return this.handleResponse(response);
@@ -267,12 +255,10 @@ class ApiService {
     return this.handleResponse(response);
   }
 
-  // Internship application API calls
   static async submitInternshipApplication(applicationData, cvFile = null) {
     try {
       const formData = new FormData();
 
-      // Alanları tek tek ekle (backend DTO ile uyumlu)
       if (applicationData?.fullName) formData.append('FullName', applicationData.fullName);
       if (applicationData?.email) formData.append('Email', applicationData.email);
       if (applicationData?.phone) formData.append('Phone', applicationData.phone);
@@ -280,13 +266,10 @@ class ApiService {
       if (applicationData?.department !== undefined) formData.append('Department', applicationData.department || '');
       if (applicationData?.year !== undefined) formData.append('Year', applicationData.year || '');
       if (applicationData?.message !== undefined) formData.append('Message', applicationData.message || '');
-      console.log(formData);
-      // Eğer dosya varsa ekle
       if (cvFile) {
         formData.append('CvFile', cvFile);
       }
 
-      // Bu endpoint herkese açık; CORS preflight'ını tetiklememek için Authorization göndermeyelim
       const headers = {};
 
       const response = await fetch(`${API_BASE_URL}/api/internship/apply`, {
@@ -318,7 +301,6 @@ class ApiService {
       throw new Error('CV dosyası indirilemedi');
     }
 
-    // Dosya adını response header'dan al
     const contentDisposition = response.headers.get('content-disposition');
     let fileName = `cv_${applicationId}.pdf`;
     if (contentDisposition) {
@@ -328,7 +310,6 @@ class ApiService {
       }
     }
 
-    // Blob olarak indir
     const blob = await response.blob();
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -349,7 +330,6 @@ class ApiService {
     return this.handleResponse(response);
   }
 
-  // User management API calls (Manager only)
   static async getPendingUsers(pageNumber = 1, pageSize = 10) {
     const response = await fetch(`${API_BASE_URL}/api/auth/pending-users?pageNumber=${pageNumber}&pageSize=${pageSize}`, {
       method: 'GET',
@@ -403,7 +383,6 @@ class ApiService {
     return this.handleResponse(response);
   }
 
-  // User management API calls
   static async getUserDetail(userId) {
     const response = await fetch(`${API_BASE_URL}/api/user/${userId}`, {
       method: 'GET',
