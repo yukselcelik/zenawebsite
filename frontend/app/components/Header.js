@@ -107,7 +107,7 @@ export default function Header() {
               onMouseLeave={handleAboutLeave}
             >
               <button
-                className={`flex items-center font-bold transition-colors hover:text-orange-400`}
+                className={`flex items-center font-bold transition-colors hover:text-orange-400 hover:cursor-pointer`}
                 aria-haspopup="menu"
                 aria-expanded={isAboutOpen}
               >
@@ -166,7 +166,7 @@ export default function Header() {
               onMouseLeave={handleServicesLeave}
             >
               <button
-                className={`flex items-center font-bold transition-colors hover:text-orange-400`}
+                className={`flex items-center font-bold transition-colors hover:text-orange-400 hover:cursor-pointer`}
                 aria-haspopup="menu"
                 aria-expanded={isServicesOpen}
               >
