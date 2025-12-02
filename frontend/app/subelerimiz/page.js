@@ -4,78 +4,72 @@
 
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import GoogleMap from '../components/GoogleMap';
 import { useState } from 'react';
+
+// Şubeler verisi
+const branches = [
+  {
+    id: 1,
+    name: 'İstanbul Merkez Şubesi',
+    address: 'Fenerbahçe Mahallesi Bağdat Caddesi No:200/6 Kadıköy/İstanbul',
+    phone: '+90 (216) 606 44 58',
+    coordinates: { lat: 40.97493589794215, lng: 29.05296105674061 }, 
+  },
+  {
+    id: 0,
+    name: 'İstanbul Çengelköy Ar-Ge Binası',
+    address: 'Çengelköy Mah. Prf.Dr.Beynun Akyavaş Cad. No:90 Üsküdar / İstanbul',
+    phone: '+90 (216) 606 44 58',
+    coordinates: { lat: 41.05237721470146, lng: 29.067600415461087 }, 
+  },
+  {
+    id: 2,
+    name: 'İstanbul Marmara Üniversitesi Teknopark Şubesi',
+    address: 'MARMARA ÜNİVERSİTESİ GÖZTEPE YERLEŞKESİ TGB.1 BÖLGESİ TEKNOPARK BİNASI KADIKÖY / İSTANBUL',
+    phone: '+90 (216) 606 44 58',
+    coordinates: { lat: 40.98939672264976, lng: 29.053268253355718 }
+  },
+  {
+    id: 3,
+    name: 'Yozgat Bozok OSB Hızlı Şarj Ünitesi Fabrikası',
+    address: 'YOZGAT İL ÖZEL İDARESİ',
+    phone: '+90 (354) 123 45 67',
+    coordinates: { lat: 39.7706170819135, lng: 32.48357061118928 }
+  },
+  {
+    id: 4,
+    name: 'Sivas Merkez Şubesi',
+    address: 'SULARBAŞI MAH. 11-4 SK. NO:1/6 MERKEZ/SİVAS',
+    phone: '+90 (346) 123 45 67',
+    coordinates: { lat: 39.752198171525286, lng: 37.0157534904467 }
+  },
+  {
+    id: 5,
+    name: 'Sivas Cumhuriyet Teknokent Şubesi',
+    address: 'YENİŞEHİR MAH. KARDEŞLER CD. TEKNOKENT ARGE KAT: 1 OFİS NO: 111 MERKEZ / SİVAS',
+    phone: '+90 (346) 123 45 67',
+    coordinates: { lat: 39.7023456, lng: 37.0223456 }
+  },
+  {
+    id: 6,
+    name: 'Sivas Demirağ OSB Hızlı Şarj Ünitesi Fabrikası',
+    address: 'KAYSERİ SİVAS YOLU 23. KM BUDAKLI / SİVAS',
+    phone: '+90 (346) 123 45 67',
+    coordinates: { lat: 39.6923456, lng: 37.0323456 }
+  }
+];
 
 export default function Subelerimiz() {
   const [selectedBranch, setSelectedBranch] = useState(0);
 
-  // Şubeler verisi
-  const branches = [
-    {
-      id: 0,
-      name: 'İstanbul Çengelköy Ar-Ge Binası',
-      address: 'Çengelköy Mah. Prf.Dr.Beynun Akyavaş Cad. No:90 Üsküdar / İstanbul',
-      phone: '+90 (216) 606 44 58',
-      mapUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3009.1234567890!2d29.0123456!3d41.0123456!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDHCsDAwJzQ0LjQiTiAyOcKwMDAnNDQuNCJF!5e0!3m2!1str!2str!4v1234567890123!5m2!1str!2str',
-      coordinates: { lat: 41.0123456, lng: 29.0123456 }
-    },
-    {
-      id: 1,
-      name: 'İstanbul Merkez Şubesi',
-      address: 'Fenerbahçe Mahallesi Bağdat Caddesi No:200/6 Kadıköy/İstanbul',
-      phone: '+90 (216) 606 44 58',
-      mapUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3009.1234567890!2d29.0123456!3d41.0123456!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDHCsDAwJzQ0LjQiTiAyOcKwMDAnNDQuNCJF!5e0!3m2!1str!2str!4v1234567890123!5m2!1str!2str',
-      coordinates: { lat: 40.9876543, lng: 29.0234567 }
-    },
-    {
-      id: 2,
-      name: 'İstanbul Marmara Üniversitesi Teknopark Şubesi',
-      address: 'Marmara Üniversitesi Teknopark Göztepe Kampüsü Kadıköy/İstanbul',
-      phone: '+90 (216) 606 44 58',
-      mapUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3009.1234567890!2d29.0123456!3d41.0123456!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDHCsDAwJzQ0LjQiTiAyOcKwMDAnNDQuNCJF!5e0!3m2!1str!2str!4v1234567890123!5m2!1str!2str',
-      coordinates: { lat: 40.9754321, lng: 29.0345678 }
-    },
-    {
-      id: 3,
-      name: 'Yozgat Bozok OSB Hızlı Şarj Ünitesi Fabrikası',
-      address: 'Bozok Organize Sanayi Bölgesi Yozgat',
-      phone: '+90 (354) 123 45 67',
-      mapUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3009.1234567890!2d34.0123456!3d39.8123456!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMznCsDQ4JzQ0LjQiTiAzNMKwMDAnNDQuNCJF!5e0!3m2!1str!2str!4v1234567890123!5m2!1str!2str',
-      coordinates: { lat: 39.8123456, lng: 34.0123456 }
-    },
-    {
-      id: 4,
-      name: 'Sivas Merkez Şubesi',
-      address: 'Merkez Mahallesi Atatürk Caddesi No:123 Sivas',
-      phone: '+90 (346) 123 45 67',
-      mapUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3009.1234567890!2d37.0123456!3d39.7123456!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMznCsDQyJzQ0LjQiTiAzN8KwMDAnNDQuNCJF!5e0!3m2!1str!2str!4v1234567890123!5m2!1str!2str',
-      coordinates: { lat: 39.7123456, lng: 37.0123456 }
-    },
-    {
-      id: 5,
-      name: 'Sivas Cumhuriyet Teknokent Şubesi',
-      address: 'Cumhuriyet Üniversitesi Teknokent Kampüsü Sivas',
-      phone: '+90 (346) 123 45 67',
-      mapUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3009.1234567890!2d37.0123456!3d39.7123456!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMznCsDQyJzQ0LjQiTiAzN8KwMDAnNDQuNCJF!5e0!3m2!1str!2str!4v1234567890123!5m2!1str!2str',
-      coordinates: { lat: 39.7023456, lng: 37.0223456 }
-    },
-    {
-      id: 6,
-      name: 'Sivas Demirağ OSB Hızlı Şarj Ünitesi Fabrikası',
-      address: 'Demirağ Organize Sanayi Bölgesi Sivas',
-      phone: '+90 (346) 123 45 67',
-      mapUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3009.1234567890!2d37.0123456!3d39.7123456!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMznCsDQyJzQ0LjQiTiAzN8KwMDAnNDQuNCJF!5e0!3m2!1str!2str!4v1234567890123!5m2!1str!2str',
-      coordinates: { lat: 39.6923456, lng: 37.0323456 }
-    }
-  ];
-
-  const currentBranch = branches[selectedBranch];
+  const currentBranch = branches.find((branch) => branch.id === selectedBranch) ?? branches[0];
 
   return (
     <div className="min-h-screen bg-white">
       <Header />
       
-      {/* Hero Section - Header arkasında küçük banner */}
+      {/* Hero Section */}
       <section className="relative h-[300px] overflow-hidden -mt-20">
         <div
           className="absolute inset-0 bg-cover bg-center"
@@ -108,12 +102,12 @@ export default function Subelerimiz() {
                 <h2 className="text-xl font-bold text-gray-900">Bizi Buralarda Bulabilirsiniz</h2>
               </div>
               
-              <div className="space-y-2">
+              <div className="space-y-2 max-h-[600px] overflow-y-auto pr-2">
                 {branches.map((branch) => (
                   <button
                     key={branch.id}
                     onClick={() => setSelectedBranch(branch.id)}
-                    className={`w-full text-left p-4 rounded-lg transition-all duration-200 ${
+                    className={`w-full text-left p-4 rounded-lg transition-all duration-200 hover:cursor-pointer ${
                       selectedBranch === branch.id
                         ? 'bg-orange-500 text-white shadow-md'
                         : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
@@ -122,7 +116,7 @@ export default function Subelerimiz() {
                     <div className="flex items-center justify-between">
                       <span className="font-medium">{branch.name}</span>
                       {selectedBranch === branch.id && (
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-5 h-5 flex-shrink-0 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                         </svg>
                       )}
@@ -136,18 +130,12 @@ export default function Subelerimiz() {
             <div className="space-y-6">
               {/* Harita */}
               <div className="bg-white rounded-lg shadow-md overflow-hidden">
-                <div className="w-full h-[400px] md:h-[500px]">
-                  <iframe
-                    src={currentBranch.mapUrl}
-                    width="100%"
-                    height="100%"
-                    style={{ border: 0 }}
-                    allowFullScreen=""
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                    className="w-full h-full"
-                  ></iframe>
-                </div>
+                <GoogleMap
+                  center={currentBranch.coordinates}
+                  zoom={14}
+                  className="w-full h-[400px] md:h-[500px] rounded-lg"
+                  pinTitle={currentBranch.name}
+                />
               </div>
 
               {/* Şube detayları */}
@@ -161,14 +149,32 @@ export default function Subelerimiz() {
                     </svg>
                     <p className="text-gray-700">{currentBranch.address}</p>
                   </div>
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3s">
                     <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                     </svg>
-                    <a href={`tel:${currentBranch.phone.replace(/\s/g, '')}`} className="text-green-500 font-medium hover:text-green-600 transition-colors">
+                    <a 
+                      href={`tel:${currentBranch.phone.replace(/\s/g, '')}`} 
+                      className="text-green-500 font-medium hover:text-green-600 transition-colors"
+                    >
                       {currentBranch.phone}
                     </a>
                   </div>
+                </div>
+
+                {/* Yol Tarifi Butonu */}
+                <div className="mt-6 pt-6 border-t border-gray-200">
+                  <a
+                    href={`https://www.google.com/maps/dir/?api=1&destination=${currentBranch.coordinates.lat},${currentBranch.coordinates.lng}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 w-full bg-orange-500 text-white py-3 px-6 rounded-lg font-medium hover:bg-orange-600 transition-colors"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                    </svg>
+                    Yol Tarifi Al
+                  </a>
                 </div>
               </div>
             </div>
@@ -180,4 +186,3 @@ export default function Subelerimiz() {
     </div>
   );
 }
-

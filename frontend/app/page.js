@@ -160,16 +160,16 @@ export default function Home() {
     <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white">
       {/* Header bileşeni - tüm sayfalarda ortak */}
       <Header />
-      
+
       {/* Hero Slider Section */}
       <section className="relative h-screen overflow-hidden -mt-20">
-        <div 
+        <div
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: `url(${sliderItems[currentSlide].image})` }}
         >
           <div className="absolute inset-0 bg-black/60" />
         </div>
-        
+
         <div
           className="relative z-10 flex h-full items-center justify-center px-6"
           onMouseDown={(e) => startDrag(e.clientX)}
@@ -181,7 +181,7 @@ export default function Home() {
           <button
             onClick={handlePrev}
             aria-label="Önceki slayt"
-            className="absolute left-6 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 rounded-full p-3 transition"
+            className="absolute left-6 top-1/2 -translate-y-1/2 rounded-full p-3 transition hover:cursor-pointer"
           >
             <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
@@ -192,8 +192,8 @@ export default function Home() {
             <motion.div
               key={sliderItems[currentSlide].id}
               className="text-center text-white max-w-3xl px-4"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -30 }}
               transition={{ duration: 0.35 }}
             >
@@ -212,12 +212,12 @@ export default function Home() {
                 transition={{ duration: 0.35, delay: 0.12 }}
               >
                 {sliderItems[currentSlide].description}
-          </motion.p>
+              </motion.p>
               <motion.a
                 href={sliderItems[currentSlide].href}
                 className="inline-flex items-center justify-center bg-green-500 hover:bg-green-600 text-white font-semibold py-2.5 px-7 rounded-full text-sm md:text-base transition"
                 initial={{ opacity: 0, scale: 0.92 }}
-            animate={{ opacity: 1, scale: 1 }}
+                animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.35, delay: 0.18 }}
               >
                 {sliderItems[currentSlide].buttonLabel}
@@ -228,7 +228,7 @@ export default function Home() {
           <button
             onClick={handleNext}
             aria-label="Sonraki slayt"
-            className="absolute right-6 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 rounded-full p-3 transition"
+            className="absolute right-6 top-1/2 -translate-y-1/2 rounded-full p-3 transition hover:cursor-pointer"
           >
             <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
@@ -241,7 +241,7 @@ export default function Home() {
             <button
               key={item.id}
               onClick={() => goToSlide(index)}
-              className={`h-1.5 w-8 rounded-full transition-all ${index === currentSlide ? 'bg-white' : 'bg-white/40'}`}
+              className={`h-1.5 rounded-full transition-all hover:cursor-pointer ${index === currentSlide ? 'bg-white w-8' : 'bg-white/40 w-5'}`}
               aria-label={`${item.title} slaytı`}
             />
           ))}
@@ -254,23 +254,23 @@ export default function Home() {
             <div className="w-full lg:max-w-none">
               <h2 className="text-lg md:text-xl font-semibold text-gray-900 mb-5">Zena Enerji ile Tam Hizmet</h2>
               <p className="text-[0.78rem] md:text-sm text-gray-700 mb-8 leading-relaxed">
-              Zena Enerji olarak, güneş enerjisi sektöründe proje geliştirme, proje uygulama, imar uygulamaları, saha kurulumu,
-              geçici kabul işlemleri, danışmanlık ve müşterilerimizin portföy verimliliğini en üst düzeye çıkarmak için
-              kapsamlı hizmet sunuyoruz. Güneş PV tesislerindeki sorunları anlamaya yardımcı olmak amacıyla İHA'lar ile
-              inceleme ve İHA'larda bulunan termal kamera ile havadan denetim yapılmaktadır.
-            </p>
-              </div>
+                Zena Enerji olarak, güneş enerjisi sektöründe proje geliştirme, proje uygulama, imar uygulamaları, saha kurulumu,
+                geçici kabul işlemleri, danışmanlık ve müşterilerimizin portföy verimliliğini en üst düzeye çıkarmak için
+                kapsamlı hizmet sunuyoruz. Güneş PV tesislerindeki sorunları anlamaya yardımcı olmak amacıyla İHA'lar ile
+                inceleme ve İHA'larda bulunan termal kamera ile havadan denetim yapılmaktadır.
+              </p>
+            </div>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-2xl mx-auto justify-items-center mt-2">
               {serviceCards.map((card) => (
                 <div key={card.title} className="flex flex-col items-center text-center gap-2.5">
                   <div className={`w-12 h-12 sm:w-12 sm:h-12 rounded-full flex items-center justify-center shadow-[0_6px_16px_rgba(0,0,0,0.3)] bg-gray-700 hover:bg-gray-600 transition-colors`}>
                     {card.icon}
-              </div>
+                  </div>
                   <p className="text-gray-900 font-semibold text-[9px] sm:text-[10px] tracking-wide">{card.title}</p>
-              </div>
+                </div>
               ))}
-              </div>
             </div>
+          </div>
           <div className="relative w-full h-72 md:h-[380px] rounded-xl overflow-hidden shadow-lg lg:ml-10 xl:ml-16">
             <img src="/dron-operator.jpg" alt="Drone ile denetim" className="absolute inset-0 w-full h-full object-cover" />
           </div>
@@ -411,7 +411,7 @@ function StatsScrollReveal() {
         </div>
         <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {stats.map((stat) => (
-              <div key={stat.label} className="flex flex-col items-center text-center space-y-2.5">
+            <div key={stat.label} className="flex flex-col items-center text-center space-y-2.5">
               <div className="w-12 h-12 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center shadow-md">
                 <svg className="w-7 h-7 text-orange-500" viewBox="0 0 32 32" aria-hidden="true">
                   <circle cx="16" cy="16" r="6.5" fill="currentColor" />
@@ -427,16 +427,16 @@ function StatsScrollReveal() {
                     <line x1="6.2" y1="25.8" x2="9.2" y2="22.8" />
                     <line x1="22.8" y1="9.2" x2="25.8" y2="6.2" />
                   </g>
-          </svg>
-          </div>
+                </svg>
+              </div>
               <div className="text-lg font-semibold text-gray-900">
                 {new Intl.NumberFormat('tr-TR').format(Number(stat.value))}
                 <span className="text-orange-500 text-xs font-semibold ml-1">{stat.suffix}</span>
-          </div>
+              </div>
               <p className="text-[11px] md:text-xs text-gray-600">{stat.label}</p>
-          </div>
+            </div>
           ))}
-          </div>
+        </div>
       </div>
     </section>
   );
