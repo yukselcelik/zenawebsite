@@ -1,0 +1,22 @@
+// Program.cs dosyasına eklenecek middleware'ler için örnek
+// Bu dosyayı Program.cs'e entegre edin
+
+// ... mevcut kod ...
+
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseRouting();
+
+// ✅ Security Headers Middleware ekle (CORS'tan ÖNCE)
+app.UseMiddleware<Zenabackend.Middleware.SecurityHeadersMiddleware>();
+
+app.UseCors("MyPolicy");
+
+// ✅ Rate Limiting Middleware ekle (Authentication'tan ÖNCE)
+app.UseMiddleware<Zenabackend.Middleware.RateLimitingMiddleware>();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+// ... devam eden kod ...
+
