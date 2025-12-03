@@ -300,10 +300,10 @@ export default function Home() {
       {/* Zena Enerji Hakkında */}
       <section className="py-16 bg-white text-center">
         <div className="max-w-6xl mx-auto px-6">
-          <p className="text-xs font-semibold tracking-[0.6em] text-orange-500 mb-4">HAKKIMIZDA</p>
+          {/* <p className="text-xs font-semibold tracking-[0.6em] text-orange-500 mb-4">HAKKIMIZDA</p> */}
           <div className="inline-flex items-center justify-center gap-4 mb-6">
             <span className="w-12 h-px bg-gray-300" />
-            <h3 className="text-3xl md:text-4xl font-bold text-gray-900 uppercase">Zena Enerji Hakkında</h3>
+            <h3 className="text-3xl md:text-4xl font-bold text-gray-900 uppercase">Hakkında</h3>
             <span className="w-12 h-px bg-gray-300" />
           </div>
           <div className="space-y-5 text-sm md:text-base text-gray-700 leading-relaxed">
