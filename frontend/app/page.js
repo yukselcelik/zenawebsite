@@ -271,7 +271,7 @@ export default function Home() {
               ))}
             </div>
           </div>
-          <div className="relative w-full h-72 md:h-[380px] rounded-xl overflow-hidden shadow-lg lg:ml-10 xl:ml-16">
+          <div className="relative w-[103%] h-60 md:h-[320px] rounded-xl overflow-hidden shadow-lg lg:ml-10 xl:ml-16 mt-6 md:mt-8">
             <img src="/dron-operator.jpg" alt="Drone ile denetim" className="absolute inset-0 w-full h-full object-cover" />
           </div>
         </div>
@@ -386,7 +386,7 @@ function StatsScrollReveal() {
 
   return (
     <section id="istatistikler" className="py-16 bg-gray-50 relative overflow-hidden">
-      <div className="absolute -left-24 md:-left-12 top-1/2 -translate-y-1/2 w-[220px] h-[220px] md:w-[320px] md:h-[320px] text-[#ffc666] opacity-40 pointer-events-none select-none">
+      <div className="absolute -left-24 md:-left-12 top-1/2 -translate-y-1/2 w-[140px] h-[140px] md:w-[200px] md:h-[200px] text-[#fbbf24] opacity-40 pointer-events-none select-none">
         <svg viewBox="0 0 200 200" fill="none" stroke="currentColor" className="w-full h-full drop-shadow-[0_8px_24px_rgba(255,160,55,0.25)]">
           <circle cx="100" cy="100" r="48" strokeWidth="14" />
           <g strokeWidth="14" strokeLinecap="round">
