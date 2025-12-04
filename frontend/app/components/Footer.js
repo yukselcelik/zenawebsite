@@ -22,17 +22,17 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-gray-800 text-white relative before:absolute before:top-0 before:left-0 before:right-0 before:h-3 before:bg-gradient-to-b before:from-transparent before:to-gray-800">
+    <footer className="bg-black text-white relative before:absolute before:top-0 before:left-0 before:right-0 before:h-3 before:bg-gradient-to-b before:from-transparent before:to-black">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-[72px] pb-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 
           {/* Zena Enerji - Sol kolon */}
           <div className="col-span-1">
-            <div className="flex items-center mb-4">
+            <div className="flex items-center justify-center mb-4">
               <div className="w-1 h-8 bg-green-500 mr-3"></div>
               <h3 className="text-2xl font-bold text-white">Zena Enerji</h3>
             </div>
-            <p className="text-gray-300 text-sm leading-relaxed">
+            <p className="text-gray-300 text-sm leading-relaxed text-center">
               Zena Enerji, 2015 yılında deneyimli paydaşlar tarafından kurulmuş, yenilenebilir enerji sektöründe faaliyet gösteren bir Türk firmasıdır. Firmamız, Yapay Zeka (AI), Gelişmiş Analitik ve Büyük Veri kullanarak güneş PV tesislerinin dijitalleşmesini iyileştirerek, proje geliştirme, imar uygulamaları, saha kurulumları ve güneş enerjisi endüstrisinin genel gelişimi için çalışmaktadır.
             </p>
           </div>
@@ -40,13 +40,13 @@ export default function Footer() {
           {/* İLETİŞİM - İkinci kolon */}
           <div className="col-span-1">
             <div className="mb-4">
-              <div className="flex items-center mb-2">
+              <div className="flex items-center justify-center mb-2">
                 <div className="w-12 h-0.5 bg-green-500 mr-2"></div>
-                <div className="flex-1 h-0.5 bg-gray-600"></div>
+                <div className="flex-1 h-0.5 bg-gray-800"></div>
               </div>
-              <h3 className="text-lg font-semibold text-white mt-2">İLETİŞİM</h3>
+              <h3 className="text-lg font-semibold text-white mt-2 text-center">İLETİŞİM</h3>
             </div>
-            <div className="space-y-3 text-gray-300 text-sm">
+            <div className="space-y-3 text-gray-300 text-sm text-center">
               <p>
                 Fenerbahçe Mahallesi<br />
                 Bağdat Caddesi No:200/6<br />
@@ -56,7 +56,7 @@ export default function Footer() {
               <p>Email: <a href="mailto:info@zenaenerji.com" className="hover:text-green-500 transition-colors">info@zenaenerji.com</a></p>
 
               {/* Sosyal medya ikonları */}
-              <div className="flex items-center gap-3 mt-4">
+              <div className="flex items-center justify-center gap-3 mt-4">
                 <a
                   href="https://instagram.com"
                   target="_blank"
@@ -104,26 +104,26 @@ export default function Footer() {
           {/* ÇALIŞMA SAATLERİMİZ - Dördüncü kolon */}
           <div className="col-span-1">
             <div className="mb-4">
-              <div className="flex items-center mb-2">
+              <div className="flex items-center justify-center mb-2">
                 <div className="w-12 h-0.5 bg-green-500 mr-2"></div>
-                <div className="flex-1 h-0.5 bg-gray-600"></div>
+                <div className="flex-1 h-0.5 bg-gray-800"></div>
               </div>
-              <h3 className="text-lg font-semibold text-white mt-2">ÇALIŞMA SAATLERİMİZ</h3>
+              <h3 className="text-lg font-semibold text-white mt-2 text-center">ÇALIŞMA SAATLERİMİZ</h3>
             </div>
-            <ul className="space-y-2 text-gray-300 text-sm">
+            <ul className="space-y-2 text-gray-300 text-sm text-center">
               <li>Pazartesi 08:00-18:00</li>
               <li>Salı 08:00-18:00</li>
               <li>Çarşamba 08:00-18:00</li>
               <li>Perşembe 08:00-18:00</li>
               <li>Cuma 08:00-18:00</li>
-              <li>Cumartesi 09:00–13:00</li>
+              <li>Cumartesi Kapalı</li>
               <li>Pazar Kapalı</li>
             </ul>
           </div>
         </div>
 
         {/* Alt çizgi - Telif hakkı bilgisi */}
-        <div className="border-t border-gray-700 mt-8 pt-8 text-center">
+        <div className="border-t border-gray-900 mt-8 pt-8 text-center">
           <p className="text-gray-400 text-sm">
             © Copyright Zena Enerji. Tüm Hakları Saklıdır.
           </p>
