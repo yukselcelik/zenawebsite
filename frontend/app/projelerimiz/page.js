@@ -97,11 +97,13 @@ export default function Projelerimiz() {
 
                   // Özel konum ayarlamaları
                   const positionAdjustments = {
-                    'İzmir': { x: 0, y: 15 }, // aşağı tarafa
+                    'İzmir': { x: 0, y: 20 }, // daha aşağı
                     'Konya': { x: -8, y: 0 }, // biraz sola
                     'Giresun': { x: 0, y: -12 }, // yukarı, hafif
                     'Erzincan': { x: 0, y: -15 }, // üste, biraz
-                    'Elazığ': { x: 0, y: 10 } // alta, biraz
+                    'Elazığ': { x: -7, y: 15 }, // biraz daha sola
+                    'Malatya': { x: -9, y: 0 }, // biraz daha sola
+                    'Balıkesir': { x: 5, y: 12 } // aşağı
                   };
 
                   const adjustment = positionAdjustments[ilAdi];

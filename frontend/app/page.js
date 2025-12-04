@@ -335,6 +335,145 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Referanslarımız */}
+      <section id="referanslarimiz" className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">REFERANSLAR</h2>
+            <div className="flex items-center justify-center gap-4 mb-6">
+              <span className="w-12 h-px bg-gray-300" />
+              <span className="w-16 h-px bg-green-500" />
+              <span className="w-12 h-px bg-gray-300" />
+            </div>
+          </div>
+          <div className="overflow-x-auto pb-4 -mx-4 px-4">
+            <div className="flex gap-6 md:gap-8 min-w-max">
+              {[
+                'Akfen Holding.png',
+                'Alkataş.avif',
+                'Alter.webp',
+                'Arta Tekstil.svg',
+                'Berg.png',
+                'Big Chefs.png',
+                'BİM.png',
+                'Birinci.png',
+                'Bisem Paradise.svg',
+                'Cemer kent.png',
+                'Danış Grup.png',
+                'Diler Holding.jpg',
+                'Ege Orman.png',
+                'Elektroaktif.png',
+                'Erfa Yapı.jpg',
+                'Espe Enerji.png',
+                'Farah Enerji.png',
+                'Futurapet.png',
+                'Gelişim Yapı.jpg',
+                'GEN İlaç.png',
+                'Hanwha Qcells.svg',
+                'Has Beton.jpg',
+                'Hasçelik.svg',
+                'İstanbul Aydın Üniversitesi.png',
+                'ITC.svg',
+                'Kar grup.png',
+                'Medicalpark.svg',
+                'Metroport AVM.jpg',
+                'Mön.png',
+                'Namet.svg',
+                'OBH Construction.jpg',
+                'olgun çelik.webp',
+                'Özseç Beton.svg',
+                'Pak Tavuk.png',
+                'Pimsa Otomotiv.png',
+                'Rofa Solar.png',
+                'Şıkmakas.png',
+                'Tekfen Holding.jpg',
+                'Tosyalı Holding.svg',
+                'Toyotetsu.webp',
+                'Ulus Metal.avif',
+                'Utest.png',
+                'Werde Hotels.svg'
+              ].map((logo, index) => {
+                // Dosya ismini encode et (Türkçe karakterler ve boşluklar için)
+                const encodedLogo = encodeURIComponent(logo);
+                return (
+                  <div key={index} className="flex items-center justify-center h-28 w-36 flex-shrink-0 p-3 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-100">
+                    <img
+                      src={`/logolar/${encodedLogo}`}
+                      alt={logo.replace(/\.[^/.]+$/, '')}
+                      className="h-full w-full object-contain transition-all duration-300"
+                      loading="lazy"
+                      onError={(e) => {
+                        console.error('Logo yüklenemedi:', logo);
+                        e.target.style.display = 'none';
+                        e.target.parentElement.style.display = 'none';
+                      }}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Çözüm Ortaklarımız */}
+      <section id="cozum-ortaklarimiz" className="py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">ÇÖZÜM ORTAKLARIMIZ</h2>
+            <div className="flex items-center justify-center gap-4 mb-6">
+              <span className="w-12 h-px bg-gray-300" />
+              <span className="w-16 h-px bg-green-500" />
+              <span className="w-12 h-px bg-gray-300" />
+            </div>
+          </div>
+          <div className="overflow-x-auto pb-4 -mx-4 px-4">
+            <div className="flex gap-6 md:gap-8 min-w-max">
+              {[
+                'Altungrup.avif',
+                'Astor.png',
+                'ERL Solar.png',
+                'Hasçelik.svg',
+                'HİS.JPG',
+                'HT Solar.JPG',
+                'huawei.png',
+                'İsotec.JPG',
+                'Kolay Enerji.png',
+                'Kontek.JPG',
+                'Neva Solar.svg',
+                'Öznur Kablo.png',
+                'Schneider Elektrik.JPG',
+                'Siemens.png',
+                'Smart Solar.png',
+                'Solaris Kablo.webp',
+                'Sungrow.png',
+                'Toplam Enerji Merkezi.png',
+                'Yeo.png',
+                'Yingli Solar.png'
+              ].map((logo, index) => {
+                // Dosya ismini encode et (Türkçe karakterler ve boşluklar için)
+                const encodedLogo = encodeURIComponent(logo);
+                return (
+                  <div key={index} className="flex items-center justify-center h-28 w-36 flex-shrink-0 p-3 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-100">
+                    <img
+                      src={`/logolar2/${encodedLogo}`}
+                      alt={logo.replace(/\.[^/.]+$/, '')}
+                      className="h-full w-full object-contain transition-all duration-300"
+                      loading="lazy"
+                      onError={(e) => {
+                        console.error('Logo yüklenemedi:', logo);
+                        e.target.style.display = 'none';
+                        e.target.parentElement.style.display = 'none';
+                      }}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* İletişim CTA */}
       <section className="pb-16 px-4">
         <div className="max-w-6xl mx-auto">
