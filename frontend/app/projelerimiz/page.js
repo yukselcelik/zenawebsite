@@ -51,13 +51,13 @@ export default function Projelerimiz() {
 
           if (!element || !info) return;
 
-          // Önce tüm path'leri kahverengi renkle boya (varsayılan renk)
+          // Önce tüm path'leri koyu gri renkle boya (varsayılan renk)
           const allPaths = element.querySelectorAll('path');
           allPaths.forEach(path => {
             if (path.parentNode.id !== 'guney-kibris') {
-              path.style.fill = '#7A5F3F'; // koyu kahverengi ton
-              path.setAttribute('fill', '#7A5F3F');
-              path.setAttribute('data-default-color', '#7A5F3F');
+              path.style.fill = '#5A5A5A'; // koyu gri ton
+              path.setAttribute('fill', '#5A5A5A');
+              path.setAttribute('data-default-color', '#5A5A5A');
             }
           });
 
@@ -186,7 +186,7 @@ export default function Projelerimiz() {
                 path.style.fill = baseColor;
                 path.setAttribute('fill', baseColor);
               } else {
-                const defaultColor = path.getAttribute('data-default-color') || '#7A5F3F';
+                const defaultColor = path.getAttribute('data-default-color') || '#5A5A5A';
                 path.style.fill = defaultColor;
                 path.setAttribute('fill', defaultColor);
               }
@@ -329,7 +329,7 @@ export default function Projelerimiz() {
                   .svg-map-container #svg-turkiye-haritasi path {
                     transition: fill 0.2s ease, opacity 0.2s ease;
                     cursor: pointer;
-                    fill: #7A5F3F; /* varsayılan koyu kahverengi renk */
+                    fill: #5A5A5A; /* varsayılan koyu gri renk */
                   }
                   .svg-map-container #svg-turkiye-haritasi path:hover {
                     fill: #ea580c !important; /* orange-600 - hover rengi */
