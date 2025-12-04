@@ -51,6 +51,16 @@ export default function Projelerimiz() {
 
           if (!element || !info) return;
 
+          // Önce tüm path'leri kahverengi renkle boya (varsayılan renk)
+          const allPaths = element.querySelectorAll('path');
+          allPaths.forEach(path => {
+            if (path.parentNode.id !== 'guney-kibris') {
+              path.style.fill = '#7A5F3F'; // koyu kahverengi ton
+              path.setAttribute('fill', '#7A5F3F');
+              path.setAttribute('data-default-color', '#7A5F3F');
+            }
+          });
+
           // cities.js'deki illeri turuncu tonları ile renklendir ve il adlarını ekle
           citiesData.forEach(city => {
             const cityGroup = element.querySelector(`#${city.id}`);
@@ -78,12 +88,27 @@ export default function Projelerimiz() {
                 });
 
                 // İl adını ekle (sadece bir kez, tüm grubun merkezini kullan)
-                const ilAdi = cityGroup.getAttribute('data-iladi');
+                const ilAdi = cityGroup.getAttribute('data-iladi') || city.name;
                 if (ilAdi) {
                   // Grup bounding box'ını al (birden fazla path olsa bile)
                   const bbox = cityGroup.getBBox();
-                  const centerX = bbox.x + bbox.width / 2;
-                  const centerY = bbox.y + bbox.height / 2;
+                  let centerX = bbox.x + bbox.width / 2;
+                  let centerY = bbox.y + bbox.height / 2;
+
+                  // Özel konum ayarlamaları
+                  const positionAdjustments = {
+                    'İzmir': { x: 0, y: 15 }, // aşağı tarafa
+                    'Konya': { x: -8, y: 0 }, // biraz sola
+                    'Giresun': { x: 0, y: -12 }, // yukarı, hafif
+                    'Erzincan': { x: 0, y: -15 }, // üste, biraz
+                    'Elazığ': { x: 0, y: 10 } // alta, biraz
+                  };
+
+                  const adjustment = positionAdjustments[ilAdi];
+                  if (adjustment) {
+                    centerX += adjustment.x;
+                    centerY += adjustment.y;
+                  }
 
                   // Text elementi oluştur
                   const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
@@ -92,13 +117,14 @@ export default function Projelerimiz() {
                   text.setAttribute('text-anchor', 'middle');
                   text.setAttribute('dominant-baseline', 'middle');
                   text.setAttribute('fill', '#ffffff');
-                  text.setAttribute('font-size', '10');
+                  text.setAttribute('font-size', '8');
                   text.setAttribute('font-weight', '600');
                   text.setAttribute('pointer-events', 'none');
                   text.setAttribute('style', 'text-shadow: 1px 1px 2px rgba(0,0,0,0.5);');
+                  text.setAttribute('class', 'il-adi-text');
                   text.textContent = ilAdi;
 
-                  // Text'i il grubuna ekle
+                  // Text'i il grubuna ekle (path'lerden sonra eklendiği için en üstte görünecek)
                   cityGroup.appendChild(text);
                 }
               }
@@ -154,14 +180,15 @@ export default function Projelerimiz() {
               info.innerHTML = '';
               info.style.display = 'none';
 
-              // Eğer proje olan bir il ise turuncu rengi koru, değilse eski haline getir
+              // Eğer proje olan bir il ise turuncu rengi koru, değilse koyu kahverengiye dön
               if (path.getAttribute('data-has-project') === 'true') {
                 const baseColor = path.getAttribute('data-base-color') || '#fdba74';
                 path.style.fill = baseColor;
                 path.setAttribute('fill', baseColor);
               } else {
-                path.style.fill = '';
-                path.removeAttribute('fill');
+                const defaultColor = path.getAttribute('data-default-color') || '#7A5F3F';
+                path.style.fill = defaultColor;
+                path.setAttribute('fill', defaultColor);
               }
             }
           };
@@ -302,6 +329,7 @@ export default function Projelerimiz() {
                   .svg-map-container #svg-turkiye-haritasi path {
                     transition: fill 0.2s ease, opacity 0.2s ease;
                     cursor: pointer;
+                    fill: #7A5F3F; /* varsayılan koyu kahverengi renk */
                   }
                   .svg-map-container #svg-turkiye-haritasi path:hover {
                     fill: #ea580c !important; /* orange-600 - hover rengi */
@@ -309,6 +337,11 @@ export default function Projelerimiz() {
                   }
                   .svg-map-container #svg-turkiye-haritasi path[data-has-project="true"]:hover {
                     fill: #c2410c !important; /* orange-700 - proje olan iller için hover rengi */
+                  }
+                  .svg-map-container #svg-turkiye-haritasi text.il-adi-text {
+                    pointer-events: none;
+                    z-index: 1000;
+                    position: relative;
                   }
                   @media (max-width: 768px) {
                     .svg-map-container #svg-turkiye-haritasi {
