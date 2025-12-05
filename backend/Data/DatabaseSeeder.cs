@@ -229,7 +229,9 @@ public static class DatabaseSeeder
                         Department = "Elektrik Mühendisliği",
                         Year = "3. Sınıf",
                         Message = "Yaz dönemi için staj başvurusu yapmak istiyorum. Güneş enerjisi konusunda deneyim kazanmak istiyorum.",
-                        CreatedAt = DateTime.UtcNow.AddHours(3).AddDays(-15)
+                        CreatedAt = DateTime.UtcNow.AddHours(3).AddDays(-15),
+                        CvFilePath = "example.pdf",
+                        OriginalFileName = "example1.pdf",
                     },
                     new InternshipApplication
                     {
@@ -240,7 +242,9 @@ public static class DatabaseSeeder
                         Department = "Makine Mühendisliği",
                         Year = "4. Sınıf",
                         Message = "Son sınıf öğrencisiyim ve mezuniyet öncesi staj yapmak istiyorum. Rüzgar enerjisi sistemleri ile ilgileniyorum.",
-                        CreatedAt = DateTime.UtcNow.AddHours(3).AddDays(-10)
+                        CreatedAt = DateTime.UtcNow.AddHours(3).AddDays(-10),
+                        CvFilePath = "example.pdf",
+                        OriginalFileName = "example2.pdf",
                     },
                     new InternshipApplication
                     {
@@ -251,7 +255,9 @@ public static class DatabaseSeeder
                         Department = "Endüstri Mühendisliği",
                         Year = "2. Sınıf",
                         Message = "Enerji sektöründe kariyer yapmak istiyorum. Staj imkanı için başvuruyorum.",
-                        CreatedAt = DateTime.UtcNow.AddHours(3).AddDays(-5)
+                        CreatedAt = DateTime.UtcNow.AddHours(3).AddDays(-5),
+                        CvFilePath = "example.pdf",
+                        OriginalFileName = "example3.pdf",
                     }
                 };
 

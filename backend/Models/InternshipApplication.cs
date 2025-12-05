@@ -35,4 +35,7 @@ public class InternshipApplication : BaseEntity
     
     [MaxLength(500)]
     public string? CvFilePath { get; set; }
+    
+    [MaxLength(500)]
+    public string? OriginalFileName { get; set; }
 }

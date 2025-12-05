@@ -12,16 +12,16 @@ import ApiService from '../../lib/api'; // API servis sınıfı
 export default function Kariyer() {
   // useState ile form verilerini yönetiyoruz
   const [formData, setFormData] = useState({
-    fullName: '',
-    phone: '',
-    email: '',
-    birthDate: '',
-    education: '',
-    position: '',
-    school: '',
-    department: '',
-    year: '',
-    message: '',
+    fullName: 'Test Kullanıcı',
+    phone: '5551234567',
+    email: 'test@example.com',
+    birthDate: '1995-01-15',
+    education: 'lisans',
+    position: 'staj',
+    school: 'İstanbul Teknik Üniversitesi',
+    department: 'Elektrik Mühendisliği',
+    year: '3. Sınıf',
+    message: 'Bu bir test mesajıdır. Staj başvurusu için formu test ediyorum.',
     cv: null,
     consent: false
   });

@@ -1,10 +1,16 @@
 'use client';
 
-export default function Sidebar({ activeTab, setActiveTab, isManager, pendingCount, pendingLeaveCount, onPersonnelTabClick }) {
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+
+export default function Sidebar({ isManager, pendingCount, pendingLeaveCount }) {
+  const pathname = usePathname();
+
   const menuItems = [
     {
       id: 'dashboard',
       label: 'Dashboard',
+      href: '/panel/dashboard',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
@@ -15,6 +21,7 @@ export default function Sidebar({ activeTab, setActiveTab, isManager, pendingCou
     {
       id: 'profile',
       label: 'Profilim',
+      href: '/panel/profilim',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -25,6 +32,7 @@ export default function Sidebar({ activeTab, setActiveTab, isManager, pendingCou
     {
       id: 'leaves',
       label: 'İzin Talepleri',
+      href: '/panel/izin-talepleri',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -36,6 +44,7 @@ export default function Sidebar({ activeTab, setActiveTab, isManager, pendingCou
     {
       id: 'personnel',
       label: 'Personeller',
+      href: '/panel/personeller',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -47,6 +56,7 @@ export default function Sidebar({ activeTab, setActiveTab, isManager, pendingCou
     {
       id: 'internships',
       label: 'Staj Başvuruları',
+      href: '/panel/staj-basvurulari',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
@@ -55,6 +65,13 @@ export default function Sidebar({ activeTab, setActiveTab, isManager, pendingCou
       visible: isManager
     }
   ];
+
+  const isActive = (href) => {
+    if (href === '/panel/dashboard') {
+      return pathname === '/panel' || pathname === '/panel/dashboard';
+    }
+    return pathname?.startsWith(href);
+  };
 
   return (
     <aside className="w-64 bg-white shadow-lg">
@@ -72,40 +89,38 @@ export default function Sidebar({ activeTab, setActiveTab, isManager, pendingCou
         </div>
 
         <nav className="space-y-2">
-          {menuItems.filter(item => item.visible).map((item) => (
-            <button
-              key={item.id}
-              onClick={() => {
-                setActiveTab(item.id);
-                if (item.id === 'personnel' && onPersonnelTabClick) {
-                  onPersonnelTabClick();
-                }
-              }}
-              className={`w-full text-left px-4 py-3 rounded-lg transition-colors cursor-pointer ${
-                activeTab === item.id || (item.id === 'personnel' && activeTab === 'personnel-detail')
-                  ? 'bg-orange-500 text-white'
-                  : 'text-gray-700 hover:bg-gray-100'
-              }`}
-            >
-              <div className="flex items-center space-x-3">
-                {item.icon}
-                <span>{item.label}</span>
-                {(item.id === 'leaves' || item.id === 'personnel') ? (
-                  <span
-                    className={`ml-auto text-xs px-2 py-1 rounded-full ${item.badge > 0 ? 'bg-red-500 text-white' : 'invisible'}`}
-                  >
-                    {item.badge || 0}
-                  </span>
-                ) : (
-                  item.badge && (
-                    <span className="ml-auto bg-red-500 text-white text-xs px-2 py-1 rounded-full">
-                      {item.badge}
+          {menuItems.filter(item => item.visible).map((item) => {
+            const active = isActive(item.href);
+            return (
+              <Link
+                key={item.id}
+                href={item.href}
+                className={`w-full text-left px-4 py-3 rounded-lg transition-colors cursor-pointer block ${
+                  active
+                    ? 'bg-orange-500 text-white'
+                    : 'text-gray-700 hover:bg-gray-100'
+                }`}
+              >
+                <div className="flex items-center space-x-3">
+                  {item.icon}
+                  <span>{item.label}</span>
+                  {(item.id === 'leaves' || item.id === 'personnel') ? (
+                    <span
+                      className={`ml-auto text-xs px-2 py-1 rounded-full ${item.badge > 0 ? 'bg-red-500 text-white' : 'invisible'}`}
+                    >
+                      {item.badge || 0}
                     </span>
-                  )
-                )}
-              </div>
-            </button>
-          ))}
+                  ) : (
+                    item.badge && (
+                      <span className="ml-auto bg-red-500 text-white text-xs px-2 py-1 rounded-full">
+                        {item.badge}
+                      </span>
+                    )
+                  )}
+                </div>
+              </Link>
+            );
+          })}
         </nav>
       </div>
     </aside>

@@ -1,16 +1,20 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
-export default function Navbar({ userData, onLogout, activeTab, isManager }) {
-  const tabTitles = {
-    'dashboard': 'Dashboard',
-    'profile': 'Profilim',
-    'leaves': 'İzin Talepleri',
-    'create-leave': 'Yeni İzin Talebi',
-    'personnel': 'Personeller',
-    'personnel-detail': 'Personel Detayı',
-    'internships': 'Staj Başvuruları'
+export default function Navbar({ userData, onLogout, isManager }) {
+  const pathname = usePathname();
+
+  const getTitle = () => {
+    if (pathname?.includes('/dashboard')) return 'Dashboard';
+    if (pathname?.includes('/profilim')) return 'Profilim';
+    if (pathname?.includes('/izin-talepleri/yeni')) return 'Yeni İzin Talebi';
+    if (pathname?.includes('/izin-talepleri')) return 'İzin Talepleri';
+    if (pathname?.includes('/personeller') && pathname?.match(/\/personeller\/\d+/)) return 'Personel Detayı';
+    if (pathname?.includes('/personeller')) return 'Personeller';
+    if (pathname?.includes('/staj-basvurulari')) return 'Staj Başvuruları';
+    return 'Panel';
   };
 
   return (
@@ -18,7 +22,7 @@ export default function Navbar({ userData, onLogout, activeTab, isManager }) {
       <div className="px-6 flex justify-between items-center">
         <div className="flex items-center gap-2">
           <h1 className="text-2xl font-extrabold text-gray-800">
-            {tabTitles[activeTab] || 'Panel'}
+            {getTitle()}
           </h1>
           {isManager && (
             <div className="flex items-center gap-1.5 bg-gradient-to-r from-orange-500 to-orange-600 text-white px-2.5 py-1 rounded-full shadow-sm">

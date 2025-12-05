@@ -11,6 +11,7 @@ public class InternshipApplicationResponseDto
     public string? Year { get; set; } = string.Empty;
     public string Message { get; set; } = string.Empty;
     public string? CvFilePath { get; set; }
+    public string? OriginalFileName { get; set; }
     public DateTime CreatedAt { get; set; }
 }
 

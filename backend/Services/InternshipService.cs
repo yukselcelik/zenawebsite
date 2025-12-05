@@ -24,6 +24,7 @@ public class InternshipService(
             Year = dto.Year ?? "",
             Message = dto.Message ?? "",
             CvFilePath = cvFilePath,
+            OriginalFileName = null, // Will be set when file is saved
             CreatedAt = DateTime.UtcNow.AddHours(3)
         };
 
@@ -43,7 +44,10 @@ public class InternshipService(
             Department = application.Department,
             Year = application.Year,
             Message = application.Message,
-            CvFilePath = configuration["FileStorage:BaseUrl"] + "/uploads/cvs" + application.CvFilePath,
+            CvFilePath = !string.IsNullOrEmpty(application.CvFilePath) 
+                ? configuration["FileStorage:BaseUrl"] + "/uploads/cvs/" + application.CvFilePath 
+                : null,
+            OriginalFileName = application.OriginalFileName,
             CreatedAt = application.CreatedAt
         };
 
@@ -109,7 +113,10 @@ public class InternshipService(
             Department = a.Department,
             Year = a.Year,
             Message = a.Message,
-            CvFilePath = configuration["FileStorage:BaseUrl"] + "/uploads/cvs" + a.CvFilePath,
+            CvFilePath = !string.IsNullOrEmpty(a.CvFilePath) 
+                ? configuration["FileStorage:BaseUrl"] + "/uploads/cvs/" + a.CvFilePath 
+                : null,
+            OriginalFileName = a.OriginalFileName,
             CreatedAt = a.CreatedAt
         }).ToList();
 
