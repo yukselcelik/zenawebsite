@@ -84,7 +84,7 @@ export default function DashboardPage() {
         const routes = {
           'personnel': '/panel/personeller',
           'leaves': '/panel/izin-talepleri',
-          'internships': '/panel/staj-basvurulari'
+          'internships': '/panel/is-basvurulari'
         };
         if (routes[tab]) {
           router.push(routes[tab]);

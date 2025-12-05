@@ -116,6 +116,22 @@ public class InternshipController(
         }
     }
 
+    [HttpDelete("{applicationId}")]
+    [Authorize(Roles = "Manager")]
+    public async Task<ActionResult<ApiResult<bool>>> DeleteApplication(int applicationId)
+    {
+        try
+        {
+            var result = await internshipService.DeleteApplicationAsync(applicationId);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error deleting internship application {ApplicationId}", applicationId);
+            return Ok(ApiResult<bool>.BadRequest("Başvuru silinirken hata oluştu"));
+        }
+    }
+
     private string GetContentType(string fileName)
     {
         var extension = Path.GetExtension(fileName).ToLowerInvariant();

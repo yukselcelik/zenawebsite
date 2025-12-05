@@ -356,6 +356,23 @@ class ApiService {
     window.URL.revokeObjectURL(url);
   }
 
+  static async deleteInternshipApplication(applicationId) {
+    const token = this.getToken();
+    if (!token) {
+      throw new Error('Authentication required');
+    }
+
+    const response = await fetch(`${API_BASE_URL}/api/internship/${applicationId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return this.handleResponse(response);
+  }
+
   static async getAllInternshipApplications(pageNumber = 1, pageSize = 10) {
     const response = await fetch(`${API_BASE_URL}/api/internship/applications?pageNumber=${pageNumber}&pageSize=${pageSize}`, {
       method: 'GET',

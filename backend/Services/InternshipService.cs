@@ -143,4 +143,44 @@ public class InternshipService(
         context.InternshipApplications.Update(application);
         await context.SaveChangesAsync();
     }
+
+    public async Task<ApiResult<bool>> DeleteApplicationAsync(int id)
+    {
+        var application = await context.InternshipApplications
+            .FirstOrDefaultAsync(a => a.Id == id);
+
+        if (application == null)
+        {
+            return ApiResult<bool>.NotFound("Başvuru bulunamadı");
+        }
+
+        // CV dosyasını sil
+        if (!string.IsNullOrEmpty(application.CvFilePath))
+        {
+            try
+            {
+                var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "cvs");
+                var filePath = Path.Combine(uploadsPath, application.CvFilePath);
+                
+                if (System.IO.File.Exists(filePath))
+                {
+                    System.IO.File.Delete(filePath);
+                    logger.LogInformation("CV file deleted: {FilePath} for application {ApplicationId}", filePath, id);
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogWarning(ex, "Failed to delete CV file for application {ApplicationId}", id);
+                // Dosya silinemediyse de devam et, sadece logla
+            }
+        }
+
+        // Veritabanından sil
+        context.InternshipApplications.Remove(application);
+        await context.SaveChangesAsync();
+
+        logger.LogInformation("Internship application deleted: {Id}", id);
+
+        return ApiResult<bool>.Ok(true);
+    }
 }

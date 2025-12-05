@@ -13,7 +13,7 @@ export default function Navbar({ userData, onLogout, isManager }) {
     if (pathname?.includes('/izin-talepleri')) return 'İzin Talepleri';
     if (pathname?.includes('/personeller') && pathname?.match(/\/personeller\/\d+/)) return 'Personel Detayı';
     if (pathname?.includes('/personeller')) return 'Personeller';
-    if (pathname?.includes('/staj-basvurulari')) return 'Staj Başvuruları';
+    if (pathname?.includes('/is-basvurulari')) return 'İş/Staj Başvuruları';
     return 'Panel';
   };
 

@@ -25,52 +25,74 @@ export default function LeaveRequests({ isManager, onLeaveRequestsChange, onCrea
   const fetchLeaveRequests = async () => {
     try {
       setIsLoading(true);
-      const data = isManager 
+      setError('');
+      const response = isManager 
         ? await ApiService.getAllLeaveRequests(pagination.pageNumber, pagination.pageSize)
         : await ApiService.getMyLeaveRequests(pagination.pageNumber, pagination.pageSize);
       
-      const items = data.data?.items || [];
+      console.log('Leave requests response:', response);
+      
+      // Response yapısını kontrol et
+      const items = response?.data?.items || response?.items || [];
+      const responseData = response?.data || response;
+      
       setLeaveRequests(items);
       setPagination({
-        pageNumber: data.data?.pageNumber || 1,
-        pageSize: data.data?.pageSize || 10,
-        totalCount: data.data?.totalCount || 0,
-        totalPages: data.data?.totalPages || 0
+        pageNumber: responseData?.pageNumber || pagination.pageNumber,
+        pageSize: responseData?.pageSize || pagination.pageSize,
+        totalCount: responseData?.totalCount || 0,
+        totalPages: responseData?.totalPages || 0
       });
 
       // Pending count'u hesapla ve parent'a bildir
       if (onLeaveRequestsChange) {
-        const pendingCount = items.filter(r => r.status === 'Pending').length;
+        const pendingCount = items.filter(r => {
+          const status = r.status;
+          return status === 'Pending' || status === 'pending' || status === 0 || status === '0';
+        }).length;
         onLeaveRequestsChange(pendingCount);
       }
     } catch (error) {
       console.error('Error fetching leave requests:', error);
+      setError(error.message || 'İzin talepleri yüklenirken hata oluştu');
     } finally {
       setIsLoading(false);
     }
   };
 
   const getStatusColor = (status) => {
-    switch (status) {
+    const statusStr = typeof status === 'string' ? status : String(status);
+    switch (statusStr) {
       case 'Approved':
+      case '1':
         return 'bg-green-100 text-green-800';
       case 'Rejected':
+      case '2':
         return 'bg-red-100 text-red-800';
       case 'Cancelled':
+      case '3':
         return 'bg-gray-100 text-gray-800';
+      case 'Pending':
+      case '0':
       default:
         return 'bg-yellow-100 text-yellow-800';
     }
   };
 
   const getStatusText = (status) => {
-    switch (status) {
+    const statusStr = typeof status === 'string' ? status : String(status);
+    switch (statusStr) {
       case 'Approved':
+      case '1':
         return 'Onaylandı';
       case 'Rejected':
+      case '2':
         return 'Reddedildi';
       case 'Cancelled':
+      case '3':
         return 'İptal Edildi';
+      case 'Pending':
+      case '0':
       default:
         return 'Beklemede';
     }
@@ -141,9 +163,15 @@ export default function LeaveRequests({ isManager, onLeaveRequestsChange, onCrea
             </div>
           )}
           <div className="space-y-4">
-          {leaveRequests.length === 0 ? (
-            <p className="text-gray-500 text-center py-8">Henüz izin talebi bulunmamaktadır.</p>
+          {leaveRequests.length === 0 && !isLoading ? (
+            <div className="text-center py-8">
+              <p className="text-gray-500 mb-2">Henüz izin talebi bulunmamaktadır.</p>
+              {pagination.totalCount > 0 && (
+                <p className="text-xs text-gray-400">Toplam kayıt: {pagination.totalCount} (farklı sayfada olabilir)</p>
+              )}
+            </div>
           ) : (
+            leaveRequests.length > 0 && (
             leaveRequests.map((request) => (
               <div key={request.id} className="border border-gray-200 rounded-lg p-4">
                 <div className="flex justify-between items-start">
@@ -174,14 +202,9 @@ export default function LeaveRequests({ isManager, onLeaveRequestsChange, onCrea
                   <div className="flex flex-col space-y-2 ml-4">
                     {isManager && (
                       <select
-                        value={request.status}
+                        value={typeof request.status === 'string' ? request.status : String(request.status)}
                         onChange={(e) => handleStatusChange(request.id, e.target.value)}
-                        className={`px-3 py-2 rounded text-sm font-medium border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 cursor-pointer ${
-                          request.status === 'Approved' ? 'bg-green-100 text-green-800' :
-                          request.status === 'Rejected' ? 'bg-red-100 text-red-800' :
-                          request.status === 'Cancelled' ? 'bg-gray-100 text-gray-800' :
-                          'bg-yellow-100 text-yellow-800'
-                        }`}
+                        className={`px-3 py-2 rounded text-sm font-medium border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 cursor-pointer ${getStatusColor(request.status)}`}
                       >
                         <option value="Pending">Beklemede</option>
                         <option value="Approved">Onaylandı</option>
@@ -189,7 +212,7 @@ export default function LeaveRequests({ isManager, onLeaveRequestsChange, onCrea
                         <option value="Cancelled">İptal Edildi</option>
                       </select>
                     )}
-                    {!isManager && request.status === 'Pending' && (
+                    {!isManager && (request.status === 'Pending' || request.status === 0 || request.status === '0') && (
                       <button
                         onClick={() => handleCancelLeaveRequest(request.id)}
                         className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded text-sm font-medium transition-colors cursor-pointer"
@@ -201,6 +224,7 @@ export default function LeaveRequests({ isManager, onLeaveRequestsChange, onCrea
                 </div>
               </div>
             ))
+            )
           )}
           </div>
 
