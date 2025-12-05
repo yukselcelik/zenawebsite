@@ -36,13 +36,16 @@ export default function InternshipApplications() {
     }
   };
 
-  const handleDownloadCv = async (applicationId) => {
+  const handleDownloadCv = async (applicationId, originalFileName) => {
     try {
       setDownloadingCv(prev => ({ ...prev, [applicationId]: true }));
-      await ApiService.downloadInternshipCv(applicationId);
+      await ApiService.downloadInternshipCv(applicationId, originalFileName);
     } catch (error) {
       console.error('Error downloading CV:', error);
-      alert(error.message || 'CV dosyası indirilemedi');
+      // Kullanıcı iptal ettiyse alert gösterme
+      if (error.message !== 'İndirme iptal edildi') {
+        alert(error.message || 'CV dosyası indirilemedi');
+      }
     } finally {
       setDownloadingCv(prev => ({ ...prev, [applicationId]: false }));
     }
@@ -122,7 +125,7 @@ export default function InternshipApplications() {
                   <div className="ml-4 flex flex-col gap-2">
                     {application.cvFilePath && (
                       <button
-                        onClick={() => handleDownloadCv(application.id)}
+                        onClick={() => handleDownloadCv(application.id, application.originalFileName)}
                         disabled={downloadingCv[application.id]}
                         className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer flex items-center gap-2 ${
                           downloadingCv[application.id]

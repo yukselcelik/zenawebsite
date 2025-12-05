@@ -284,7 +284,7 @@ class ApiService {
     }
   }
 
-  static async downloadInternshipCv(applicationId) {
+  static async downloadInternshipCv(applicationId, originalFileName = null) {
     const token = this.getToken();
     if (!token) {
       throw new Error('Authentication required');
@@ -302,7 +302,7 @@ class ApiService {
     }
 
     const contentDisposition = response.headers.get('content-disposition');
-    let fileName = `cv_${applicationId}.pdf`;
+    let fileName = originalFileName || `cv_${applicationId}.pdf`;
     if (contentDisposition) {
       const fileNameMatch = contentDisposition.match(/filename="?(.+)"?/i);
       if (fileNameMatch) {
@@ -311,6 +311,41 @@ class ApiService {
     }
 
     const blob = await response.blob();
+
+    // Modern tarayıcılarda showSaveFilePicker API'sini kullan
+    if ('showSaveFilePicker' in window) {
+      try {
+        const fileHandle = await window.showSaveFilePicker({
+          suggestedName: fileName,
+          types: [
+            {
+              description: 'CV Dosyası',
+              accept: {
+                'application/pdf': ['.pdf'],
+                'application/msword': ['.doc'],
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
+              },
+            },
+          ],
+        });
+
+        const writable = await fileHandle.createWritable();
+        await writable.write(blob);
+        await writable.close();
+        return;
+      } catch (error) {
+        // Kullanıcı dialog'u iptal ettiyse veya hata oluştuysa
+        if (error.name !== 'AbortError') {
+          console.error('File picker error:', error);
+          // Fallback olarak eski yönteme geç
+        } else {
+          // Kullanıcı iptal etti, sessizce çık
+          throw new Error('İndirme iptal edildi');
+        }
+      }
+    }
+
+    // Fallback: Eski tarayıcılar için otomatik indirme
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
