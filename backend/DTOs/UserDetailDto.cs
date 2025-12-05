@@ -14,6 +14,8 @@ public class UserDetailDto
     public DateTime? ApprovedAt { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
+    public string? SocialSecurityNumber { get; set; }
+    public string TaxNumber { get; set; } = string.Empty;
     public List<ContactInfoDto>? ContactInfos { get; set; }
     public List<EmergencyContactDto>? EmergencyContacts { get; set; }
     public List<EmploymentInfoDto>? EmploymentInfos { get; set; }

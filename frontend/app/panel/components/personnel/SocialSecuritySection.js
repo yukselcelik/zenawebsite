@@ -6,9 +6,6 @@ import ConfirmDialog from '../common/ConfirmDialog';
 
 export default function SocialSecuritySection({ socialSecurity: initialSocialSecurity, userId, onUpdate }) {
   const [socialSecurity, setSocialSecurity] = useState(initialSocialSecurity);
-  const [socialSecurityNumber, setSocialSecurityNumber] = useState('');
-  const [taxNumber, setTaxNumber] = useState('');
-  const [saving, setSaving] = useState(false);
   const [showDocumentForm, setShowDocumentForm] = useState(false);
   const [documentFormData, setDocumentFormData] = useState({
     documentType: '1', // HealthDocument
@@ -31,13 +28,6 @@ export default function SocialSecuritySection({ socialSecurity: initialSocialSec
     { value: '3', label: 'Özel Sağlık Sigortası' }
   ];
 
-  useEffect(() => {
-    if (socialSecurity) {
-      setSocialSecurityNumber(socialSecurity.socialSecurityNumber || '');
-      setTaxNumber(socialSecurity.taxNumber || '');
-    }
-  }, [socialSecurity]);
-
   // Update document type when available options change
   useEffect(() => {
     const existingDocumentTypes = socialSecurity?.documents?.map(doc => doc.documentType.toString()) || [];
@@ -56,30 +46,9 @@ export default function SocialSecuritySection({ socialSecurity: initialSocialSec
       const response = await ApiService.getSocialSecurity(userId);
       if (response?.data) {
         setSocialSecurity(response.data);
-        setSocialSecurityNumber(response.data.socialSecurityNumber || '');
-        setTaxNumber(response.data.taxNumber || '');
       }
     } catch (error) {
       console.error('Error refreshing social security:', error);
-    }
-  };
-
-  const handleSave = async () => {
-    try {
-      setSaving(true);
-      const response = await ApiService.createOrUpdateSocialSecurity({
-        userId: userId,
-        socialSecurityNumber: socialSecurityNumber || null,
-        taxNumber: taxNumber || ''
-      });
-      if (response?.data) {
-        setSocialSecurity(response.data);
-      }
-    } catch (error) {
-      console.error('Error saving social security:', error);
-      alert(error.message || 'Sosyal güvenlik bilgileri kaydedilemedi');
-    } finally {
-      setSaving(false);
     }
   };
 
@@ -152,44 +121,6 @@ export default function SocialSecuritySection({ socialSecurity: initialSocialSec
   return (
     <div className="mb-6">
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-semibold text-gray-800">Sosyal Güvenlik Bilgileri</h3>
-      </div>
-
-      {/* Social Security Number and Tax Number Inputs */}
-      <div className="mb-6 p-4 bg-gray-50 rounded-lg space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Sosyal Güvenlik Numarası</label>
-            <input
-              type="text"
-              value={socialSecurityNumber}
-              onChange={(e) => setSocialSecurityNumber(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 cursor-pointer"
-              placeholder="Sosyal güvenlik numarası"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Vergi Numarası</label>
-            <input
-              type="text"
-              value={taxNumber}
-              onChange={(e) => setTaxNumber(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 cursor-pointer"
-              placeholder="Vergi numarası"
-            />
-          </div>
-        </div>
-        <div className="flex justify-end">
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className={`px-4 py-2 rounded-lg text-white text-sm cursor-pointer ${
-              saving ? 'bg-gray-400' : 'bg-orange-500 hover:bg-orange-600'
-            }`}
-          >
-            {saving ? 'Kaydediliyor...' : 'Kaydet'}
-          </button>
-        </div>
       </div>
 
       {/* Document Management */}

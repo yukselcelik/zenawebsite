@@ -73,6 +73,8 @@ public class UserService(ApplicationDbContext context, ILogger<UserService> logg
             ApprovedAt = user.ApprovedAt,
             CreatedAt = user.CreatedAt,
             UpdatedAt = user.UpdatedAt,
+            SocialSecurityNumber = user.SocialSecurityNumber,
+            TaxNumber = user.TaxNumber,
             ContactInfos = user.ContactInfos?.Select(c => new ContactInfoDto
             {
                 Id = c.Id,
@@ -286,6 +288,24 @@ public class UserService(ApplicationDbContext context, ILogger<UserService> logg
             }
 
             user.Role = newRole;
+        }
+
+        if (updateDto.SocialSecurityNumber != null)
+        {
+            if (requestingUserRole != UserRoleEnum.Manager)
+            {
+                return ApiResult<UserDetailDto>.Unauthorized("Sosyal güvenlik numarası güncelleme yetkiniz yok");
+            }
+            user.SocialSecurityNumber = updateDto.SocialSecurityNumber;
+        }
+
+        if (updateDto.TaxNumber != null)
+        {
+            if (requestingUserRole != UserRoleEnum.Manager)
+            {
+                return ApiResult<UserDetailDto>.Unauthorized("Vergi numarası güncelleme yetkiniz yok");
+            }
+            user.TaxNumber = updateDto.TaxNumber;
         }
 
         user.UpdatedAt = DateTime.UtcNow;

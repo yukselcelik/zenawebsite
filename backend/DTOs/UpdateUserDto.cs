@@ -8,10 +8,12 @@ public class UpdateUserDto
     public string? PhotoPath { get; set; }
     public string? TcNo { get; set; } // Personel kendi TcNo bilgisini güncelleyebilir, yönetici herkes için güncelleyebilir
     public string? Role { get; set; } // Sadece yönetici güncelleyebilir: "Manager" | "Personel"
+    public string? SocialSecurityNumber { get; set; } // Sadece yönetici güncelleyebilir
+    public string? TaxNumber { get; set; } // Sadece yönetici güncelleyebilir
     public List<ContactInfoDto>? ContactInfos { get; set; }
     public List<EmergencyContactDto>? EmergencyContacts { get; set; }
     public List<EducationInfoDto>? EducationInfos { get; set; }
-    // Note: Email, TcNo, Role, IsApproved gibi alanlar sadece yönetici tarafından değiştirilebilir
+    // Note: Email, TcNo, Role, IsApproved, SocialSecurityNumber, TaxNumber gibi alanlar sadece yönetici tarafından değiştirilebilir
 }
 
 public class CreateEmploymentInfoDto
