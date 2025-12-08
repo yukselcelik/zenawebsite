@@ -92,7 +92,7 @@ export default function CalisanGirisi() {
       router.push('/panel');
     } catch (error) {
       // Hata mesajını göster
-      setError(error.message || 'Giriş başarısız!');
+      setError(error.message || 'Giriş başarısız');
     } finally {
       setIsLoading(false); // Yükleme durumunu kapat
     }

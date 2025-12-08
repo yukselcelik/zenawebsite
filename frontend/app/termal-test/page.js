@@ -26,7 +26,7 @@ export default function TermalTest() {
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full min-h-[800px] md:min-h-[900px] lg:min-h-[1000px] flex items-center">
           <div className="w-full text-center max-w-4xl mx-auto text-white">
             <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-6">
-              Termal İncelemede Yapay Zeka!
+              Termal İncelemede Yapay Zeka
             </h1>
             <p className="text-base md:text-lg text-white/90 mb-8 leading-relaxed">
               Toplamda 4 GW'lık Güneş enerji santrali ölçümlerinden elde edilen veriler ile hazırlanmış Yapay zeka programımız sayesinde Termal kameralarla aldığımız verileri işleyerek çok hızlı ve kesin doğruluk payına sahip bir rapor hazırlıyoruz.

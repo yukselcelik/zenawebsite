@@ -54,14 +54,14 @@ export default function KayitOl() {
 
     // Şifre doğrulama
     if (registerData.password !== registerData.confirmPassword) {
-      setError('Şifreler eşleşmiyor!');
+      setError('Şifreler eşleşmiyor');
       setIsLoading(false);
       return;
     }
 
     // Şifre uzunluk kontrolü
     if (registerData.password.length < 6) {
-      setError('Şifre en az 6 karakter olmalıdır!');
+      setError('Şifre en az 6 karakter olmalıdır');
       setIsLoading(false);
       return;
     }
@@ -103,7 +103,7 @@ export default function KayitOl() {
       }
     } catch (error) {
       // Hata mesajını göster
-      setError(error.message || 'Kayıt başarısız!');
+      setError(error.message || 'Kayıt başarısız');
     } finally {
       setIsLoading(false); // Yükleme durumunu kapat
     }

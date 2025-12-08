@@ -45,7 +45,7 @@ export default function Iletisim() {
 
       if (response.ok) {
         // Mesaj başarılı
-        alert(`Mesajınız başarıyla gönderildi! Mesaj No: ${result.messageId}`);
+        alert(`Mesajınız başarıyla gönderildi. Mesaj No: ${result.messageId}`);
         
         // Formu temizle
         setFormData({
@@ -61,7 +61,7 @@ export default function Iletisim() {
       }
     } catch (error) {
       // Ağ hatası
-      alert('Bağlantı hatası! Lütfen tekrar deneyin.');
+      alert('Bağlantı hatası. Lütfen tekrar deneyin.');
     }
   };
 

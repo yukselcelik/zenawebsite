@@ -12,7 +12,7 @@ import { motion, AnimatePresence } from 'framer-motion'; // Framer Motion - anim
 const sliderItems = [
   {
     id: 1,
-    title: 'Güneş Enerjisinden Elektrik Üretin!',
+    title: 'Güneş Enerjisinden Elektrik Üretin',
     description:
       'Güneş enerjisi ile yüksek elektrik maliyetinden kurtulabilirsiniz. Zena Enerji profesyonel proje ve teknik ekibi ile bu sorunlara çözüm kaynağı olmaktadır.',
     buttonLabel: 'Daha fazla bilgi için',
@@ -21,7 +21,7 @@ const sliderItems = [
   },
   {
     id: 2,
-    title: 'Veriminizi Maksimuma Çıkarın!',
+    title: 'Veriminizi Maksimuma Çıkarın',
     description:
       "Güneş enerjisi paneli ve santralinizin verimini ölçmek ve raporlamalarını yapmak amacıyla insansız hava aracı ile termal testlerini gerçekleştiriyoruz. Bu verileri Singapur'lu iş ve çözüm ortağımız AVA Asia ile paylaşarak görüntü işleme ve yapay zekayla birlikte kısa sürede raporluyoruz.",
     buttonLabel: 'Daha fazla bilgi için',
@@ -488,7 +488,7 @@ export default function Home() {
               <div className="text-white max-w-lg space-y-4">
                 <p className="text-xs md:text-sm font-semibold tracking-[0.35em] text-orange-300">İLETİŞİME GEÇİN</p>
                 <h4 className="text-2xl md:text-3xl font-bold leading-snug">
-                  Hemen bize ulaşın ve size özel <span className="text-orange-300">hizmetleri keşfedin!</span>
+                  Hemen bize ulaşın ve size özel <span className="text-orange-300">hizmetleri keşfedin</span>
                 </h4>
                 <p className="text-sm md:text-base text-white/90">
                   Projelerinizi hızla hayata geçirmek için mühendislik, saha kurulumu ve danışmanlık ekibimiz hazır.
