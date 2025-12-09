@@ -336,18 +336,18 @@ export default function Home() {
       </section>
 
       {/* Referanslarımız */}
-      <section id="referanslarimiz" className="py-16 bg-white">
+      <section id="referanslarimiz" className="py-8 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-[1.8rem]">
-            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-[0.675rem]">REFERANSLAR</h2>
-            <div className="flex items-center justify-center gap-[0.675rem] mb-[0.9rem]">
-              <span className="w-[1.8rem] h-px bg-gray-300" />
-              <span className="w-[2.475rem] h-px bg-green-500" />
-              <span className="w-[1.8rem] h-px bg-gray-300" />
+          <div className="text-center mb-[1.44rem]">
+            <h2 className="text-lg md:text-xl font-bold text-gray-900 mb-[0.54rem]">REFERANSLAR</h2>
+            <div className="flex items-center justify-center gap-[0.54rem] mb-[0.72rem]">
+              <span className="w-[1.44rem] h-px bg-gray-300" />
+              <span className="w-[1.98rem] h-px bg-green-500" />
+              <span className="w-[1.44rem] h-px bg-gray-300" />
             </div>
           </div>
           <div className="overflow-x-auto pb-4 -mx-4 px-4">
-            <div className="flex gap-[0.9rem] md:gap-[1.35rem] min-w-max">
+            <div className="flex gap-[0.72rem] md:gap-[1.08rem] min-w-max">
               {[
                 'Akfen Holding.png',
                 'Alkataş.avif',
@@ -396,7 +396,7 @@ export default function Home() {
                 // Dosya ismini encode et (Türkçe karakterler ve boşluklar için)
                 const encodedLogo = encodeURIComponent(logo);
                 return (
-                  <div key={index} className="flex items-center justify-center h-[4.5rem] w-[6.3rem] flex-shrink-0 p-[0.45rem] bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-100">
+                  <div key={index} className="flex items-center justify-center h-[3.6rem] w-[5.04rem] flex-shrink-0 p-[0.36rem] bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-100">
                     <img
                       src={`/logolar/${encodedLogo}`}
                       alt={logo.replace(/\.[^/.]+$/, '')}
@@ -417,18 +417,18 @@ export default function Home() {
       </section>
 
       {/* Çözüm Ortaklarımız */}
-      <section id="cozum-ortaklarimiz" className="py-16 bg-gray-50">
+      <section id="cozum-ortaklarimiz" className="pt-8 pb-28 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-[1.8rem]">
-            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-[0.675rem]">ÇÖZÜM ORTAKLARIMIZ</h2>
-            <div className="flex items-center justify-center gap-[0.675rem] mb-[0.9rem]">
-              <span className="w-[1.8rem] h-px bg-gray-300" />
-              <span className="w-[2.475rem] h-px bg-green-500" />
-              <span className="w-[1.8rem] h-px bg-gray-300" />
+          <div className="text-center mb-[1.44rem]">
+            <h2 className="text-lg md:text-xl font-bold text-gray-900 mb-[0.54rem]">ÇÖZÜM ORTAKLARIMIZ</h2>
+            <div className="flex items-center justify-center gap-[0.54rem] mb-[0.72rem]">
+              <span className="w-[1.44rem] h-px bg-gray-300" />
+              <span className="w-[1.98rem] h-px bg-green-500" />
+              <span className="w-[1.44rem] h-px bg-gray-300" />
             </div>
           </div>
           <div className="overflow-x-auto pb-4 -mx-4 px-4">
-            <div className="flex gap-[0.9rem] md:gap-[1.35rem] min-w-max">
+            <div className="flex gap-[0.72rem] md:gap-[1.08rem] min-w-max">
               {[
                 'Altungrup.avif',
                 'Astor.png',
@@ -454,7 +454,7 @@ export default function Home() {
                 // Dosya ismini encode et (Türkçe karakterler ve boşluklar için)
                 const encodedLogo = encodeURIComponent(logo);
                 return (
-                  <div key={index} className="flex items-center justify-center h-[4.5rem] w-[6.3rem] flex-shrink-0 p-[0.45rem] bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-100">
+                  <div key={index} className="flex items-center justify-center h-[3.6rem] w-[5.04rem] flex-shrink-0 p-[0.36rem] bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-100">
                     <img
                       src={`/logolar2/${encodedLogo}`}
                       alt={logo.replace(/\.[^/.]+$/, '')}
@@ -477,28 +477,28 @@ export default function Home() {
       {/* İletişim CTA */}
       <section className="pb-16 px-4">
         <div className="max-w-6xl mx-auto">
-          <div className="relative rounded-[28px] overflow-hidden shadow-xl">
+          <div className="relative rounded-[20.16px] overflow-hidden shadow-xl">
             <img
               src="https://images.unsplash.com/photo-1500536311302-3756c5a7b4b3?auto=format&fit=crop&w=1600&q=80"
               alt="Güneş batımı"
-              className="w-full h-64 md:h-72 object-cover"
+              className="w-full h-48 md:h-[211px] object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-transparent" />
-            <div className="absolute inset-0 flex items-center px-8 md:px-12">
-              <div className="text-white max-w-lg space-y-4">
-                <p className="text-xs md:text-sm font-semibold tracking-[0.35em] text-orange-300">İLETİŞİME GEÇİN</p>
-                <h4 className="text-2xl md:text-3xl font-bold leading-snug">
+            <div className="absolute inset-0 flex items-center px-[1.44rem] md:px-[2.16rem]">
+              <div className="text-white max-w-lg space-y-[0.72rem]">
+                <p className="text-[0.54rem] md:text-[0.63rem] font-semibold tracking-[0.252em] text-orange-300">İLETİŞİME GEÇİN</p>
+                <h4 className="text-[1.08rem] md:text-[1.35rem] font-bold leading-snug">
                   Hemen bize ulaşın ve size özel <span className="text-orange-300">hizmetleri keşfedin</span>
                 </h4>
-                <p className="text-sm md:text-base text-white/90">
+                <p className="text-[0.63rem] md:text-[0.72rem] text-white/90">
                   Projelerinizi hızla hayata geçirmek için mühendislik, saha kurulumu ve danışmanlık ekibimiz hazır.
                 </p>
                 <a
                   href="/iletisim"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold transition shadow-lg shadow-orange-500/30"
+                  className="inline-flex items-center gap-[0.36rem] px-[0.9rem] py-[0.45rem] rounded-full bg-orange-500 hover:bg-orange-600 text-white text-[0.63rem] font-semibold transition shadow-lg shadow-orange-500/30"
                 >
                   Bize Ulaşın
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <svg className="w-[0.72rem] h-[0.72rem]" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M13 5l7 7-7 7" />
                   </svg>
                 </a>
