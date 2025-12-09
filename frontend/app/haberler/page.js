@@ -77,7 +77,7 @@ export default function Haberler() {
               Zena Enerji Haberler
             </h1>
             <p className="text-sm md:text-base text-white/90 leading-relaxed">
-              Zena Enerji ve Güneş Enerjisindeki önemli gelişme ve haberleri buradan takip edebilirsiniz!
+              Zena Enerji ve Güneş Enerjisindeki önemli gelişme ve haberleri buradan takip edebilirsiniz
             </p>
           </div>
         </div>

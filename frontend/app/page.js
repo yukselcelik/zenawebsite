@@ -12,7 +12,7 @@ import { motion, AnimatePresence } from 'framer-motion'; // Framer Motion - anim
 const sliderItems = [
   {
     id: 1,
-    title: 'Güneş Enerjisinden Elektrik Üretin!',
+    title: 'Güneş Enerjisinden Elektrik Üretin',
     description:
       'Güneş enerjisi ile yüksek elektrik maliyetinden kurtulabilirsiniz. Zena Enerji profesyonel proje ve teknik ekibi ile bu sorunlara çözüm kaynağı olmaktadır.',
     buttonLabel: 'Daha fazla bilgi için',
@@ -21,7 +21,7 @@ const sliderItems = [
   },
   {
     id: 2,
-    title: 'Veriminizi Maksimuma Çıkarın!',
+    title: 'Veriminizi Maksimuma Çıkarın',
     description:
       "Güneş enerjisi paneli ve santralinizin verimini ölçmek ve raporlamalarını yapmak amacıyla insansız hava aracı ile termal testlerini gerçekleştiriyoruz. Bu verileri Singapur'lu iş ve çözüm ortağımız AVA Asia ile paylaşarak görüntü işleme ve yapay zekayla birlikte kısa sürede raporluyoruz.",
     buttonLabel: 'Daha fazla bilgi için',
@@ -62,7 +62,7 @@ const serviceCards = [
     title: 'Proje Geliştirme',
     iconBg: 'bg-[#f9a826]',
     icon: (
-      <svg className="w-7 h-7 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg className="w-[1.995rem] h-[1.995rem] text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <rect x="3.5" y="3.5" width="7" height="7" rx="1.5" />
         <rect x="13.5" y="3.5" width="7" height="7" rx="1.5" />
         <rect x="3.5" y="13.5" width="7" height="7" rx="1.5" />
@@ -75,7 +75,7 @@ const serviceCards = [
     title: 'İmar Uygulamaları',
     iconBg: 'bg-[#2fafa2]',
     icon: (
-      <svg className="w-7 h-7 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg className="w-[1.995rem] h-[1.995rem] text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M12 21s5-5.2 5-9.2a5 5 0 10-10 0c0 4 5 9.2 5 9.2z" />
         <path d="M9.5 11.5h5" />
         <path d="M12 9v5" />
@@ -86,7 +86,7 @@ const serviceCards = [
     title: 'Saha Kurulumları',
     iconBg: 'bg-[#1f68a5]',
     icon: (
-      <svg className="w-7 h-7 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg className="w-[1.995rem] h-[1.995rem] text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M3 11h18l-2 7H5z" />
         <path d="M7 11l2-5h6l2 5" />
         <path d="M8 15h8" />
@@ -97,7 +97,7 @@ const serviceCards = [
     title: 'İHA ile Termal Test',
     iconBg: 'bg-[#f9a826]',
     icon: (
-      <svg className="w-7 h-7 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg className="w-[1.995rem] h-[1.995rem] text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="2.2" />
         <path d="M4 9h5l1.5-3h3L15 9h5" />
         <path d="M4 15h5l1.5 3h3l1.5-3h5" />
@@ -109,7 +109,7 @@ const serviceCards = [
     title: 'İşletme ve Bakım',
     iconBg: 'bg-[#f06b5b]',
     icon: (
-      <svg className="w-7 h-7 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg className="w-[1.995rem] h-[1.995rem] text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M10 3h4l-1 4h-2z" />
         <path d="M8 8h8l1 5v5H7v-5z" />
         <path d="M7 18l-1.5 3M17 18l1.5 3" />
@@ -121,7 +121,7 @@ const serviceCards = [
     title: 'Danışmanlık ve Teknik İnceleme',
     iconBg: 'bg-[#14395b]',
     icon: (
-      <svg className="w-7 h-7 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg className="w-[1.995rem] h-[1.995rem] text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M8 9a3 3 0 116 0v1.5" />
         <path d="M5 13l4 4c.8.8 2.2.8 3 0l2-2" />
         <path d="M19 11l-4 4" />
@@ -250,10 +250,10 @@ export default function Home() {
       {/* Zena Enerji ile Tam Hizmet + Drone görselli bölüm (drone görseli kalsın) */}
       <section className="py-16 bg-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div className="flex flex-col items-center text-center lg:items-start lg:text-left w-full">
+          <div className="flex flex-col items-center text-center w-full">
             <div className="w-full lg:max-w-none">
-              <h2 className="text-lg md:text-xl font-semibold text-gray-900 mb-5">Zena Enerji ile Tam Hizmet</h2>
-              <p className="text-[0.78rem] md:text-sm text-gray-700 mb-8 leading-relaxed">
+              <h2 className="text-[1.35rem] md:text-[1.5rem] font-semibold text-gray-900 mb-5 text-center">Zena Enerji ile Tam Hizmet</h2>
+              <p className="text-[0.936rem] md:text-[1.05rem] text-gray-700 mb-8 leading-relaxed">
                 Zena Enerji olarak, güneş enerjisi sektöründe proje geliştirme, proje uygulama, imar uygulamaları, saha kurulumu,
                 geçici kabul işlemleri, danışmanlık ve müşterilerimizin portföy verimliliğini en üst düzeye çıkarmak için
                 kapsamlı hizmet sunuyoruz. Güneş PV tesislerindeki sorunları anlamaya yardımcı olmak amacıyla İHA'lar ile
@@ -263,15 +263,15 @@ export default function Home() {
             <div className="grid grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-2xl mx-auto justify-items-center mt-2">
               {serviceCards.map((card) => (
                 <div key={card.title} className="flex flex-col items-center text-center gap-2.5">
-                  <div className={`w-12 h-12 sm:w-12 sm:h-12 rounded-full flex items-center justify-center shadow-[0_6px_16px_rgba(0,0,0,0.3)] bg-gray-700 hover:bg-gray-600 transition-colors`}>
+                  <div className={`w-[3.42rem] h-[3.42rem] rounded-full flex items-center justify-center shadow-[0_6px_16px_rgba(0,0,0,0.3)] bg-gray-700 hover:bg-gray-600 transition-colors`}>
                     {card.icon}
                   </div>
-                  <p className="text-gray-900 font-semibold text-[9px] sm:text-[10px] tracking-wide">{card.title}</p>
+                  <p className="text-gray-900 font-semibold text-[10.26px] sm:text-[11.4px] tracking-wide">{card.title}</p>
                 </div>
               ))}
             </div>
           </div>
-          <div className="relative w-[103%] h-60 md:h-[320px] rounded-xl overflow-hidden shadow-lg lg:ml-10 xl:ml-16 mt-6 md:mt-8">
+          <div className="relative w-[103%] h-72 md:h-[384px] rounded-xl overflow-hidden shadow-lg lg:ml-10 xl:ml-16 mt-6 md:mt-8">
             <img src="/dron-operator.jpg" alt="Drone ile denetim" className="absolute inset-0 w-full h-full object-cover" />
           </div>
         </div>
@@ -281,16 +281,16 @@ export default function Home() {
       <StatsScrollReveal />
 
       {/* Solar Güç Hesaplama CTA (görselli banner) */}
-      <section className="py-16 bg-gray-50 px-0">
+      <section className="py-[3.4rem] bg-gray-50 px-0">
         <div className="w-full">
           <div className="relative rounded-none lg:rounded-2xl overflow-hidden">
-            <img src="/solar-hesabi.jpg" alt="Solar güç hesabı" className="w-full h-[400px] object-cover" />
+            <img src="/solar-hesabi.jpg" alt="Solar güç hesabı" className="w-full h-[340px] object-cover" />
             <div className="absolute inset-0 bg-black/45"></div>
             <div className="absolute inset-0 flex items-center">
               <div className="px-8 md:px-14 max-w-xl">
-                <h3 className="text-3xl md:text-4xl font-bold text-white mb-4">Solar Güç Simulasyonu Hesabı</h3>
-                <p className="text-white/90 mb-6">Kurulu gücünüzü, panel sayınızı, kurtarılan ağaç sayınızı hesaplayabilirsiniz...</p>
-                <a href="/simulasyon" className="inline-block bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 px-6 rounded-lg">Şimdi Hesapla</a>
+                <h3 className="text-3xl md:text-4xl font-bold text-white mb-[0.85rem]">Solar Güç Simulasyonu Hesabı</h3>
+                <p className="text-white/90 mb-[1.275rem]">Kurulu gücünüzü, panel sayınızı, kurtarılan ağaç sayınızı hesaplayabilirsiniz...</p>
+                <a href="/simulasyon" className="inline-block bg-orange-500 hover:bg-orange-600 text-white font-semibold py-[0.6375rem] px-6 rounded-lg">Şimdi Hesapla</a>
               </div>
             </div>
           </div>
@@ -336,18 +336,18 @@ export default function Home() {
       </section>
 
       {/* Referanslarımız */}
-      <section id="referanslarimiz" className="py-16 bg-white">
+      <section id="referanslarimiz" className="py-8 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">REFERANSLAR</h2>
-            <div className="flex items-center justify-center gap-4 mb-6">
-              <span className="w-12 h-px bg-gray-300" />
-              <span className="w-16 h-px bg-green-500" />
-              <span className="w-12 h-px bg-gray-300" />
+          <div className="text-center mb-[1.44rem]">
+            <h2 className="text-lg md:text-xl font-bold text-gray-900 mb-[0.54rem]">REFERANSLAR</h2>
+            <div className="flex items-center justify-center gap-[0.54rem] mb-[0.72rem]">
+              <span className="w-[1.44rem] h-px bg-gray-300" />
+              <span className="w-[1.98rem] h-px bg-green-500" />
+              <span className="w-[1.44rem] h-px bg-gray-300" />
             </div>
           </div>
           <div className="overflow-x-auto pb-4 -mx-4 px-4">
-            <div className="flex gap-6 md:gap-8 min-w-max">
+            <div className="flex gap-[0.72rem] md:gap-[1.08rem] min-w-max">
               {[
                 'Akfen Holding.png',
                 'Alkataş.avif',
@@ -396,7 +396,7 @@ export default function Home() {
                 // Dosya ismini encode et (Türkçe karakterler ve boşluklar için)
                 const encodedLogo = encodeURIComponent(logo);
                 return (
-                  <div key={index} className="flex items-center justify-center h-28 w-36 flex-shrink-0 p-3 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-100">
+                  <div key={index} className="flex items-center justify-center h-[3.6rem] w-[5.04rem] flex-shrink-0 p-[0.36rem] bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-100">
                     <img
                       src={`/logolar/${encodedLogo}`}
                       alt={logo.replace(/\.[^/.]+$/, '')}
@@ -417,18 +417,18 @@ export default function Home() {
       </section>
 
       {/* Çözüm Ortaklarımız */}
-      <section id="cozum-ortaklarimiz" className="py-16 bg-gray-50">
+      <section id="cozum-ortaklarimiz" className="pt-8 pb-28 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">ÇÖZÜM ORTAKLARIMIZ</h2>
-            <div className="flex items-center justify-center gap-4 mb-6">
-              <span className="w-12 h-px bg-gray-300" />
-              <span className="w-16 h-px bg-green-500" />
-              <span className="w-12 h-px bg-gray-300" />
+          <div className="text-center mb-[1.44rem]">
+            <h2 className="text-lg md:text-xl font-bold text-gray-900 mb-[0.54rem]">ÇÖZÜM ORTAKLARIMIZ</h2>
+            <div className="flex items-center justify-center gap-[0.54rem] mb-[0.72rem]">
+              <span className="w-[1.44rem] h-px bg-gray-300" />
+              <span className="w-[1.98rem] h-px bg-green-500" />
+              <span className="w-[1.44rem] h-px bg-gray-300" />
             </div>
           </div>
           <div className="overflow-x-auto pb-4 -mx-4 px-4">
-            <div className="flex gap-6 md:gap-8 min-w-max">
+            <div className="flex gap-[0.72rem] md:gap-[1.08rem] min-w-max">
               {[
                 'Altungrup.avif',
                 'Astor.png',
@@ -454,7 +454,7 @@ export default function Home() {
                 // Dosya ismini encode et (Türkçe karakterler ve boşluklar için)
                 const encodedLogo = encodeURIComponent(logo);
                 return (
-                  <div key={index} className="flex items-center justify-center h-28 w-36 flex-shrink-0 p-3 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-100">
+                  <div key={index} className="flex items-center justify-center h-[3.6rem] w-[5.04rem] flex-shrink-0 p-[0.36rem] bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-100">
                     <img
                       src={`/logolar2/${encodedLogo}`}
                       alt={logo.replace(/\.[^/.]+$/, '')}
@@ -477,28 +477,28 @@ export default function Home() {
       {/* İletişim CTA */}
       <section className="pb-16 px-4">
         <div className="max-w-6xl mx-auto">
-          <div className="relative rounded-[28px] overflow-hidden shadow-xl">
+          <div className="relative rounded-[20.16px] overflow-hidden shadow-xl">
             <img
               src="https://images.unsplash.com/photo-1500536311302-3756c5a7b4b3?auto=format&fit=crop&w=1600&q=80"
               alt="Güneş batımı"
-              className="w-full h-64 md:h-72 object-cover"
+              className="w-full h-48 md:h-[211px] object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-transparent" />
-            <div className="absolute inset-0 flex items-center px-8 md:px-12">
-              <div className="text-white max-w-lg space-y-4">
-                <p className="text-xs md:text-sm font-semibold tracking-[0.35em] text-orange-300">İLETİŞİME GEÇİN</p>
-                <h4 className="text-2xl md:text-3xl font-bold leading-snug">
-                  Hemen bize ulaşın ve size özel <span className="text-orange-300">hizmetleri keşfedin!</span>
+            <div className="absolute inset-0 flex items-center px-[1.44rem] md:px-[2.16rem]">
+              <div className="text-white max-w-lg space-y-[0.72rem]">
+                <p className="text-[0.54rem] md:text-[0.63rem] font-semibold tracking-[0.252em] text-orange-300">İLETİŞİME GEÇİN</p>
+                <h4 className="text-[1.08rem] md:text-[1.35rem] font-bold leading-snug">
+                  Hemen bize ulaşın ve size özel <span className="text-orange-300">hizmetleri keşfedin</span>
                 </h4>
-                <p className="text-sm md:text-base text-white/90">
+                <p className="text-[0.63rem] md:text-[0.72rem] text-white/90">
                   Projelerinizi hızla hayata geçirmek için mühendislik, saha kurulumu ve danışmanlık ekibimiz hazır.
                 </p>
                 <a
                   href="/iletisim"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold transition shadow-lg shadow-orange-500/30"
+                  className="inline-flex items-center gap-[0.36rem] px-[0.9rem] py-[0.45rem] rounded-full bg-orange-500 hover:bg-orange-600 text-white text-[0.63rem] font-semibold transition shadow-lg shadow-orange-500/30"
                 >
                   Bize Ulaşın
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <svg className="w-[0.72rem] h-[0.72rem]" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M13 5l7 7-7 7" />
                   </svg>
                 </a>
@@ -542,8 +542,8 @@ function StatsScrollReveal() {
       </div>
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto">
-          <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">Türkiye'de Güneş Enerjisi</h2>
-          <p className="text-gray-600 text-xs md:text-sm leading-relaxed">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Türkiye'de Güneş Enerjisi</h2>
+          <p className="text-gray-600 text-sm md:text-base leading-relaxed">
             Enerji Bakanlığı'nın güneş enerjisi potansiyel atlasına göre Türkiye'de yıllık toplam güneşlenme süresi 2.737 saat,
             yıllık toplam gelen güneş enerjisi 1.527 kWh/m²·yıl olarak hesaplanıyor. Bu potansiyeli en verimli şekilde değerlendirmek için çalışıyoruz.
           </p>
@@ -551,8 +551,8 @@ function StatsScrollReveal() {
         <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {stats.map((stat) => (
             <div key={stat.label} className="flex flex-col items-center text-center space-y-2.5">
-              <div className="w-12 h-12 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center shadow-md">
-                <svg className="w-7 h-7 text-orange-500" viewBox="0 0 32 32" aria-hidden="true">
+              <div className="w-[3.6rem] h-[3.6rem] rounded-full bg-orange-50 text-orange-500 flex items-center justify-center shadow-md">
+                <svg className="w-[2.1rem] h-[2.1rem] text-orange-500" viewBox="0 0 32 32" aria-hidden="true">
                   <circle cx="16" cy="16" r="6.5" fill="currentColor" />
                   <circle cx="16" cy="16" r="4.6" fill="#fff6eb" />
                   <circle cx="16" cy="16" r="3.4" fill="#f28c1a" />
@@ -568,11 +568,11 @@ function StatsScrollReveal() {
                   </g>
                 </svg>
               </div>
-              <div className="text-lg font-semibold text-gray-900">
+              <div className="text-[0.8775rem] font-semibold text-gray-900">
                 {new Intl.NumberFormat('tr-TR').format(Number(stat.value))}
-                <span className="text-orange-500 text-xs font-semibold ml-1">{stat.suffix}</span>
+                <span className="text-orange-500 text-[0.585rem] font-semibold ml-1">{stat.suffix}</span>
               </div>
-              <p className="text-[11px] md:text-xs text-gray-600">{stat.label}</p>
+              <p className="text-[13.2px] md:text-[0.9rem] text-gray-600">{stat.label}</p>
             </div>
           ))}
         </div>

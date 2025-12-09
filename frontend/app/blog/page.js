@@ -133,10 +133,10 @@ export default function Blog() {
             <input
               type="email"
               placeholder="E-posta adresiniz"
-              className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900"
             />
             <button className="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-300">
-              Abone Ol
+              Katıl
             </button>
           </div>
         </div>
