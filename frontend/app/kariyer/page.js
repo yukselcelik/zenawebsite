@@ -1,21 +1,16 @@
-// Kariyer sayfası - İş başvuru ve staj başvuru formları
-// Bu sayfa çalışan başvurularını ve staj başvurularını toplar
+'use client';
 
-'use client'; // Client-side bileşen - form yönetimi için
-
-import Header from '../components/Header'; // Header bileşenini import ediyoruz
-import Footer from '../components/Footer'; // Footer bileşenini import ediyoruz
-import PhoneInput from '../components/PhoneInput'; // PhoneInput bileşenini import ediyoruz
-import { useState } from 'react'; // useState hook'u - form state yönetimi için
-import ApiService from '../../lib/api'; // API servis sınıfı
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import PhoneInput from '../components/PhoneInput';
+import { useState } from 'react';
+import ApiService from '../../lib/api';
 
 export default function Kariyer() {
-  // useState ile form verilerini yönetiyoruz
   const [formData, setFormData] = useState({
     fullName: 'Test Kullanıcı',
     phone: '5551234567',
     email: 'test@example.com',
-    birthDate: '1995-01-15',
     education: 'lisans',
     position: 'staj',
     school: 'İstanbul Teknik Üniversitesi',
@@ -29,7 +24,6 @@ export default function Kariyer() {
   const [submitError, setSubmitError] = useState('');
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
-  // Form alanlarını güncelleyen fonksiyon
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({
@@ -38,92 +32,27 @@ export default function Kariyer() {
     }));
   };
 
-  // Form gönderme fonksiyonu
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Sayfa yenilenmesini engeller
+    e.preventDefault();
     setIsSubmitting(true);
     setSubmitError('');
     setSubmitSuccess(false);
-    
+
     try {
-      // Eğer pozisyon "staj" ise staj başvurusu API'sine gönder
-      if (formData.position === 'staj') {
-        const internshipData = {
-          fullName: formData.fullName,
-          email: formData.email,
-          phone: formData.phone,
-          school: formData.school || '',
-          department: formData.department || '',
-          year: formData.year || '',
-          message: formData.message || ''
-        };
-
-        // Dosya varsa birlikte gönder
-        await ApiService.submitInternshipApplication(internshipData, formData.cv);
-        
-        // Başvuru başarılı
-        setSubmitSuccess(true);
-        
-        // Formu temizle
-        setFormData({
-          fullName: '',
-          phone: '',
-          email: '',
-          birthDate: '',
-          education: '',
-          position: '',
-          school: '',
-          department: '',
-          year: '',
-          message: '',
-          cv: null,
-          consent: false
-        });
-      } else {
-        // Diğer pozisyonlar için mevcut API'ye gönder
-        const response = await fetch('/api/applications/submit', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            fullName: formData.fullName,
-            phone: formData.phone,
-            email: formData.email,
-            birthDate: formData.birthDate,
-            education: formData.education,
-            position: formData.position,
-            kvkkConsent: formData.consent
-          }),
-        });
-
-        const result = await response.json();
-
-        if (response.ok) {
-          // Başvuru başarılı
-          setSubmitSuccess(true);
-          
-          // Formu temizle
-          setFormData({
-            fullName: '',
-            phone: '',
-            email: '',
-            birthDate: '',
-            education: '',
-            position: '',
-            school: '',
-            department: '',
-            year: '',
-            message: '',
-            cv: null,
-            consent: false
-          });
-        } else {
-          setSubmitError(result.message || 'Başvuru gönderilirken hata oluştu');
-        }
-      }
+      const internshipData = {
+        fullName: formData.fullName,
+        email: formData.email,
+        phone: formData.phone,
+        position: formData.position,
+        education: formData.education,
+        school: formData.school || '',
+        department: formData.department || '',
+        year: formData.year || '',
+        message: formData.message || ''
+      };
+      await ApiService.submitInternshipApplication(internshipData, formData.cv);
+      setSubmitSuccess(true);
     } catch (error) {
-      // Ağ hatası
       setSubmitError(error.message || 'Bağlantı hatası! Lütfen tekrar deneyin.');
     } finally {
       setIsSubmitting(false);
@@ -132,10 +61,7 @@ export default function Kariyer() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header bileşeni */}
       <Header />
-      
-      {/* Hero Section - Header arkasında küçük banner */}
       <section className="relative h-[300px] overflow-hidden -mt-20">
         <div
           className="absolute inset-0 bg-cover bg-center"
@@ -156,7 +82,6 @@ export default function Kariyer() {
         </div>
       </section>
 
-      {/* Bilgi kutusu */}
       <section className="py-8 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 max-w-2xl mx-auto">
@@ -167,7 +92,6 @@ export default function Kariyer() {
         </div>
       </section>
 
-      {/* Başvuru formu */}
       <section className="py-16 bg-white">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
           {submitSuccess && (
@@ -181,8 +105,7 @@ export default function Kariyer() {
             </div>
           )}
           <form onSubmit={handleSubmit} className="space-y-6">
-            
-            {/* Ad Soyad alanı */}
+
             <div>
               <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-2">
                 Adınız Soyadınız <span className="text-red-500">*</span>
@@ -195,11 +118,10 @@ export default function Kariyer() {
                 onChange={handleInputChange}
                 placeholder="Ad Soyad"
                 required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900"
               />
             </div>
 
-            {/* Telefon alanı */}
             <div>
               <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
                 Telefon Numaranız <span className="text-red-500">*</span>
@@ -212,7 +134,6 @@ export default function Kariyer() {
               />
             </div>
 
-            {/* E-posta alanı */}
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                 E-Posta Adresiniz <span className="text-red-500">*</span>
@@ -225,27 +146,10 @@ export default function Kariyer() {
                 onChange={handleInputChange}
                 placeholder="E-Posta"
                 required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900"
               />
             </div>
 
-            {/* Doğum tarihi alanı */}
-            <div>
-              <label htmlFor="birthDate" className="block text-sm font-medium text-gray-700 mb-2">
-                Doğum Tarihiniz <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="date"
-                id="birthDate"
-                name="birthDate"
-                value={formData.birthDate}
-                onChange={handleInputChange}
-                required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900"
-              />
-            </div>
-
-            {/* Eğitim durumu alanı */}
             <div>
               <label htmlFor="education" className="block text-sm font-medium text-gray-700 mb-2">
                 Eğitim Durumunuz <span className="text-red-500">*</span>
@@ -256,7 +160,7 @@ export default function Kariyer() {
                 value={formData.education}
                 onChange={handleInputChange}
                 required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900"
               >
                 <option value="">Eğitim Durumu Seçiniz</option>
                 <option value="lise">Lise</option>
@@ -267,7 +171,6 @@ export default function Kariyer() {
               </select>
             </div>
 
-            {/* Pozisyon alanı */}
             <div>
               <label htmlFor="position" className="block text-sm font-medium text-gray-700 mb-2">
                 Başvurmak İstediğiniz Pozisyon <span className="text-red-500">*</span>
@@ -278,7 +181,7 @@ export default function Kariyer() {
                 value={formData.position}
                 onChange={handleInputChange}
                 required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900"
               >
                 <option value="">Pozisyon Seçiniz</option>
                 <option value="staj">Staj</option>
@@ -292,7 +195,6 @@ export default function Kariyer() {
               </select>
             </div>
 
-            {/* Staj için özel alanlar */}
             {formData.position === 'staj' && (
               <>
                 <div>
@@ -341,25 +243,23 @@ export default function Kariyer() {
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900"
                   />
                 </div>
-
-                <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
-                    Mesajınız
-                  </label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    value={formData.message}
-                    onChange={handleInputChange}
-                    rows={4}
-                    placeholder="Eklemek istediğiniz bir mesaj varsa yazabilirsiniz..."
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900"
-                  />
-                </div>
               </>
             )}
+            <div>
+              <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+                Mesajınız
+              </label>
+              <textarea
+                id="message"
+                name="message"
+                value={formData.message}
+                onChange={handleInputChange}
+                rows={4}
+                placeholder="Eklemek istediğiniz bir mesaj varsa yazabilirsiniz..."
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900"
+              />
+            </div>
 
-            {/* CV yükleme alanı */}
             <div>
               <label htmlFor="cv" className="block text-sm font-medium text-gray-700 mb-2">
                 CV Yükleyiniz (PDF, DOC, DOCX)
@@ -370,11 +270,10 @@ export default function Kariyer() {
                 name="cv"
                 accept=".pdf,.doc,.docx"
                 onChange={(e) => setFormData(prev => ({ ...prev, cv: e.target.files[0] }))}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900"
               />
             </div>
 
-            {/* KVKK onay kutusu */}
             <div className="flex items-start space-x-3">
               <input
                 type="checkbox"
@@ -390,7 +289,6 @@ export default function Kariyer() {
               </label>
             </div>
 
-            {/* Gönder butonu */}
             <button
               type="submit"
               disabled={isSubmitting}
@@ -402,7 +300,6 @@ export default function Kariyer() {
         </div>
       </section>
 
-      {/* Çalışan giriş bölümü */}
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold text-gray-900 mb-6">
@@ -411,7 +308,7 @@ export default function Kariyer() {
           <p className="text-lg text-gray-600 mb-8">
             Zena Enerji'de çalışıyorsanız, aşağıdaki butona tıklayarak çalışan panelinize giriş yapabilirsiniz.
           </p>
-          <a 
+          <a
             href="/calisan-girisi"
             className="inline-block bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-8 rounded-lg text-lg transition-colors duration-300"
           >
@@ -420,7 +317,6 @@ export default function Kariyer() {
         </div>
       </section>
 
-      {/* Footer bileşeni */}
       <Footer />
     </div>
   );

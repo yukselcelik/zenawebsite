@@ -262,6 +262,7 @@ class ApiService {
       if (applicationData?.fullName) formData.append('FullName', applicationData.fullName);
       if (applicationData?.email) formData.append('Email', applicationData.email);
       if (applicationData?.phone) formData.append('Phone', applicationData.phone);
+      if (applicationData?.position) formData.append('Position', applicationData.position);
       if (applicationData?.school !== undefined) formData.append('School', applicationData.school || '');
       if (applicationData?.department !== undefined) formData.append('Department', applicationData.department || '');
       if (applicationData?.year !== undefined) formData.append('Year', applicationData.year || '');

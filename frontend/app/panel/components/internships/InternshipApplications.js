@@ -148,6 +148,7 @@ export default function InternshipApplications() {
                       <div className="mt-1 flex flex-wrap gap-4 text-sm text-gray-600">
                         <span><span className="font-medium">E-posta:</span> {application.email}</span>
                         <span><span className="font-medium">Telefon:</span> {application.phone}</span>
+                        <span><span className="font-medium">Pozisyon:</span> {application.position}</span>
                       </div>
                     </div>
                     <div className="ml-4 flex items-center">

@@ -232,6 +232,7 @@ public static class DatabaseSeeder
                         CreatedAt = DateTime.UtcNow.AddHours(3).AddDays(-15),
                         CvFilePath = "example.pdf",
                         OriginalFileName = "example1.pdf",
+                        Position = "Stajyer",
                     },
                     new InternshipApplication
                     {
@@ -245,6 +246,7 @@ public static class DatabaseSeeder
                         CreatedAt = DateTime.UtcNow.AddHours(3).AddDays(-10),
                         CvFilePath = "example.pdf",
                         OriginalFileName = "example2.pdf",
+                        Position = "Stajyer",
                     },
                     new InternshipApplication
                     {
@@ -258,6 +260,15 @@ public static class DatabaseSeeder
                         CreatedAt = DateTime.UtcNow.AddHours(3).AddDays(-5),
                         CvFilePath = "example.pdf",
                         OriginalFileName = "example3.pdf",
+                        Position = "Stajyer",
+                    },
+                    // is basvurusu
+                    new InternshipApplication
+                    {
+                        FullName = "Ahmet Yılmaz",
+                        Email = "ahmet.yilmaz@university.edu.tr",
+                        Phone = "05551234567",
+                        
                     }
                 };
 

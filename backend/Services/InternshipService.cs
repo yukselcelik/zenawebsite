@@ -23,8 +23,9 @@ public class InternshipService(
             Department = dto.Department ?? "",
             Year = dto.Year ?? "",
             Message = dto.Message ?? "",
+            Position = dto.Position,
             CvFilePath = cvFilePath,
-            OriginalFileName = null, // Will be set when file is saved
+            OriginalFileName = null,
             CreatedAt = DateTime.UtcNow.AddHours(3)
         };
 
@@ -44,6 +45,7 @@ public class InternshipService(
             Department = application.Department,
             Year = application.Year,
             Message = application.Message,
+            Position = application.Position,
             CvFilePath = !string.IsNullOrEmpty(application.CvFilePath) 
                 ? configuration["FileStorage:BaseUrl"] + "/uploads/cvs/" + application.CvFilePath 
                 : null,
@@ -113,6 +115,7 @@ public class InternshipService(
             Department = a.Department,
             Year = a.Year,
             Message = a.Message,
+            Position = a.Position,
             CvFilePath = !string.IsNullOrEmpty(a.CvFilePath) 
                 ? configuration["FileStorage:BaseUrl"] + "/uploads/cvs/" + a.CvFilePath 
                 : null,
@@ -154,7 +157,6 @@ public class InternshipService(
             return ApiResult<bool>.NotFound("Başvuru bulunamadı");
         }
 
-        // CV dosyasını sil
         if (!string.IsNullOrEmpty(application.CvFilePath))
         {
             try
@@ -171,7 +173,6 @@ public class InternshipService(
             catch (Exception ex)
             {
                 logger.LogWarning(ex, "Failed to delete CV file for application {ApplicationId}", id);
-                // Dosya silinemediyse de devam et, sadece logla
             }
         }
 
