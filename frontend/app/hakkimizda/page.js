@@ -64,8 +64,8 @@ export default function Hakkimizda() {
             <div className="relative">
               <div className="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden">
                 <img 
-                  src="https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" 
-                  alt="Solar panel installation" 
+                  src="/1111.jfif" 
+                  alt="Zena Enerji ile Tam Hizmet" 
                   className="w-full h-full object-cover"
                 />
               </div>
