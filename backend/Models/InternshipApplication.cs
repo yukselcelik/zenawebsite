@@ -33,6 +33,10 @@ public class InternshipApplication : BaseEntity
     [MaxLength(2000)]
     public string Message { get; set; } = string.Empty;
     
+    [Required]
+    [MaxLength(100)]
+    public string Position { get; set; } = string.Empty;
+    
     [MaxLength(500)]
     public string? CvFilePath { get; set; }
     

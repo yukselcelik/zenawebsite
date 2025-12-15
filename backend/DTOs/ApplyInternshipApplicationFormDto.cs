@@ -12,4 +12,5 @@ public class ApplyInternshipApplicationFormDto
     public string? Department { get; set; } = string.Empty;
     public string? Year { get; set; } = string.Empty;
     public string? Message { get; set; } = string.Empty;
+    public string Position { get; set; } = string.Empty;
 }
