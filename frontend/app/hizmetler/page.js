@@ -16,31 +16,36 @@ export default function Hizmetler() {
       id: 1,
       title: "GES Proje Geliştirme İşlemleri",
       description: "GES projelerinde sağlam bir altyapının oluşturulması, proje geliştirme sürecinin doğru yönetilmesine bağlıdır. Bu süreç, projenin en temel ve en kritik aşamasını oluşturur. Firmamız, proje geliştirme sürecini yürürlükteki mevzuatlara tam uyumlu şekilde, alanında uzman kadrosuyla titizlikle gerçekleştirmektedir. Her adımı özenle planlanan bu süreçle, projelerinizi güvenle hayata geçiriyoruz.",
-      backgroundImage: "/1.jpg"           // 1. görsel
+      backgroundImage: "/1.jpg",
+      slug: "ges-proje-gelistirme"
     },
     {
       id: 2,
       title: "Danışmanlık Ve Teknik İnceleme",
       description: "Zena Enerji, mevcut veya yeni güneş santralleri için 300'e yakın kriteri inceleyerek verim, raporlama ve fizibilite analizleri sunmaktadır. Bu hizmet sayesinde yatırımcılar, santrallerine ait gerçek teknik ve finansal verilere güvenilir şekilde ulaşabilmektedir.",
-      backgroundImage: "/2.jpg"           // 2. görsel
+      backgroundImage: "/2.jpg",
+      slug: "danismanlik-ve-teknik-inceleme"
     },
     {
       id: 3,
       title: "Yapay Zeka Destekli Termal Test Ve Raporlama",
       description: "Güneş enerji sistemlerinde oluşan \"hot spot\" sıcak noktaları, İHA'larımızdaki termal kameralarla hızlıca tespit edilmekte, ardından Büyük Veri Analitiği, Yapay Zeka ve Makine Öğrenimi ile doğru, hızlı ve maliyet avantajlı çözümler sunulmaktadır.",
-      backgroundImage: "/3.jpg"           // 3. görsel
+      backgroundImage: "/3.jpg",
+      slug: "termal-test"
     },
     {
       id: 4,
       title: "İşletme Ve Bakım Hizmetleri",
       description: "Zena Enerji, işletme ve bakım (O&M) hizmetleriyle güneş enerji santrallerinizin performansını artırarak sürdürülebilir ve verimli enerji üretimi sağlar. Bakım, onarım, izleme ve yönetim faaliyetlerimizle yatırımınızın fizibilite aşamasındaki hedef değerlere ulaşmasına destek oluyoruz.",
-      backgroundImage: "/4.jpg"           // 4. görsel
+      backgroundImage: "/4.jpg",
+      slug: "isletme-ve-bakim"
     },
     {
       id: 5,
       title: "Anahtar Teslim GES Kurulum İşlemleri",
       description: "Zena Enerji, lisanslı ve lisanssız güneş enerjisi tesislerinde tüm izinlerden kurulum ve kabul işlemlerine kadar süreci yöneterek santral kurulumunu anahtar teslim olarak gerçekleştirmektedir.",
-      backgroundImage: "/5.jpg"           // 5. görsel
+      backgroundImage: "/5.jpg",
+      slug: "anahtar-teslim-ges-kurulum"
     }
   ];
 
@@ -104,25 +109,14 @@ export default function Hizmetler() {
                   {service.description}
                 </p>
                 
-                {service.id === 3 && (
-                  <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                    <a 
-                      href="/termal-test"
-                      className="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 px-8 rounded-lg text-lg transition-colors duration-300 shadow-lg"
-                    >
-                      Daha Fazla Bilgi
-                    </a>
-                    <a 
-                      href="/iletisim"
-                      className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-gray-900 font-semibold py-3 px-8 rounded-lg text-lg transition-all duration-300 flex items-center gap-2"
-                    >
-                      Bize Ulaşın
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </a>
-                  </div>
-                )}
+                <div className="flex justify-center items-center">
+                  <a 
+                    href={service.id === 3 ? "/termal-test" : `/hizmetler/${service.slug}`}
+                    className="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 px-8 rounded-lg text-lg transition-colors duration-300 shadow-lg"
+                  >
+                    Daha Fazla Bilgi
+                  </a>
+                </div>
               </div>
             </div>
           </div>

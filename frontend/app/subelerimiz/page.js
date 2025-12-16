@@ -25,38 +25,24 @@ const branches = [
   },
   {
     id: 2,
-    name: 'İstanbul Marmara Üniversitesi Teknopark Şubesi',
-    address: 'MARMARA ÜNİVERSİTESİ GÖZTEPE YERLEŞKESİ TGB.1 BÖLGESİ TEKNOPARK BİNASI KADIKÖY / İSTANBUL',
+    name: 'Boğaziçi Üniversitesi Teknopark',
+    address: 'Boğaziçi Üniversitesi Güney Kampüsü, Bebek, 34342 Beşiktaş/İstanbul',
     phone: '+90 (216) 606 44 58',
-    coordinates: { lat: 40.98939672264976, lng: 29.053268253355718 }
+    coordinates: { lat: 41.0805, lng: 29.0444 }
   },
   {
     id: 3,
-    name: 'Yozgat Bozok OSB Hızlı Şarj Ünitesi Fabrikası',
-    address: 'YOZGAT İL ÖZEL İDARESİ',
-    phone: '+90 (354) 123 45 67',
-    coordinates: { lat: 39.7706170819135, lng: 32.48357061118928 }
-  },
-  {
-    id: 4,
     name: 'Sivas Merkez Şubesi',
     address: 'SULARBAŞI MAH. 11-4 SK. NO:1/6 MERKEZ/SİVAS',
     phone: '+90 (346) 123 45 67',
     coordinates: { lat: 39.752198171525286, lng: 37.0157534904467 }
   },
   {
-    id: 5,
+    id: 4,
     name: 'Sivas Cumhuriyet Teknokent Şubesi',
     address: 'YENİŞEHİR MAH. KARDEŞLER CD. TEKNOKENT ARGE KAT: 1 OFİS NO: 111 MERKEZ / SİVAS',
     phone: '+90 (346) 123 45 67',
     coordinates: { lat: 39.7023456, lng: 37.0223456 }
-  },
-  {
-    id: 6,
-    name: 'Sivas Demirağ OSB Hızlı Şarj Ünitesi Fabrikası',
-    address: 'KAYSERİ SİVAS YOLU 23. KM BUDAKLI / SİVAS',
-    phone: '+90 (346) 123 45 67',
-    coordinates: { lat: 39.6923456, lng: 37.0323456 }
   }
 ];
 
