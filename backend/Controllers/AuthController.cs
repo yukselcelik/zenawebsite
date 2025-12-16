@@ -31,22 +31,22 @@ public class AuthController(AuthService authService) : ControllerBase
     [HttpPost("login")]
     public async Task<ActionResult<ApiResult<AuthResponseDto>>> Login([FromBody] LoginDto loginDto)
     {
+        // Önce kullanıcının onay durumunu kontrol et
+        var isApproved = await authService.CheckUserApprovalStatusAsync(loginDto.Email);
+        
+        // Kullanıcı varsa ve onaylanmamışsa direkt engelle
+        if (isApproved.HasValue && !isApproved.Value)
+        {
+            return Ok(ApiResult<AuthResponseDto>.Unauthorized(
+                "Hesabınız henüz onaylanmamış. Lütfen yönetici onayı bekleyin."));
+        }
+
+        // Login işlemini gerçekleştir
         var result = await authService.LoginAsync(loginDto);
 
         if (result == null)
         {
-            var isApproved = await authService.CheckUserApprovalStatusAsync(loginDto.Email);
-            if (!isApproved.HasValue)
-            {
-                return Ok(ApiResult<AuthResponseDto>.Unauthorized("Invalid email or password"));
-            }
-
-            if (!isApproved.Value)
-            {
-                return Ok(ApiResult<AuthResponseDto>.Unauthorized(
-                    "Hesabınız henüz onaylanmamış. Lütfen yönetici onayı bekleyin."));
-            }
-
+            // Kullanıcı bulunamadı veya şifre yanlış
             return Ok(ApiResult<AuthResponseDto>.Unauthorized("Invalid email or password"));
         }
 

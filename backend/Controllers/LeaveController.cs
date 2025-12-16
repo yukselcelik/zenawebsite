@@ -36,6 +36,16 @@ public class LeaveController(LeaveService leaveService) : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("requests")]
+    public async Task<ActionResult<ApiResult<PagedResultDto<LeaveRequestResponseDto>>>> GetLeaveRequests(
+        [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+    {
+        var userId = GetUserId();
+        var isManager = IsManager();
+        var result = await leaveService.GetLeaveRequestsAsync(userId, isManager, pageNumber, pageSize);
+        return Ok(result);
+    }
+
     [HttpGet("my-requests")]
     public async Task<ActionResult<ApiResult<PagedResultDto<LeaveRequestResponseDto>>>> GetMyLeaveRequests(
         [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)

@@ -20,28 +20,23 @@ export default function LeaveRequests({ isManager, onLeaveRequestsChange, onCrea
 
   useEffect(() => {
     fetchLeaveRequests();
-  }, [pagination.pageNumber, isManager]);
+  }, [pagination.pageNumber]);
 
   const fetchLeaveRequests = async () => {
     try {
       setIsLoading(true);
       setError('');
-      const response = isManager 
-        ? await ApiService.getAllLeaveRequests(pagination.pageNumber, pagination.pageSize)
-        : await ApiService.getMyLeaveRequests(pagination.pageNumber, pagination.pageSize);
+
+      const data = await ApiService.getLeaveRequests(pagination.pageNumber, pagination.pageSize);
       
-      console.log('Leave requests response:', response);
-      
-      // Response yapısını kontrol et
-      const items = response?.data?.items || response?.items || [];
-      const responseData = response?.data || response;
+      const items = data?.data?.items || [];
       
       setLeaveRequests(items);
       setPagination({
-        pageNumber: responseData?.pageNumber || pagination.pageNumber,
-        pageSize: responseData?.pageSize || pagination.pageSize,
-        totalCount: responseData?.totalCount || 0,
-        totalPages: responseData?.totalPages || 0
+        pageNumber: data?.data?.pageNumber || 1,
+        pageSize: data?.data?.pageSize || 10,
+        totalCount: data?.data?.totalCount || 0,
+        totalPages: data?.data?.totalPages || 0
       });
 
       // Pending count'u hesapla ve parent'a bildir
@@ -236,14 +231,18 @@ export default function LeaveRequests({ isManager, onLeaveRequestsChange, onCrea
             </div>
             <div className="flex space-x-2">
               <button
-                onClick={() => setPagination({ ...pagination, pageNumber: pagination.pageNumber - 1 })}
+                onClick={() =>
+                  setPagination({ ...pagination, pageNumber: pagination.pageNumber - 1 })
+                }
                 disabled={pagination.pageNumber === 1}
                 className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 Önceki
               </button>
               <button
-                onClick={() => setPagination({ ...pagination, pageNumber: pagination.pageNumber + 1 })}
+                onClick={() =>
+                  setPagination({ ...pagination, pageNumber: pagination.pageNumber + 1 })
+                }
                 disabled={pagination.pageNumber >= pagination.totalPages}
                 className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >

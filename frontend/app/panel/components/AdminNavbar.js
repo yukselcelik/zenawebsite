@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 
 export default function Navbar({ userData, onLogout, isManager }) {
@@ -20,7 +21,17 @@ export default function Navbar({ userData, onLogout, isManager }) {
   return (
     <header className="sticky top-0 z-50 bg-white shadow-sm py-4">
       <div className="px-6 flex justify-between items-center">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
+          <Link href="/" className="flex items-center">
+            <Image
+              src="/zena-logo.png"
+              alt="Zena Enerji"
+              width={96}
+              height={30}
+              priority
+              className="brightness-0 invert"
+            />
+          </Link>
           <h1 className="text-2xl font-extrabold text-gray-800">
             {getTitle()}
           </h1>

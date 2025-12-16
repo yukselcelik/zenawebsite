@@ -3,26 +3,34 @@
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import PhoneInput from '../components/PhoneInput';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import ApiService from '../../lib/api';
 
 export default function Kariyer() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
-    fullName: 'Test Kullanıcı',
-    phone: '5551234567',
-    email: 'test@example.com',
-    education: 'lisans',
-    position: 'staj',
-    school: 'İstanbul Teknik Üniversitesi',
-    department: 'Elektrik Mühendisliği',
-    year: '3. Sınıf',
-    message: 'Bu bir test mesajıdır. Staj başvurusu için formu test ediyorum.',
+    fullName: '',
+    phone: '',
+    email: '',
+    education: '',
+    position: '',
+    school: '',
+    department: '',
+    year: '',
+    message: '',
     cv: null,
     consent: false
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
   const [submitSuccess, setSubmitSuccess] = useState(false);
+
+  useEffect(() => {
+    if (submitError && submitError.toLowerCase().includes('unauthorized')) {
+      router.push('/calisan-girisi');
+    }
+  }, [submitError, router]);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;

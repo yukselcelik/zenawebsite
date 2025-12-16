@@ -517,10 +517,15 @@ public class UserService(ApplicationDbContext context, ILogger<UserService> logg
             return ApiResult<EmploymentInfoDto>.BadRequest("Geçersiz ContractType");
         }
 
+        // StartDate'i UTC'ye çevir (PostgreSQL için gerekli)
+        var startDate = createDto.StartDate.Kind == DateTimeKind.Unspecified
+            ? DateTime.SpecifyKind(createDto.StartDate, DateTimeKind.Utc)
+            : createDto.StartDate.ToUniversalTime();
+
         var employmentInfo = new EmploymentInfo
         {
-            UserId = createDto.UserId,
-            StartDate = createDto.StartDate,
+            // UserId = createDto.UserId,
+            StartDate = startDate,
             Position = createDto.Position,
             WorkType = workType,
             ContractType = contractType,
@@ -532,22 +537,29 @@ public class UserService(ApplicationDbContext context, ILogger<UserService> logg
 
         user.EmploymentInfos ??= new List<EmploymentInfo>();
         user.EmploymentInfos.Add(employmentInfo);
-
-        await context.SaveChangesAsync();
-
-        logger.LogInformation("EmploymentInfo created for user: {UserId}", createDto.UserId);
-
-        var result = new EmploymentInfoDto
+        try
         {
-            Id = employmentInfo.Id,
-            StartDate = employmentInfo.StartDate,
-            Position = employmentInfo.Position,
-            WorkType = employmentInfo.WorkType.ToString(),
-            ContractType = employmentInfo.ContractType.ToString(),
-            WorkplaceNumber = employmentInfo.WorkplaceNumber
-        };
+            await context.SaveChangesAsync();
 
-        return ApiResult<EmploymentInfoDto>.Ok(result);
+            logger.LogInformation("EmploymentInfo created for user: {UserId}", createDto.UserId);
+
+            var result = new EmploymentInfoDto
+            {
+                Id = employmentInfo.Id,
+                StartDate = employmentInfo.StartDate,
+                Position = employmentInfo.Position,
+                WorkType = employmentInfo.WorkType.ToString(),
+                ContractType = employmentInfo.ContractType.ToString(),
+                WorkplaceNumber = employmentInfo.WorkplaceNumber
+            };
+
+            return ApiResult<EmploymentInfoDto>.Ok(result);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
     public async Task<ApiResult<EmploymentInfoDto>> UpdateEmploymentInfoAsync(int employmentInfoId,
@@ -561,7 +573,14 @@ public class UserService(ApplicationDbContext context, ILogger<UserService> logg
             return ApiResult<EmploymentInfoDto>.NotFound("İstihdam bilgisi bulunamadı");
         }
 
-        if (updateDto.StartDate.HasValue) employmentInfo.StartDate = updateDto.StartDate.Value;
+        if (updateDto.StartDate.HasValue)
+        {
+            // StartDate'i UTC'ye çevir (PostgreSQL için gerekli)
+            var startDate = updateDto.StartDate.Value.Kind == DateTimeKind.Unspecified
+                ? DateTime.SpecifyKind(updateDto.StartDate.Value, DateTimeKind.Utc)
+                : updateDto.StartDate.Value.ToUniversalTime();
+            employmentInfo.StartDate = startDate;
+        }
         if (updateDto.Position != null) employmentInfo.Position = updateDto.Position;
         if (updateDto.WorkType != null && Enum.TryParse<WorkTypeEnum>(updateDto.WorkType, out var workType))
         {

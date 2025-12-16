@@ -32,7 +32,7 @@ export default function Footer() {
               <div className="w-1 h-8 bg-green-500 mr-3"></div>
               <h3 className="text-2xl font-bold text-white">Zena Enerji</h3>
             </div>
-            <p className="text-gray-300 text-sm leading-relaxed text-center">
+            <p className="text-gray-300 text-sm leading-relaxed" style={{ textAlign: 'justify', textJustify: 'inter-word' }}>
               Zena Enerji, 2015 yılında deneyimli paydaşlar tarafından kurulmuş, yenilenebilir enerji sektöründe faaliyet gösteren bir Türk firmasıdır. Firmamız, Yapay Zeka (AI), Gelişmiş Analitik ve Büyük Veri kullanarak güneş PV tesislerinin dijitalleşmesini iyileştirerek, proje geliştirme, imar uygulamaları, saha kurulumları ve güneş enerjisi endüstrisinin genel gelişimi için çalışmaktadır.
             </p>
           </div>
