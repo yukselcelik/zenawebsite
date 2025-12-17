@@ -105,6 +105,56 @@ public class LeaveService(ApplicationDbContext context, ILogger<LeaveService> lo
         return ApiResult<PagedResultDto<LeaveRequestResponseDto>>.Ok(response);
     }
 
+    public async Task<ApiResult<PagedResultDto<LeaveRequestResponseDto>>> GetLeaveRequestsAsync(int userId, bool isManager, int pageNumber = 1, int pageSize = 10)
+    {
+        var query = context.LeaveRequests
+            .AsNoTracking()
+            .Include(lr => lr.User)
+            .AsQueryable();
+
+        // Manager değilse sadece kendi izin taleplerini göster
+        if (!isManager)
+        {
+            query = query.Where(lr => lr.UserId == userId);
+        }
+
+        query = query.OrderByDescending(lr => lr.CreatedAt);
+
+        var totalCount = await query.CountAsync();
+        var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+
+        var leaveRequests = await query
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        var items = leaveRequests.Select(lr => new LeaveRequestResponseDto
+        {
+            Id = lr.Id,
+            UserId = lr.UserId,
+            UserName = lr.User.Name,
+            UserSurname = lr.User.Surname,
+            UserEmail = lr.User.Email,
+            StartDate = lr.StartDate,
+            EndDate = lr.EndDate,
+            Reason = lr.Reason,
+            Status = lr.Status,
+            CreatedAt = lr.CreatedAt,
+            UpdatedAt = lr.UpdatedAt
+        }).ToList();
+
+        var response = new PagedResultDto<LeaveRequestResponseDto>
+        {
+            Items = items,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalCount = totalCount,
+            TotalPages = totalPages
+        };
+
+        return ApiResult<PagedResultDto<LeaveRequestResponseDto>>.Ok(response);
+    }
+
     public async Task<ApiResult<PagedResultDto<LeaveRequestResponseDto>>> GetAllLeaveRequestsAsync(int pageNumber = 1, int pageSize = 10)
     {
         var query = context.LeaveRequests

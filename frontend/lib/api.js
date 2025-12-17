@@ -182,6 +182,15 @@ class ApiService {
     }
   }
 
+  static async getLeaveRequests(pageNumber = 1, pageSize = 10) {
+    const response = await fetch(`${API_BASE_URL}/api/leave/requests?pageNumber=${pageNumber}&pageSize=${pageSize}`, {
+      method: 'GET',
+      headers: this.getHeaders(),
+    });
+
+    return this.handleResponse(response);
+  }
+
   static async getMyLeaveRequests(pageNumber = 1, pageSize = 10) {
     const response = await fetch(`${API_BASE_URL}/api/leave/my-requests?pageNumber=${pageNumber}&pageSize=${pageSize}`, {
       method: 'GET',

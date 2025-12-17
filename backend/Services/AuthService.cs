@@ -99,6 +99,13 @@ public class AuthService(ApplicationDbContext context, IConfiguration configurat
         if (user == null)
             return ApiResult<MeDto>.NotFound("User not found");
 
+        // Personel kullanıcıların onay durumunu kontrol et
+        if (user.Role == UserRoleEnum.Personel && !user.IsApproved)
+        {
+            logger.LogWarning("Unauthorized access attempt by unapproved user: {UserId} - {Email}", userId, user.Email);
+            return ApiResult<MeDto>.Unauthorized("Hesabınız henüz onaylanmamış. Lütfen yönetici onayı bekleyin.");
+        }
+
         var photoPath = BuildPublicPhotoUrl(user.PhotoPath) ?? string.Empty;
 
         var meDto = new MeDto

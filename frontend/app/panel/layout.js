@@ -52,6 +52,16 @@ export default function PanelLayout({ children }) {
         } catch {}
 
         const profileData = await ApiService.getProfile();
+        
+        // Eğer kullanıcı onaylanmamışsa yönlendir
+        if (profileData.success === false || profileData.message?.toLowerCase().includes('onaylanmamış')) {
+          localStorage.removeItem('employeeToken');
+          localStorage.removeItem('userRole');
+          localStorage.removeItem('userName');
+          router.push('/calisan-girisi');
+          return;
+        }
+        
         setUserData(profileData.data);
 
         // Kullanıcı detaylarını çek
@@ -59,6 +69,15 @@ export default function PanelLayout({ children }) {
           const detailData = await ApiService.getUserDetail(parseInt(profileData.data.userId)).catch(() => null);
           if (detailData?.data) {
             setUserDetail(detailData.data);
+            
+            // Personel kullanıcıların onay durumunu kontrol et
+            if (profileData.data?.role === 'Personel' && !detailData.data.isApproved) {
+              localStorage.removeItem('employeeToken');
+              localStorage.removeItem('userRole');
+              localStorage.removeItem('userName');
+              router.push('/calisan-girisi');
+              return;
+            }
           }
         }
 
@@ -103,7 +122,11 @@ export default function PanelLayout({ children }) {
         }
       } catch (error) {
         console.error('Data fetch error:', error);
-        if (error.message.includes('Geçersiz token') || error.message.includes('401')) {
+        const errorMessage = error.message || '';
+        if (errorMessage.includes('Geçersiz token') || 
+            errorMessage.includes('401') || 
+            errorMessage.includes('Unauthorized') ||
+            errorMessage.includes('onaylanmamış')) {
           localStorage.removeItem('employeeToken');
           localStorage.removeItem('userRole');
           localStorage.removeItem('userName');
