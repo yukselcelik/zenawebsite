@@ -183,7 +183,7 @@ export default function Home() {
             aria-label="Önceki slayt"
             className="absolute left-6 top-1/2 -translate-y-1/2 rounded-full p-3 transition hover:cursor-pointer"
           >
-            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <svg className="w-9 h-9 text-white" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
           </button>
@@ -230,7 +230,7 @@ export default function Home() {
             aria-label="Sonraki slayt"
             className="absolute right-6 top-1/2 -translate-y-1/2 rounded-full p-3 transition hover:cursor-pointer"
           >
-            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <svg className="w-9 h-9 text-white" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
             </svg>
           </button>
@@ -286,8 +286,8 @@ export default function Home() {
           <div className="relative rounded-none lg:rounded-2xl overflow-hidden">
             <img src="/solar-hesabi.jpg" alt="Solar güç hesabı" className="w-full h-[340px] object-cover" />
             <div className="absolute inset-0 bg-black/45"></div>
-            <div className="absolute inset-0 flex items-center">
-              <div className="px-8 md:px-14 max-w-xl">
+            <div className="absolute inset-0 flex items-center justify-start">
+              <div className="px-8 md:px-14 max-w-xl ml-[3%] md:ml-[5%]">
                 <h3 className="text-3xl md:text-4xl font-bold text-white mb-[0.85rem]">Solar Güç Simulasyonu Hesabı</h3>
                 <p className="text-white/90 mb-[1.275rem]">Kurulu gücünüzü, panel sayınızı, kurtarılan ağaç sayınızı hesaplayabilirsiniz...</p>
                 <a href="/simulasyon" className="inline-block bg-orange-500 hover:bg-orange-600 text-white font-semibold py-[0.6375rem] px-6 rounded-lg">Şimdi Hesapla</a>
@@ -335,140 +335,142 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Referanslarımız */}
-      <section id="referanslarimiz" className="py-8 bg-white">
+      {/* Referanslarımız ve Çözüm Ortaklarımız */}
+      <section id="referanslarimiz" className="py-8 pb-28 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-[1.44rem]">
-            <h2 className="text-lg md:text-xl font-bold text-gray-900 mb-[0.54rem]">REFERANSLAR</h2>
-            <div className="flex items-center justify-center gap-[0.54rem] mb-[0.72rem]">
-              <span className="w-[1.44rem] h-px bg-gray-300" />
-              <span className="w-[1.98rem] h-px bg-green-500" />
-              <span className="w-[1.44rem] h-px bg-gray-300" />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-48">
+            
+            {/* Sol taraf - Referanslar */}
+            <div>
+              <div className="text-center mb-[1.44rem]">
+                <h2 className="text-lg md:text-xl font-bold text-gray-900 mb-[0.54rem]">REFERANSLAR</h2>
+                <div className="flex items-center justify-center gap-[0.54rem] mb-[0.72rem]">
+                  <span className="w-[1.44rem] h-px bg-gray-300" />
+                  <span className="w-[1.98rem] h-px bg-green-500" />
+                  <span className="w-[1.44rem] h-px bg-gray-300" />
+                </div>
+              </div>
+              <div className="overflow-x-auto pb-4 -mx-4 px-4">
+                <div className="flex gap-[0.72rem] md:gap-[1.08rem] min-w-max">
+                  {[
+                    'Akfen Holding.png',
+                    'Alkataş.avif',
+                    'Alter.webp',
+                    'Arta Tekstil.svg',
+                    'Berg.png',
+                    'Big Chefs.png',
+                    'BİM.png',
+                    'Birinci.png',
+                    'Bisem Paradise.svg',
+                    'Cemer kent.png',
+                    'Danış Grup.png',
+                    'Diler Holding.jpg',
+                    'Ege Orman.png',
+                    'Elektroaktif.png',
+                    'Erfa Yapı.jpg',
+                    'Espe Enerji.png',
+                    'Farah Enerji.png',
+                    'Futurapet.png',
+                    'Gelişim Yapı.jpg',
+                    'GEN İlaç.png',
+                    'Hanwha Qcells.svg',
+                    'Has Beton.jpg',
+                    'Hasçelik.svg',
+                    'İstanbul Aydın Üniversitesi.png',
+                    'ITC.svg',
+                    'Kar grup.png',
+                    'Medicalpark.svg',
+                    'Metroport AVM.jpg',
+                    'Mön.png',
+                    'Namet.svg',
+                    'OBH Construction.jpg',
+                    'olgun çelik.webp',
+                    'Özseç Beton.svg',
+                    'Pak Tavuk.png',
+                    'Pimsa Otomotiv.png',
+                    'Rofa Solar.png',
+                    'Şıkmakas.png',
+                    'Tekfen Holding.jpg',
+                    'Tosyalı Holding.svg',
+                    'Toyotetsu.webp',
+                    'Ulus Metal.avif',
+                    'Utest.png',
+                    'Werde Hotels.svg'
+                  ].map((logo, index) => {
+                    const encodedLogo = encodeURIComponent(logo);
+                    return (
+                      <div key={index} className="flex items-center justify-center h-[3.6rem] w-[5.04rem] flex-shrink-0 p-[0.36rem] bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-100">
+                        <img
+                          src={`/logolar/${encodedLogo}`}
+                          alt={logo.replace(/\.[^/.]+$/, '')}
+                          className="h-full w-full object-contain transition-all duration-300"
+                          loading="lazy"
+                          onError={(e) => {
+                            console.error('Logo yüklenemedi:', logo);
+                            e.target.style.display = 'none';
+                            e.target.parentElement.style.display = 'none';
+                          }}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
-          </div>
-          <div className="overflow-x-auto pb-4 -mx-4 px-4">
-            <div className="flex gap-[0.72rem] md:gap-[1.08rem] min-w-max">
-              {[
-                'Akfen Holding.png',
-                'Alkataş.avif',
-                'Alter.webp',
-                'Arta Tekstil.svg',
-                'Berg.png',
-                'Big Chefs.png',
-                'BİM.png',
-                'Birinci.png',
-                'Bisem Paradise.svg',
-                'Cemer kent.png',
-                'Danış Grup.png',
-                'Diler Holding.jpg',
-                'Ege Orman.png',
-                'Elektroaktif.png',
-                'Erfa Yapı.jpg',
-                'Espe Enerji.png',
-                'Farah Enerji.png',
-                'Futurapet.png',
-                'Gelişim Yapı.jpg',
-                'GEN İlaç.png',
-                'Hanwha Qcells.svg',
-                'Has Beton.jpg',
-                'Hasçelik.svg',
-                'İstanbul Aydın Üniversitesi.png',
-                'ITC.svg',
-                'Kar grup.png',
-                'Medicalpark.svg',
-                'Metroport AVM.jpg',
-                'Mön.png',
-                'Namet.svg',
-                'OBH Construction.jpg',
-                'olgun çelik.webp',
-                'Özseç Beton.svg',
-                'Pak Tavuk.png',
-                'Pimsa Otomotiv.png',
-                'Rofa Solar.png',
-                'Şıkmakas.png',
-                'Tekfen Holding.jpg',
-                'Tosyalı Holding.svg',
-                'Toyotetsu.webp',
-                'Ulus Metal.avif',
-                'Utest.png',
-                'Werde Hotels.svg'
-              ].map((logo, index) => {
-                // Dosya ismini encode et (Türkçe karakterler ve boşluklar için)
-                const encodedLogo = encodeURIComponent(logo);
-                return (
-                  <div key={index} className="flex items-center justify-center h-[3.6rem] w-[5.04rem] flex-shrink-0 p-[0.36rem] bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-100">
-                    <img
-                      src={`/logolar/${encodedLogo}`}
-                      alt={logo.replace(/\.[^/.]+$/, '')}
-                      className="h-full w-full object-contain transition-all duration-300"
-                      loading="lazy"
-                      onError={(e) => {
-                        console.error('Logo yüklenemedi:', logo);
-                        e.target.style.display = 'none';
-                        e.target.parentElement.style.display = 'none';
-                      }}
-                    />
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Çözüm Ortaklarımız */}
-      <section id="cozum-ortaklarimiz" className="pt-8 pb-28 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-[1.44rem]">
-            <h2 className="text-lg md:text-xl font-bold text-gray-900 mb-[0.54rem]">ÇÖZÜM ORTAKLARIMIZ</h2>
-            <div className="flex items-center justify-center gap-[0.54rem] mb-[0.72rem]">
-              <span className="w-[1.44rem] h-px bg-gray-300" />
-              <span className="w-[1.98rem] h-px bg-green-500" />
-              <span className="w-[1.44rem] h-px bg-gray-300" />
-            </div>
-          </div>
-          <div className="overflow-x-auto pb-4 -mx-4 px-4">
-            <div className="flex gap-[0.72rem] md:gap-[1.08rem] min-w-max">
-              {[
-                'Altungrup.avif',
-                'Astor.png',
-                'ERL Solar.png',
-                'Hasçelik.svg',
-                'HİS.JPG',
-                'HT Solar.JPG',
-                'huawei.png',
-                'İsotec.JPG',
-                'Kolay Enerji.png',
-                'Kontek.JPG',
-                'Neva Solar.svg',
-                'Öznur Kablo.png',
-                'Schneider Elektrik.JPG',
-                'Siemens.png',
-                'Smart Solar.png',
-                'Solaris Kablo.webp',
-                'Sungrow.png',
-                'Toplam Enerji Merkezi.png',
-                'Yeo.png',
-                'Yingli Solar.png'
-              ].map((logo, index) => {
-                // Dosya ismini encode et (Türkçe karakterler ve boşluklar için)
-                const encodedLogo = encodeURIComponent(logo);
-                return (
-                  <div key={index} className="flex items-center justify-center h-[3.6rem] w-[5.04rem] flex-shrink-0 p-[0.36rem] bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-100">
-                    <img
-                      src={`/logolar2/${encodedLogo}`}
-                      alt={logo.replace(/\.[^/.]+$/, '')}
-                      className="h-full w-full object-contain transition-all duration-300"
-                      loading="lazy"
-                      onError={(e) => {
-                        console.error('Logo yüklenemedi:', logo);
-                        e.target.style.display = 'none';
-                        e.target.parentElement.style.display = 'none';
-                      }}
-                    />
-                  </div>
-                );
-              })}
+            {/* Sağ taraf - Çözüm Ortaklarımız */}
+            <div>
+              <div className="text-center mb-[1.44rem]">
+                <h2 className="text-lg md:text-xl font-bold text-gray-900 mb-[0.54rem]">ÇÖZÜM ORTAKLARIMIZ</h2>
+                <div className="flex items-center justify-center gap-[0.54rem] mb-[0.72rem]">
+                  <span className="w-[1.44rem] h-px bg-gray-300" />
+                  <span className="w-[1.98rem] h-px bg-green-500" />
+                  <span className="w-[1.44rem] h-px bg-gray-300" />
+                </div>
+              </div>
+              <div className="overflow-x-auto pb-4 -mx-4 px-4">
+                <div className="flex gap-[0.72rem] md:gap-[1.08rem] min-w-max">
+                  {[
+                    'Altungrup.avif',
+                    'Astor.png',
+                    'ERL Solar.png',
+                    'Hasçelik.svg',
+                    'HİS.JPG',
+                    'HT Solar.JPG',
+                    'huawei.png',
+                    'İsotec.JPG',
+                    'Kolay Enerji.png',
+                    'Kontek.JPG',
+                    'Neva Solar.svg',
+                    'Öznur Kablo.png',
+                    'Schneider Elektrik.JPG',
+                    'Siemens.png',
+                    'Smart Solar.png',
+                    'Solaris Kablo.webp',
+                    'Sungrow.png',
+                    'Toplam Enerji Merkezi.png',
+                    'Yeo.png',
+                    'Yingli Solar.png'
+                  ].map((logo, index) => {
+                    const encodedLogo = encodeURIComponent(logo);
+                    return (
+                      <div key={index} className="flex items-center justify-center h-[3.6rem] w-[5.04rem] flex-shrink-0 p-[0.36rem] bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-100">
+                        <img
+                          src={`/logolar2/${encodedLogo}`}
+                          alt={logo.replace(/\.[^/.]+$/, '')}
+                          className="h-full w-full object-contain transition-all duration-300"
+                          loading="lazy"
+                          onError={(e) => {
+                            console.error('Logo yüklenemedi:', logo);
+                            e.target.style.display = 'none';
+                            e.target.parentElement.style.display = 'none';
+                          }}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           </div>
         </div>

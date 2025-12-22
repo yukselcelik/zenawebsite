@@ -71,10 +71,7 @@ export default function Header({ forceDark = false }) {
 
   return (
     <header
-      className={`sticky top-0 z-[100] transition-all duration-300 pt-4 ${shouldShowDark
-          ? 'bg-black/90 shadow-lg'
-          : 'bg-transparent'
-        }`}
+      className="sticky top-0 z-[100] transition-all duration-300 pt-4 bg-black/90 shadow-lg"
     >
       {/* Ana container - içeriği ortalar ve maksimum genişlik verir */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -122,37 +119,27 @@ export default function Header({ forceDark = false }) {
               {/* Dropdown menü - tıklama ve hover ile açılır */}
               {isAboutOpen && (
                 <div
-                  className={`absolute top-full left-0 mt-2 w-48 rounded-md shadow-lg py-1 z-50 ${shouldShowDark ? 'bg-black/95' : 'bg-white'
-                    }`}
+                  className="absolute top-full left-0 mt-2 w-48 rounded-md shadow-lg py-1 z-50 bg-black/95"
                   onMouseEnter={handleAboutEnter}
                   onMouseLeave={handleAboutLeave}
                 >
                   <Link
                     href="/hakkimizda"
-                    className={`block px-4 py-2 text-sm transition-colors ${shouldShowDark
-                        ? 'text-white hover:bg-white/10 hover:text-orange-400'
-                        : 'text-gray-700 hover:bg-orange-50 hover:text-orange-500'
-                      }`}
+                    className="block px-4 py-2 text-sm transition-colors text-white hover:bg-white/10 hover:text-orange-400"
                     onClick={() => setIsAboutOpen(false)}
                   >
                     Biz Kimiz?
                   </Link>
                   <Link
                     href="/#referanslarimiz"
-                    className={`block px-4 py-2 text-sm transition-colors ${shouldShowDark
-                        ? 'text-white hover:bg-white/10 hover:text-orange-400'
-                        : 'text-gray-700 hover:bg-orange-50 hover:text-orange-500'
-                      }`}
+                    className="block px-4 py-2 text-sm transition-colors text-white hover:bg-white/10 hover:text-orange-400"
                     onClick={() => setIsAboutOpen(false)}
                   >
                     Referanslarımız
                   </Link>
                   <Link
                     href="/subelerimiz"
-                    className={`block px-4 py-2 text-sm transition-colors ${shouldShowDark
-                        ? 'text-white hover:bg-white/10 hover:text-orange-400'
-                        : 'text-gray-700 hover:bg-orange-50 hover:text-orange-500'
-                      }`}
+                    className="block px-4 py-2 text-sm transition-colors text-white hover:bg-white/10 hover:text-orange-400"
                     onClick={() => setIsAboutOpen(false)}
                   >
                     Şubelerimiz
@@ -181,27 +168,20 @@ export default function Header({ forceDark = false }) {
               {/* Dropdown menü - tıklama ve hover ile açılır */}
               {isServicesOpen && (
                 <div
-                  className={`absolute top-full left-0 mt-2 w-48 rounded-md shadow-lg py-1 z-50 ${shouldShowDark ? 'bg-black/95' : 'bg-white'
-                    }`}
+                  className="absolute top-full left-0 mt-2 w-48 rounded-md shadow-lg py-1 z-50 bg-black/95"
                   onMouseEnter={handleServicesEnter}
                   onMouseLeave={handleServicesLeave}
                 >
                   <Link
                     href="/hizmetler"
-                    className={`block px-4 py-2 text-sm transition-colors ${shouldShowDark
-                        ? 'text-white hover:bg-white/10 hover:text-orange-400'
-                        : 'text-gray-700 hover:bg-orange-50 hover:text-orange-500'
-                      }`}
+                    className="block px-4 py-2 text-sm transition-colors text-white hover:bg-white/10 hover:text-orange-400"
                     onClick={() => setIsServicesOpen(false)}
                   >
                     Hizmetlerimiz
                   </Link>
                   <Link
                     href="/simulasyon"
-                    className={`block px-4 py-2 text-sm transition-colors ${shouldShowDark
-                        ? 'text-white hover:bg-white/10 hover:text-orange-400'
-                        : 'text-gray-700 hover:bg-orange-50 hover:text-orange-500'
-                      }`}
+                    className="block px-4 py-2 text-sm transition-colors text-white hover:bg-white/10 hover:text-orange-400"
                     onClick={() => setIsServicesOpen(false)}
                   >
                     Solar Güç Hesaplama
