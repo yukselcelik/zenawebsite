@@ -6,8 +6,8 @@
 
 import Header from './components/Header'; // Header bileşenini import ediyoruz
 import Footer from './components/Footer'; // Footer bileşenini import ediyoruz
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion'; // Framer Motion - animasyonlar için
+import { useState, useRef } from 'react';
+import { motion, AnimatePresence, useInView } from 'framer-motion'; // Framer Motion - animasyonlar için
 
 const sliderItems = [
   {
@@ -249,266 +249,362 @@ export default function Home() {
       </section>
       {/* Zena Enerji ile Tam Hizmet + Drone görselli bölüm (drone görseli kalsın) */}
       <section className="py-16 bg-white">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div className="flex flex-col items-center text-center w-full">
-            <div className="w-full lg:max-w-none">
-              <h2 className="text-[1.35rem] md:text-[1.5rem] font-semibold text-gray-900 mb-5 text-center">Zena Enerji ile Tam Hizmet</h2>
-              <p className="text-[0.936rem] md:text-[1.05rem] text-gray-700 mb-8 leading-relaxed">
-                Zena Enerji olarak, güneş enerjisi sektöründe proje geliştirme, proje uygulama, imar uygulamaları, saha kurulumu,
-                geçici kabul işlemleri, danışmanlık ve müşterilerimizin portföy verimliliğini en üst düzeye çıkarmak için
-                kapsamlı hizmet sunuyoruz. Güneş PV tesislerindeki sorunları anlamaya yardımcı olmak amacıyla İHA'lar ile
-                inceleme ve İHA'larda bulunan termal kamera ile havadan denetim yapılmaktadır.
-              </p>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-2xl mx-auto justify-items-center mt-2">
-              {serviceCards.map((card) => (
-                <div key={card.title} className="flex flex-col items-center text-center gap-2.5">
-                  <div className={`w-[3.42rem] h-[3.42rem] rounded-full flex items-center justify-center shadow-[0_6px_16px_rgba(0,0,0,0.3)] bg-gray-700 hover:bg-gray-600 transition-colors`}>
-                    {card.icon}
-                  </div>
-                  <p className="text-gray-900 font-semibold text-[10.26px] sm:text-[11.4px] tracking-wide">{card.title}</p>
-                </div>
-              ))}
-            </div>
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <motion.div 
+              className="flex flex-col items-center text-center w-full"
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+            >
+              <div className="w-full lg:max-w-none">
+                <h2 className="text-[1.35rem] md:text-[1.5rem] font-semibold text-gray-900 mb-5 text-center">Zena Enerji ile Tam Hizmet</h2>
+                <p className="text-[0.936rem] md:text-[1.05rem] text-gray-700 mb-8 leading-relaxed">
+                  Zena Enerji olarak, güneş enerjisi sektöründe proje geliştirme, proje uygulama, imar uygulamaları, saha kurulumu,
+                  geçici kabul işlemleri, danışmanlık ve müşterilerimizin portföy verimliliğini en üst düzeye çıkarmak için
+                  kapsamlı hizmet sunuyoruz. Güneş PV tesislerindeki sorunları anlamaya yardımcı olmak amacıyla İHA'lar ile
+                  inceleme ve İHA'larda bulunan termal kamera ile havadan denetim yapılmaktadır.
+                </p>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-2xl mx-auto justify-items-center mt-2">
+                {serviceCards.map((card, index) => (
+                  <motion.div 
+                    key={card.title} 
+                    className="flex flex-col items-center text-center gap-2.5"
+                    initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                    whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.3 }}
+                    transition={{ duration: 0.5, delay: index * 0.1, ease: "easeOut" }}
+                  >
+                    <div className={`w-[3.42rem] h-[3.42rem] rounded-full flex items-center justify-center shadow-[0_6px_16px_rgba(0,0,0,0.3)] bg-gray-700 hover:bg-gray-600 transition-colors`}>
+                      {card.icon}
+                    </div>
+                    <p className="text-gray-900 font-semibold text-[10.26px] sm:text-[11.4px] tracking-wide">{card.title}</p>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+            <motion.div 
+              className="relative w-[103%] h-72 md:h-[384px] rounded-xl overflow-hidden shadow-lg lg:ml-10 xl:ml-16 mt-6 md:mt-8"
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+            >
+              <img src="/dron-operator.jpg" alt="Drone ile denetim" className="absolute inset-0 w-full h-full object-cover" />
+            </motion.div>
           </div>
-          <div className="relative w-[103%] h-72 md:h-[384px] rounded-xl overflow-hidden shadow-lg lg:ml-10 xl:ml-16 mt-6 md:mt-8">
-            <img src="/dron-operator.jpg" alt="Drone ile denetim" className="absolute inset-0 w-full h-full object-cover" />
-          </div>
-        </div>
-      </section>
+        </section>
 
       {/* Türkiye'de Güneş Enerjisi İstatistikleri Bölümü */}
       <StatsScrollReveal />
 
       {/* Solar Güç Hesaplama CTA (görselli banner) */}
       <section className="py-[3.4rem] bg-gray-50 px-0">
-        <div className="w-full">
-          <div className="relative rounded-none lg:rounded-2xl overflow-hidden">
-            <img src="/solar-hesabi.jpg" alt="Solar güç hesabı" className="w-full h-[340px] object-cover" />
-            <div className="absolute inset-0 bg-black/45"></div>
-            <div className="absolute inset-0 flex items-center justify-start">
-              <div className="px-8 md:px-14 max-w-xl ml-[3%] md:ml-[5%]">
-                <h3 className="text-3xl md:text-4xl font-bold text-white mb-[0.85rem]">Solar Güç Simulasyonu Hesabı</h3>
-                <p className="text-white/90 mb-[1.275rem]">Kurulu gücünüzü, panel sayınızı, kurtarılan ağaç sayınızı hesaplayabilirsiniz...</p>
-                <a href="/simulasyon" className="inline-block bg-orange-500 hover:bg-orange-600 text-white font-semibold py-[0.6375rem] px-6 rounded-lg">Şimdi Hesapla</a>
+          <div className="w-full">
+            <motion.div 
+              className="relative rounded-none lg:rounded-2xl overflow-hidden"
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.7, ease: "easeOut" }}
+            >
+              <img src="/solar-hesabi.jpg" alt="Solar güç hesabı" className="w-full h-[340px] object-cover" />
+              <div className="absolute inset-0 bg-black/45"></div>
+              <div className="absolute inset-0 flex items-center justify-start">
+                <motion.div 
+                  className="px-8 md:px-14 max-w-xl ml-[3%] md:ml-[5%]"
+                  initial={{ opacity: 0, x: -30 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+                >
+                  <h3 className="text-3xl md:text-4xl font-bold text-white mb-[0.85rem]">Solar Güç Simulasyonu Hesabı</h3>
+                  <p className="text-white/90 mb-[1.275rem]">Kurulu gücünüzü, panel sayınızı, kurtarılan ağaç sayınızı hesaplayabilirsiniz...</p>
+                  <motion.a 
+                    href="/simulasyon" 
+                    className="inline-block bg-orange-500 hover:bg-orange-600 text-white font-semibold py-[0.6375rem] px-6 rounded-lg"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    Şimdi Hesapla
+                  </motion.a>
+                </motion.div>
               </div>
-            </div>
+            </motion.div>
           </div>
-        </div>
-      </section>
+        </section>
 
       {/* Zena Enerji Hakkında */}
       <section className="py-16 bg-white text-center">
-        <div className="max-w-6xl mx-auto px-6">
-          {/* <p className="text-xs font-semibold tracking-[0.6em] text-orange-500 mb-4">HAKKIMIZDA</p> */}
-          <div className="inline-flex items-center justify-center gap-4 mb-6">
-            <span className="w-12 h-px bg-gray-300" />
-            <h3 className="text-3xl md:text-4xl font-bold text-gray-900 uppercase">Hakkında</h3>
-            <span className="w-12 h-px bg-gray-300" />
+          <div className="max-w-6xl mx-auto px-6">
+            {/* <p className="text-xs font-semibold tracking-[0.6em] text-orange-500 mb-4">HAKKIMIZDA</p> */}
+            <motion.div 
+              className="inline-flex items-center justify-center gap-4 mb-6"
+              initial={{ opacity: 0, y: -20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+            >
+              <span className="w-12 h-px bg-gray-300" />
+              <h3 className="text-3xl md:text-4xl font-bold text-gray-900 uppercase">Hakkında</h3>
+              <span className="w-12 h-px bg-gray-300" />
+            </motion.div>
+            <motion.div 
+              className="space-y-5 text-sm md:text-base text-gray-700 leading-relaxed"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+            >
+              <p>
+                2015 yılından itibaren güneş enerjisi sektöründe faaliyet gösteren firmamız, sahip olduğumuz bilgi birikimini uzman iş gücüyle birleştirerek
+                Türkiye'de güneş enerjisi santrali yatırımları konusunda birçok projeyi başarıyla hayata geçirmiştir.
+              </p>
+              <p>
+                Proje çizimi, proje geliştirme ve uygulama süreçlerinde sektörün önde gelen firmalarından olan Zena Enerji, Türkiye'de ki ilk ve en büyük Endüstriyel Çatı Güneş Elektrik Santralini ve Türkiye'nin ilk ve tek kurulum için tüm özellikleri yansıtan Test Güneş Elektrik Santralini kurmuştur.
+                Dünyaca ünlü firmaların projelerini tamamlayan firmamız, her bir projede farklı bir deneyim sürecinden geçmiş, edindiği profesyonellik ve disiplini çalışma prensipleri haline getirmiştir.
+              </p>
+              <p>
+                Bununla birlikte müşteri bağlılığına verdiği değerle alınan işleri zamanında tamamlayarak güven ve dürüstlük ilkelerine sahip çıkmış ve aynı ilkelerle yoluna devam eden bir şirket olmuştur.
+              </p>
+              <p>
+                Türkiye'de güneş enerjisi santralleri kurulması ile ilgili olarak ilk projeleri gerçekleştiren Zena Enerji'nin bünyesinde sektörün en tecrübeli mühendis ve teknikerleri görev almaktadır.
+                Zena Enerji olarak edindiğimiz tecrübelere, birlikte çalıştığımız uzman iş gücüne ve sektördeki saygın bilinirliliğimize dayanarak ülkemiz ve dünyamız adına daha yeşil bir gelecek için çalışmalarımıza devam etmekteyiz.
+              </p>
+            </motion.div>
+            <motion.a
+              href="/hakkimizda"
+              className="inline-flex items-center gap-2 px-5 py-2.5 mt-10 rounded-full bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold transition"
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.5, delay: 0.4, ease: "easeOut" }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Daha Fazla Bilgi
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M13 5l7 7-7 7" />
+              </svg>
+            </motion.a>
           </div>
-          <div className="space-y-5 text-sm md:text-base text-gray-700 leading-relaxed">
-            <p>
-              2015 yılından itibaren güneş enerjisi sektöründe faaliyet gösteren firmamız, sahip olduğumuz bilgi birikimini uzman iş gücüyle birleştirerek
-              Türkiye'de güneş enerjisi santrali yatırımları konusunda birçok projeyi başarıyla hayata geçirmiştir.
-            </p>
-            <p>
-              Proje çizimi, proje geliştirme ve uygulama süreçlerinde sektörün önde gelen firmalarından olan Zena Enerji, Türkiye'de ki ilk ve en büyük Endüstriyel Çatı Güneş Elektrik Santralini ve Türkiye'nin ilk ve tek kurulum için tüm özellikleri yansıtan Test Güneş Elektrik Santralini kurmuştur.
-              Dünyaca ünlü firmaların projelerini tamamlayan firmamız, her bir projede farklı bir deneyim sürecinden geçmiş, edindiği profesyonellik ve disiplini çalışma prensipleri haline getirmiştir.
-            </p>
-            <p>
-              Bununla birlikte müşteri bağlılığına verdiği değerle alınan işleri zamanında tamamlayarak güven ve dürüstlük ilkelerine sahip çıkmış ve aynı ilkelerle yoluna devam eden bir şirket olmuştur.
-            </p>
-            <p>
-              Türkiye'de güneş enerjisi santralleri kurulması ile ilgili olarak ilk projeleri gerçekleştiren Zena Enerji'nin bünyesinde sektörün en tecrübeli mühendis ve teknikerleri görev almaktadır.
-              Zena Enerji olarak edindiğimiz tecrübelere, birlikte çalıştığımız uzman iş gücüne ve sektördeki saygın bilinirliliğimize dayanarak ülkemiz ve dünyamız adına daha yeşil bir gelecek için çalışmalarımıza devam etmekteyiz.
-            </p>
-          </div>
-          <a
-            href="/hakkimizda"
-            className="inline-flex items-center gap-2 px-5 py-2.5 mt-10 rounded-full bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold transition"
-          >
-            Daha Fazla Bilgi
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M13 5l7 7-7 7" />
-            </svg>
-          </a>
-        </div>
-      </section>
+        </section>
 
       {/* Referanslarımız ve Çözüm Ortaklarımız */}
       <section id="referanslarimiz" className="py-8 pb-28 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-48">
-            
-            {/* Sol taraf - Referanslar */}
-            <div>
-              <div className="text-center mb-[1.44rem]">
-                <h2 className="text-lg md:text-xl font-bold text-gray-900 mb-[0.54rem]">REFERANSLAR</h2>
-                <div className="flex items-center justify-center gap-[0.54rem] mb-[0.72rem]">
-                  <span className="w-[1.44rem] h-px bg-gray-300" />
-                  <span className="w-[1.98rem] h-px bg-green-500" />
-                  <span className="w-[1.44rem] h-px bg-gray-300" />
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-48">
+              
+              {/* Sol taraf - Referanslar */}
+              <motion.div
+                initial={{ opacity: 0, x: -50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
+              >
+                <div className="text-center mb-[1.44rem]">
+                  <h2 className="text-lg md:text-xl font-bold text-gray-900 mb-[0.54rem]">REFERANSLAR</h2>
+                  <div className="flex items-center justify-center gap-[0.54rem] mb-[0.72rem]">
+                    <span className="w-[1.44rem] h-px bg-gray-300" />
+                    <span className="w-[1.98rem] h-px bg-green-500" />
+                    <span className="w-[1.44rem] h-px bg-gray-300" />
+                  </div>
                 </div>
-              </div>
-              <div className="overflow-x-auto pb-4 -mx-4 px-4">
-                <div className="flex gap-[0.72rem] md:gap-[1.08rem] min-w-max">
-                  {[
-                    'Akfen Holding.png',
-                    'Alkataş.avif',
-                    'Alter.webp',
-                    'Arta Tekstil.svg',
-                    'Berg.png',
-                    'Big Chefs.png',
-                    'BİM.png',
-                    'Birinci.png',
-                    'Bisem Paradise.svg',
-                    'Cemer kent.png',
-                    'Danış Grup.png',
-                    'Diler Holding.jpg',
-                    'Ege Orman.png',
-                    'Elektroaktif.png',
-                    'Erfa Yapı.jpg',
-                    'Espe Enerji.png',
-                    'Farah Enerji.png',
-                    'Futurapet.png',
-                    'Gelişim Yapı.jpg',
-                    'GEN İlaç.png',
-                    'Hanwha Qcells.svg',
-                    'Has Beton.jpg',
-                    'Hasçelik.svg',
-                    'İstanbul Aydın Üniversitesi.png',
-                    'ITC.svg',
-                    'Kar grup.png',
-                    'Medicalpark.svg',
-                    'Metroport AVM.jpg',
-                    'Mön.png',
-                    'Namet.svg',
-                    'OBH Construction.jpg',
-                    'olgun çelik.webp',
-                    'Özseç Beton.svg',
-                    'Pak Tavuk.png',
-                    'Pimsa Otomotiv.png',
-                    'Rofa Solar.png',
-                    'Şıkmakas.png',
-                    'Tekfen Holding.jpg',
-                    'Tosyalı Holding.svg',
-                    'Toyotetsu.webp',
-                    'Ulus Metal.avif',
-                    'Utest.png',
-                    'Werde Hotels.svg'
-                  ].map((logo, index) => {
-                    const encodedLogo = encodeURIComponent(logo);
-                    return (
-                      <div key={index} className="flex items-center justify-center h-[3.6rem] w-[5.04rem] flex-shrink-0 p-[0.36rem] bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-100">
-                        <img
-                          src={`/logolar/${encodedLogo}`}
-                          alt={logo.replace(/\.[^/.]+$/, '')}
-                          className="h-full w-full object-contain transition-all duration-300"
-                          loading="lazy"
-                          onError={(e) => {
-                            console.error('Logo yüklenemedi:', logo);
-                            e.target.style.display = 'none';
-                            e.target.parentElement.style.display = 'none';
-                          }}
-                        />
-                      </div>
-                    );
-                  })}
+                <div className="overflow-x-auto pb-4 -mx-4 px-4">
+                  <div className="flex gap-[0.72rem] md:gap-[1.08rem] min-w-max">
+                    {[
+                      'Akfen Holding.png',
+                      'Alkataş.avif',
+                      'Alter.webp',
+                      'Arta Tekstil.svg',
+                      'Berg.png',
+                      'Big Chefs.png',
+                      'BİM.png',
+                      'Birinci.png',
+                      'Bisem Paradise.svg',
+                      'Cemer kent.png',
+                      'Danış Grup.png',
+                      'Diler Holding.jpg',
+                      'Ege Orman.png',
+                      'Elektroaktif.png',
+                      'Erfa Yapı.jpg',
+                      'Espe Enerji.png',
+                      'Farah Enerji.png',
+                      'Futurapet.png',
+                      'Gelişim Yapı.jpg',
+                      'GEN İlaç.png',
+                      'Hanwha Qcells.svg',
+                      'Has Beton.jpg',
+                      'Hasçelik.svg',
+                      'İstanbul Aydın Üniversitesi.png',
+                      'ITC.svg',
+                      'Kar grup.png',
+                      'Medicalpark.svg',
+                      'Metroport AVM.jpg',
+                      'Mön.png',
+                      'Namet.svg',
+                      'OBH Construction.jpg',
+                      'olgun çelik.webp',
+                      'Özseç Beton.svg',
+                      'Pak Tavuk.png',
+                      'Pimsa Otomotiv.png',
+                      'Rofa Solar.png',
+                      'Şıkmakas.png',
+                      'Tekfen Holding.jpg',
+                      'Tosyalı Holding.svg',
+                      'Toyotetsu.webp',
+                      'Ulus Metal.avif',
+                      'Utest.png',
+                      'Werde Hotels.svg'
+                    ].map((logo, index) => {
+                      const encodedLogo = encodeURIComponent(logo);
+                      return (
+                        <motion.div 
+                          key={index} 
+                          className="flex items-center justify-center h-[3.6rem] w-[5.04rem] flex-shrink-0 p-[0.36rem] bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-100"
+                          initial={{ opacity: 0, scale: 0.8 }}
+                          whileInView={{ opacity: 1, scale: 1 }}
+                          viewport={{ once: true, amount: 0.1 }}
+                          transition={{ duration: 0.3, delay: index * 0.02 }}
+                          whileHover={{ scale: 1.1, y: -5 }}
+                        >
+                          <img
+                            src={`/logolar/${encodedLogo}`}
+                            alt={logo.replace(/\.[^/.]+$/, '')}
+                            className="h-full w-full object-contain transition-all duration-300"
+                            loading="lazy"
+                            onError={(e) => {
+                              console.error('Logo yüklenemedi:', logo);
+                              e.target.style.display = 'none';
+                              e.target.parentElement.style.display = 'none';
+                            }}
+                          />
+                        </motion.div>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            </div>
+              </motion.div>
 
-            {/* Sağ taraf - Çözüm Ortaklarımız */}
-            <div>
-              <div className="text-center mb-[1.44rem]">
-                <h2 className="text-lg md:text-xl font-bold text-gray-900 mb-[0.54rem]">ÇÖZÜM ORTAKLARIMIZ</h2>
-                <div className="flex items-center justify-center gap-[0.54rem] mb-[0.72rem]">
-                  <span className="w-[1.44rem] h-px bg-gray-300" />
-                  <span className="w-[1.98rem] h-px bg-green-500" />
-                  <span className="w-[1.44rem] h-px bg-gray-300" />
+              {/* Sağ taraf - Çözüm Ortaklarımız */}
+              <motion.div
+                initial={{ opacity: 0, x: 50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
+              >
+                <div className="text-center mb-[1.44rem]">
+                  <h2 className="text-lg md:text-xl font-bold text-gray-900 mb-[0.54rem]">ÇÖZÜM ORTAKLARIMIZ</h2>
+                  <div className="flex items-center justify-center gap-[0.54rem] mb-[0.72rem]">
+                    <span className="w-[1.44rem] h-px bg-gray-300" />
+                    <span className="w-[1.98rem] h-px bg-green-500" />
+                    <span className="w-[1.44rem] h-px bg-gray-300" />
+                  </div>
                 </div>
-              </div>
-              <div className="overflow-x-auto pb-4 -mx-4 px-4">
-                <div className="flex gap-[0.72rem] md:gap-[1.08rem] min-w-max">
-                  {[
-                    'Altungrup.avif',
-                    'Astor.png',
-                    'ERL Solar.png',
-                    'Hasçelik.svg',
-                    'HİS.JPG',
-                    'HT Solar.JPG',
-                    'huawei.png',
-                    'İsotec.JPG',
-                    'Kolay Enerji.png',
-                    'Kontek.JPG',
-                    'Neva Solar.svg',
-                    'Öznur Kablo.png',
-                    'Schneider Elektrik.JPG',
-                    'Siemens.png',
-                    'Smart Solar.png',
-                    'Solaris Kablo.webp',
-                    'Sungrow.png',
-                    'Toplam Enerji Merkezi.png',
-                    'Yeo.png',
-                    'Yingli Solar.png'
-                  ].map((logo, index) => {
-                    const encodedLogo = encodeURIComponent(logo);
-                    return (
-                      <div key={index} className="flex items-center justify-center h-[3.6rem] w-[5.04rem] flex-shrink-0 p-[0.36rem] bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-100">
-                        <img
-                          src={`/logolar2/${encodedLogo}`}
-                          alt={logo.replace(/\.[^/.]+$/, '')}
-                          className="h-full w-full object-contain transition-all duration-300"
-                          loading="lazy"
-                          onError={(e) => {
-                            console.error('Logo yüklenemedi:', logo);
-                            e.target.style.display = 'none';
-                            e.target.parentElement.style.display = 'none';
-                          }}
-                        />
-                      </div>
-                    );
-                  })}
+                <div className="overflow-x-auto pb-4 -mx-4 px-4">
+                  <div className="flex gap-[0.72rem] md:gap-[1.08rem] min-w-max">
+                    {[
+                      'Altungrup.avif',
+                      'Astor.png',
+                      'ERL Solar.png',
+                      'Hasçelik.svg',
+                      'HİS.JPG',
+                      'HT Solar.JPG',
+                      'huawei.png',
+                      'İsotec.JPG',
+                      'Kolay Enerji.png',
+                      'Kontek.JPG',
+                      'Neva Solar.svg',
+                      'Öznur Kablo.png',
+                      'Schneider Elektrik.JPG',
+                      'Siemens.png',
+                      'Smart Solar.png',
+                      'Solaris Kablo.webp',
+                      'Sungrow.png',
+                      'Toplam Enerji Merkezi.png',
+                      'Yeo.png',
+                      'Yingli Solar.png'
+                    ].map((logo, index) => {
+                      const encodedLogo = encodeURIComponent(logo);
+                      return (
+                        <motion.div 
+                          key={index} 
+                          className="flex items-center justify-center h-[3.6rem] w-[5.04rem] flex-shrink-0 p-[0.36rem] bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-100"
+                          initial={{ opacity: 0, scale: 0.8 }}
+                          whileInView={{ opacity: 1, scale: 1 }}
+                          viewport={{ once: true, amount: 0.1 }}
+                          transition={{ duration: 0.3, delay: index * 0.02 }}
+                          whileHover={{ scale: 1.1, y: -5 }}
+                        >
+                          <img
+                            src={`/logolar2/${encodedLogo}`}
+                            alt={logo.replace(/\.[^/.]+$/, '')}
+                            className="h-full w-full object-contain transition-all duration-300"
+                            loading="lazy"
+                            onError={(e) => {
+                              console.error('Logo yüklenemedi:', logo);
+                              e.target.style.display = 'none';
+                              e.target.parentElement.style.display = 'none';
+                            }}
+                          />
+                        </motion.div>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            </div>
+              </motion.div>
           </div>
         </div>
       </section>
 
       {/* İletişim CTA */}
       <section className="pb-16 px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="relative rounded-[20.16px] overflow-hidden shadow-xl">
-            <img
-              src="https://images.unsplash.com/photo-1500536311302-3756c5a7b4b3?auto=format&fit=crop&w=1600&q=80"
-              alt="Güneş batımı"
-              className="w-full h-48 md:h-[211px] object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-transparent" />
-            <div className="absolute inset-0 flex items-center px-[1.44rem] md:px-[2.16rem]">
-              <div className="text-white max-w-lg space-y-[0.72rem]">
-                <p className="text-[0.54rem] md:text-[0.63rem] font-semibold tracking-[0.252em] text-orange-300">İLETİŞİME GEÇİN</p>
-                <h4 className="text-[1.08rem] md:text-[1.35rem] font-bold leading-snug">
-                  Hemen bize ulaşın ve size özel <span className="text-orange-300">hizmetleri keşfedin</span>
-                </h4>
-                <p className="text-[0.63rem] md:text-[0.72rem] text-white/90">
-                  Projelerinizi hızla hayata geçirmek için mühendislik, saha kurulumu ve danışmanlık ekibimiz hazır.
-                </p>
-                <a
-                  href="/iletisim"
-                  className="inline-flex items-center gap-[0.36rem] px-[0.9rem] py-[0.45rem] rounded-full bg-orange-500 hover:bg-orange-600 text-white text-[0.63rem] font-semibold transition shadow-lg shadow-orange-500/30"
+          <div className="max-w-6xl mx-auto">
+            <motion.div 
+              className="relative rounded-[20.16px] overflow-hidden shadow-xl"
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.7, ease: "easeOut" }}
+            >
+              <img
+                src="https://images.unsplash.com/photo-1500536311302-3756c5a7b4b3?auto=format&fit=crop&w=1600&q=80"
+                alt="Güneş batımı"
+                className="w-full h-48 md:h-[211px] object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-transparent" />
+              <div className="absolute inset-0 flex items-center px-[1.44rem] md:px-[2.16rem]">
+                <motion.div 
+                  className="text-white max-w-lg space-y-[0.72rem]"
+                  initial={{ opacity: 0, x: -30 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
                 >
-                  Bize Ulaşın
-                  <svg className="w-[0.72rem] h-[0.72rem]" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M13 5l7 7-7 7" />
-                  </svg>
-                </a>
+                  <p className="text-[0.54rem] md:text-[0.63rem] font-semibold tracking-[0.252em] text-orange-300">İLETİŞİME GEÇİN</p>
+                  <h4 className="text-[1.08rem] md:text-[1.35rem] font-bold leading-snug">
+                    Hemen bize ulaşın ve size özel <span className="text-orange-300">hizmetleri keşfedin</span>
+                  </h4>
+                  <p className="text-[0.63rem] md:text-[0.72rem] text-white/90">
+                    Projelerinizi hızla hayata geçirmek için mühendislik, saha kurulumu ve danışmanlık ekibimiz hazır.
+                  </p>
+                  <motion.a
+                    href="/iletisim"
+                    className="inline-flex items-center gap-[0.36rem] px-[0.9rem] py-[0.45rem] rounded-full bg-orange-500 hover:bg-orange-600 text-white text-[0.63rem] font-semibold transition shadow-lg shadow-orange-500/30"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    Bize Ulaşın
+                    <svg className="w-[0.72rem] h-[0.72rem]" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M13 5l7 7-7 7" />
+                    </svg>
+                  </motion.a>
+                </motion.div>
               </div>
-            </div>
+            </motion.div>
           </div>
-        </div>
-      </section>
+        </section>
       {/* Radyasyon haritası bölümü KALDIRILDI */}
 
       {/* Footer bileşeni - tüm sayfalarda ortak */}
@@ -525,9 +621,16 @@ function StatsScrollReveal() {
     { value: '18000', suffix: 'MW', label: '2025 Minimum Kurulu Güç Hedefi' },
   ];
 
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, amount: 0.2 });
+
   return (
-    <section id="istatistikler" className="py-16 bg-gray-50 relative overflow-hidden">
-      <div className="absolute -left-24 md:-left-12 top-1/2 -translate-y-1/2 w-[100px] h-[100px] md:w-[150px] md:h-[150px] text-[#fbbf24] opacity-40 pointer-events-none select-none">
+    <section id="istatistikler" className="py-16 bg-gray-50 relative overflow-hidden" ref={ref}>
+      <motion.div 
+        className="absolute -left-24 md:-left-12 top-1/2 -translate-y-1/2 w-[100px] h-[100px] md:w-[150px] md:h-[150px] text-[#fbbf24] opacity-40 pointer-events-none select-none"
+        animate={isInView ? { rotate: 360 } : { rotate: 0 }}
+        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+      >
         <svg viewBox="0 0 200 200" fill="none" stroke="currentColor" className="w-full h-full drop-shadow-[0_8px_24px_rgba(255,160,55,0.25)]">
           <circle cx="100" cy="100" r="48" strokeWidth="14" />
           <g strokeWidth="14" strokeLinecap="round">
@@ -541,19 +644,34 @@ function StatsScrollReveal() {
             <line x1="169" y1="31" x2="183" y2="17" />
           </g>
         </svg>
-      </div>
+      </motion.div>
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-2xl mx-auto">
+        <motion.div 
+          className="text-center max-w-2xl mx-auto"
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+        >
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Türkiye'de Güneş Enerjisi</h2>
           <p className="text-gray-600 text-sm md:text-base leading-relaxed">
             Enerji Bakanlığı'nın güneş enerjisi potansiyel atlasına göre Türkiye'de yıllık toplam güneşlenme süresi 2.737 saat,
             yıllık toplam gelen güneş enerjisi 1.527 kWh/m²·yıl olarak hesaplanıyor. Bu potansiyeli en verimli şekilde değerlendirmek için çalışıyoruz.
           </p>
-        </div>
+        </motion.div>
         <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {stats.map((stat) => (
-            <div key={stat.label} className="flex flex-col items-center text-center space-y-2.5">
-              <div className="w-[3.6rem] h-[3.6rem] rounded-full bg-orange-50 text-orange-500 flex items-center justify-center shadow-md">
+          {stats.map((stat, index) => (
+            <motion.div 
+              key={stat.label} 
+              className="flex flex-col items-center text-center space-y-2.5"
+              initial={{ opacity: 0, y: 50, scale: 0.8 }}
+              animate={isInView ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 50, scale: 0.8 }}
+              transition={{ duration: 0.5, delay: index * 0.15, ease: "easeOut" }}
+            >
+              <motion.div 
+                className="w-[3.6rem] h-[3.6rem] rounded-full bg-orange-50 text-orange-500 flex items-center justify-center shadow-md"
+                whileHover={{ scale: 1.1, rotate: 360 }}
+                transition={{ duration: 0.5 }}
+              >
                 <svg className="w-[2.1rem] h-[2.1rem] text-orange-500" viewBox="0 0 32 32" aria-hidden="true">
                   <circle cx="16" cy="16" r="6.5" fill="currentColor" />
                   <circle cx="16" cy="16" r="4.6" fill="#fff6eb" />
@@ -569,16 +687,17 @@ function StatsScrollReveal() {
                     <line x1="22.8" y1="9.2" x2="25.8" y2="6.2" />
                   </g>
                 </svg>
-              </div>
+              </motion.div>
               <div className="text-[0.8775rem] font-semibold text-gray-900">
                 {new Intl.NumberFormat('tr-TR').format(Number(stat.value))}
                 <span className="text-orange-500 text-[0.585rem] font-semibold ml-1">{stat.suffix}</span>
               </div>
               <p className="text-[13.2px] md:text-[0.9rem] text-gray-600">{stat.label}</p>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>
     </section>
   );
 }
+
