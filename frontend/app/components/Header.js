@@ -71,7 +71,7 @@ export default function Header({ forceDark = false }) {
 
   return (
     <header
-      className="sticky top-0 z-[100] transition-all duration-300 pt-4 bg-black/90 shadow-lg"
+      className="sticky top-0 z-[100] transition-all duration-300 pt-4 bg-gray-200 shadow-lg"
     >
       {/* Ana container - içeriği ortalar ve maksimum genişlik verir */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -86,7 +86,6 @@ export default function Header({ forceDark = false }) {
               width={96}
               height={30}
               priority
-              className="brightness-0 invert"
             />
           </Link>
 
@@ -94,7 +93,7 @@ export default function Header({ forceDark = false }) {
           <nav className="hidden md:flex gap-6">
             <Link
               href="/"
-              className="font-bold transition-colors text-white hover:text-orange-400"
+              className="font-bold transition-colors text-gray-800 hover:text-orange-500"
             >
               Ana Sayfa
             </Link>
@@ -106,7 +105,7 @@ export default function Header({ forceDark = false }) {
               onMouseLeave={handleAboutLeave}
             >
               <button
-                className="flex items-center font-bold transition-colors text-white hover:text-orange-400 hover:cursor-pointer"
+                className="flex items-center font-bold transition-colors text-gray-800 hover:text-orange-500 hover:cursor-pointer"
                 aria-haspopup="menu"
                 aria-expanded={isAboutOpen}
               >
@@ -119,27 +118,27 @@ export default function Header({ forceDark = false }) {
               {/* Dropdown menü - tıklama ve hover ile açılır */}
               {isAboutOpen && (
                 <div
-                  className="absolute top-full left-0 mt-2 w-48 rounded-md shadow-lg py-1 z-50 bg-black/95"
+                  className="absolute top-full left-0 mt-2 w-48 rounded-md shadow-lg py-1 z-50 bg-white border border-gray-300"
                   onMouseEnter={handleAboutEnter}
                   onMouseLeave={handleAboutLeave}
                 >
                   <Link
                     href="/hakkimizda"
-                    className="block px-4 py-2 text-sm transition-colors text-white hover:bg-white/10 hover:text-orange-400"
+                    className="block px-4 py-2 text-sm transition-colors text-gray-800 hover:bg-orange-50 hover:text-orange-500"
                     onClick={() => setIsAboutOpen(false)}
                   >
                     Biz Kimiz?
                   </Link>
                   <Link
                     href="/#referanslarimiz"
-                    className="block px-4 py-2 text-sm transition-colors text-white hover:bg-white/10 hover:text-orange-400"
+                    className="block px-4 py-2 text-sm transition-colors text-gray-800 hover:bg-orange-50 hover:text-orange-500"
                     onClick={() => setIsAboutOpen(false)}
                   >
                     Referanslarımız
                   </Link>
                   <Link
                     href="/subelerimiz"
-                    className="block px-4 py-2 text-sm transition-colors text-white hover:bg-white/10 hover:text-orange-400"
+                    className="block px-4 py-2 text-sm transition-colors text-gray-800 hover:bg-orange-50 hover:text-orange-500"
                     onClick={() => setIsAboutOpen(false)}
                   >
                     Şubelerimiz
@@ -155,7 +154,7 @@ export default function Header({ forceDark = false }) {
               onMouseLeave={handleServicesLeave}
             >
               <button
-                className="flex items-center font-bold transition-colors text-white hover:text-orange-400 hover:cursor-pointer"
+                className="flex items-center font-bold transition-colors text-gray-800 hover:text-orange-500 hover:cursor-pointer"
                 aria-haspopup="menu"
                 aria-expanded={isServicesOpen}
               >
@@ -168,20 +167,20 @@ export default function Header({ forceDark = false }) {
               {/* Dropdown menü - tıklama ve hover ile açılır */}
               {isServicesOpen && (
                 <div
-                  className="absolute top-full left-0 mt-2 w-48 rounded-md shadow-lg py-1 z-50 bg-black/95"
+                  className="absolute top-full left-0 mt-2 w-48 rounded-md shadow-lg py-1 z-50 bg-white border border-gray-300"
                   onMouseEnter={handleServicesEnter}
                   onMouseLeave={handleServicesLeave}
                 >
                   <Link
                     href="/hizmetler"
-                    className="block px-4 py-2 text-sm transition-colors text-white hover:bg-white/10 hover:text-orange-400"
+                    className="block px-4 py-2 text-sm transition-colors text-gray-800 hover:bg-orange-50 hover:text-orange-500"
                     onClick={() => setIsServicesOpen(false)}
                   >
                     Hizmetlerimiz
                   </Link>
                   <Link
                     href="/simulasyon"
-                    className="block px-4 py-2 text-sm transition-colors text-white hover:bg-white/10 hover:text-orange-400"
+                    className="block px-4 py-2 text-sm transition-colors text-gray-800 hover:bg-orange-50 hover:text-orange-500"
                     onClick={() => setIsServicesOpen(false)}
                   >
                     Solar Güç Hesaplama
@@ -193,25 +192,25 @@ export default function Header({ forceDark = false }) {
             {/* Diğer menü öğeleri */}
             <Link
               href="/projelerimiz"
-              className="font-bold transition-colors text-white hover:text-orange-400"
+              className="font-bold transition-colors text-gray-800 hover:text-orange-500"
             >
               Projelerimiz
             </Link>
             <Link
               href="/haberler"
-              className="font-bold transition-colors text-white hover:text-orange-400"
+              className="font-bold transition-colors text-gray-800 hover:text-orange-500"
             >
               Haberler
             </Link>
             <Link
               href="/kariyer"
-              className="font-bold transition-colors text-white hover:text-orange-400"
+              className="font-bold transition-colors text-gray-800 hover:text-orange-500"
             >
               Kariyer
             </Link>
             <Link
               href="/iletisim"
-              className="font-bold transition-colors text-white hover:text-orange-400"
+              className="font-bold transition-colors text-gray-800 hover:text-orange-500"
             >
               İletişim
             </Link>
@@ -221,13 +220,13 @@ export default function Header({ forceDark = false }) {
               <>
                 <Link
                   href="/panel"
-                  className="font-bold transition-colors text-white hover:text-orange-400"
+                  className="font-bold transition-colors text-gray-800 hover:text-orange-500"
                 >
                   Panel
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="font-bold transition-colors text-white hover:text-orange-400"
+                  className="font-bold transition-colors text-gray-800 hover:text-orange-500"
                 >
                   Çıkış
                 </button>
@@ -237,7 +236,7 @@ export default function Header({ forceDark = false }) {
 
           {/* Mobil menü butonu - sadece mobilde görünür */}
           <button
-            className="md:hidden p-2 transition-colors text-white hover:text-orange-400"
+            className="md:hidden p-2 transition-colors text-gray-800 hover:text-orange-500"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
