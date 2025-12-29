@@ -1,27 +1,34 @@
 // Haberler sayfası - Zena Enerji haberleri ve güneş enerjisi haberleri
 // Bu sayfa şirket haberlerini ve sektör haberlerini listeler
 
+'use client'; // Client-side bileşen - Framer Motion animasyonları için gerekli
+
 import Header from '../components/Header'; // Header bileşenini import ediyoruz
 import Footer from '../components/Footer'; // Footer bileşenini import ediyoruz
+import { motion } from 'framer-motion'; // Framer Motion - animasyonlar için
 
 export default function Haberler() {
-  // Örnek haber verileri
+  // Haber verileri
   const news = [
     {
       id: 1,
-      title: "Toyotetsu Otomotiv'e ait 2.26 MW'lık güneş enerjisi santralini anahtar teslim olarak tamamlamış bulunmaktayız",
-      date: "15.10.2024",
-      category: "Proje",
-      image: "https://images.unsplash.com/photo-1509391366360-2e959784a276?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      hasVideo: true
+      title: "Galatasaray Zena Su Topu Takımımız, Play-off müsabakalarına katılmaya hak kazandı.",
+      hoverTitle: "Su Topu 1. Liginde normal sezonu namağlup tamamlayarak Play-off müsabakalarına katılmaya hak kazandı. Takımımıza Play-Off müsabakalarında başarılar dileriz.",
+      date: "22.11.2024",
+      category: "Spor",
+      image: "/haberler/gs.jfif",
+      hasVideo: false,
+      slug: "galatasaray-zena-su-topu-play-off",
+      externalUrl: "https://www.galatasaray.org/anasayfa"
     },
     {
       id: 2,
-      title: "1200 kW'lık güneş enerjisi santralimizin geçici kabulü tamamlanıp üretime başlamıştır.",
+      title: "Toyotetsu'ya ait 12 MW GES projemizin geçici kabulü yapılmıştır.",
       date: "12.10.2024",
       category: "Proje",
       image: "https://images.unsplash.com/photo-1509391366360-2e959784a276?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      hasVideo: false
+      hasVideo: true,
+      slug: "toyotetsu-12mw-ges-gecici-kabul"
     },
     {
       id: 3,
@@ -83,65 +90,92 @@ export default function Haberler() {
         </div>
       </section>
 
-      {/* Tab menüsü */}
-      <section className="py-8 bg-white border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-center space-x-8">
-            <button className="py-2 px-4 text-lg font-medium border-b-2 border-orange-500 text-orange-500">
-              Haberler
-            </button>
-            <button className="py-2 px-4 text-lg font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700">
-              Etkinlikler
-            </button>
-          </div>
-        </div>
-      </section>
 
-      {/* Haberler grid */}
+      {/* Haberler grid - 2 sütunlu büyük kartlar */}
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             
             {/* Haber kartları */}
-            {news.map((item) => (
-              <article key={item.id} className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                
-                {/* Haber görseli */}
-                <div className="relative">
-                  <img 
+            {news.map((item, index) => (
+              <motion.article 
+                key={item.id} 
+                className="relative h-[320px] md:h-[360px] rounded-xl overflow-hidden cursor-pointer group"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                whileHover={{ scale: 1.02 }}
+              >
+                {/* Arka plan görseli */}
+                <div className="absolute inset-0">
+                  <motion.img 
                     src={item.image} 
                     alt={item.title}
-                    className="w-full h-48 object-cover"
+                    className="w-full h-full object-cover"
+                    whileHover={{ scale: 1.1 }}
+                    transition={{ duration: 0.5 }}
                   />
-                  
-                  {/* Video ikonu */}
-                  {item.hasVideo && (
-                    <div className="absolute top-4 left-4">
-                      <div className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center">
-                        <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                          <path d="M8 5v10l8-5-8-5z"/>
-                        </svg>
-                      </div>
-                    </div>
-                  )}
+                  {/* Koyu overlay - normal durum */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/60 to-black/40 transition-opacity duration-300 group-hover:opacity-0" />
+                  {/* Yeşil overlay - hover durumunda (saydam) */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-green-700/90 via-green-600/80 to-green-500/70 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                 </div>
                 
-                {/* Haber içeriği */}
-                <div className="p-6">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm text-orange-500 font-medium">{item.category}</span>
-                    <span className="text-sm text-gray-500">{item.date}</span>
+                {/* İçerik */}
+                <div className="relative z-10 h-full flex flex-col justify-between p-5 md:p-6 text-white">
+                  {/* Üst kısım - Tarih */}
+                  <div className="flex items-center gap-2">
+                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span className="text-white text-xs md:text-sm font-medium">{item.date}</span>
                   </div>
                   
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3 leading-tight">
-                    {item.title}
-                  </h3>
-                  
-                  <button className="text-orange-500 hover:text-orange-600 font-medium text-sm transition-colors">
-                    Devamını Oku →
-                  </button>
+                  {/* Alt kısım - Başlık ve Buton */}
+                  <div className="space-y-4">
+                    {/* Başlık - hoverTitle varsa değişir, yoksa aynı kalır */}
+                    {item.hoverTitle ? (
+                      <>
+                        <h3 className="text-lg md:text-xl font-bold leading-tight group-hover:hidden">
+                          {item.title}
+                        </h3>
+                        <h3 className="text-lg md:text-xl font-bold leading-tight hidden group-hover:block">
+                          {item.hoverTitle}
+                        </h3>
+                      </>
+                    ) : (
+                      <h3 className="text-lg md:text-xl font-bold leading-tight">
+                        {item.title}
+                      </h3>
+                    )}
+                    
+                    <motion.a 
+                      href={item.externalUrl || `/haberler/${item.slug || `haber-${item.id}`}`}
+                      target={item.externalUrl ? "_blank" : undefined}
+                      rel={item.externalUrl ? "noopener noreferrer" : undefined}
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-full border-2 border-white text-white font-semibold text-xs md:text-sm hover:bg-white hover:text-gray-900 transition-colors"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      DEVAMINI OKU
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                      </svg>
+                    </motion.a>
+                  </div>
                 </div>
-              </article>
+                
+                {/* Video ikonu - varsa */}
+                {item.hasVideo && (
+                  <div className="absolute top-4 right-4 z-20">
+                    <div className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center shadow-lg">
+                      <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M8 5v10l8-5-8-5z"/>
+                      </svg>
+                    </div>
+                  </div>
+                )}
+              </motion.article>
             ))}
           </div>
         </div>

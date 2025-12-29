@@ -204,12 +204,6 @@ export default function Header({ forceDark = false }) {
               Haberler
             </Link>
             <Link
-              href="/blog"
-              className="font-bold transition-colors text-white hover:text-orange-400"
-            >
-              Blog
-            </Link>
-            <Link
               href="/kariyer"
               className="font-bold transition-colors text-white hover:text-orange-400"
             >
