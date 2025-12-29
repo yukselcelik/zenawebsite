@@ -18,6 +18,27 @@ export default function HaberDetay() {
       category: "Proje",
       videoUrl: "/haberler/tt.mp4",
       description: `Proje geliştirmesinden geçici kabulüne kadar tüm işlemleri yaptığımız ve anahtar teslim olarak kurduğumuz Yozgat'ın Yerköy İlçesinde bulunan 190 dönümlük arazide TOYOTETSU 'ya ait 12 MW GES projemizin geçici kabulü yapılmıştır. 3 yıl içerisinde ikisi çatı biri arazi projesi olmak üzere 17,8 MW GES projesinde Toyotetsu yönetimine bizimle çalıştığı için çok teşekkür ederiz. Kurumsal yapısı ve farklı iş kültürü ile firmamızın gelişimine katkıda bulundukları için de ayrıca teşekkür ederiz. Güzel bir 3 yılın kutlaması da olması amacıyla GES arazi projelerinde nadir olarak yapılan santral açılışımızı gerçekleştirdik. Bu projeyle birlikte Toyotetsu Türkiye'nin tüm elektrik tüketimi artık yenilenebilir enerjiyle karşılanmaktadır. Ülkemize, Toyotetsu'ya ve Şirketimize hayırlı olmasını dileriz.`
+    },
+    '19500-kwp-ges-kabul': {
+      title: "19.500 kWp kurulu gücündeki Güneş Enerji Santralinin kabul işlemleri tamamlanarak üretime başlamıştır.",
+      date: "08.10.2024",
+      category: "Proje",
+      videoUrl: "/haberler/ags.mp4",
+      description: `Proje geliştirmesi Zena Enerji tarafından yapılan anahtar teslim kurulumu Altun Grup Solar Enerji tarafından tamamlanan 19.500 kWp kurulu gücündeki Güneş Enerji Santralinin kabul işlemleri tamamlanarak üretime başlamıştır. Yatırımcılarımız Şık Makas ve Seki İnşaat firmalarına ve Ülkemize hayırlı olmasını dileriz.`
+    },
+    'toyotetsu-36mw-ges': {
+      title: "Toyotetsu Otomotiv'e ait 3.6 MW'lık güneş enerji santralini anahtar teslim olarak tamamlamış bulunmaktayız.",
+      date: "05.10.2024",
+      category: "Proje",
+      videoUrl: "/haberler/tt2.mp4",
+      description: `Geçici kabulü tamamlanan GES tesisinin devreye alınması ile TOYOTETSU Otomotiv Parçaları San. ve Tic. A.Ş.'nin enerjisinin %30'u güneş enerjisinden karşılanacaktır. Ülkemizin enerji bağımsızlığı için yaptığımız çalışmalara bir yenisini daha eklemekten gurur duyuyoruz.`
+    },
+    '1200-kw-ges-gecici-kabul': {
+      title: "1200 kW'lık güneş enerjisi santralimizin geçici kabulü tamamlanıp üretime başlamıştır.",
+      date: "03.10.2024",
+      category: "Proje",
+      videoUrl: "/haberler/elektroaktif.mp4",
+      description: `Cumhuriyet şehrimiz Sivas'ta proje geliştirmesini ve anahtar teslim kurulumunu yaptığımız 1200 kW'lık güneş enerjisi santralimizin geçici kabulü tamamlanıp üretime başlamıştır. Yatırımcımız Elektroaktif Bobinaj firması ve ülkemize hayırlı olmasını dileriz.`
     }
   };
 
@@ -46,10 +67,10 @@ export default function HaberDetay() {
         </div>
         <div className="relative z-10 flex h-full items-center justify-center px-6 py-8">
           <div className="text-center max-w-4xl px-4">
-            <h1 className="text-2xl md:text-3xl font-bold mb-3 text-orange-500">
+            <h1 className="text-2xl md:text-3xl font-bold mb-3 text-white">
               {haber.title}
             </h1>
-            <p className="text-sm md:text-base text-orange-500/90">
+            <p className="text-sm md:text-base text-white/90">
               {haber.date} • {haber.category}
             </p>
           </div>
@@ -83,13 +104,57 @@ export default function HaberDetay() {
             {haber.description && (
               <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 md:p-8 shadow-sm">
                 <div className="text-gray-700 leading-relaxed text-xs md:text-sm">
-                  {haber.description.split(/(TOYOTETSU|Toyotetsu)/gi).map((part, i) => 
-                    part.toUpperCase() === 'TOYOTETSU' || part === 'Toyotetsu' ? (
-                      <span key={i} className="text-green-600 font-semibold">{part}</span>
-                    ) : (
-                      <span key={i}>{part}</span>
-                    )
-                  )}
+                  {(() => {
+                    let text = haber.description;
+                    // Yeşil vurgular
+                    const greenTerms = [
+                      'TOYOTETSU', 'Toyotetsu', 
+                      'Otomotiv Parçaları San. ve Tic. A.Ş.',
+                      'Altun Grup Solar Enerji',
+                      'Şık Makas',
+                      'Seki İnşaat',
+                      'Elektroaktif Bobinaj'
+                    ];
+                    // Turuncu vurgular
+                    const orangeTerms = ['Zena Enerji'];
+                    // Kalın vurgular
+                    const boldTerms = ['Sivas'];
+                    
+                    // Önce yeşil terimleri işaretle
+                    greenTerms.forEach(term => {
+                      const regex = new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+                      text = text.replace(regex, '||GREEN||$1||/GREEN||');
+                    });
+                    
+                    // Sonra turuncu terimleri işaretle
+                    orangeTerms.forEach(term => {
+                      const regex = new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+                      text = text.replace(regex, '||ORANGE||$1||/ORANGE||');
+                    });
+                    
+                    // Sonra kalın terimleri işaretle
+                    boldTerms.forEach(term => {
+                      const regex = new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+                      text = text.replace(regex, '||BOLD||$1||/BOLD||');
+                    });
+                    
+                    // İşaretlenmiş metni parse et
+                    const parts = text.split(/(\|\|GREEN\|\|.*?\|\|\/GREEN\|\||\|\|ORANGE\|\|.*?\|\|\/ORANGE\|\||\|\|BOLD\|\|.*?\|\|\/BOLD\|\|)/);
+                    
+                    return parts.map((part, i) => {
+                      if (part.startsWith('||GREEN||')) {
+                        const content = part.replace(/\|\|GREEN\|\||\|\|\/GREEN\|\|/g, '');
+                        return <span key={i} className="text-green-600 font-semibold">{content}</span>;
+                      } else if (part.startsWith('||ORANGE||')) {
+                        const content = part.replace(/\|\|ORANGE\|\||\|\|\/ORANGE\|\|/g, '');
+                        return <span key={i} className="text-orange-500 font-semibold">{content}</span>;
+                      } else if (part.startsWith('||BOLD||')) {
+                        const content = part.replace(/\|\|BOLD\|\||\|\|\/BOLD\|\|/g, '');
+                        return <span key={i} className="font-bold">{content}</span>;
+                      }
+                      return <span key={i}>{part}</span>;
+                    });
+                  })()}
                 </div>
               </div>
             )}

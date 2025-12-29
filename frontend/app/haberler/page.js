@@ -32,35 +32,40 @@ export default function Haberler() {
     },
     {
       id: 3,
-      title: "YTÜ ile KOOP protokolü imzaladık.",
+      title: "Galatasaray Kadın Sutopu Takımı ile 3 yıllık sponsorluk anlaşması yaptık.",
+      hoverTitle: "2023/2024, 2024/2025, 2025/2026 sezonlarını kapsayan anlaşmamızda hedefimiz Galatasaray'ımızın Avrupa Şampiyonluğu'nu kazanmasıdır. Hepimize hayırlı olsun.",
       date: "10.10.2024",
-      category: "Anlaşma",
-      image: "https://images.unsplash.com/photo-1509391366360-2e959784a276?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      hasVideo: false
+      category: "Spor",
+      image: "/haberler/gs1.jfif",
+      hasVideo: false,
+      externalUrl: "https://www.galatasaray.org/sl/sutopu-ana-sayfa/9"
     },
     {
       id: 4,
-      title: "Güneş enerjisi sektöründe yeni teknolojiler",
+      title: "19.500 kWp kurulu gücündeki Güneş Enerji Santralinin kabul işlemleri tamamlanarak üretime başlamıştır.",
       date: "08.10.2024",
-      category: "Teknoloji",
+      category: "Proje",
       image: "https://images.unsplash.com/photo-1509391366360-2e959784a276?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      hasVideo: false
+      hasVideo: true,
+      slug: "19500-kwp-ges-kabul"
     },
     {
       id: 5,
-      title: "Sürdürülebilir enerji çözümleri hakkında",
+      title: "Toyotetsu Otomotiv'e ait 3.6 MW'lık güneş enerji santralini anahtar teslim olarak tamamlamış bulunmaktayız.",
       date: "05.10.2024",
-      category: "Çevre",
+      category: "Proje",
       image: "https://images.unsplash.com/photo-1509391366360-2e959784a276?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      hasVideo: true
+      hasVideo: true,
+      slug: "toyotetsu-36mw-ges"
     },
     {
       id: 6,
-      title: "Yenilenebilir enerji yatırımları artıyor",
+      title: "1200 kW'lık güneş enerjisi santralimizin geçici kabulü tamamlanıp üretime başlamıştır.",
       date: "03.10.2024",
-      category: "Sektör",
+      category: "Proje",
       image: "https://images.unsplash.com/photo-1509391366360-2e959784a276?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      hasVideo: false
+      hasVideo: true,
+      slug: "1200-kw-ges-gecici-kabul"
     }
   ];
 
