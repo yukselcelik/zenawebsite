@@ -32,43 +32,48 @@ export default function Hakkimizda() {
       </section>
 
       {/* Şirket tanıtım metni */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <section className="py-16 bg-white relative overflow-hidden w-full">
+        <div className="w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 min-h-[300px]">
             
-            {/* Sol taraf - Metin */}
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-5">
-                Zena Enerji ile Tam Hizmet
-              </h2>
-              <div className="space-y-3 text-sm font-medium text-gray-600 leading-normal">
-                <p>
-                  Zena Enerji, sürdürülebilir bir gelecek için yenilenebilir enerji çözümlerinin geliştiricisi ve uygulayıcısıdır. Solar Güç Santrali (GES) projeleri için proje geliştirme, saha seçimi, mühendislik, kurulum ve devreye alma dahil olmak üzere uçtan uca hizmetler sunmaktadır.
-                </p>
-                <p>
-                  Profesyonel ekip tarafından yürütülen bu hizmetler, 2015 yılında yenilenebilir enerji alanında 15 yıllık deneyime sahip ortaklar tarafından kurulmuş Türk şirketi Zena Enerji tarafından gerçekleştirilmektedir.
-                </p>
-                <p>
-                  Yapay Zeka (AI), Gelişmiş Analitik ve Büyük Veri kullanarak Solar PV santrallerinin dijitalleştirilmesini artırarak, proje geliştirme, imar uygulamaları, saha kurulumları ve güneş enerjisi endüstrisinin genel ilerlemesine katkıda bulunmaktadır.
-                </p>
-                <p>
-                  Gelişmiş teknoloji altyapısı sayesinde sadece enerji üretimini değil, aynı zamanda verimliliği ve çevresel etkileri de ölçebilir ve raporlayabiliriz. AI destekli analizler, İHA'lar ile gerçekleştirilen termal incelemeler ve çeşitli dijital çözümler, müşterilerimiz için hızlı, güvenilir ve ekonomik enerji dönüşümü sağlamaktadır.
-                </p>
-                <p>
-                  Megavat ölçeğindeki projelerin başarıyla tamamlanmasından gurur duyuyoruz. Her yatırım, binlerce ağacın kurtarılmasına ve karbon emisyonlarının önemli ölçüde azaltılmasına katkıda bulunmaktadır.
-                </p>
+            {/* Sol taraf - Yazı (beyaz arka plan) */}
+            <div className="relative bg-white flex items-center p-8 md:p-12 lg:p-16">
+              <div className="relative z-10">
+                <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">
+                  Zena Enerji ile Tam Hizmet
+                </h2>
+                <div className="space-y-4 text-sm md:text-base text-gray-700 leading-relaxed">
+                  <p>
+                    Zena Enerji, sürdürülebilir bir gelecek için yenilenebilir enerji çözümlerinin geliştiricisi ve uygulayıcısıdır. Solar Güç Santrali (GES) projeleri için proje geliştirme, saha seçimi, mühendislik, kurulum ve devreye alma dahil olmak üzere uçtan uca hizmetler sunmaktadır.
+                  </p>
+                  <p>
+                    Profesyonel ekip tarafından yürütülen bu hizmetler, 2015 yılında yenilenebilir enerji alanında 15 yıllık deneyime sahip ortaklar tarafından kurulmuş Türk şirketi Zena Enerji tarafından gerçekleştirilmektedir.
+                  </p>
+                  <p>
+                    Yapay Zeka (AI), Gelişmiş Analitik ve Büyük Veri kullanarak Solar PV santrallerinin dijitalleştirilmesini artırarak, proje geliştirme, imar uygulamaları, saha kurulumları ve güneş enerjisi endüstrisinin genel ilerlemesine katkıda bulunmaktadır.
+                  </p>
+                  <p>
+                    Gelişmiş teknoloji altyapısı sayesinde sadece enerji üretimini değil, aynı zamanda verimliliği ve çevresel etkileri de ölçebilir ve raporlayabiliriz. AI destekli analizler, İHA'lar ile gerçekleştirilen termal incelemeler ve çeşitli dijital çözümler, müşterilerimiz için hızlı, güvenilir ve ekonomik enerji dönüşümü sağlamaktadır.
+                  </p>
+                  <p>
+                    Megavat ölçeğindeki projelerin başarıyla tamamlanmasından gurur duyuyoruz. Her yatırım, binlerce ağacın kurtarılmasına ve karbon emisyonlarının önemli ölçüde azaltılmasına katkıda bulunmaktadır.
+                  </p>
+                </div>
               </div>
+              
+              {/* Gradient geçiş efekti - soldan sağa (daha geniş) */}
+              <div className="absolute right-0 top-0 bottom-0 w-48 bg-gradient-to-r from-white via-white/60 to-transparent pointer-events-none"></div>
             </div>
 
-            {/* Sağ taraf - Görsel */}
+            {/* Sağ taraf - Resim */}
             <div className="relative">
-              <div className="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden">
-                <img 
-                  src="/1111.jfif" 
-                  alt="Zena Enerji ile Tam Hizmet" 
-                  className="w-full h-full object-cover"
-                />
-              </div>
+              <div 
+                className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+                style={{ backgroundImage: `url(/1111.jfif)` }}
+              ></div>
+              
+              {/* Gradient geçiş efekti - sağdan sola (daha geniş) */}
+              <div className="absolute left-0 top-0 bottom-0 w-48 bg-gradient-to-l from-transparent via-white/60 to-white pointer-events-none"></div>
             </div>
           </div>
         </div>
@@ -77,32 +82,34 @@ export default function Hakkimizda() {
       {/* Misyon ve Vizyon Bölümü */}
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          
-          {/* Misyon */}
-          <div className="mb-16">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                Misyonumuz
-              </h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+            
+            {/* Misyon - Sol Taraf */}
+            <div>
+              <div className="text-center mb-8">
+                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                  Misyonumuz
+                </h2>
+              </div>
+              <div>
+                <p className="text-lg text-gray-600 leading-relaxed text-center">
+                  Yasa, yönetmelik ve ilgili mevzuatlara uygun olarak, şirket değerleri doğrultusunda, bilginin güç olduğu bilinciyle, teknolojik gelişmeleri takip etmenin başarının ön koşullarından olduğu anlayışıyla çalışarak yatırımlardan daha fazla katma değer elde etmeyi amaçlarız.
+                </p>
+              </div>
             </div>
-            <div className="max-w-4xl mx-auto">
-              <p className="text-lg text-gray-600 leading-relaxed text-center">
-                Yasa, yönetmelik ve ilgili mevzuatlara uygun olarak, şirket değerleri doğrultusunda, bilginin güç olduğu bilinciyle, teknolojik gelişmeleri takip etmenin başarının ön koşullarından olduğu anlayışıyla çalışarak yatırımlardan daha fazla katma değer elde etmeyi amaçlarız.
-              </p>
-            </div>
-          </div>
 
-          {/* Vizyon */}
-          <div>
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                Vizyonumuz
-              </h2>
-            </div>
-            <div className="max-w-4xl mx-auto">
-              <p className="text-lg text-gray-600 leading-relaxed text-center">
-                2015 yılından itibaren yurt içinde tamamladığımız projelerle ve yenilikçi yönetim anlayışımızla ulusal alanda akla gelen ilk marka olmak ve aynı zamanda uluslararası alanda da güçlü, saygın ve sürdürülebilir bir marka kimliği kazanmaktır.
-              </p>
+            {/* Vizyon - Sağ Taraf */}
+            <div>
+              <div className="text-center mb-8">
+                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                  Vizyonumuz
+                </h2>
+              </div>
+              <div>
+                <p className="text-lg text-gray-600 leading-relaxed text-center">
+                  2015 yılından itibaren yurt içinde tamamladığımız projelerle ve yenilikçi yönetim anlayışımızla ulusal alanda akla gelen ilk marka olmak ve aynı zamanda uluslararası alanda da güçlü, saygın ve sürdürülebilir bir marka kimliği kazanmaktır.
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -202,40 +209,6 @@ export default function Hakkimizda() {
         </div>
       </section>
 
-      {/* Ekibimiz Bölümü */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Ekibimiz
-            </h2>
-          </div>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            
-            {/* Sol taraf - Görsel */}
-            <div className="relative">
-              <div className="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden">
-                <img 
-                  src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" 
-                  alt="Our team" 
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            </div>
-            
-            {/* Sağ taraf - Metin ve buton */}
-            <div>
-              <p className="text-lg text-gray-600 leading-relaxed mb-8">
-                Enerji sektöründe birlikte çalışmaya, öğrenmeye ve gelişime açık adaylarla tanışmaktan büyük bir memnuniyet duyarız. Ekip ruhuna değer veren, sorumluluk bilinci yüksek ve geleceğe katkı sunmayı hedefleyen çalışma arkadaşlarının başvurularını bekliyoruz.
-              </p>
-              <button className="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 px-8 rounded-lg text-lg transition-colors duration-300">
-                Bize Katılın
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Footer bileşeni */}
       <Footer />

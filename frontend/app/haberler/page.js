@@ -3,12 +3,29 @@
 
 'use client'; // Client-side bileşen - Framer Motion animasyonları için gerekli
 
+import { useState, useEffect } from 'react'; // useState ve useEffect hook'ları - sayfalama için
+import { useSearchParams, useRouter } from 'next/navigation'; // URL parametreleri için
 import Header from '../components/Header'; // Header bileşenini import ediyoruz
 import Footer from '../components/Footer'; // Footer bileşenini import ediyoruz
 import { motion } from 'framer-motion'; // Framer Motion - animasyonlar için
 
 export default function Haberler() {
-  // Haber verileri
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  
+  // URL'den sayfa numarasını oku
+  const pageFromUrl = parseInt(searchParams.get('page') || '1', 10);
+  
+  // Sayfa durumu
+  const [currentPage, setCurrentPage] = useState(pageFromUrl);
+  const itemsPerPage = 6; // Her sayfada 6 haber
+
+  // URL'den sayfa değiştiğinde state'i güncelle
+  useEffect(() => {
+    setCurrentPage(pageFromUrl);
+  }, [pageFromUrl]);
+
+  // Haber verileri - Toplam 12 haber (2 sayfa)
   const news = [
     {
       id: 1,
@@ -66,8 +83,149 @@ export default function Haberler() {
       image: "https://images.unsplash.com/photo-1509391366360-2e959784a276?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
       hasVideo: true,
       slug: "1200-kw-ges-gecici-kabul"
+    },
+    {
+      id: 7,
+      title: "Len Challenger Cup Şampiyonu Olduk",
+      hoverTitle: "Sponsoru olduğumuz Galatasaray Su Topu Takımımız Avrupa Şampiyonu olmuştur. Türk'ün Avrupadaki sesi Aslanlarımızı tebrik ederiz.",
+      date: "01.10.2024",
+      category: "Spor",
+      image: "/haberler/gs2.jpeg",
+      hasVideo: false,
+      slug: "len-challenger-cup-sampiyonu",
+      externalUrl: "https://www.galatasaray.org/sl/sutopu-ana-sayfa/9"
+    },
+    {
+      id: 8,
+      title: "YTÜ ile KOOP protokolü imzaladık.",
+      hoverTitle: "Şirketimiz Zena Enerji ile YTÜ arasında KOOP Eğitim Modeli (İşletmede Mesleki Eğitim) kapsamında KOOP protokolü imzalanmıştır.",
+      date: "28.09.2024",
+      category: "Eğitim",
+      image: "/haberler/ytu.jpeg",
+      hasVideo: false,
+      slug: "ytu-koop-protokolu",
+      externalUrl: "https://elk.yildiz.edu.tr/duyurular/ytu-koop-egitim-modeli-isletmede-mesleki-egitim-protokolu-zena-enerji"
+    },
+    {
+      id: 9,
+      title: "Toyotetsu Otomotiv'e ait 2.26 MW'lık güneş enerjisi santralini anahtar teslim olarak tamamlamış bulunmaktayız.",
+      date: "25.09.2024",
+      category: "Proje",
+      image: "https://images.unsplash.com/photo-1509391366360-2e959784a276?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+      hasVideo: true,
+      slug: "toyotetsu-226mw-ges"
+    },
+    {
+      id: 10,
+      title: "Termal Drone tarafından düzenlenen Workshop etkinliğine katıldık.",
+      hoverTitle: "Etkinlikte şirketimizin vizyonundan ve özellikle Kara Yorga ekibimizin gerçekleştirdiği İHA ile yaptığımız termal test hizmetimizden bahsettik. Davetlerinden ötürü Termal Drone ekibine ve bizleri dinleyen başta Türk Silahlı Kuvvetleri mensubu olmak üzere tüm değerli katılımcılara teşekkür ederiz.",
+      date: "22.09.2024",
+      category: "Etkinlik",
+      image: "/haberler/termal.jpg",
+      hasVideo: false,
+      slug: "termal-drone-workshop"
+    },
+    {
+      id: 11,
+      title: "Zena Enerji ile Toyota grubundan Toyotetsu ile 2,266 kw GES projesinde anahtar teslim EPC olarak anlaşmaya varılmıştır.",
+      hoverTitle: "Firmanın Kocaeli Çayırova TOSB'da bulunan fabrikasının 23.000 m2'lik çatısına kurulum işlemimiz başlamıştır. Bu proje Mayıs ayı sonunda tamamlanacak olup, hem TOYOTA grubunun hemde TOSB içerisinde gerçekleşen ilk Güneş Enerjisi projesi olacaktır.",
+      date: "20.09.2024",
+      category: "Proje",
+      image: "/haberler/tt4.jpg",
+      hasVideo: false,
+      slug: "toyotetsu-2266kw-ges-epc"
+    },
+    {
+      id: 12,
+      title: "Solar istanbul Fuarına Katılım Gösterdik.",
+      hoverTitle: "Zena Enerji olarak Güneş Enerjisinin önemli fuarlarından Solar İstanbul'da E-09 standında yer aldık.",
+      date: "18.09.2024",
+      category: "Etkinlik",
+      image: "/haberler/fuar.jfif",
+      hasVideo: false,
+      slug: "solar-istanbul-fuari"
+    },
+    {
+      id: 13,
+      title: "Kütahya ve Burdur Toplam 16 MW GES Termal İncelemesi Tamamlandı.",
+      hoverTitle: "Tekfen ve Zen Enerji ortaklığında kurulan Kütahya ve Burdur ilinde bulunan Toplam Gücü 16 MWp olan Güneş Enerji Santrallerinin yapay zeka ile termal incelenmesi tamamlanmıştır.",
+      date: "15.09.2024",
+      category: "Proje",
+      image: "/haberler/dron.jpg",
+      hasVideo: false,
+      slug: "kutahya-burdur-16mw-termal-inceleme"
+    },
+    {
+      id: 14,
+      title: "Akfen 10 MW MT GES Termal incelemesi Tamamlandı.",
+      hoverTitle: "Zena Enerji olarak, Konya Ereğlide bulunan Akfen Holdinge ait MT GES 10 MW Gücündeki güneş enerji santralinin İHA ve yapay zeka ile termal incelemesini gerçekleştirdik.",
+      date: "12.09.2024",
+      category: "Proje",
+      image: "/haberler/dron2.jpg",
+      hasVideo: false,
+      slug: "akfen-10mw-mt-ges-termal-inceleme"
+    },
+    {
+      id: 15,
+      title: "Teknopark istanbul Zena Enerji Röportajı",
+      hoverTitle: "Zena Enerji Sayın Genel Müdürümüz, Yüksel Çağrı Gürses'in İstanbul Ticaret ile gerçekleştirdiği Teknopark İstanbul röpartajı.",
+      date: "10.09.2024",
+      category: "Genel",
+      image: "/haberler/gazete.jpg",
+      hasVideo: false,
+      slug: "teknopark-istanbul-zena-enerji-roportaj",
+      externalUrl: "https://www.teknoparkistanbul.com.tr/"
+    },
+    {
+      id: 16,
+      title: "Sivas Zara 648 kWp Güneş Enerji Santrali Anahtar Teslim Olarak Tarafımızca Yapılıp Devreye Alınmıştır.",
+      hoverTitle: "Zena Enerji olarak, Sivas ilinde başladığımız Güneş Santrali kurulumu bitmiş olup sıfırdan anahtar teslimi gerçekleştirilmiştir. Güneş Enerjisi Santrali kurulumu hakkında bilgi edinmek için lütfen iletişime geçiniz.",
+      date: "08.09.2024",
+      category: "Proje",
+      image: "/haberler/sivas.jpg",
+      hasVideo: false,
+      slug: "sivas-zara-648-kwp-ges",
+      externalUrl: "http://localhost:3001/projelerimiz"
+    },
+    {
+      id: 17,
+      title: "Akıllı İHA'lar GES'lerin hizmetinde!",
+      hoverTitle: "Actus Solar ve Zena Enerji \"Yapay Zekayla Panel Verimi Maksimizasyonu\" hizmeti vermeye başladı.",
+      date: "05.09.2024",
+      category: "Teknoloji",
+      image: "/haberler/dron3.png",
+      hasVideo: false,
+      slug: "akilli-iha-ges-hizmeti"
+    },
+    {
+      id: 18,
+      title: "Zena Enerji ile Singapurun Köklü Teknoloji Firması Ava Asia ile Çözüm Ortaklığı Anlaşmasına Varıldı.",
+      date: "03.09.2024",
+      category: "İşbirliği",
+      image: "/haberler/dron4.jpg",
+      hasVideo: false,
+      slug: "zena-enerji-ava-asia-cozum-ortakligi",
+      externalUrl: "https://www.teknoparkistanbul.com.tr/haberler/gunes-enerjisinde-ihayla-yuksek-verim",
+      titleLinks: {
+        "Ava Asia": "https://www.avaasia.co/",
+        "Çözüm Ortaklığı Anlaşmasına": "https://www.teknoparkistanbul.com.tr/haberler/gunes-enerjisinde-ihayla-yuksek-verim"
+      }
     }
   ];
+
+  // Sayfalama hesaplamaları
+  const totalPages = Math.ceil(news.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentNews = news.slice(startIndex, endIndex);
+
+  // Sayfa değiştirme fonksiyonları
+  const goToPage = (page) => {
+    setCurrentPage(page);
+    // URL'i güncelle
+    router.push(`/haberler?page=${page}`, { scroll: false });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -101,8 +259,8 @@ export default function Haberler() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             
-            {/* Haber kartları */}
-            {news.map((item, index) => (
+            {/* Haber kartları - Sadece mevcut sayfadaki haberler */}
+            {currentNews.map((item, index) => (
               <motion.article 
                 key={item.id} 
                 className="relative h-[320px] md:h-[360px] rounded-xl overflow-hidden cursor-pointer group"
@@ -117,6 +275,7 @@ export default function Haberler() {
                     src={item.image} 
                     alt={item.title}
                     className="w-full h-full object-cover"
+                    style={item.id === 15 ? { objectPosition: 'center bottom' } : {}}
                     whileHover={{ scale: 1.1 }}
                     transition={{ duration: 0.5 }}
                   />
@@ -141,21 +300,114 @@ export default function Haberler() {
                     {/* Başlık - hoverTitle varsa değişir, yoksa aynı kalır */}
                     {item.hoverTitle ? (
                       <>
-                        <h3 className="text-lg md:text-xl font-bold leading-tight group-hover:hidden">
-                          {item.title}
+                        <h3 className="font-bold leading-tight group-hover:hidden text-base md:text-lg">
+                          {item.titleLinks ? (
+                            // Özel linkler varsa (ID 18 için)
+                            (() => {
+                              let titleText = item.title;
+                              const parts = [];
+                              let lastIndex = 0;
+                              
+                              // Tüm linkleri bul ve sırala
+                              const linkPositions = [];
+                              Object.keys(item.titleLinks).forEach(keyword => {
+                                const index = titleText.indexOf(keyword);
+                                if (index !== -1) {
+                                  linkPositions.push({ index, keyword, url: item.titleLinks[keyword] });
+                                }
+                              });
+                              
+                              // Pozisyonlara göre sırala
+                              linkPositions.sort((a, b) => a.index - b.index);
+                              
+                              linkPositions.forEach(({ index, keyword, url }) => {
+                                // Önceki metni ekle
+                                if (index > lastIndex) {
+                                  parts.push(titleText.substring(lastIndex, index));
+                                }
+                                // Linki ekle
+                                parts.push(
+                                  <a
+                                    key={`${keyword}-${index}`}
+                                    href={url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="underline hover:text-orange-400 transition-colors"
+                                    onClick={(e) => e.stopPropagation()}
+                                  >
+                                    {keyword}
+                                  </a>
+                                );
+                                lastIndex = index + keyword.length;
+                              });
+                              
+                              // Kalan metni ekle
+                              if (lastIndex < titleText.length) {
+                                parts.push(titleText.substring(lastIndex));
+                              }
+                              
+                              return parts.length > 0 ? parts : titleText;
+                            })()
+                          ) : (
+                            item.title
+                          )}
                         </h3>
-                        <h3 className="text-lg md:text-xl font-bold leading-tight hidden group-hover:block">
+                        <h3 className="font-bold leading-tight hidden group-hover:block text-xs md:text-sm">
                           {item.hoverTitle}
                         </h3>
                       </>
                     ) : (
-                      <h3 className="text-lg md:text-xl font-bold leading-tight">
-                        {item.title}
+                      <h3 className="font-bold leading-tight text-base md:text-lg">
+                        {item.titleLinks ? (
+                          // Özel linkler varsa
+                          (() => {
+                            let titleText = item.title;
+                            const parts = [];
+                            let lastIndex = 0;
+                            
+                            const linkPositions = [];
+                            Object.keys(item.titleLinks).forEach(keyword => {
+                              const index = titleText.indexOf(keyword);
+                              if (index !== -1) {
+                                linkPositions.push({ index, keyword, url: item.titleLinks[keyword] });
+                              }
+                            });
+                            
+                            linkPositions.sort((a, b) => a.index - b.index);
+                            
+                            linkPositions.forEach(({ index, keyword, url }) => {
+                              if (index > lastIndex) {
+                                parts.push(titleText.substring(lastIndex, index));
+                              }
+                              parts.push(
+                                <a
+                                  key={`${keyword}-${index}`}
+                                  href={url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="underline hover:text-orange-400 transition-colors"
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  {keyword}
+                                </a>
+                              );
+                              lastIndex = index + keyword.length;
+                            });
+                            
+                            if (lastIndex < titleText.length) {
+                              parts.push(titleText.substring(lastIndex));
+                            }
+                            
+                            return parts.length > 0 ? parts : titleText;
+                          })()
+                        ) : (
+                          item.title
+                        )}
                       </h3>
                     )}
                     
                     <motion.a 
-                      href={item.externalUrl || `/haberler/${item.slug || `haber-${item.id}`}`}
+                      href={item.externalUrl || `/haberler/${item.slug || `haber-${item.id}`}${item.hasVideo ? `?page=${currentPage}` : ''}`}
                       target={item.externalUrl ? "_blank" : undefined}
                       rel={item.externalUrl ? "noopener noreferrer" : undefined}
                       className="inline-flex items-center gap-2 px-4 py-2 rounded-full border-2 border-white text-white font-semibold text-xs md:text-sm hover:bg-white hover:text-gray-900 transition-colors"
@@ -183,6 +435,56 @@ export default function Haberler() {
               </motion.article>
             ))}
           </div>
+
+          {/* Sayfalama kontrolleri */}
+          {totalPages > 1 && (
+            <div className="mt-12 flex justify-center items-center gap-2">
+              {/* Önceki sayfa butonu */}
+              <button
+                onClick={() => goToPage(currentPage - 1)}
+                disabled={currentPage === 1}
+                className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+                  currentPage === 1
+                    ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                    : 'bg-orange-500 text-white hover:bg-orange-600'
+                }`}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+
+              {/* Sayfa numaraları */}
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                <button
+                  key={page}
+                  onClick={() => goToPage(page)}
+                  className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+                    currentPage === page
+                      ? 'bg-orange-500 text-white'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  }`}
+                >
+                  {page}
+                </button>
+              ))}
+
+              {/* Sonraki sayfa butonu */}
+              <button
+                onClick={() => goToPage(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+                  currentPage === totalPages
+                    ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                    : 'bg-orange-500 text-white hover:bg-orange-600'
+                }`}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+          )}
         </div>
       </section>
 

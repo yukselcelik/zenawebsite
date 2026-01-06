@@ -16,7 +16,7 @@ export default function Hizmetler() {
       id: 1,
       title: "GES Proje Geliştirme İşlemleri",
       description: "GES projelerinde sağlam bir altyapının oluşturulması, proje geliştirme sürecinin doğru yönetilmesine bağlıdır. Bu süreç, projenin en temel ve en kritik aşamasını oluşturur. Firmamız, proje geliştirme sürecini yürürlükteki mevzuatlara tam uyumlu şekilde, alanında uzman kadrosuyla titizlikle gerçekleştirmektedir. Her adımı özenle planlanan bu süreçle, projelerinizi güvenle hayata geçiriyoruz.",
-      backgroundImage: "/1.jpg",
+      backgroundImage: "/projegelistirme.jpg",
       slug: "ges-proje-gelistirme"
     },
     {
@@ -30,7 +30,7 @@ export default function Hizmetler() {
       id: 3,
       title: "Yapay Zeka Destekli Termal Test Ve Raporlama",
       description: "Güneş enerji sistemlerinde oluşan \"hot spot\" sıcak noktaları, İHA'larımızdaki termal kameralarla hızlıca tespit edilmekte, ardından Büyük Veri Analitiği, Yapay Zeka ve Makine Öğrenimi ile doğru, hızlı ve maliyet avantajlı çözümler sunulmaktadır.",
-      backgroundImage: "/3.jpg",
+      backgroundImage: "/chat2.png",
       slug: "termal-test"
     },
     {
@@ -62,7 +62,7 @@ export default function Hizmetler() {
           <div className="absolute inset-0 bg-black/60" />
         </div>
 
-        <div className="relative z-10 flex h-full items-center justify-center px-6">
+        <div className="relative z-10 flex h-full items-end justify-center px-6 pb-12">
           <div className="text-center text-white max-w-4xl px-4">
             <h1 className="text-3xl md:text-4xl font-bold mb-3 text-orange-500">
               Hizmetlerimiz

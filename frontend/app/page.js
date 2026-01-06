@@ -247,51 +247,64 @@ export default function Home() {
           ))}
         </div>
       </section>
-      {/* Zena Enerji ile Tam Hizmet + Drone görselli bölüm (drone görseli kalsın) */}
-      <section className="py-16 bg-white">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      {/* Zena Enerji ile Tam Hizmet + Drone görselli bölüm */}
+      <section className="py-4 bg-white relative overflow-hidden">
+          <div className="w-full max-w-[95%] mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 grid grid-cols-1 lg:grid-cols-2 gap-0 items-stretch">
+            {/* Sol taraf - Metin (beyaz arka plan üzerinde siyah yazı) */}
             <motion.div 
-              className="flex flex-col items-center text-center w-full"
+              className="relative flex flex-col justify-center p-3 md:p-4 lg:p-5 bg-white"
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.6, ease: "easeOut" }}
             >
-              <div className="w-full lg:max-w-none">
-                <h2 className="text-[1.35rem] md:text-[1.5rem] font-semibold text-gray-900 mb-5 text-center">Zena Enerji ile Tam Hizmet</h2>
-                <p className="text-[0.936rem] md:text-[1.05rem] text-gray-700 mb-8 leading-relaxed">
-                  Zena Enerji olarak, güneş enerjisi sektöründe proje geliştirme, proje uygulama, imar uygulamaları, saha kurulumu,
-                  geçici kabul işlemleri, danışmanlık ve müşterilerimizin portföy verimliliğini en üst düzeye çıkarmak için
-                  kapsamlı hizmet sunuyoruz. Güneş PV tesislerindeki sorunları anlamaya yardımcı olmak amacıyla İHA'lar ile
-                  inceleme ve İHA'larda bulunan termal kamera ile havadan denetim yapılmaktadır.
-                </p>
-              </div>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-2xl mx-auto justify-items-center mt-2">
-                {serviceCards.map((card, index) => (
-                  <motion.div 
-                    key={card.title} 
-                    className="flex flex-col items-center text-center gap-2.5"
-                    initial={{ opacity: 0, scale: 0.8, y: 20 }}
-                    whileInView={{ opacity: 1, scale: 1, y: 0 }}
-                    viewport={{ once: true, amount: 0.3 }}
-                    transition={{ duration: 0.5, delay: index * 0.1, ease: "easeOut" }}
-                  >
-                    <div className={`w-[3.42rem] h-[3.42rem] rounded-full flex items-center justify-center shadow-[0_6px_16px_rgba(0,0,0,0.3)] bg-gray-700 hover:bg-gray-600 transition-colors`}>
-                      {card.icon}
-                    </div>
-                    <p className="text-gray-900 font-semibold text-[10.26px] sm:text-[11.4px] tracking-wide">{card.title}</p>
-                  </motion.div>
-                ))}
+              {/* İçerik */}
+              <div className="relative z-10">
+                <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-5 text-center">
+                  Zena Enerji ile Tam Hizmet
+                </h2>
+                
+                <div className="space-y-1.5 text-gray-900 mb-5">
+                  <p className="text-sm md:text-base leading-relaxed">
+                    Zena Enerji, güneş enerjisi sektöründe proje geliştirme, imar uygulamaları, saha kurulumu, geçici kabul işlemleri konusunda uluslararası saygın firmalar ile çalışarak Lisanslı, Lisanssız birçok büyük ve ses getiren projelerin mimarı olmuştur. İHA'lar ile termal kamera kullanarak havadan inceleme ve izleme yaparak güneş PV tesislerindeki sorunları tespit edebilir ve portföy verimliliğini artırabiliriz.
+                  </p>
+                </div>
+                
+                {/* Hizmet kartları - sol tarafın içinde */}
+                <div className="grid grid-cols-3 gap-1.5 md:gap-2">
+                  {serviceCards.map((card, index) => (
+                    <motion.div 
+                      key={card.title} 
+                      className="flex flex-col items-center text-center gap-2"
+                      initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                      whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                      viewport={{ once: true, amount: 0.3 }}
+                      transition={{ duration: 0.5, delay: index * 0.1, ease: "easeOut" }}
+                    >
+                      <div className="w-10 h-10 md:w-11 md:h-11 rounded-full flex items-center justify-center shadow-md bg-slate-800 hover:bg-slate-700 transition-colors [&_svg]:w-6 [&_svg]:h-6 md:[&_svg]:w-7 md:[&_svg]:h-7">
+                        {card.icon}
+                      </div>
+                      <p className="text-gray-900 font-semibold text-[11px] md:text-xs tracking-wide leading-tight">{card.title}</p>
+                    </motion.div>
+                  ))}
+                </div>
               </div>
             </motion.div>
+            
+            {/* Sağ taraf - Resim */}
             <motion.div 
-              className="relative w-[103%] h-72 md:h-[384px] rounded-xl overflow-hidden shadow-lg lg:ml-10 xl:ml-16 mt-6 md:mt-8"
+              className="relative w-full h-[90%] self-center"
               initial={{ opacity: 0, x: 50 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.6, ease: "easeOut" }}
             >
-              <img src="/dron-operator.jpg" alt="Drone ile denetim" className="absolute inset-0 w-full h-full object-cover" />
+              <img 
+                src="/dron-operator.jpg" 
+                alt="Zena Enerji Ekibi" 
+                className="w-full h-full object-cover rounded-lg" 
+                style={{ objectPosition: 'left center' }}
+              />
             </motion.div>
           </div>
         </section>
@@ -311,6 +324,29 @@ export default function Home() {
             >
               <img src="/solar-hesabi.jpg" alt="Solar güç hesabı" className="w-full h-[340px] object-cover" />
               <div className="absolute inset-0 bg-black/45"></div>
+              
+              {/* Rüzgar Efekti */}
+              <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                {[...Array(5)].map((_, i) => (
+                  <motion.div
+                    key={i}
+                    className="absolute w-full h-1 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                    style={{
+                      top: `${20 + i * 15}%`,
+                      left: '-100%',
+                    }}
+                    animate={{
+                      left: ['-100%', '100%'],
+                    }}
+                    transition={{
+                      duration: 3 + i * 0.5,
+                      repeat: Infinity,
+                      delay: i * 0.3,
+                      ease: 'linear',
+                    }}
+                  />
+                ))}
+              </div>
               <div className="absolute inset-0 flex items-center justify-start">
                 <motion.div 
                   className="px-8 md:px-14 max-w-xl ml-[3%] md:ml-[5%]"
@@ -627,7 +663,7 @@ function StatsScrollReveal() {
   return (
     <section id="istatistikler" className="py-16 bg-gray-50 relative overflow-hidden" ref={ref}>
       <motion.div 
-        className="absolute -left-24 md:-left-12 top-1/2 -translate-y-1/2 w-[100px] h-[100px] md:w-[150px] md:h-[150px] text-[#fbbf24] opacity-40 pointer-events-none select-none"
+        className="absolute -left-24 md:-left-12 top-1/2 -translate-y-1/2 w-[115px] h-[115px] md:w-[173px] md:h-[173px] text-[#fbbf24] opacity-40 pointer-events-none select-none"
         animate={isInView ? { rotate: 360 } : { rotate: 0 }}
         transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
       >

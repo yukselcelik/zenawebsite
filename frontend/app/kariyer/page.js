@@ -100,22 +100,29 @@ export default function Kariyer() {
         </div>
       </section>
 
-      <section className="py-16 bg-white">
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-          {submitSuccess && (
-            <div className="mb-6 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded">
-              Başvurunuz başarıyla gönderildi. Teşekkür ederiz.
-            </div>
-          )}
-          {submitError && (
-            <div className="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-              {submitError}
-            </div>
-          )}
-          <form onSubmit={handleSubmit} className="space-y-6">
+      <section className="py-16 bg-white relative">
+        {/* Arka plan görseli - hafif şeffaf */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-75"
+          style={{ backgroundImage: `url(/kariyer.png)` }}
+        ></div>
+        
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="bg-white/95 backdrop-blur-sm rounded-xl shadow-xl p-8 md:p-10">
+            {submitSuccess && (
+              <div className="mb-6 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded">
+                Başvurunuz başarıyla gönderildi. Teşekkür ederiz.
+              </div>
+            )}
+            {submitError && (
+              <div className="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+                {submitError}
+              </div>
+            )}
+            <form onSubmit={handleSubmit} className="space-y-6">
 
             <div>
-              <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="fullName" className="block text-sm font-semibold text-gray-900 mb-2">
                 Adınız Soyadınız <span className="text-red-500">*</span>
               </label>
               <input
@@ -126,12 +133,12 @@ export default function Kariyer() {
                 onChange={handleInputChange}
                 placeholder="Ad Soyad"
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900"
+                className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 font-medium shadow-sm"
               />
             </div>
 
             <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="phone" className="block text-sm font-semibold text-gray-900 mb-2">
                 Telefon Numaranız <span className="text-red-500">*</span>
               </label>
               <PhoneInput
@@ -143,7 +150,7 @@ export default function Kariyer() {
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="email" className="block text-sm font-semibold text-gray-900 mb-2">
                 E-Posta Adresiniz <span className="text-red-500">*</span>
               </label>
               <input
@@ -154,12 +161,12 @@ export default function Kariyer() {
                 onChange={handleInputChange}
                 placeholder="E-Posta"
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900"
+                className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 font-medium shadow-sm"
               />
             </div>
 
             <div>
-              <label htmlFor="education" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="education" className="block text-sm font-semibold text-gray-900 mb-2">
                 Eğitim Durumunuz <span className="text-red-500">*</span>
               </label>
               <select
@@ -168,7 +175,7 @@ export default function Kariyer() {
                 value={formData.education}
                 onChange={handleInputChange}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900"
+                className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 font-medium shadow-sm"
               >
                 <option value="">Eğitim Durumu Seçiniz</option>
                 <option value="lise">Lise</option>
@@ -180,7 +187,7 @@ export default function Kariyer() {
             </div>
 
             <div>
-              <label htmlFor="position" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="position" className="block text-sm font-semibold text-gray-900 mb-2">
                 Başvurmak İstediğiniz Pozisyon <span className="text-red-500">*</span>
               </label>
               <select
@@ -189,7 +196,7 @@ export default function Kariyer() {
                 value={formData.position}
                 onChange={handleInputChange}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900"
+                className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 font-medium shadow-sm"
               >
                 <option value="">Pozisyon Seçiniz</option>
                 <option value="staj">Staj</option>
@@ -206,7 +213,7 @@ export default function Kariyer() {
             {formData.position === 'staj' && (
               <>
                 <div>
-                  <label htmlFor="school" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="school" className="block text-sm font-semibold text-gray-900 mb-2">
                     Okul <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -217,12 +224,12 @@ export default function Kariyer() {
                     onChange={handleInputChange}
                     placeholder="Okul adı"
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900"
+                    className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 font-medium shadow-sm"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="department" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="department" className="block text-sm font-semibold text-gray-900 mb-2">
                     Bölüm <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -233,12 +240,12 @@ export default function Kariyer() {
                     onChange={handleInputChange}
                     placeholder="Bölüm adı"
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900"
+                    className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 font-medium shadow-sm"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="year" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="year" className="block text-sm font-semibold text-gray-900 mb-2">
                     Sınıf
                   </label>
                   <input
@@ -248,13 +255,13 @@ export default function Kariyer() {
                     value={formData.year}
                     onChange={handleInputChange}
                     placeholder="Örn: 3. Sınıf"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900"
+                    className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 font-medium shadow-sm"
                   />
                 </div>
               </>
             )}
             <div>
-              <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="message" className="block text-sm font-semibold text-gray-900 mb-2">
                 Mesajınız
               </label>
               <textarea
@@ -264,12 +271,12 @@ export default function Kariyer() {
                 onChange={handleInputChange}
                 rows={4}
                 placeholder="Eklemek istediğiniz bir mesaj varsa yazabilirsiniz..."
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900"
+                className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 font-medium shadow-sm"
               />
             </div>
 
             <div>
-              <label htmlFor="cv" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="cv" className="block text-sm font-semibold text-gray-900 mb-2">
                 CV Yükleyiniz (PDF, DOC, DOCX)
               </label>
               <input
@@ -278,7 +285,7 @@ export default function Kariyer() {
                 name="cv"
                 accept=".pdf,.doc,.docx"
                 onChange={(e) => setFormData(prev => ({ ...prev, cv: e.target.files[0] }))}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900"
+                className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 font-medium shadow-sm"
               />
             </div>
 
@@ -290,9 +297,9 @@ export default function Kariyer() {
                 checked={formData.consent}
                 onChange={handleInputChange}
                 required
-                className="mt-1 w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
+                className="mt-1 w-4 h-4 text-orange-600 border-2 border-gray-300 rounded focus:ring-orange-500"
               />
-              <label htmlFor="consent" className="text-sm text-gray-700">
+              <label htmlFor="consent" className="text-sm font-medium text-gray-900">
                 <span className="text-red-500">*</span> Kişisel verilerimin KVKK Aydınlatma Metni kapsamında işlenmesine izin veriyorum.
               </label>
             </div>
@@ -305,6 +312,7 @@ export default function Kariyer() {
               {isSubmitting ? 'Gönderiliyor...' : 'Başvur'}
             </button>
           </form>
+          </div>
         </div>
       </section>
 

@@ -3,12 +3,14 @@
 
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
-import { useParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 
 export default function HaberDetay() {
   const params = useParams();
+  const searchParams = useSearchParams();
   const slug = params.slug;
+  const page = searchParams.get('page') || '1';
 
   // Haber verileri - slug'a göre içerik
   const haberData = {
@@ -39,6 +41,13 @@ export default function HaberDetay() {
       category: "Proje",
       videoUrl: "/haberler/elektroaktif.mp4",
       description: `Cumhuriyet şehrimiz Sivas'ta proje geliştirmesini ve anahtar teslim kurulumunu yaptığımız 1200 kW'lık güneş enerjisi santralimizin geçici kabulü tamamlanıp üretime başlamıştır. Yatırımcımız Elektroaktif Bobinaj firması ve ülkemize hayırlı olmasını dileriz.`
+    },
+    'toyotetsu-226mw-ges': {
+      title: "Toyotetsu Otomotiv'e ait 2.26 MW'lık güneş enerjisi santralini anahtar teslim olarak tamamlamış bulunmaktayız.",
+      date: "25.09.2024",
+      category: "Proje",
+      videoUrl: "/haberler/tt3.mp4",
+      description: `Tamamlamış olduğumuz bu proje Toyota Türkiye ve TOSB OTOMOTİV TEDARİK SANAYİ İHTİSAS ORGANİZE SANAYİ BÖLGESİ'nin ilk GES projesi olma özelliğini taşımaktadır. Ülkemiz için büyük değer oluşturan TOYOTETSU Otomotiv Parçaları San. ve Tic. A.Ş. projesinin başından sonuna kadar yer almak bizi ayrıca onurlandırmıştır.`
     }
   };
 
@@ -159,19 +168,23 @@ export default function HaberDetay() {
               </div>
             )}
 
+            {/* Geri Dön Butonu */}
+            <div className="text-center pt-4">
+              <a
+                href={`/haberler?page=${page}`}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-orange-500 hover:bg-orange-600 text-white font-semibold transition-colors"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Haberlere Dön
+              </a>
+            </div>
+
             {/* Video yoksa mesaj */}
             {!haber.videoUrl && !haber.description && (
               <div className="text-center py-12">
                 <p className="text-gray-500 mb-4">Video ve açıklama yakında eklenecektir.</p>
-                <a
-                  href="/haberler"
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-orange-500 hover:bg-orange-600 text-white font-semibold transition-colors"
-                >
-                  Haberlere Dön
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                  </svg>
-                </a>
               </div>
             )}
           </motion.div>
