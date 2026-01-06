@@ -661,7 +661,13 @@ function StatsScrollReveal() {
   const isInView = useInView(ref, { once: true, amount: 0.2 });
 
   return (
-    <section id="istatistikler" className="py-16 bg-gray-50 relative overflow-hidden" ref={ref}>
+    <section id="istatistikler" className="py-16 bg-white relative overflow-hidden" ref={ref}>
+      {/* Üst turuncu çizgi */}
+      <div className="absolute top-0 left-0 right-0 h-1.5 bg-orange-400"></div>
+      
+      {/* Alt turuncu çizgi */}
+      <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-orange-400"></div>
+      
       <motion.div 
         className="absolute -left-24 md:-left-12 top-1/2 -translate-y-1/2 w-[115px] h-[115px] md:w-[173px] md:h-[173px] text-[#fbbf24] opacity-40 pointer-events-none select-none"
         animate={isInView ? { rotate: 360 } : { rotate: 0 }}
