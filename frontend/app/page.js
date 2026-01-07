@@ -252,26 +252,26 @@ export default function Home() {
           <div className="w-full max-w-[95%] mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 grid grid-cols-1 lg:grid-cols-2 gap-0 items-stretch">
             {/* Sol taraf - Metin (beyaz arka plan üzerinde siyah yazı) */}
             <motion.div 
-              className="relative flex flex-col justify-center p-3 md:p-4 lg:p-5 bg-white"
+              className="relative flex flex-col justify-between pt-3 md:pt-4 lg:pt-5 px-3 md:px-4 lg:px-5 pb-3 md:pb-4 lg:pb-5 bg-white"
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.6, ease: "easeOut" }}
             >
-              {/* İçerik */}
+              {/* İçerik - Üst kısım */}
               <div className="relative z-10">
-                <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-5 text-center">
+                <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-8 text-center">
                   Zena Enerji ile Tam Hizmet
                 </h2>
                 
-                <div className="space-y-1.5 text-gray-900 mb-5">
+                <div className="space-y-1.5 text-gray-900 mb-8">
                   <p className="text-sm md:text-base leading-relaxed">
                     Zena Enerji, güneş enerjisi sektöründe proje geliştirme, imar uygulamaları, saha kurulumu, geçici kabul işlemleri konusunda uluslararası saygın firmalar ile çalışarak Lisanslı, Lisanssız birçok büyük ve ses getiren projelerin mimarı olmuştur. İHA'lar ile termal kamera kullanarak havadan inceleme ve izleme yaparak güneş PV tesislerindeki sorunları tespit edebilir ve portföy verimliliğini artırabiliriz.
                   </p>
                 </div>
                 
-                {/* Hizmet kartları - sol tarafın içinde */}
-                <div className="grid grid-cols-3 gap-1.5 md:gap-2">
+                {/* Hizmet kartları - Yazıya yakın */}
+                <div className="grid grid-cols-3 gap-3 md:gap-4">
                   {serviceCards.map((card, index) => (
                     <motion.div 
                       key={card.title} 
@@ -311,6 +311,62 @@ export default function Home() {
 
       {/* Türkiye'de Güneş Enerjisi İstatistikleri Bölümü */}
       <StatsScrollReveal />
+
+      {/* Zena Enerji Hakkında */}
+      <section className="py-16 bg-white text-center">
+          <div className="max-w-6xl mx-auto px-6">
+            {/* <p className="text-xs font-semibold tracking-[0.6em] text-orange-500 mb-4">HAKKIMIZDA</p> */}
+            <motion.div 
+              className="inline-flex items-center justify-center gap-4 mb-6"
+              initial={{ opacity: 0, y: -20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+            >
+              <span className="w-12 h-px bg-gray-300" />
+              <h3 className="text-3xl md:text-4xl font-bold text-gray-900 uppercase">Hakkında</h3>
+              <span className="w-12 h-px bg-gray-300" />
+            </motion.div>
+            <motion.div 
+              className="space-y-5 text-sm md:text-base text-gray-700 leading-relaxed"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+            >
+              <p>
+                2015 yılından itibaren güneş enerjisi sektöründe faaliyet gösteren firmamız, sahip olduğumuz bilgi birikimini uzman iş gücüyle birleştirerek
+                Türkiye'de güneş enerjisi santrali yatırımları konusunda birçok projeyi başarıyla hayata geçirmiştir.
+              </p>
+              <p>
+                Proje çizimi, proje geliştirme ve uygulama süreçlerinde sektörün önde gelen firmalarından olan Zena Enerji, Türkiye'de ki ilk ve en büyük Endüstriyel Çatı Güneş Elektrik Santralini ve Türkiye'nin ilk ve tek kurulum için tüm özellikleri yansıtan Test Güneş Elektrik Santralini kurmuştur.
+                Dünyaca ünlü firmaların projelerini tamamlayan firmamız, her bir projede farklı bir deneyim sürecinden geçmiş, edindiği profesyonellik ve disiplini çalışma prensipleri haline getirmiştir.
+              </p>
+              <p>
+                Bununla birlikte müşteri bağlılığına verdiği değerle alınan işleri zamanında tamamlayarak güven ve dürüstlük ilkelerine sahip çıkmış ve aynı ilkelerle yoluna devam eden bir şirket olmuştur.
+              </p>
+              <p>
+                Türkiye'de güneş enerjisi santralleri kurulması ile ilgili olarak ilk projeleri gerçekleştiren Zena Enerji'nin bünyesinde sektörün en tecrübeli mühendis ve teknikerleri görev almaktadır.
+                Zena Enerji olarak edindiğimiz tecrübelere, birlikte çalıştığımız uzman iş gücüne ve sektördeki saygın bilinirliliğimize dayanarak ülkemiz ve dünyamız adına daha yeşil bir gelecek için çalışmalarımıza devam etmekteyiz.
+              </p>
+            </motion.div>
+            <motion.a
+              href="/hakkimizda"
+              className="inline-flex items-center gap-2 px-5 py-2.5 mt-10 rounded-full bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold transition"
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.5, delay: 0.4, ease: "easeOut" }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Daha Fazla Bilgi
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M13 5l7 7-7 7" />
+              </svg>
+            </motion.a>
+          </div>
+        </section>
 
       {/* Solar Güç Hesaplama CTA (görselli banner) */}
       <section className="py-[3.4rem] bg-gray-50 px-0">
@@ -368,62 +424,6 @@ export default function Home() {
                 </motion.div>
               </div>
             </motion.div>
-          </div>
-        </section>
-
-      {/* Zena Enerji Hakkında */}
-      <section className="py-16 bg-white text-center">
-          <div className="max-w-6xl mx-auto px-6">
-            {/* <p className="text-xs font-semibold tracking-[0.6em] text-orange-500 mb-4">HAKKIMIZDA</p> */}
-            <motion.div 
-              className="inline-flex items-center justify-center gap-4 mb-6"
-              initial={{ opacity: 0, y: -20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.5, ease: "easeOut" }}
-            >
-              <span className="w-12 h-px bg-gray-300" />
-              <h3 className="text-3xl md:text-4xl font-bold text-gray-900 uppercase">Hakkında</h3>
-              <span className="w-12 h-px bg-gray-300" />
-            </motion.div>
-            <motion.div 
-              className="space-y-5 text-sm md:text-base text-gray-700 leading-relaxed"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
-            >
-              <p>
-                2015 yılından itibaren güneş enerjisi sektöründe faaliyet gösteren firmamız, sahip olduğumuz bilgi birikimini uzman iş gücüyle birleştirerek
-                Türkiye'de güneş enerjisi santrali yatırımları konusunda birçok projeyi başarıyla hayata geçirmiştir.
-              </p>
-              <p>
-                Proje çizimi, proje geliştirme ve uygulama süreçlerinde sektörün önde gelen firmalarından olan Zena Enerji, Türkiye'de ki ilk ve en büyük Endüstriyel Çatı Güneş Elektrik Santralini ve Türkiye'nin ilk ve tek kurulum için tüm özellikleri yansıtan Test Güneş Elektrik Santralini kurmuştur.
-                Dünyaca ünlü firmaların projelerini tamamlayan firmamız, her bir projede farklı bir deneyim sürecinden geçmiş, edindiği profesyonellik ve disiplini çalışma prensipleri haline getirmiştir.
-              </p>
-              <p>
-                Bununla birlikte müşteri bağlılığına verdiği değerle alınan işleri zamanında tamamlayarak güven ve dürüstlük ilkelerine sahip çıkmış ve aynı ilkelerle yoluna devam eden bir şirket olmuştur.
-              </p>
-              <p>
-                Türkiye'de güneş enerjisi santralleri kurulması ile ilgili olarak ilk projeleri gerçekleştiren Zena Enerji'nin bünyesinde sektörün en tecrübeli mühendis ve teknikerleri görev almaktadır.
-                Zena Enerji olarak edindiğimiz tecrübelere, birlikte çalıştığımız uzman iş gücüne ve sektördeki saygın bilinirliliğimize dayanarak ülkemiz ve dünyamız adına daha yeşil bir gelecek için çalışmalarımıza devam etmekteyiz.
-              </p>
-            </motion.div>
-            <motion.a
-              href="/hakkimizda"
-              className="inline-flex items-center gap-2 px-5 py-2.5 mt-10 rounded-full bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold transition"
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.5, delay: 0.4, ease: "easeOut" }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Daha Fazla Bilgi
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M13 5l7 7-7 7" />
-              </svg>
-            </motion.a>
           </div>
         </section>
 
@@ -662,28 +662,32 @@ function StatsScrollReveal() {
 
   return (
     <section id="istatistikler" className="py-16 bg-white relative overflow-hidden" ref={ref}>
-      {/* Üst turuncu çizgi */}
-      <div className="absolute top-0 left-0 right-0 h-1.5 bg-orange-400"></div>
-      
-      {/* Alt turuncu çizgi */}
-      <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-orange-400"></div>
-      
       <motion.div 
-        className="absolute -left-24 md:-left-12 top-1/2 -translate-y-1/2 w-[115px] h-[115px] md:w-[173px] md:h-[173px] text-[#fbbf24] opacity-40 pointer-events-none select-none"
+        className="absolute -left-[60px] md:-left-[90px] top-1/2 -translate-y-1/2 w-[162px] h-[162px] md:w-[234px] md:h-[234px] text-[#fbbf24] opacity-40 pointer-events-none select-none"
         animate={isInView ? { rotate: 360 } : { rotate: 0 }}
         transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
       >
         <svg viewBox="0 0 200 200" fill="none" stroke="currentColor" className="w-full h-full drop-shadow-[0_8px_24px_rgba(255,160,55,0.25)]">
-          <circle cx="100" cy="100" r="48" strokeWidth="14" />
-          <g strokeWidth="14" strokeLinecap="round">
-            <line x1="100" y1="10" x2="100" y2="0" />
-            <line x1="100" y1="200" x2="100" y2="190" />
-            <line x1="10" y1="100" x2="0" y2="100" />
-            <line x1="200" y1="100" x2="190" y2="100" />
-            <line x1="31" y1="31" x2="17" y2="17" />
-            <line x1="169" y1="169" x2="183" y2="183" />
-            <line x1="31" y1="169" x2="17" y2="183" />
-            <line x1="169" y1="31" x2="183" y2="17" />
+          <circle cx="100" cy="100" r="30" strokeWidth="14" strokeLinecap="round" />
+          <g strokeWidth="14" strokeLinecap="round" strokeLinejoin="round">
+            {/* Tüm ışınlar çemberden 20px uzakta başlar ve tam 60px uzunluğundadır */}
+            {/* Merkez: (100, 100), Çember yarıçapı: 30, Başlangıç yarıçapı: 50, Işın uzunluğu: 60 */}
+            {/* Üst (90 derece) - tam 60px uzunluk */}
+            <line x1="100" y1="50" x2="100" y2="-10" />
+            {/* Alt (270 derece) - tam 60px uzunluk */}
+            <line x1="100" y1="150" x2="100" y2="210" />
+            {/* Sağ (0 derece) - tam 60px uzunluk */}
+            <line x1="150" y1="100" x2="210" y2="100" />
+            {/* Sol (180 derece) - tam 60px uzunluk */}
+            <line x1="50" y1="100" x2="-10" y2="100" />
+            {/* Sağ üst çapraz (45 derece) - tam 60px uzunluk */}
+            <line x1="135.36" y1="64.64" x2="177.79" y2="22.21" />
+            {/* Sol alt çapraz (225 derece) - tam 60px uzunluk */}
+            <line x1="64.64" y1="135.36" x2="22.21" y2="177.79" />
+            {/* Sol üst çapraz (135 derece) - tam 60px uzunluk */}
+            <line x1="64.64" y1="64.64" x2="22.21" y2="22.21" />
+            {/* Sağ alt çapraz (315 derece) - tam 60px uzunluk */}
+            <line x1="135.36" y1="135.36" x2="177.79" y2="177.79" />
           </g>
         </svg>
       </motion.div>
