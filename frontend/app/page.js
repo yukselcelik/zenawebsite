@@ -662,35 +662,61 @@ function StatsScrollReveal() {
 
   return (
     <section id="istatistikler" className="py-16 bg-white relative overflow-hidden" ref={ref}>
-      <motion.div 
-        className="absolute -left-[60px] md:-left-[90px] top-1/2 -translate-y-1/2 w-[162px] h-[162px] md:w-[234px] md:h-[234px] text-[#fbbf24] opacity-40 pointer-events-none select-none"
-        animate={isInView ? { rotate: 360 } : { rotate: 0 }}
-        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-      >
-        <svg viewBox="0 0 200 200" fill="none" stroke="currentColor" className="w-full h-full drop-shadow-[0_8px_24px_rgba(255,160,55,0.25)]">
-          <circle cx="100" cy="100" r="30" strokeWidth="14" strokeLinecap="round" />
-          <g strokeWidth="14" strokeLinecap="round" strokeLinejoin="round">
-            {/* Tüm ışınlar çemberden 20px uzakta başlar ve tam 60px uzunluğundadır */}
-            {/* Merkez: (100, 100), Çember yarıçapı: 30, Başlangıç yarıçapı: 50, Işın uzunluğu: 60 */}
-            {/* Üst (90 derece) - tam 60px uzunluk */}
-            <line x1="100" y1="50" x2="100" y2="-10" />
-            {/* Alt (270 derece) - tam 60px uzunluk */}
-            <line x1="100" y1="150" x2="100" y2="210" />
-            {/* Sağ (0 derece) - tam 60px uzunluk */}
-            <line x1="150" y1="100" x2="210" y2="100" />
-            {/* Sol (180 derece) - tam 60px uzunluk */}
-            <line x1="50" y1="100" x2="-10" y2="100" />
-            {/* Sağ üst çapraz (45 derece) - tam 60px uzunluk */}
-            <line x1="135.36" y1="64.64" x2="177.79" y2="22.21" />
-            {/* Sol alt çapraz (225 derece) - tam 60px uzunluk */}
-            <line x1="64.64" y1="135.36" x2="22.21" y2="177.79" />
-            {/* Sol üst çapraz (135 derece) - tam 60px uzunluk */}
-            <line x1="64.64" y1="64.64" x2="22.21" y2="22.21" />
-            {/* Sağ alt çapraz (315 derece) - tam 60px uzunluk */}
-            <line x1="135.36" y1="135.36" x2="177.79" y2="177.79" />
-          </g>
+      <div className="absolute -left-[60px] md:-left-[90px] top-1/2 -translate-y-1/2 w-[162px] h-[162px] md:w-[234px] md:h-[234px] opacity-40 pointer-events-none select-none">
+        {/* Güneş merkezi - dolu, güneş tonlarında */}
+        <svg viewBox="0 0 200 200" fill="none" className="w-full h-full absolute inset-0">
+          <defs>
+            <radialGradient id="sunGradient" cx="50%" cy="50%">
+              <stop offset="0%" stopColor="#FFE135" stopOpacity="0.9" />
+              <stop offset="70%" stopColor="#FFD700" stopOpacity="0.8" />
+              <stop offset="100%" stopColor="#FFA500" stopOpacity="0.9" />
+            </radialGradient>
+          </defs>
+          {/* Ana güneş dairesi - dolu */}
+          <circle cx="100" cy="100" r="38" fill="url(#sunGradient)" stroke="#FF8C00" strokeWidth="2" />
+          {/* İç highlight */}
+          <circle cx="100" cy="100" r="28" fill="#FFE135" opacity="0.4" />
         </svg>
-      </motion.div>
+        
+        {/* Işınlar - animasyonlu */}
+        <motion.svg 
+          viewBox="0 0 200 200" 
+          fill="none" 
+          stroke="#FFA500"
+          className="w-full h-full absolute inset-0"
+          style={{ transformOrigin: '50% 50%' }}
+          animate={isInView ? {
+            rotate: [0, 10, -10, 10, -10, 0]
+          } : { rotate: 0 }}
+          transition={{
+            duration: 4,
+            repeat: Infinity,
+            ease: "easeInOut",
+            repeatType: "reverse"
+          }}
+        >
+          <g strokeWidth="14" strokeLinecap="round" strokeLinejoin="round" stroke="#FFA500" opacity="0.8">
+            {/* Tüm ışınlar çemberden 20px uzakta başlar ve tam 60px uzunluğundadır */}
+            {/* Merkez: (100, 100), Çember yarıçapı: 38, Başlangıç yarıçapı: 58, Işın uzunluğu: 60 */}
+            {/* Üst (90 derece) - tam 60px uzunluk */}
+            <line x1="100" y1="42" x2="100" y2="-18" />
+            {/* Alt (270 derece) - tam 60px uzunluk */}
+            <line x1="100" y1="158" x2="100" y2="218" />
+            {/* Sağ (0 derece) - tam 60px uzunluk */}
+            <line x1="158" y1="100" x2="218" y2="100" />
+            {/* Sol (180 derece) - tam 60px uzunluk */}
+            <line x1="42" y1="100" x2="-18" y2="100" />
+            {/* Sağ üst çapraz (45 derece) - tam 60px uzunluk */}
+            <line x1="141.01" y1="58.99" x2="183.44" y2="16.56" />
+            {/* Sol alt çapraz (225 derece) - tam 60px uzunluk */}
+            <line x1="58.99" y1="141.01" x2="16.56" y2="183.44" />
+            {/* Sol üst çapraz (135 derece) - tam 60px uzunluk */}
+            <line x1="58.99" y1="58.99" x2="16.56" y2="16.56" />
+            {/* Sağ alt çapraz (315 derece) - tam 60px uzunluk */}
+            <line x1="141.01" y1="141.01" x2="183.44" y2="183.44" />
+          </g>
+        </motion.svg>
+      </div>
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div 
           className="text-center max-w-2xl mx-auto"
