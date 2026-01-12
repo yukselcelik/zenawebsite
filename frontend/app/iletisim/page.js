@@ -97,12 +97,13 @@ export default function Iletisim() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             
             {/* Sol taraf - Görsel */}
-            <div className="relative">
+            <div className="relative pt-8">
               <div className="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden">
                 <img 
-                  src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" 
+                  src="/zena1.png" 
                   alt="Contact us" 
                   className="w-full h-full object-cover"
+                  style={{ objectPosition: 'center 40%' }}
                 />
               </div>
             </div>
