@@ -81,7 +81,7 @@ export default function InternshipApplications() {
 
   const handleDeleteConfirm = async () => {
     if (!deletingApplicationId) return;
-    
+
     try {
       setDeleteLoading(true);
       await ApiService.deleteInternshipApplication(deletingApplicationId);
@@ -182,7 +182,7 @@ export default function InternshipApplications() {
                             {new Date(application.createdAt).toLocaleString('tr-TR')}
                           </p>
                         </div>
-                        
+
                         {application.message && (
                           <div className="mt-3">
                             <p className="text-sm font-medium text-gray-700 mb-1">Mesaj:</p>
@@ -210,11 +210,10 @@ export default function InternshipApplications() {
                                 handleDownloadCv(application.id, application.originalFileName);
                               }}
                               disabled={downloadingCv[application.id]}
-                              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer flex items-center gap-2 ${
-                                downloadingCv[application.id]
+                              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer flex items-center gap-2 ${downloadingCv[application.id]
                                   ? 'bg-gray-400 text-white cursor-not-allowed'
                                   : 'bg-orange-500 hover:bg-orange-600 text-white'
-                              }`}
+                                }`}
                             >
                               {downloadingCv[application.id] ? (
                                 <>

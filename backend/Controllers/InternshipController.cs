@@ -23,10 +23,11 @@ public class InternshipController(
         {
             if (string.IsNullOrWhiteSpace(request.FullName) ||
                 string.IsNullOrWhiteSpace(request.Email) ||
-                string.IsNullOrWhiteSpace(request.Phone))
+                string.IsNullOrWhiteSpace(request.Phone) ||
+                string.IsNullOrWhiteSpace(request.Position))
             {
                 return Ok(ApiResult<InternshipApplicationResponseDto>.BadRequest(
-                    "Zorunlu alanlar eksik: Ad Soyad, E-posta, Telefon"));
+                    "Zorunlu alanlar eksik: Ad Soyad, E-posta, Telefon, Pozisyon"));
             }
 
             var result = await internshipService.CreateApplicationAsync(request);
