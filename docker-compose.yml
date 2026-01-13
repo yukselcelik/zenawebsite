@@ -1,4 +1,3 @@
-version: "3.8"
 services:
   # db:
   #   image: postgres:15
@@ -42,9 +41,9 @@ services:
     volumes:
       - ./backend/wwwroot:/app/wwwroot
       - ./backend/logs:/app/logs
-    depends_on:
-      db:
-        condition: service_healthy
+    # depends_on:
+    #   db:
+    #     condition: service_healthy
     networks:
       - zena_network
       - monitoring
@@ -72,5 +71,5 @@ networks:
   monitoring:
     external: true
 
-volumes:
-  pgdata:
+# volumes:
+#   pgdata:
