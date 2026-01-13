@@ -130,7 +130,7 @@ export default function Header({ forceDark = false }) {
                     Biz Kimiz?
                   </Link>
                   <Link
-                    href="/#referanslarimiz"
+                    href="/referanslar"
                     className="block px-4 py-2 text-sm transition-colors text-gray-800 hover:bg-orange-50 hover:text-orange-500"
                     onClick={() => setIsAboutOpen(false)}
                   >
