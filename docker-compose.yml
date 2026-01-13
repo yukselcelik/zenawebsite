@@ -1,23 +1,22 @@
-version: "3.8"
 services:
-  db:
-    image: postgres:15
-    container_name: zena_db
-    environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: 12345
-      POSTGRES_DB: zena1
-    ports:
-      - "5432:5432"
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    networks:
-      - zena_network
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U admin -d zena1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+  # db:
+  #   image: postgres:15
+  #   container_name: zena_db
+  #   environment:
+  #     POSTGRES_USER: admin
+  #     POSTGRES_PASSWORD: 12345
+  #     POSTGRES_DB: zena1
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - pgdata:/var/lib/postgresql/data
+  #   networks:
+  #     - zena_network
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "pg_isready -U admin -d zena1"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
 
   backend:
     build:
@@ -29,21 +28,22 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:5133
-      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=zena1;Username=admin;Password=12345;TrustServerCertificate=True
+      - ConnectionStrings__DefaultConnection=Host=72.61.158.70:5432;Database=zenadb;Username=admin;Password=;TrustServerCertificate=True
       - Jwt__Key=e12126f62167195ccc74cb7309da6c03!
       - Jwt__Issuer=ZenaBackend
       - Jwt__Audience=ZenaBackend
       - Cors__AllowedOrigins__0=http://localhost:3000
       - Cors__AllowedOrigins__1=http://localhost:3001
       - Cors__AllowedOrigins__2=http://frontend:3000
+      - Cors__AllowedOrigins__3=http://72.61.158.70:3000
       - Loki__Url=http://loki:3100
       - OpenTelemetry__OtlpEndpoint=http://otel-collector:4317
     volumes:
       - ./backend/wwwroot:/app/wwwroot
       - ./backend/logs:/app/logs
-    depends_on:
-      db:
-        condition: service_healthy
+    # depends_on:
+    #   db:
+    #     condition: service_healthy
     networks:
       - zena_network
       - monitoring
@@ -53,13 +53,13 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        - NEXT_PUBLIC_API_URL=http://localhost:5133
+        - NEXT_PUBLIC_API_URL=http://72.61.158.70:5133
     container_name: zena_frontend
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV=production
-      - NEXT_PUBLIC_API_URL=http://localhost:5133
+      - NEXT_PUBLIC_API_URL=http://72.61.158.70:5133
     depends_on:
       - backend
     networks:
@@ -71,5 +71,5 @@ networks:
   monitoring:
     external: true
 
-volumes:
-  pgdata:
+# volumes:
+#   pgdata:

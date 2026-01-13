@@ -3,13 +3,13 @@
 
 'use client'; // Client-side bileşen - Framer Motion animasyonları için gerekli
 
-import { useState, useEffect } from 'react'; // useState ve useEffect hook'ları - sayfalama için
+import { useState, useEffect, Suspense } from 'react'; // useState ve useEffect hook'ları - sayfalama için
 import { useSearchParams, useRouter } from 'next/navigation'; // URL parametreleri için
 import Header from '../components/Header'; // Header bileşenini import ediyoruz
 import Footer from '../components/Footer'; // Footer bileşenini import ediyoruz
 import { motion } from 'framer-motion'; // Framer Motion - animasyonlar için
 
-export default function Haberler() {
+function HaberlerContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   
@@ -491,5 +491,24 @@ export default function Haberler() {
       {/* Footer bileşeni */}
       <Footer />
     </div>
+  );
+}
+
+export default function Haberler() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-white">
+        <Header />
+        <div className="flex items-center justify-center h-screen">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
+            <p className="text-gray-600">Yükleniyor...</p>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    }>
+      <HaberlerContent />
+    </Suspense>
   );
 }
