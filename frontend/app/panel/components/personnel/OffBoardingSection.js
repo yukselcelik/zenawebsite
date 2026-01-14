@@ -34,6 +34,7 @@ export default function OffBoardingSection({ offBoarding, userId, onUpdate }) {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [documentToDelete, setDocumentToDelete] = useState(null);
+  const [documentsExpanded, setDocumentsExpanded] = useState(false);
 
   // offBoarding prop'u değiştiğinde formData'yı güncelle
   useEffect(() => {
@@ -269,22 +270,22 @@ export default function OffBoardingSection({ offBoarding, userId, onUpdate }) {
               İş Çıkışını Yap
             </button>
           )}
-          {isTerminated && (
+          {isTerminated && !isEditing && (
             <button
-              onClick={() => isEditing ? handleSave() : setIsEditing(true)}
+              onClick={() => setIsEditing(true)}
               className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm cursor-pointer"
             >
-              {isEditing ? 'Kaydet' : 'Düzenle'}
+              Düzenle
             </button>
           )}
-          {isEditing && showOffBoardingForm && (
+          {(isEditing && showOffBoardingForm) || (isTerminated && isEditing && !showOffBoardingForm) ? (
             <button
               onClick={handleSave}
               className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm cursor-pointer"
             >
               Kaydet
             </button>
-          )}
+          ) : null}
         </div>
       </div>
 
@@ -367,9 +368,24 @@ export default function OffBoardingSection({ offBoarding, userId, onUpdate }) {
 
           {/* İşten Ayrılma Belgeleri - Sadece işten ayrılmışsa göster */}
           <div className="mt-6">
-            <h4 className="text-md font-semibold text-gray-800 mb-4">İşten Ayrılma Belgeleri</h4>
-            <div className="space-y-4">
-              {DOCUMENT_TYPES.map(docType => {
+            <button
+              type="button"
+              onClick={() => setDocumentsExpanded(!documentsExpanded)}
+              className="flex items-center justify-between w-full mb-4 text-left hover:bg-gray-50 p-2 rounded-lg transition-colors"
+            >
+              <h4 className="text-md font-semibold text-gray-800">İşten Ayrılma Belgeleri</h4>
+              <svg
+                className={`w-5 h-5 text-gray-600 transition-transform duration-200 ${documentsExpanded ? 'transform rotate-180' : ''}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            {documentsExpanded && (
+              <div className="space-y-4">
+                {DOCUMENT_TYPES.map(docType => {
                 const document = getDocumentByType(docType.value);
                 const hasDocument = !!document;
                 
@@ -432,7 +448,8 @@ export default function OffBoardingSection({ offBoarding, userId, onUpdate }) {
                   </div>
                 );
               })}
-            </div>
+              </div>
+            )}
           </div>
         </>
       )}
