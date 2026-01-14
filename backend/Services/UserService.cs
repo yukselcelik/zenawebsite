@@ -118,7 +118,8 @@ public class UserService(ApplicationDbContext context, ILogger<UserService> logg
                     if (!string.IsNullOrWhiteSpace(docPath))
                     {
                         var trimmed = docPath.Trim();
-                        var baseUrlLocal = configuration["FileStorage:BaseUrl"]?.TrimEnd('/') ?? "http://localhost:5133";
+                        var baseUrlLocal = configuration["FileStorage:BaseUrl"]?.TrimEnd('/') ??
+                                           "http://localhost:5133";
                         if (trimmed.StartsWith("http", StringComparison.OrdinalIgnoreCase))
                         {
                             docUrl = trimmed;
@@ -136,6 +137,7 @@ public class UserService(ApplicationDbContext context, ILogger<UserService> logg
                             docUrl = $"{baseUrlLocal}/uploads/social-security/{trimmed}";
                         }
                     }
+
                     return new SocialSecurityDocumentDto
                     {
                         Id = d.Id,
@@ -174,6 +176,7 @@ public class UserService(ApplicationDbContext context, ILogger<UserService> logg
                         docUrl = $"{baseUrlLocal}/uploads/social-security/{trimmed}";
                     }
                 }
+
                 return new SocialSecurityDocumentDto
                 {
                     Id = d.Id,
@@ -195,7 +198,8 @@ public class UserService(ApplicationDbContext context, ILogger<UserService> logg
                     if (!string.IsNullOrWhiteSpace(docPath))
                     {
                         var trimmed = docPath.Trim();
-                        var baseUrlLocal = configuration["FileStorage:BaseUrl"]?.TrimEnd('/') ?? "http://localhost:5133";
+                        var baseUrlLocal = configuration["FileStorage:BaseUrl"]?.TrimEnd('/') ??
+                                           "http://localhost:5133";
                         if (trimmed.StartsWith("http", StringComparison.OrdinalIgnoreCase))
                         {
                             docUrl = trimmed;
@@ -213,6 +217,7 @@ public class UserService(ApplicationDbContext context, ILogger<UserService> logg
                             docUrl = $"{baseUrlLocal}/uploads/legal-documents/{trimmed}";
                         }
                     }
+
                     return new LegalDocumentItemDto
                     {
                         Id = d.Id,
@@ -296,6 +301,7 @@ public class UserService(ApplicationDbContext context, ILogger<UserService> logg
             {
                 return ApiResult<UserDetailDto>.Unauthorized("Sosyal güvenlik numarası güncelleme yetkiniz yok");
             }
+
             user.SocialSecurityNumber = updateDto.SocialSecurityNumber;
         }
 
@@ -305,6 +311,7 @@ public class UserService(ApplicationDbContext context, ILogger<UserService> logg
             {
                 return ApiResult<UserDetailDto>.Unauthorized("Vergi numarası güncelleme yetkiniz yok");
             }
+
             user.TaxNumber = updateDto.TaxNumber;
         }
 
@@ -581,13 +588,15 @@ public class UserService(ApplicationDbContext context, ILogger<UserService> logg
                 : updateDto.StartDate.Value.ToUniversalTime();
             employmentInfo.StartDate = startDate;
         }
+
         if (updateDto.Position != null) employmentInfo.Position = updateDto.Position;
         if (updateDto.WorkType != null && Enum.TryParse<WorkTypeEnum>(updateDto.WorkType, out var workType))
         {
             employmentInfo.WorkType = workType;
         }
 
-        if (updateDto.ContractType != null && Enum.TryParse<ContractTypeEnum>(updateDto.ContractType, out var contractType))
+        if (updateDto.ContractType != null &&
+            Enum.TryParse<ContractTypeEnum>(updateDto.ContractType, out var contractType))
         {
             employmentInfo.ContractType = contractType;
         }
