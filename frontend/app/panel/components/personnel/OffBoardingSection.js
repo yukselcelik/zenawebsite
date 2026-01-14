@@ -77,6 +77,7 @@ export default function OffBoardingSection({ offBoarding, userId, onUpdate }) {
         offBoardingReason: formData.offBoardingReason ? parseInt(formData.offBoardingReason) : null
       });
       setIsEditing(false);
+      setShowOffBoardingForm(false);
       onUpdate();
     } catch (error) {
       console.error('Error saving offboarding:', error);
@@ -202,12 +203,37 @@ export default function OffBoardingSection({ offBoarding, userId, onUpdate }) {
     }
   }, [offBoarding, documents]);
 
+  // Personel işten ayrılmış mı kontrolü
+  const hasOffBoardingDate = offBoarding?.offBoardingDate != null && offBoarding.offBoardingDate !== '';
+  const isTerminated = hasOffBoardingDate || (isEditing && formData.offBoardingDate);
+  const [showOffBoardingForm, setShowOffBoardingForm] = useState(false);
+
   return (
     <div className="mb-6">
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-semibold text-gray-800">İşten Ayrılma Bilgileri</h3>
+        <h3 className="text-lg font-semibold text-gray-800">
+          İşten Ayrılma Bilgileri: {isTerminated 
+            ? (offBoarding?.offBoardingReasonName ? `(${offBoarding.offBoardingReasonName})` : 'İşten Ayrıldı')
+            : 'Şu Anda Devam Ediyor'
+          }
+        </h3>
         <div className="flex gap-2">
-          {isEditing && (
+          {isEditing && showOffBoardingForm && (
+            <button
+              onClick={() => {
+                setShowOffBoardingForm(false);
+                setIsEditing(false);
+                setFormData({
+                  offBoardingDate: offBoarding?.offBoardingDate ? new Date(offBoarding.offBoardingDate).toISOString().split('T')[0] : '',
+                  offBoardingReason: offBoarding?.offBoardingReason || ''
+                });
+              }}
+              className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 cursor-pointer text-sm"
+            >
+              İptal
+            </button>
+          )}
+          {isEditing && !showOffBoardingForm && (
             <button
               onClick={() => {
                 setIsEditing(false);
@@ -221,158 +247,189 @@ export default function OffBoardingSection({ offBoarding, userId, onUpdate }) {
               İptal
             </button>
           )}
-          <button
-            onClick={() => isEditing ? handleSave() : setIsEditing(true)}
-            className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm cursor-pointer"
-          >
-            {isEditing ? 'Kaydet' : 'Düzenle'}
-          </button>
-        </div>
-      </div>
-
-      {/* İşten Ayrılma Tarihi */}
-      <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-        <div className="flex items-center gap-4">
-          <label className="block text-sm font-medium text-gray-700 min-w-[180px]">
-            İşten Ayrılma Tarihi:
-          </label>
-          {isEditing ? (
-            <div className="flex flex-col gap-2">
-              <input
-                type="date"
-                value={formData.offBoardingDate}
-                onChange={(e) => setFormData({ ...formData, offBoardingDate: e.target.value })}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
-              />
-              {formData.offBoardingDate && (
-                <button
-                  type="button"
-                  onClick={() => setFormData({ ...formData, offBoardingDate: '' })}
-                  className="text-xs text-red-600 hover:text-red-800 underline self-start"
-                >
-                  Tarihi Temizle (Kullanıcıyı Tekrar Aktif Et)
-                </button>
-              )}
-              {formData.offBoardingDate && (
-                <p className="text-xs text-amber-600">
-                  ⚠️ Tarih girildiğinde kullanıcı sisteme giriş yapamayacak. Tarihi temizleyerek tekrar aktif edebilirsiniz.
-                </p>
-              )}
-            </div>
-          ) : (
-            <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg min-w-[200px]">
-              {offBoarding?.offBoardingDate 
-                ? (() => {
-                    try {
-                      const date = new Date(offBoarding.offBoardingDate);
-                      return !isNaN(date.getTime()) ? <span className="text-gray-900">{date.toLocaleDateString('tr-TR')}</span> : <span className="text-gray-500">Devam Ediyor</span>;
-                    } catch {
-                      return <span className="text-gray-500">Devam Ediyor</span>;
-                    }
-                  })()
-                : <span className="text-gray-500">Devam Ediyor</span>
-              }
-            </div>
+          {!isTerminated && !isEditing && (
+            <button
+              onClick={() => setIsEditing(true)}
+              className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm cursor-pointer"
+            >
+              Düzenle
+            </button>
+          )}
+          {!isTerminated && isEditing && !showOffBoardingForm && (
+            <button
+              onClick={() => setShowOffBoardingForm(true)}
+              className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm cursor-pointer"
+            >
+              İş Çıkışını Yap
+            </button>
+          )}
+          {isTerminated && (
+            <button
+              onClick={() => isEditing ? handleSave() : setIsEditing(true)}
+              className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm cursor-pointer"
+            >
+              {isEditing ? 'Kaydet' : 'Düzenle'}
+            </button>
+          )}
+          {isEditing && showOffBoardingForm && (
+            <button
+              onClick={handleSave}
+              className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm cursor-pointer"
+            >
+              Kaydet
+            </button>
           )}
         </div>
       </div>
 
-      {/* İşten Ayrılma Nedeni - Tarih girildiğinde (kaydetmeden önce) veya kaydedilmiş tarih varsa göster */}
-      {((isEditing && formData.offBoardingDate) || isActive) && (
-        <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-          <div className="flex items-center gap-4">
-            <label className="block text-sm font-medium text-gray-700 min-w-[180px]">
-              İşten Ayrılma Nedeni:
-            </label>
-            {isEditing ? (
-              <select
-                value={formData.offBoardingReason}
-                onChange={(e) => setFormData({ ...formData, offBoardingReason: e.target.value })}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 min-w-[300px]"
-              >
-                <option value="">Seçiniz</option>
-                {OFFBOARDING_REASONS.map(reason => (
-                  <option key={reason.value} value={reason.value}>{reason.label}</option>
-                ))}
-              </select>
-            ) : (
-              <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg min-w-[300px]">
-                <span className="text-gray-900">{offBoarding?.offBoardingReasonName || '-'}</span>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* İşten Ayrılma Belgeleri */}
-      <div className="mt-6">
-        <h4 className="text-md font-semibold text-gray-800 mb-4">İşten Ayrılma Belgeleri</h4>
-        <div className="space-y-4">
-          {DOCUMENT_TYPES.map(docType => {
-            const document = getDocumentByType(docType.value);
-            const hasDocument = !!document;
-            
-            return (
-              <div key={docType.value} className="border border-gray-200 rounded-lg p-4">
-                <div className="flex items-center justify-between">
-                  <label className="block text-sm font-medium text-gray-700 min-w-[250px]">
-                    {docType.label}:
-                  </label>
-                  <div className="flex gap-2">
+      {/* Eğer personel işten ayrılmışsa veya düzenleme modunda "İş Çıkışını Yap"a basıldıysa detayları göster */}
+      {(isTerminated || (isEditing && showOffBoardingForm)) && (
+        <>
+          {/* İşten Ayrılma Tarihi */}
+          <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+            <div className="flex items-center gap-4">
+              <label className="block text-sm font-medium text-gray-700 min-w-[180px]">
+                İşten Ayrılma Tarihi:
+              </label>
+              {isEditing ? (
+                <div className="flex flex-col gap-2">
+                  <input
+                    type="date"
+                    value={formData.offBoardingDate}
+                    onChange={(e) => setFormData({ ...formData, offBoardingDate: e.target.value })}
+                    className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                  />
+                  {formData.offBoardingDate && (
                     <button
                       type="button"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        handleDocumentUpload(docType.value);
-                      }}
-                      disabled={uploadingDocuments[docType.value]}
-                      className={`px-3 py-1 rounded text-sm ${
-                        uploadingDocuments[docType.value]
-                          ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                          : 'bg-blue-500 hover:bg-blue-600 text-white cursor-pointer'
-                      }`}
+                      onClick={() => setFormData({ ...formData, offBoardingDate: '' })}
+                      className="text-xs text-red-600 hover:text-red-800 underline self-start"
                     >
-                      {uploadingDocuments[docType.value] ? 'Yükleniyor...' : hasDocument ? 'Yeniden Yükle' : 'Yükle'}
+                      Tarihi Temizle (Kullanıcıyı Tekrar Aktif Et)
                     </button>
-                    {hasDocument && (
-                      <>
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            handleDocumentView(document);
-                          }}
-                          className="px-3 py-1 rounded text-sm bg-green-500 hover:bg-green-600 text-white cursor-pointer"
-                        >
-                          Görüntüle
-                        </button>
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            handleDocumentDelete(document.id);
-                          }}
-                          className="px-3 py-1 rounded text-sm bg-red-500 hover:bg-red-600 text-white cursor-pointer"
-                        >
-                          Sil
-                        </button>
-                      </>
-                    )}
-                  </div>
+                  )}
+                  {formData.offBoardingDate && (
+                    <p className="text-xs text-amber-600">
+                      ⚠️ Tarih girildiğinde kullanıcı sisteme giriş yapamayacak. Tarihi temizleyerek tekrar aktif edebilirsiniz.
+                    </p>
+                  )}
                 </div>
-                {hasDocument && (
-                  <p className="text-xs text-gray-500 mt-2">
-                    {document.originalFileName || 'Belge yüklü'}
-                  </p>
+              ) : (
+                <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg min-w-[200px]">
+                  {offBoarding?.offBoardingDate 
+                    ? (() => {
+                        try {
+                          const date = new Date(offBoarding.offBoardingDate);
+                          return !isNaN(date.getTime()) ? <span className="text-gray-900">{date.toLocaleDateString('tr-TR')}</span> : <span className="text-gray-500">Devam Ediyor</span>;
+                        } catch {
+                          return <span className="text-gray-500">Devam Ediyor</span>;
+                        }
+                      })()
+                    : <span className="text-gray-500">Devam Ediyor</span>
+                  }
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* İşten Ayrılma Nedeni - Tarih girildiğinde (kaydetmeden önce) veya kaydedilmiş tarih varsa göster */}
+          {((isEditing && showOffBoardingForm && formData.offBoardingDate) || isActive) && (
+            <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+              <div className="flex items-center gap-4">
+                <label className="block text-sm font-medium text-gray-700 min-w-[180px]">
+                  İşten Ayrılma Nedeni:
+                </label>
+                {isEditing ? (
+                  <select
+                    value={formData.offBoardingReason}
+                    onChange={(e) => setFormData({ ...formData, offBoardingReason: e.target.value })}
+                    className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 min-w-[300px]"
+                  >
+                    <option value="">Seçiniz</option>
+                    {OFFBOARDING_REASONS.map(reason => (
+                      <option key={reason.value} value={reason.value}>{reason.label}</option>
+                    ))}
+                  </select>
+                ) : (
+                  <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg min-w-[300px]">
+                    <span className="text-gray-900">{offBoarding?.offBoardingReasonName || '-'}</span>
+                  </div>
                 )}
               </div>
-            );
-          })}
-        </div>
-      </div>
+            </div>
+          )}
+
+          {/* İşten Ayrılma Belgeleri - Sadece işten ayrılmışsa göster */}
+          <div className="mt-6">
+            <h4 className="text-md font-semibold text-gray-800 mb-4">İşten Ayrılma Belgeleri</h4>
+            <div className="space-y-4">
+              {DOCUMENT_TYPES.map(docType => {
+                const document = getDocumentByType(docType.value);
+                const hasDocument = !!document;
+                
+                return (
+                  <div key={docType.value} className="border border-gray-200 rounded-lg p-4">
+                    <div className="flex items-center justify-between">
+                      <label className="block text-sm font-medium text-gray-700 min-w-[250px]">
+                        {docType.label}:
+                      </label>
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleDocumentUpload(docType.value);
+                          }}
+                          disabled={uploadingDocuments[docType.value]}
+                          className={`px-3 py-1 rounded text-sm ${
+                            uploadingDocuments[docType.value]
+                              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                              : 'bg-blue-500 hover:bg-blue-600 text-white cursor-pointer'
+                          }`}
+                        >
+                          {uploadingDocuments[docType.value] ? 'Yükleniyor...' : hasDocument ? 'Yeniden Yükle' : 'Yükle'}
+                        </button>
+                        {hasDocument && (
+                          <>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                handleDocumentView(document);
+                              }}
+                              className="px-3 py-1 rounded text-sm bg-green-500 hover:bg-green-600 text-white cursor-pointer"
+                            >
+                              Görüntüle
+                            </button>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                handleDocumentDelete(document.id);
+                              }}
+                              className="px-3 py-1 rounded text-sm bg-red-500 hover:bg-red-600 text-white cursor-pointer"
+                            >
+                              Sil
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                    {hasDocument && (
+                      <p className="text-xs text-gray-500 mt-2">
+                        {document.originalFileName || 'Belge yüklü'}
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </>
+      )}
 
       <ConfirmDialog
         open={confirmOpen}
