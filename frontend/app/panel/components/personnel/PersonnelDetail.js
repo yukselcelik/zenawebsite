@@ -5,6 +5,7 @@ import ApiService from '../../../../lib/api';
 import EmploymentInfoSection from './EmploymentInfoSection';
 import SocialSecuritySection from './SocialSecuritySection';
 import LegalDocumentsSection from './LegalDocumentsSection';
+import OffBoardingSection from './OffBoardingSection';
 import ContactInfoSection from '../user/ContactInfoSection';
 import EmergencyContactSection from '../user/EmergencyContactSection';
 import EducationInfoSection from '../user/EducationInfoSection';
@@ -21,21 +22,31 @@ export default function PersonnelDetail({ userId, onBack }) {
   const [socialSecuritySaving, setSocialSecuritySaving] = useState(false);
 
   useEffect(() => {
-    fetchUserDetail();
+    fetchUserDetail(true); // İlk yüklemede loading göster
   }, [userId]);
 
-  const fetchUserDetail = async () => {
+  const fetchUserDetail = async (showLoading = false) => {
     try {
-      setIsLoading(true);
+      if (showLoading) {
+        setIsLoading(true);
+      }
       const data = await ApiService.getUserDetail(userId);
       if (data?.data) {
+        console.log('User detail fetched:', data.data);
+        console.log('OffBoarding data:', data.data.offBoarding);
         setUserDetail(data.data);
         setSelectedRole(data.data.role === 'Manager' ? 'Manager' : 'Personel');
         setSocialSecurityNumber(data.data.socialSecurityNumber || '');
         setTaxNumber(data.data.taxNumber || '');
+      } else {
+        console.error('User detail data is missing:', data);
+        setUserDetail(null);
+        alert('Kullanıcı bilgileri alınamadı');
       }
     } catch (error) {
       console.error('Error fetching user detail:', error);
+      setUserDetail(null);
+      alert(error.message || 'Kullanıcı bilgileri yüklenirken hata oluştu');
     } finally {
       setIsLoading(false);
     }
@@ -340,6 +351,15 @@ export default function PersonnelDetail({ userId, onBack }) {
             onUpdate={fetchUserDetail}
           />
         </div>
+      </div>
+
+      {/* İşten Ayrılma Bilgileri - Sadece yönetici için */}
+      <div className="bg-white rounded-lg shadow p-6">
+        <OffBoardingSection 
+          offBoarding={userDetail.offBoarding || null} 
+          userId={userDetail.id}
+          onUpdate={() => fetchUserDetail(false)}
+        />
       </div>
     </div>
   );

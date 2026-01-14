@@ -11,8 +11,20 @@ namespace Zenabackend.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class UserController(UserService userService, SocialSecurityService socialSecurityService, LegalDocumentService legalDocumentService) : ControllerBase
+public class UserController : ControllerBase
 {
+    private readonly UserService _userService;
+    private readonly SocialSecurityService _socialSecurityService;
+    private readonly LegalDocumentService _legalDocumentService;
+    private readonly OffBoardingService _offBoardingService;
+
+    public UserController(UserService userService, SocialSecurityService socialSecurityService, LegalDocumentService legalDocumentService, OffBoardingService offBoardingService)
+    {
+        _userService = userService;
+        _socialSecurityService = socialSecurityService;
+        _legalDocumentService = legalDocumentService;
+        _offBoardingService = offBoardingService;
+    }
 
     [HttpGet("{id:int}")]
     public async Task<ActionResult<ApiResult<UserDetailDto>>> GetUserDetail(int id)
@@ -26,7 +38,7 @@ public class UserController(UserService userService, SocialSecurityService socia
         if (!Enum.TryParse<UserRoleEnum>(roleClaim, out var requestingUserRole))
             return Ok(ApiResult<UserDetailDto>.Unauthorized("Invalid role"));
 
-        var result = await userService.GetUserDetailAsync(id, requestingUserId, requestingUserRole);
+        var result = await _userService.GetUserDetailAsync(id, requestingUserId, requestingUserRole);
         return Ok(result);
     }
 
@@ -42,7 +54,7 @@ public class UserController(UserService userService, SocialSecurityService socia
         if (!Enum.TryParse<UserRoleEnum>(roleClaim, out var requestingUserRole))
             return Ok(ApiResult<UserDetailDto>.Unauthorized("Invalid role"));
 
-        var result = await userService.UpdateUserAsync(id, updateDto, requestingUserId, requestingUserRole);
+        var result = await _userService.UpdateUserAsync(id, updateDto, requestingUserId, requestingUserRole);
         return Ok(result);
     }
 
@@ -52,7 +64,7 @@ public class UserController(UserService userService, SocialSecurityService socia
         [FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 10)
     {
-        var result = await userService.GetPersonnelListAsync(pageNumber, pageSize);
+        var result = await _userService.GetPersonnelListAsync(pageNumber, pageSize);
         return Ok(result);
     }
 
@@ -60,7 +72,7 @@ public class UserController(UserService userService, SocialSecurityService socia
     [Authorize(Roles = "Manager")]
     public async Task<ActionResult<ApiResult<EmploymentInfoDto>>> CreateEmploymentInfo([FromBody] CreateEmploymentInfoDto createDto)
     {
-        var result = await userService.CreateEmploymentInfoAsync(createDto);
+        var result = await _userService.CreateEmploymentInfoAsync(createDto);
         return Ok(result);
     }
 
@@ -68,7 +80,7 @@ public class UserController(UserService userService, SocialSecurityService socia
     [Authorize(Roles = "Manager")]
     public async Task<ActionResult<ApiResult<EmploymentInfoDto>>> UpdateEmploymentInfo(int id, [FromBody] UpdateEmploymentInfoDto updateDto)
     {
-        var result = await userService.UpdateEmploymentInfoAsync(id, updateDto);
+        var result = await _userService.UpdateEmploymentInfoAsync(id, updateDto);
         return Ok(result);
     }
 
@@ -76,7 +88,7 @@ public class UserController(UserService userService, SocialSecurityService socia
     [Authorize(Roles = "Manager")]
     public async Task<ActionResult<ApiResult<bool>>> DeleteEmploymentInfo(int id)
     {
-        var result = await userService.DeleteEmploymentInfoAsync(id);
+        var result = await _userService.DeleteEmploymentInfoAsync(id);
         return Ok(result);
     }
 
@@ -97,7 +109,7 @@ public class UserController(UserService userService, SocialSecurityService socia
             return Ok(ApiResult<string>.BadRequest("Geçerli bir dosya yükleyiniz"));
         }
 
-        var result = await userService.UploadProfilePhotoAsync(id, photo, requestingUserId, requestingUserRole);
+        var result = await _userService.UploadProfilePhotoAsync(id, photo, requestingUserId, requestingUserRole);
         return Ok(result);
     }
 
@@ -113,7 +125,7 @@ public class UserController(UserService userService, SocialSecurityService socia
         if (!Enum.TryParse<UserRoleEnum>(roleClaim, out var requestingUserRole))
             return Ok(ApiResult<bool>.Unauthorized("Invalid role"));
 
-        var result = await userService.DeleteProfilePhotoAsync(id, requestingUserId, requestingUserRole);
+        var result = await _userService.DeleteProfilePhotoAsync(id, requestingUserId, requestingUserRole);
         return Ok(result);
     }
 
@@ -121,7 +133,7 @@ public class UserController(UserService userService, SocialSecurityService socia
     [Authorize(Roles = "Manager")]
     public async Task<ActionResult<ApiResult<SocialSecurityDto>>> GetSocialSecurity(int userId)
     {
-        var result = await socialSecurityService.GetSocialSecurityByUserIdAsync(userId);
+        var result = await _socialSecurityService.GetSocialSecurityByUserIdAsync(userId);
         return Ok(result);
     }
 
@@ -130,7 +142,7 @@ public class UserController(UserService userService, SocialSecurityService socia
     [RequestSizeLimit(10_000_000)] // 10MB limit
     public async Task<ActionResult<ApiResult<SocialSecurityDto>>> CreateOrUpdateSocialSecurity([FromBody] CreateSocialSecurityDto dto)
     {
-        var result = await socialSecurityService.CreateOrUpdateSocialSecurityAsync(dto);
+        var result = await _socialSecurityService.CreateOrUpdateSocialSecurityAsync(dto);
         return Ok(result);
     }
 
@@ -149,7 +161,7 @@ public class UserController(UserService userService, SocialSecurityService socia
             File = file
         };
 
-        var result = await socialSecurityService.CreateSocialSecurityDocumentAsync(dto, file);
+        var result = await _socialSecurityService.CreateSocialSecurityDocumentAsync(dto, file);
         return Ok(result);
     }
 
@@ -157,7 +169,7 @@ public class UserController(UserService userService, SocialSecurityService socia
     [Authorize(Roles = "Manager")]
     public async Task<ActionResult<ApiResult<bool>>> DeleteSocialSecurityDocument(int id)
     {
-        var result = await socialSecurityService.DeleteSocialSecurityDocumentAsync(id);
+        var result = await _socialSecurityService.DeleteSocialSecurityDocumentAsync(id);
         return Ok(result);
     }
 
@@ -165,7 +177,7 @@ public class UserController(UserService userService, SocialSecurityService socia
     [Authorize(Roles = "Manager")]
     public async Task<IActionResult> DownloadSocialSecurityDocument(int id)
     {
-        var result = await socialSecurityService.DownloadSocialSecurityDocumentAsync(id);
+        var result = await _socialSecurityService.DownloadSocialSecurityDocumentAsync(id);
         
         if (result.Data == null)
         {
@@ -180,7 +192,7 @@ public class UserController(UserService userService, SocialSecurityService socia
     [Authorize(Roles = "Manager")]
     public async Task<ActionResult<ApiResult<LegalDocumentDto>>> GetLegalDocuments(int userId)
     {
-        var result = await legalDocumentService.GetLegalDocumentsByUserIdAsync(userId);
+        var result = await _legalDocumentService.GetLegalDocumentsByUserIdAsync(userId);
         return Ok(result);
     }
 
@@ -199,7 +211,7 @@ public class UserController(UserService userService, SocialSecurityService socia
             File = file
         };
 
-        var result = await legalDocumentService.CreateLegalDocumentAsync(dto, file);
+        var result = await _legalDocumentService.CreateLegalDocumentAsync(dto, file);
         return Ok(result);
     }
 
@@ -207,7 +219,7 @@ public class UserController(UserService userService, SocialSecurityService socia
     [Authorize(Roles = "Manager")]
     public async Task<ActionResult<ApiResult<bool>>> DeleteLegalDocument(int id)
     {
-        var result = await legalDocumentService.DeleteLegalDocumentAsync(id);
+        var result = await _legalDocumentService.DeleteLegalDocumentAsync(id);
         return Ok(result);
     }
 
@@ -215,7 +227,65 @@ public class UserController(UserService userService, SocialSecurityService socia
     [Authorize(Roles = "Manager")]
     public async Task<IActionResult> DownloadLegalDocument(int id)
     {
-        var result = await legalDocumentService.DownloadLegalDocumentAsync(id);
+        var result = await _legalDocumentService.DownloadLegalDocumentAsync(id);
+        
+        if (result.Data == null)
+        {
+            return NotFound(result.Message ?? "Belge bulunamadı");
+        }
+
+        Response.Headers.Append("Content-Disposition", $"attachment; filename=\"{result.Data.FileName}\"");
+        return File(result.Data.FileBytes, result.Data.ContentType, result.Data.FileName);
+    }
+
+    [HttpGet("{userId:int}/offboarding")]
+    [Authorize(Roles = "Manager")]
+    public async Task<ActionResult<ApiResult<OffBoardingDto>>> GetOffBoarding(int userId)
+    {
+        var result = await _offBoardingService.GetOffBoardingByUserIdAsync(userId);
+        return Ok(result);
+    }
+
+    [HttpPost("offboarding")]
+    [Authorize(Roles = "Manager")]
+    public async Task<ActionResult<ApiResult<OffBoardingDto>>> CreateOrUpdateOffBoarding([FromBody] CreateOffBoardingDto dto)
+    {
+        var result = await _offBoardingService.CreateOrUpdateOffBoardingAsync(dto);
+        return Ok(result);
+    }
+
+    [HttpPost("offboarding/document")]
+    [Authorize(Roles = "Manager")]
+    [RequestSizeLimit(10_000_000)] // 10MB limit
+    public async Task<ActionResult<ApiResult<OffBoardingDocumentDto>>> UploadOffBoardingDocument(
+        [FromForm] int userId,
+        [FromForm] OffBoardingDocumentTypeEnum documentType,
+        [FromForm] IFormFile file)
+    {
+        var dto = new CreateOffBoardingDocumentDto
+        {
+            UserId = userId,
+            DocumentType = documentType,
+            File = file
+        };
+
+        var result = await _offBoardingService.CreateOffBoardingDocumentAsync(dto, file);
+        return Ok(result);
+    }
+
+    [HttpDelete("offboarding/document/{id:int}")]
+    [Authorize(Roles = "Manager")]
+    public async Task<ActionResult<ApiResult<bool>>> DeleteOffBoardingDocument(int id)
+    {
+        var result = await _offBoardingService.DeleteOffBoardingDocumentAsync(id);
+        return Ok(result);
+    }
+
+    [HttpGet("offboarding/document/{id:int}/download")]
+    [Authorize(Roles = "Manager")]
+    public async Task<IActionResult> DownloadOffBoardingDocument(int id)
+    {
+        var result = await _offBoardingService.DownloadOffBoardingDocumentAsync(id);
         
         if (result.Data == null)
         {

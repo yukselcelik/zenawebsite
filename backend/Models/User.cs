@@ -22,4 +22,6 @@ public class User : BaseEntity
     public ICollection<EducationInfo>? EducationInfos { get; set; }
     public ICollection<SocialSecurityDocument>? SocialSecurityDocuments { get; set; }
     public ICollection<LegalDocument>? LegalDocuments { get; set; }
+    public OffBoarding? OffBoarding { get; set; }
+    public ICollection<OffBoardingDocument>? OffBoardingDocuments { get; set; }
 }

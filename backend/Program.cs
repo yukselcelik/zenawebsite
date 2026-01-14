@@ -21,7 +21,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
-        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        // Enum'ları number olarak serialize et (string değil)
+        // JsonStringEnumConverter kaldırıldı - enum'lar artık number olarak gönderilecek
         options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
     });
 
@@ -81,6 +82,7 @@ builder.Services.AddScoped<InternshipService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<SocialSecurityService>();
 builder.Services.AddScoped<LegalDocumentService>();
+builder.Services.AddScoped<OffBoardingService>();
 builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 
 var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()

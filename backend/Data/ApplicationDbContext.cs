@@ -19,6 +19,8 @@ public class ApplicationDbContext : DbContext
     public DbSet<EducationInfo> EducationInfos { get; set; }
     public DbSet<LegalDocument> LegalDocuments { get; set; }
     public DbSet<SocialSecurityDocument> SocialSecurityDocuments { get; set; }
+    public DbSet<OffBoarding> OffBoardings { get; set; }
+    public DbSet<OffBoardingDocument> OffBoardingDocuments { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

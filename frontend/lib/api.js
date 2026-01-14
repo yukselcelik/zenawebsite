@@ -690,6 +690,93 @@ class ApiService {
     window.URL.revokeObjectURL(url);
     document.body.removeChild(a);
   }
+
+  // OffBoarding API calls
+  static async getOffBoarding(userId) {
+    const response = await fetch(`${API_BASE_URL}/api/user/${userId}/offboarding`, {
+      method: 'GET',
+      headers: this.getHeaders(),
+    });
+
+    return this.handleResponse(response);
+  }
+
+  static async createOrUpdateOffBoarding(data) {
+    const response = await fetch(`${API_BASE_URL}/api/user/offboarding`, {
+      method: 'POST',
+      headers: this.getHeaders(),
+      body: JSON.stringify(data),
+    });
+
+    return this.handleResponse(response);
+  }
+
+  static async uploadOffBoardingDocument(userId, documentType, file) {
+    const token = this.getToken();
+    const headers = {};
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+    
+    const formData = new FormData();
+    formData.append('userId', userId.toString());
+    formData.append('documentType', documentType.toString());
+    formData.append('file', file);
+
+    const response = await fetch(`${API_BASE_URL}/api/user/offboarding/document`, {
+      method: 'POST',
+      headers,
+      body: formData,
+    });
+
+    return this.handleResponse(response);
+  }
+
+  static async deleteOffBoardingDocument(documentId) {
+    const response = await fetch(`${API_BASE_URL}/api/user/offboarding/document/${documentId}`, {
+      method: 'DELETE',
+      headers: this.getHeaders(),
+    });
+
+    return this.handleResponse(response);
+  }
+
+  static async downloadOffBoardingDocument(documentId) {
+    const token = this.getToken();
+    const headers = {};
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
+    const response = await fetch(`${API_BASE_URL}/api/user/offboarding/document/${documentId}/download`, {
+      method: 'GET',
+      headers,
+    });
+
+    if (!response.ok) {
+      throw new Error('Dosya indirilemedi');
+    }
+
+    const blob = await response.blob();
+    const contentDisposition = response.headers.get('Content-Disposition');
+    let fileName = `document_${documentId}`;
+    
+    if (contentDisposition) {
+      const fileNameMatch = contentDisposition.match(/filename="?(.+)"?/i);
+      if (fileNameMatch && fileNameMatch[1]) {
+        fileName = fileNameMatch[1].replace(/"/g, '');
+      }
+    }
+
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+  }
 }
 
 export default ApiService;

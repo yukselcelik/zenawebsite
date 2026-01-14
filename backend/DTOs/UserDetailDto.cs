@@ -23,6 +23,7 @@ public class UserDetailDto
     public SocialSecurityDto? SocialSecurity { get; set; }
     public List<SocialSecurityDocumentDto>? SocialSecurityDocuments { get; set; }
     public LegalDocumentDto? LegalDocuments { get; set; }
+    public OffBoardingDto? OffBoarding { get; set; }
 }
 
 public class ContactInfoDto
