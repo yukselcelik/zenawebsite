@@ -108,6 +108,7 @@ export default function Header({ forceDark = false }) {
                 className="flex items-center font-bold transition-colors text-gray-800 hover:text-orange-500 hover:cursor-pointer"
                 aria-haspopup="menu"
                 aria-expanded={isAboutOpen}
+                onClick={() => router.push('/hakkimizda')}
               >
                 Hakkımızda
                 <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -130,7 +131,7 @@ export default function Header({ forceDark = false }) {
                     Biz Kimiz?
                   </Link>
                   <Link
-                    href="/#referanslarimiz"
+                    href="/referanslar"
                     className="block px-4 py-2 text-sm transition-colors text-gray-800 hover:bg-orange-50 hover:text-orange-500"
                     onClick={() => setIsAboutOpen(false)}
                   >
