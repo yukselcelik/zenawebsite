@@ -52,6 +52,14 @@ export default function KayitOl() {
     setIsLoading(true); // Yükleme durumunu aktif et
     setError(''); // Hata mesajını temizle
 
+    // Email doğrulaması - @zenaenerji.com ile bitmeli
+    const emailLower = registerData.email.toLowerCase().trim();
+    if (!emailLower.endsWith('@zenaenerji.com')) {
+      setError('Zena Enerji Firmasında ait böyle bir mail bulunmamaktadır. Lütfen @zenaenerji.com uzantılı e-posta adresinizi kullanın.');
+      setIsLoading(false);
+      return;
+    }
+
     // Şifre doğrulama
     if (registerData.password !== registerData.confirmPassword) {
       setError('Şifreler eşleşmiyor');
@@ -188,9 +196,12 @@ export default function KayitOl() {
                   value={registerData.email}
                   onChange={handleInputChange}
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
-                  placeholder="E-posta adresinizi girin"
+                  placeholder="ornek@zenaenerji.com"
                 />
               </div>
+              <p className="mt-1 text-xs text-gray-500">
+                Sadece @zenaenerji.com uzantılı e-posta adresleri kabul edilir.
+              </p>
             </div>
 
             {/* Şifre alanı */}

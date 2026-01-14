@@ -14,6 +14,19 @@ public class AuthController(AuthService authService) : ControllerBase
     [HttpPost("register")]
     public async Task<ActionResult<ApiResult<AuthResponseDto>>> Register([FromBody] RegisterDto registerDto)
     {
+        // Email doğrulaması - @zenaenerji.com ile bitmeli
+        if (string.IsNullOrWhiteSpace(registerDto.Email))
+        {
+            return Ok(ApiResult<AuthResponseDto>.BadRequest("E-posta adresi gereklidir."));
+        }
+
+        var emailLower = registerDto.Email.ToLowerInvariant().Trim();
+        if (!emailLower.EndsWith("@zenaenerji.com", StringComparison.OrdinalIgnoreCase))
+        {
+            return Ok(ApiResult<AuthResponseDto>.BadRequest(
+                "Zena Enerji Firmasında ait böyle bir mail bulunmamaktadır. Lütfen @zenaenerji.com uzantılı e-posta adresinizi kullanın."));
+        }
+
         var result = await authService.RegisterAsync(registerDto);
 
         if (result != null)
@@ -21,11 +34,9 @@ public class AuthController(AuthService authService) : ControllerBase
                 "Kayıt işleminiz başarıyla tamamlandı. Hesabınız yönetici onayı bekliyor."));
         
         if (await authService.CheckEmailExistsAsync(registerDto.Email))
-            return Ok(ApiResult<AuthResponseDto>.BadRequest("Email already exists"));
+            return Ok(ApiResult<AuthResponseDto>.BadRequest("Bu e-posta adresi zaten kullanılıyor."));
 
-        return Ok(ApiResult<AuthResponseDto>.Ok(null!,
-            "Kayıt başarılı. Yönetici onayından sonra giriş yapabilirsiniz."));
-
+        return Ok(ApiResult<AuthResponseDto>.BadRequest("Kayıt işlemi başarısız oldu. Lütfen tekrar deneyin."));
     }
 
     [HttpPost("login")]
@@ -41,13 +52,21 @@ public class AuthController(AuthService authService) : ControllerBase
                 "Hesabınız henüz onaylanmamış. Lütfen yönetici onayı bekleyin."));
         }
 
+        // İşten ayrılma durumunu kontrol et
+        var isTerminated = await authService.CheckUserTerminationStatusAsync(loginDto.Email);
+        if (isTerminated)
+        {
+            return Ok(ApiResult<AuthResponseDto>.Unauthorized(
+                "Hesabınız işten ayrılma nedeniyle devre dışı bırakılmıştır. Giriş yapmak için yönetici ile iletişime geçin."));
+        }
+
         // Login işlemini gerçekleştir
         var result = await authService.LoginAsync(loginDto);
 
         if (result == null)
         {
             // Kullanıcı bulunamadı veya şifre yanlış
-            return Ok(ApiResult<AuthResponseDto>.Unauthorized("Invalid email or password"));
+            return Ok(ApiResult<AuthResponseDto>.Unauthorized("E-posta veya şifre hatalı"));
         }
 
         return Ok(ApiResult<AuthResponseDto>.Ok(result));

@@ -237,12 +237,28 @@ export default function OffBoardingSection({ offBoarding, userId, onUpdate }) {
             İşten Ayrılma Tarihi:
           </label>
           {isEditing ? (
-            <input
-              type="date"
-              value={formData.offBoardingDate}
-              onChange={(e) => setFormData({ ...formData, offBoardingDate: e.target.value })}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
-            />
+            <div className="flex flex-col gap-2">
+              <input
+                type="date"
+                value={formData.offBoardingDate}
+                onChange={(e) => setFormData({ ...formData, offBoardingDate: e.target.value })}
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+              />
+              {formData.offBoardingDate && (
+                <button
+                  type="button"
+                  onClick={() => setFormData({ ...formData, offBoardingDate: '' })}
+                  className="text-xs text-red-600 hover:text-red-800 underline self-start"
+                >
+                  Tarihi Temizle (Kullanıcıyı Tekrar Aktif Et)
+                </button>
+              )}
+              {formData.offBoardingDate && (
+                <p className="text-xs text-amber-600">
+                  ⚠️ Tarih girildiğinde kullanıcı sisteme giriş yapamayacak. Tarihi temizleyerek tekrar aktif edebilirsiniz.
+                </p>
+              )}
+            </div>
           ) : (
             <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg min-w-[200px]">
               {offBoarding?.offBoardingDate 

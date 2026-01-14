@@ -15,6 +15,20 @@ public class AuthService(ApplicationDbContext context, IConfiguration configurat
 {
     public async Task<AuthResponseDto?> RegisterAsync(RegisterDto registerDto)
     {
+        // Email doğrulaması - @zenaenerji.com ile bitmeli
+        if (string.IsNullOrWhiteSpace(registerDto.Email))
+        {
+            logger.LogWarning("Registration attempted with empty email");
+            return null;
+        }
+
+        var emailLower = registerDto.Email.ToLowerInvariant().Trim();
+        if (!emailLower.EndsWith("@zenaenerji.com", StringComparison.OrdinalIgnoreCase))
+        {
+            logger.LogWarning("Registration attempted with invalid email domain: {Email}", registerDto.Email);
+            return null; // Frontend'de özel hata mesajı gösterilecek
+        }
+
         if (await context.Users.AsNoTracking().AnyAsync(u => u.Email == registerDto.Email && !u.isDeleted))
         {
             logger.LogWarning("Registration attempted with existing email: {Email}", registerDto.Email);
@@ -23,7 +37,7 @@ public class AuthService(ApplicationDbContext context, IConfiguration configurat
 
         var user = new User
         {
-            Email = registerDto.Email,
+            Email = emailLower, // Email'i küçük harfe çevir ve kaydet
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerDto.Password),
             Role = UserRoleEnum.Personel,
             IsApproved = false,
@@ -34,7 +48,7 @@ public class AuthService(ApplicationDbContext context, IConfiguration configurat
         context.Users.Add(user);
         await context.SaveChangesAsync();
 
-        logger.LogInformation("User registered successfully: {Email} - Waiting for approval", registerDto.Email);
+        logger.LogInformation("User registered successfully: {Email} - Waiting for approval", user.Email);
 
         return new AuthResponseDto
         {
@@ -45,7 +59,9 @@ public class AuthService(ApplicationDbContext context, IConfiguration configurat
 
     public async Task<AuthResponseDto?> LoginAsync(LoginDto loginDto)
     {
-        var user = await context.Users.AsNoTracking()
+        var user = await context.Users
+            .Include(u => u.OffBoarding)
+            .AsNoTracking()
             .FirstOrDefaultAsync(u => u.Email == loginDto.Email && !u.isDeleted);
 
         if (user == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash))
@@ -57,6 +73,14 @@ public class AuthService(ApplicationDbContext context, IConfiguration configurat
         if (user is { Role: UserRoleEnum.Personel, IsApproved: false })
         {
             logger.LogWarning("Login attempt by unapproved user: {Email}", loginDto.Email);
+            return null;
+        }
+
+        // İşten ayrılan personel kontrolü - OffBoardingDate varsa giriş yapamaz
+        if (user.OffBoarding != null && user.OffBoarding.OffBoardingDate.HasValue && !user.OffBoarding.isDeleted)
+        {
+            logger.LogWarning("Login attempt by terminated user: {Email}, OffBoardingDate: {Date}", 
+                loginDto.Email, user.OffBoarding.OffBoardingDate);
             return null;
         }
 
@@ -154,6 +178,22 @@ public class AuthService(ApplicationDbContext context, IConfiguration configurat
         var user = await context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Email == email && !u.isDeleted);
         if (user == null) return null;
         return user.IsApproved;
+    }
+
+    public async Task<bool> CheckUserTerminationStatusAsync(string email)
+    {
+        var user = await context.Users
+            .Include(u => u.OffBoarding)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(u => u.Email == email && !u.isDeleted);
+        
+        if (user == null)
+            return false;
+        
+        // İşten ayrılma tarihi varsa ve silinmemişse, kullanıcı işten ayrılmış demektir
+        return user.OffBoarding != null 
+            && user.OffBoarding.OffBoardingDate.HasValue 
+            && !user.OffBoarding.isDeleted;
     }
 
     // Yönetici için kullanıcı yönetimi metodları
