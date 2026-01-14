@@ -211,12 +211,18 @@ export default function OffBoardingSection({ offBoarding, userId, onUpdate }) {
   return (
     <div className="mb-6">
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-semibold text-gray-800">
-          İşten Ayrılma Bilgileri: {isTerminated 
-            ? (offBoarding?.offBoardingReasonName ? `(${offBoarding.offBoardingReasonName})` : 'İşten Ayrıldı')
-            : 'Şu Anda Devam Ediyor'
-          }
-        </h3>
+        <div className="flex items-center gap-2">
+          <h3 className="text-lg font-semibold text-gray-800">İşten Ayrılma Bilgileri:</h3>
+          {isTerminated ? (
+            <span className="text-lg font-semibold text-gray-800">
+              {offBoarding?.offBoardingReasonName ? `(${offBoarding.offBoardingReasonName})` : 'İşten Ayrıldı'}
+            </span>
+          ) : (
+            <span className="text-base font-normal text-gray-500">
+              Güncel Olarak Çalışmaya Devam Ediyor
+            </span>
+          )}
+        </div>
         <div className="flex gap-2">
           {isEditing && showOffBoardingForm && (
             <button
