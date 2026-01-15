@@ -809,6 +809,107 @@ class ApiService {
 
     return this.handleResponse(response);
   }
+
+  // Expense Request API calls
+  static async createExpenseRequest(formData, documentFile) {
+    const url = `${API_BASE_URL}/api/expenserequest/request/with-document`;
+    
+    const formDataToSend = new FormData();
+    if (formData.requestDate) {
+      formDataToSend.append('requestDate', formData.requestDate);
+    }
+    formDataToSend.append('expenseType', formData.expenseType);
+    formDataToSend.append('requestedAmount', formData.requestedAmount);
+    formDataToSend.append('description', formData.description);
+    
+    if (documentFile) {
+      formDataToSend.append('document', documentFile);
+    }
+
+    console.log('Creating expense request:', {
+      requestDate: formData.requestDate,
+      expenseType: formData.expenseType,
+      requestedAmount: formData.requestedAmount,
+      description: formData.description,
+      hasDocument: !!documentFile
+    });
+
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${this.getToken()}`
+        },
+        body: formDataToSend,
+      });
+
+      console.log('Response status:', response.status, response.statusText);
+      return this.handleResponse(response);
+    } catch (error) {
+      console.error('Error in createExpenseRequest:', error);
+      throw error;
+    }
+  }
+
+  static async getMyExpenseRequests(pageNumber = 1, pageSize = 10) {
+    const response = await fetch(`${API_BASE_URL}/api/expenserequest/my-requests?pageNumber=${pageNumber}&pageSize=${pageSize}`, {
+      method: 'GET',
+      headers: this.getHeaders(),
+    });
+
+    return this.handleResponse(response);
+  }
+
+  static async getAllExpenseRequests(pageNumber = 1, pageSize = 10) {
+    const response = await fetch(`${API_BASE_URL}/api/expenserequest/all-requests?pageNumber=${pageNumber}&pageSize=${pageSize}`, {
+      method: 'GET',
+      headers: this.getHeaders(),
+    });
+
+    return this.handleResponse(response);
+  }
+
+  static async getExpenseRequest(id) {
+    const response = await fetch(`${API_BASE_URL}/api/expenserequest/${id}`, {
+      method: 'GET',
+      headers: this.getHeaders(),
+    });
+
+    return this.handleResponse(response);
+  }
+
+  static async approveExpenseRequest(id, data) {
+    const response = await fetch(`${API_BASE_URL}/api/expenserequest/${id}/approve`, {
+      method: 'PUT',
+      headers: this.getHeaders(),
+      body: JSON.stringify(data),
+    });
+
+    return this.handleResponse(response);
+  }
+
+  static async rejectExpenseRequest(id) {
+    const response = await fetch(`${API_BASE_URL}/api/expenserequest/${id}/reject`, {
+      method: 'PUT',
+      headers: this.getHeaders(),
+    });
+
+    return this.handleResponse(response);
+  }
+
+  static async markExpenseRequestAsPaid(id, data) {
+    const response = await fetch(`${API_BASE_URL}/api/expenserequest/${id}/mark-paid`, {
+      method: 'PUT',
+      headers: this.getHeaders(),
+      body: JSON.stringify(data),
+    });
+
+    return this.handleResponse(response);
+  }
+
+  static getExpenseRequestDocumentUrl(id) {
+    return `${API_BASE_URL}/api/expenserequest/${id}/document`;
+  }
 }
 
 export default ApiService;

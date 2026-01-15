@@ -53,6 +53,17 @@ export default function Sidebar({ isManager, pendingCount, pendingLeaveCount }) 
       visible: !isManager // Sadece personel için görünür
     },
     {
+      id: 'expense-request',
+      label: 'Masraf Talep Et',
+      href: '/panel/masraf-talep-et',
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+      ),
+      visible: !isManager // Sadece personel için görünür
+    },
+    {
       id: 'personnel',
       label: 'Personeller',
       href: '/panel/personeller',
@@ -63,6 +74,17 @@ export default function Sidebar({ isManager, pendingCount, pendingLeaveCount }) 
       ),
       visible: isManager,
       badge: isManager ? (pendingCount || 0) : null
+    },
+    {
+      id: 'expense-requests',
+      label: 'Masraf Talepleri',
+      href: '/panel/masraf-talepleri',
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+      ),
+      visible: isManager
     },
     {
       id: 'internships',
