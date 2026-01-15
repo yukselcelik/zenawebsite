@@ -12,6 +12,7 @@ export default function Navbar({ userData, onLogout, isManager }) {
     if (pathname?.includes('/profilim')) return 'Profilim';
     if (pathname?.includes('/izin-talepleri/yeni')) return 'Yeni İzin Talebi';
     if (pathname?.includes('/izin-talepleri')) return 'İzin Talepleri';
+    if (pathname?.includes('/hak-ve-alacaklar')) return 'Hak ve Alacaklar';
     if (pathname?.includes('/personeller') && pathname?.match(/\/personeller\/\d+/)) return 'Personel Detayı';
     if (pathname?.includes('/personeller')) return 'Personeller';
     if (pathname?.includes('/is-basvurulari')) return 'İş/Staj Başvuruları';
