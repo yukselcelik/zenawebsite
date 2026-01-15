@@ -32,6 +32,13 @@ const PAYMENT_PERIODS = [
 export default function RightsAndReceivablesSection({ rightsAndReceivables, userId, userRole, onUpdate }) {
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  // Accordion state'leri - başlangıçta kapalı
+  const [showMainInfo, setShowMainInfo] = useState(false);
+  const [showSideBenefits, setShowSideBenefits] = useState(false);
+  const [showTravelSupport, setShowTravelSupport] = useState(false);
+  const [showFoodSupport, setShowFoodSupport] = useState(false);
+  const [showBonus, setShowBonus] = useState(false);
+  const [showOtherBenefits, setShowOtherBenefits] = useState(false);
   const [formData, setFormData] = useState({
     netSalaryAmount: '',
     grossSalaryAmount: '',
@@ -216,11 +223,12 @@ export default function RightsAndReceivablesSection({ rightsAndReceivables, user
 
   return (
     <div className="mb-6">
-      {/* Başlık ve Düzenle Butonu */}
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-semibold text-gray-800">Hak ve Alacaklar</h3>
-        {isManager && (
-          <div className="flex gap-2">
+      {/* Ana Başlık - Sola Hizalı */}
+      <div className="mb-6">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-semibold text-gray-800">Hak ve Alacaklar</h3>
+          {isManager && (
+            <div className="flex gap-2">
             {isEditing ? (
               <>
                 <button
@@ -274,15 +282,35 @@ export default function RightsAndReceivablesSection({ rightsAndReceivables, user
                 Düzenle
               </button>
             )}
-          </div>
-        )}
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Ana Bilgiler */}
-      <div className="mb-6 space-y-4">
-        <h4 className="text-md font-semibold text-gray-700 mb-3">Ana Bilgiler</h4>
+      {/* Ana Bilgiler - Accordion */}
+      <div className="mb-6">
+        <button
+          type="button"
+          onClick={() => setShowMainInfo(!showMainInfo)}
+          className="flex items-center justify-between w-full mb-4 text-left hover:bg-gray-50 p-3 rounded-lg transition-colors border border-gray-200"
+        >
+          <h4 className="text-md font-semibold text-gray-700">Ana Bilgiler</h4>
+          <svg
+            className="w-5 h-5 text-gray-600 transition-transform duration-200"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            {showMainInfo ? (
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14" />
+            ) : (
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            )}
+          </svg>
+        </button>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {showMainInfo && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="p-4 bg-gray-50 rounded-lg">
             <label className="block text-sm font-medium text-gray-700 mb-2">Net Ücret Tutarı:</label>
             {isEditing && isManager ? (
@@ -386,7 +414,7 @@ export default function RightsAndReceivablesSection({ rightsAndReceivables, user
               <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg min-h-[42px]">
                 <span className="text-gray-900">
                   {rightsAndReceivables?.overtimeHours != null 
-                    ? `${formatNumber(rightsAndReceivables.overtimeHours)} Gün` 
+                    ? `${formatNumber(rightsAndReceivables.overtimeHours)} Saat` 
                     : ''}
                 </span>
               </div>
@@ -410,17 +438,57 @@ export default function RightsAndReceivablesSection({ rightsAndReceivables, user
             )}
           </div>
         </div>
+        )}
       </div>
 
-      {/* Yan Haklar */}
+      {/* Yan Haklar - Accordion */}
       <div className="mb-6">
-        <h4 className="text-md font-semibold text-gray-700 mb-4">Yan Haklar</h4>
+        <button
+          type="button"
+          onClick={() => setShowSideBenefits(!showSideBenefits)}
+          className="flex items-center justify-between w-full mb-4 text-left hover:bg-gray-50 p-3 rounded-lg transition-colors border border-gray-200"
+        >
+          <h4 className="text-md font-semibold text-gray-700">Yan Haklar</h4>
+          <svg
+            className="w-5 h-5 text-gray-600 transition-transform duration-200"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            {showSideBenefits ? (
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14" />
+            ) : (
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            )}
+          </svg>
+        </button>
         
-        <div className="space-y-6">
-          {/* Yol Desteği */}
-          <div className="p-4 bg-cyan-50 rounded-lg border border-cyan-200">
-            <h5 className="text-sm font-semibold text-gray-800 mb-3">Yol Desteği</h5>
-            <div className="space-y-3">
+        {showSideBenefits && (
+          <div className="space-y-6">
+            {/* Yol Desteği - Accordion */}
+            <div className="border border-gray-200 rounded-lg">
+              <button
+                type="button"
+                onClick={() => setShowTravelSupport(!showTravelSupport)}
+                className="flex items-center justify-between w-full p-4 bg-cyan-50 hover:bg-cyan-100 rounded-t-lg transition-colors"
+              >
+                <h5 className="text-sm font-semibold text-gray-800">Yol Desteği</h5>
+                <svg
+                  className="w-5 h-5 text-gray-600 transition-transform duration-200"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  {showTravelSupport ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  )}
+                </svg>
+              </button>
+              {showTravelSupport && (
+                <div className="p-4 bg-cyan-50 rounded-b-lg border-t border-cyan-200">
+                  <div className="space-y-3">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Tür:</label>
                 {isEditing && isManager ? (
@@ -478,13 +546,35 @@ export default function RightsAndReceivablesSection({ rightsAndReceivables, user
                   </div>
                 </>
               )}
+                  </div>
+                </div>
+              )}
             </div>
-          </div>
 
-          {/* Yemek Desteği */}
-          <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-            <h5 className="text-sm font-semibold text-gray-800 mb-3">Yemek Desteği</h5>
-            <div className="space-y-3">
+            {/* Yemek Desteği - Accordion */}
+            <div className="border border-gray-200 rounded-lg">
+              <button
+                type="button"
+                onClick={() => setShowFoodSupport(!showFoodSupport)}
+                className="flex items-center justify-between w-full p-4 bg-green-50 hover:bg-green-100 rounded-t-lg transition-colors"
+              >
+                <h5 className="text-sm font-semibold text-gray-800">Yemek Desteği</h5>
+                <svg
+                  className="w-5 h-5 text-gray-600 transition-transform duration-200"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  {showFoodSupport ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  )}
+                </svg>
+              </button>
+              {showFoodSupport && (
+                <div className="p-4 bg-green-50 rounded-b-lg border-t border-green-200">
+                  <div className="space-y-3">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Tür:</label>
                 {isEditing && isManager ? (
@@ -555,13 +645,35 @@ export default function RightsAndReceivablesSection({ rightsAndReceivables, user
                   </div>
                 )}
               </div>
+                  </div>
+                </div>
+              )}
             </div>
-          </div>
 
-          {/* Prim */}
-          <div className="p-4 bg-amber-50 rounded-lg border border-amber-200">
-            <h5 className="text-sm font-semibold text-gray-800 mb-3">Prim</h5>
-            <div className="space-y-3">
+            {/* Prim - Accordion */}
+            <div className="border border-gray-200 rounded-lg">
+              <button
+                type="button"
+                onClick={() => setShowBonus(!showBonus)}
+                className="flex items-center justify-between w-full p-4 bg-amber-50 hover:bg-amber-100 rounded-t-lg transition-colors"
+              >
+                <h5 className="text-sm font-semibold text-gray-800">Prim</h5>
+                <svg
+                  className="w-5 h-5 text-gray-600 transition-transform duration-200"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  {showBonus ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  )}
+                </svg>
+              </button>
+              {showBonus && (
+                <div className="p-4 bg-amber-50 rounded-b-lg border-t border-amber-200">
+                  <div className="space-y-3">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Tür:</label>
                 {isEditing && isManager ? (
@@ -631,13 +743,35 @@ export default function RightsAndReceivablesSection({ rightsAndReceivables, user
                   </div>
                 )}
               </div>
+                  </div>
+                </div>
+              )}
             </div>
-          </div>
 
-          {/* Diğer Yan Haklar */}
-          <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
-            <h5 className="text-sm font-semibold text-gray-800 mb-3">Diğer Yan Haklar</h5>
-            <div className="space-y-3">
+            {/* Diğer Yan Haklar - Accordion */}
+            <div className="border border-gray-200 rounded-lg">
+              <button
+                type="button"
+                onClick={() => setShowOtherBenefits(!showOtherBenefits)}
+                className="flex items-center justify-between w-full p-4 bg-purple-50 hover:bg-purple-100 rounded-t-lg transition-colors"
+              >
+                <h5 className="text-sm font-semibold text-gray-800">Diğer Yan Haklar</h5>
+                <svg
+                  className="w-5 h-5 text-gray-600 transition-transform duration-200"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  {showOtherBenefits ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  )}
+                </svg>
+              </button>
+              {showOtherBenefits && (
+                <div className="p-4 bg-purple-50 rounded-b-lg border-t border-purple-200">
+                  <div className="space-y-3">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Ödeme Periyodu:</label>
                 {isEditing && isManager ? (
@@ -688,9 +822,12 @@ export default function RightsAndReceivablesSection({ rightsAndReceivables, user
                   </div>
                 )}
               </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
