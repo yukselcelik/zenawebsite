@@ -24,27 +24,72 @@ export default function MasrafTalepEtPage() {
     requestedAmount: '',
     description: ''
   });
+  const [dateInput, setDateInput] = useState({ day: '', month: '', year: '' });
   const [documentFile, setDocumentFile] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const router = useRouter();
 
+  // Tarih input handler - gg.aa.yyyy formatı
+  const handleDateInput = (field, value) => {
+    // Sadece rakam kabul et
+    const cleaned = value.replace(/[^\d]/g, '');
+    
+    let newDateInput = { ...dateInput };
+    
+    if (field === 'day') {
+      // Gün: maksimum 2 rakam, 01-31 arası
+      if (cleaned.length <= 2) {
+        newDateInput.day = cleaned;
+        if (cleaned.length === 2 && (parseInt(cleaned) < 1 || parseInt(cleaned) > 31)) {
+          return; // Geçersiz gün
+        }
+      }
+    } else if (field === 'month') {
+      // Ay: maksimum 2 rakam, 01-12 arası
+      if (cleaned.length <= 2) {
+        newDateInput.month = cleaned;
+        if (cleaned.length === 2 && (parseInt(cleaned) < 1 || parseInt(cleaned) > 12)) {
+          return; // Geçersiz ay
+        }
+      }
+    } else if (field === 'year') {
+      // Yıl: maksimum 4 rakam
+      if (cleaned.length <= 4) {
+        newDateInput.year = cleaned;
+      }
+    }
+    
+    setDateInput(newDateInput);
+    
+    // Tarihi ISO formatına çevir (YYYY-MM-DD)
+    if (newDateInput.day.length === 2 && newDateInput.month.length === 2 && newDateInput.year.length === 4) {
+      const day = parseInt(newDateInput.day);
+      const month = parseInt(newDateInput.month);
+      const year = parseInt(newDateInput.year);
+      
+      // Tarih validasyonu
+      if (day >= 1 && day <= 31 && month >= 1 && month <= 12 && year >= 2000 && year <= 2100) {
+        const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        setFormData({ ...formData, requestDate: dateStr });
+      }
+    } else {
+      setFormData({ ...formData, requestDate: '' });
+    }
+  };
+
   // Para input validasyonu - sadece rakam ve 1 virgül (küsürat için)
   const handleCurrencyInput = (value) => {
-    // Sadece rakam ve virgül kabul et
     let cleaned = value.replace(/[^\d,]/g, '');
     
-    // Virgül kontrolü - sadece 1 tane virgül olabilir
     const commaIndex = cleaned.indexOf(',');
     if (commaIndex !== -1) {
-      // Virgülden sonra maksimum 2 hane
       const afterComma = cleaned.substring(commaIndex + 1);
       if (afterComma.length > 2) {
         cleaned = cleaned.substring(0, commaIndex + 3);
       }
       
-      // Birden fazla virgül varsa sadece ilkini al
       const parts = cleaned.split(',');
       if (parts.length > 2) {
         cleaned = parts[0] + ',' + parts.slice(1).join('');
@@ -57,7 +102,6 @@ export default function MasrafTalepEtPage() {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Dosya boyutu kontrolü (max 10MB)
       if (file.size > 10 * 1024 * 1024) {
         setError('Dosya boyutu 10MB\'dan büyük olamaz');
         return;
@@ -117,12 +161,11 @@ export default function MasrafTalepEtPage() {
           requestedAmount: '',
           description: ''
         });
+        setDateInput({ day: '', month: '', year: '' });
         setDocumentFile(null);
-        // Dosya input'unu temizle
         const fileInput = document.getElementById('documentFile');
         if (fileInput) fileInput.value = '';
         
-        // 2 saniye sonra liste sayfasına yönlendir
         setTimeout(() => {
           router.push('/panel/masraf-taleplerim');
         }, 2000);
@@ -166,13 +209,47 @@ export default function MasrafTalepEtPage() {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Talep Tarihi: <span className="text-red-500">*</span>
               </label>
-              <input
-                type="date"
-                value={formData.requestDate}
-                onChange={(e) => setFormData({ ...formData, requestDate: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
-                required
-              />
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={dateInput.day}
+                  onChange={(e) => handleDateInput('day', e.target.value)}
+                  onBlur={(e) => {
+                    if (e.target.value.length === 1) {
+                      setDateInput({ ...dateInput, day: e.target.value.padStart(2, '0') });
+                    }
+                  }}
+                  className="w-16 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 text-center"
+                  placeholder="gg"
+                  maxLength={2}
+                  inputMode="numeric"
+                />
+                <span className="text-gray-500">.</span>
+                <input
+                  type="text"
+                  value={dateInput.month}
+                  onChange={(e) => handleDateInput('month', e.target.value)}
+                  onBlur={(e) => {
+                    if (e.target.value.length === 1) {
+                      setDateInput({ ...dateInput, month: e.target.value.padStart(2, '0') });
+                    }
+                  }}
+                  className="w-16 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 text-center"
+                  placeholder="aa"
+                  maxLength={2}
+                  inputMode="numeric"
+                />
+                <span className="text-gray-500">.</span>
+                <input
+                  type="text"
+                  value={dateInput.year}
+                  onChange={(e) => handleDateInput('year', e.target.value)}
+                  className="w-20 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 text-center"
+                  placeholder="yyyy"
+                  maxLength={4}
+                  inputMode="numeric"
+                />
+              </div>
             </div>
 
             <div className="p-4 bg-gray-50 rounded-lg">
@@ -282,4 +359,3 @@ export default function MasrafTalepEtPage() {
     </div>
   );
 }
-

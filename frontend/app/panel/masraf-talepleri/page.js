@@ -20,11 +20,8 @@ export default function MasrafTalepleriPage() {
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [showApproveModal, setShowApproveModal] = useState(false);
   const [showRejectModal, setShowRejectModal] = useState(false);
-  const [activeTab, setActiveTab] = useState('requests'); // 'requests' veya 'payment'
-  const [approveData, setApproveData] = useState({
-    approvedAmount: '',
-    department: ''
-  });
+  const [activeTab, setActiveTab] = useState('requests');
+  const [editingData, setEditingData] = useState({});
   const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
@@ -36,7 +33,19 @@ export default function MasrafTalepleriPage() {
       setIsLoading(true);
       const result = await ApiService.getAllExpenseRequests(pageNumber, 10);
       if (result && result.success && result.data) {
-        setExpenseRequests(result.data.items || []);
+        const requests = result.data.items || [];
+        setExpenseRequests(requests);
+        // Her request için editing data başlat
+        const initialEditingData = {};
+        requests.forEach(req => {
+          if (req.statusName === 'Beklemede') {
+            initialEditingData[req.id] = {
+              approvedAmount: req.approvedAmount ? formatCurrencyForInput(req.approvedAmount) : '',
+              department: req.department || ''
+            };
+          }
+        });
+        setEditingData(initialEditingData);
         setTotalPages(result.data.totalPages || 1);
       }
     } catch (error) {
@@ -54,6 +63,14 @@ export default function MasrafTalepleriPage() {
     }).format(value) + ' TL';
   };
 
+  const formatCurrencyForInput = (value) => {
+    if (!value && value !== 0) return '';
+    return new Intl.NumberFormat('tr-TR', { 
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(value).replace('.', ',');
+  };
+
   const formatDate = (dateString) => {
     if (!dateString) return '-';
     return new Date(dateString).toLocaleDateString('tr-TR');
@@ -69,41 +86,61 @@ export default function MasrafTalepleriPage() {
     return statusMap[status] || 'bg-gray-100 text-gray-800';
   };
 
-  const handleApprove = (request) => {
-    setSelectedRequest(request);
-    const requestDate = request.requestDate 
-      ? new Date(request.requestDate).toISOString().split('T')[0]
-      : new Date().toISOString().split('T')[0];
-    setApproveData({
-      requestDate: requestDate,
-      approvedAmount: request.requestedAmount?.toString() || '',
-      department: ''
+  const handleCurrencyInput = (requestId, value) => {
+    let cleaned = value.replace(/[^\d,]/g, '');
+    const commaIndex = cleaned.indexOf(',');
+    if (commaIndex !== -1) {
+      const afterComma = cleaned.substring(commaIndex + 1);
+      if (afterComma.length > 2) {
+        cleaned = cleaned.substring(0, commaIndex + 3);
+      }
+      const parts = cleaned.split(',');
+      if (parts.length > 2) {
+        cleaned = parts[0] + ',' + parts.slice(1).join('');
+      }
+    }
+    setEditingData({
+      ...editingData,
+      [requestId]: {
+        ...editingData[requestId],
+        approvedAmount: cleaned
+      }
     });
-    setShowApproveModal(true);
   };
 
-  const handleReject = (request) => {
-    setSelectedRequest(request);
-    setShowRejectModal(true);
+  const handleDepartmentChange = (requestId, value) => {
+    setEditingData({
+      ...editingData,
+      [requestId]: {
+        ...editingData[requestId],
+        department: value
+      }
+    });
   };
 
-  const confirmApprove = async () => {
-    if (!selectedRequest) return;
+  const handleApprove = async (request) => {
+    if (!editingData[request.id]) {
+      alert('Lütfen onaylanan tutarı giriniz');
+      return;
+    }
+
+    const approvedAmount = editingData[request.id].approvedAmount;
+    if (!approvedAmount || parseFloat(approvedAmount.replace(',', '.')) <= 0) {
+      alert('Lütfen geçerli bir onaylanan tutar giriniz');
+      return;
+    }
 
     try {
       setIsProcessing(true);
-      const amount = parseFloat(approveData.approvedAmount.replace(',', '.')) || selectedRequest.requestedAmount;
-      const requestDate = approveData.requestDate ? new Date(approveData.requestDate) : null;
+      const amount = parseFloat(approvedAmount.replace(',', '.'));
+      const department = editingData[request.id].department || '';
       
-      const result = await ApiService.approveExpenseRequest(selectedRequest.id, {
-        requestDate: requestDate,
+      const result = await ApiService.approveExpenseRequest(request.id, {
         approvedAmount: amount,
-        department: approveData.department
+        department: department
       });
 
       if (result && result.success) {
-        setShowApproveModal(false);
-        setSelectedRequest(null);
         fetchExpenseRequests();
       } else {
         alert(result?.message || 'Onaylama işlemi başarısız oldu');
@@ -114,6 +151,11 @@ export default function MasrafTalepleriPage() {
     } finally {
       setIsProcessing(false);
     }
+  };
+
+  const handleReject = (request) => {
+    setSelectedRequest(request);
+    setShowRejectModal(true);
   };
 
   const confirmReject = async () => {
@@ -138,20 +180,14 @@ export default function MasrafTalepleriPage() {
     }
   };
 
-  const handleCurrencyInput = (value) => {
-    let cleaned = value.replace(/[^\d,]/g, '');
-    const commaIndex = cleaned.indexOf(',');
-    if (commaIndex !== -1) {
-      const afterComma = cleaned.substring(commaIndex + 1);
-      if (afterComma.length > 2) {
-        cleaned = cleaned.substring(0, commaIndex + 3);
-      }
-      const parts = cleaned.split(',');
-      if (parts.length > 2) {
-        cleaned = parts[0] + ',' + parts.slice(1).join('');
-      }
+  const handleViewDocument = async (requestId) => {
+    try {
+      const url = ApiService.getExpenseRequestDocumentUrl(requestId);
+      window.open(url, '_blank');
+    } catch (error) {
+      console.error('Error viewing document:', error);
+      alert('Belge görüntülenirken hata oluştu');
     }
-    setApproveData({ ...approveData, approvedAmount: cleaned });
   };
 
   return (
@@ -203,31 +239,31 @@ export default function MasrafTalepleriPage() {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
                     Talep Tarihi
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Çalışan Adı Soyadı
+                  <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                    Çalışan
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
                     Masraf Türü
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Açıklama
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Talep Edilen Tutar
+                  <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                    Talep Edilen
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
                     Onaylanan Tutar
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    İlgili Şirket – Departman
+                  <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Şirket/Departman
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
                     Durum
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
                     İşlemler
                   </th>
                 </tr>
@@ -235,54 +271,78 @@ export default function MasrafTalepleriPage() {
               <tbody className="bg-white divide-y divide-gray-200">
                 {expenseRequests.map((request) => (
                   <tr key={request.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
                       {formatDate(request.requestDate)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
                       {request.userName} {request.userSurname}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
                       {request.expenseTypeName}
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
-                      {request.description}
+                    <td className="px-3 py-4 text-sm text-gray-500 max-w-xs">
+                      <div className="truncate" title={request.description}>
+                        {request.description}
+                      </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
                       {formatCurrency(request.requestedAmount)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {request.approvedAmount ? formatCurrency(request.approvedAmount) : '-'}
+                    <td className="px-3 py-4 whitespace-nowrap text-sm">
+                      {request.statusName === 'Beklemede' ? (
+                        <input
+                          type="text"
+                          value={editingData[request.id]?.approvedAmount || ''}
+                          onChange={(e) => handleCurrencyInput(request.id, e.target.value)}
+                          className="w-24 px-2 py-1 border border-gray-300 rounded text-gray-900 text-sm"
+                          placeholder="0,00"
+                        />
+                      ) : (
+                        <span className="text-gray-900">
+                          {request.approvedAmount ? formatCurrency(request.approvedAmount) : '-'}
+                        </span>
+                      )}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {request.department || '-'}
+                    <td className="px-3 py-4 text-sm">
+                      {request.statusName === 'Beklemede' ? (
+                        <input
+                          type="text"
+                          value={editingData[request.id]?.department || ''}
+                          onChange={(e) => handleDepartmentChange(request.id, e.target.value)}
+                          className="w-full px-2 py-1 border border-gray-300 rounded text-gray-900 text-sm"
+                          placeholder="Departman"
+                        />
+                      ) : (
+                        <span className="text-gray-500">{request.department || '-'}</span>
+                      )}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-3 py-4 whitespace-nowrap">
                       <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadge(request.statusName)}`}>
                         {request.statusName}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                    <td className="px-3 py-4 whitespace-nowrap text-sm font-medium space-x-1">
                       {request.documentPath && (
-                        <a
-                          href={ApiService.getExpenseRequestDocumentUrl(request.id)}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-600 hover:text-blue-900"
+                        <button
+                          onClick={() => handleViewDocument(request.id)}
+                          className="text-blue-600 hover:text-blue-900 text-xs"
                         >
-                          Belgeyi Görüntüle
-                        </a>
+                          Belge
+                        </button>
                       )}
                       {request.statusName === 'Beklemede' && (
                         <>
                           <button
                             onClick={() => handleApprove(request)}
-                            className="text-green-600 hover:text-green-900"
+                            disabled={isProcessing}
+                            className="text-green-600 hover:text-green-900 text-xs disabled:opacity-50"
                           >
                             Onayla
                           </button>
                           <button
                             onClick={() => handleReject(request)}
-                            className="text-red-600 hover:text-red-900"
+                            disabled={isProcessing}
+                            className="text-red-600 hover:text-red-900 text-xs disabled:opacity-50"
                           >
                             Reddet
                           </button>
@@ -344,79 +404,6 @@ export default function MasrafTalepleriPage() {
         </div>
       )}
 
-      {/* Onay Modal */}
-      {showApproveModal && selectedRequest && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-            <div className="mt-3">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">Masraf Talebini Onayla</h3>
-              
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Talep Tarihi:
-                  </label>
-                  <input
-                    type="date"
-                    value={approveData.requestDate}
-                    onChange={(e) => setApproveData({ ...approveData, requestDate: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Onaylanan Tutar (TL):
-                  </label>
-                  <input
-                    type="text"
-                    value={approveData.approvedAmount}
-                    onChange={(e) => handleCurrencyInput(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
-                    placeholder=""
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    İlgili Şirket – Departman:
-                  </label>
-                  <input
-                    type="text"
-                    value={approveData.department}
-                    onChange={(e) => setApproveData({ ...approveData, department: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
-                    placeholder="Departman adını giriniz"
-                  />
-                </div>
-              </div>
-
-              <div className="flex justify-end gap-3 mt-6">
-                <button
-                  onClick={() => {
-                    setShowApproveModal(false);
-                    setSelectedRequest(null);
-                  }}
-                  className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
-                  disabled={isProcessing}
-                >
-                  İptal
-                </button>
-                <button
-                  onClick={confirmApprove}
-                  disabled={isProcessing}
-                  className={`px-4 py-2 rounded-lg text-white ${
-                    isProcessing ? 'bg-gray-400' : 'bg-green-500 hover:bg-green-600'
-                  }`}
-                >
-                  {isProcessing ? 'Onaylanıyor...' : 'Onayla'}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Reddet Modal */}
       <ConfirmDialog
         isOpen={showRejectModal}
@@ -426,7 +413,7 @@ export default function MasrafTalepleriPage() {
         }}
         onConfirm={confirmReject}
         title="Masraf Talebini Reddet"
-        message="Bu masraf talebini reddetmek istediğinizden emin misiniz?"
+        message="Bu masraf talebini reddetmek istediğinizden emin misiniz? Bu işlem geri alınamaz."
         confirmText="Reddet"
         cancelText="İptal"
         isLoading={isProcessing}
@@ -459,7 +446,6 @@ function OdemeTakipContent() {
       setIsLoading(true);
       const result = await ApiService.getAllExpenseRequests(pageNumber, 10);
       if (result && result.success && result.data) {
-        // Sadece onaylanmış talepleri göster
         const approvedRequests = (result.data.items || []).filter(
           req => req.statusName === 'Onaylandı' || req.statusName === 'Ödendi'
         );
@@ -653,4 +639,3 @@ function OdemeTakipContent() {
     </>
   );
 }
-

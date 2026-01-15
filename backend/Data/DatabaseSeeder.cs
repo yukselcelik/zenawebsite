@@ -293,67 +293,61 @@ public static class DatabaseSeeder
                 logger.LogInformation("Dummy education info checked/created");
             }
             
-            // Leave requests için personel kullanıcıları al
-            var personelUsers = await context.Users
-                .Where(u => u.Role == UserRoleEnum.Personel && u.IsApproved)
-                .OrderBy(u => u.CreatedAt)
-                .ToListAsync();
+            // Leave requests oluştur
+            if (personelUsers.Count >= 2)
+            {
+                var leaveRequests = new List<LeaveRequest>();
 
-                if (personelUsers.Count >= 2)
+                var personel1Id = personelUsers[0].Id;
+                leaveRequests.Add(new LeaveRequest
                 {
-                    var leaveRequests = new List<LeaveRequest>();
+                    UserId = personel1Id,
+                    StartDate = DateTime.UtcNow.Date.AddDays(5),
+                    EndDate = DateTime.UtcNow.Date.AddDays(7),
+                    Reason = "Aile ziyareti için izin talebi",
+                    Status = LeaveStatusEnum.Pending,
+                    CreatedAt = DateTime.UtcNow.AddHours(3).AddDays(-10),
+                    UpdatedAt = DateTime.UtcNow.AddHours(3).AddDays(-10)
+                });
 
-                    var personel1Id = personelUsers[0].Id;
-                    leaveRequests.Add(new LeaveRequest
-                    {
-                        UserId = personel1Id,
-                        StartDate = DateTime.UtcNow.Date.AddDays(5),
-                        EndDate = DateTime.UtcNow.Date.AddDays(7),
-                        Reason = "Aile ziyareti için izin talebi",
-                        Status = LeaveStatusEnum.Pending,
-                        CreatedAt = DateTime.UtcNow.AddHours(3).AddDays(-10),
-                        UpdatedAt = DateTime.UtcNow.AddHours(3).AddDays(-10)
-                    });
+                leaveRequests.Add(new LeaveRequest
+                {
+                    UserId = personel1Id,
+                    StartDate = DateTime.UtcNow.Date.AddDays(-15),
+                    EndDate = DateTime.UtcNow.Date.AddDays(-12),
+                    Reason = "Sağlık kontrolü için izin",
+                    Status = LeaveStatusEnum.Approved,
+                    CreatedAt = DateTime.UtcNow.AddHours(3).AddDays(-20),
+                    UpdatedAt = DateTime.UtcNow.AddHours(3).AddDays(-15)
+                });
 
-                    leaveRequests.Add(new LeaveRequest
-                    {
-                        UserId = personel1Id,
-                        StartDate = DateTime.UtcNow.Date.AddDays(-15),
-                        EndDate = DateTime.UtcNow.Date.AddDays(-12),
-                        Reason = "Sağlık kontrolü için izin",
-                        Status = LeaveStatusEnum.Approved,
-                        CreatedAt = DateTime.UtcNow.AddHours(3).AddDays(-20),
-                        UpdatedAt = DateTime.UtcNow.AddHours(3).AddDays(-15)
-                    });
+                var personel2Id = personelUsers[1].Id;
+                leaveRequests.Add(new LeaveRequest
+                {
+                    UserId = personel2Id,
+                    StartDate = DateTime.UtcNow.Date.AddDays(10),
+                    EndDate = DateTime.UtcNow.Date.AddDays(12),
+                    Reason = "Tatil planı için izin talebi",
+                    Status = LeaveStatusEnum.Pending,
+                    CreatedAt = DateTime.UtcNow.AddHours(3).AddDays(-8),
+                    UpdatedAt = DateTime.UtcNow.AddHours(3).AddDays(-8)
+                });
 
-                    var personel2Id = personelUsers[1].Id;
-                    leaveRequests.Add(new LeaveRequest
-                    {
-                        UserId = personel2Id,
-                        StartDate = DateTime.UtcNow.Date.AddDays(10),
-                        EndDate = DateTime.UtcNow.Date.AddDays(12),
-                        Reason = "Tatil planı için izin talebi",
-                        Status = LeaveStatusEnum.Pending,
-                        CreatedAt = DateTime.UtcNow.AddHours(3).AddDays(-8),
-                        UpdatedAt = DateTime.UtcNow.AddHours(3).AddDays(-8)
-                    });
+                leaveRequests.Add(new LeaveRequest
+                {
+                    UserId = personel2Id,
+                    StartDate = DateTime.UtcNow.Date.AddDays(-25),
+                    EndDate = DateTime.UtcNow.Date.AddDays(-23),
+                    Reason = "Acil durum izni",
+                    Status = LeaveStatusEnum.Cancelled,
+                    CreatedAt = DateTime.UtcNow.AddHours(3).AddDays(-28),
+                    UpdatedAt = DateTime.UtcNow.AddHours(3).AddDays(-26)
+                });
 
-                    leaveRequests.Add(new LeaveRequest
-                    {
-                        UserId = personel2Id,
-                        StartDate = DateTime.UtcNow.Date.AddDays(-25),
-                        EndDate = DateTime.UtcNow.Date.AddDays(-23),
-                        Reason = "Acil durum izni",
-                        Status = LeaveStatusEnum.Cancelled,
-                        CreatedAt = DateTime.UtcNow.AddHours(3).AddDays(-28),
-                        UpdatedAt = DateTime.UtcNow.AddHours(3).AddDays(-26)
-                    });
+                context.LeaveRequests.AddRange(leaveRequests);
+                await context.SaveChangesAsync();
 
-                    context.LeaveRequests.AddRange(leaveRequests);
-                    await context.SaveChangesAsync();
-
-                    logger.LogInformation("Dummy leave requests created: {Count}", leaveRequests.Count);
-                }
+                logger.LogInformation("Dummy leave requests created: {Count}", leaveRequests.Count);
             }
 
             var internshipCount = await context.InternshipApplications.CountAsync();

@@ -75,16 +75,21 @@ export default function UserProfile({ userDetail, onUpdate, onUserDetailUpdate }
 
   const handleSave = async () => {
     try {
-      await onUpdate(userDetail.id, {
+      // TC No boş string ise null gönder (backend'de ignore edilsin)
+      const updateData = {
         name: formData.name,
         surname: formData.surname,
         phone: formData.phone,
         photoPath: formData.photoPath,
-        tcNo: formData.tcNo
-      });
+        tcNo: formData.tcNo && formData.tcNo.trim() !== '' ? formData.tcNo.trim() : null
+      };
+      
+      await onUpdate(userDetail.id, updateData);
       setIsEditing(false);
     } catch (error) {
       console.error('Update error:', error);
+      // Hata mesajını kullanıcıya göster
+      alert(error.message || 'Güncelleme sırasında bir hata oluştu.');
     }
   };
 

@@ -358,7 +358,12 @@ public class UserService(ApplicationDbContext context, ILogger<UserService> logg
             if (requestingUserRole == UserRoleEnum.Manager || userId == requestingUserId)
             {
                 var trimmed = updateDto.TcNo.Trim();
-                if (!string.IsNullOrEmpty(trimmed) && trimmed.All(char.IsDigit) && (trimmed.Length == 11))
+                // Boş string ise null olarak kabul et (güncelleme yapma)
+                if (string.IsNullOrEmpty(trimmed))
+                {
+                    // Boş string gönderildiğinde hiçbir şey yapma, mevcut değeri koru
+                }
+                else if (trimmed.All(char.IsDigit) && (trimmed.Length == 11))
                 {
                     user.TcNo = trimmed;
                 }
