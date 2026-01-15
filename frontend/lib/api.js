@@ -125,6 +125,7 @@ class ApiService {
       return this.handleResponse(response);
     } catch (error) {
       this.handleNetworkError(error);
+      throw error; // Hata fırlatılmaya devam etmeli
     }
   }
 
@@ -776,6 +777,37 @@ class ApiService {
     a.click();
     window.URL.revokeObjectURL(url);
     document.body.removeChild(a);
+  }
+
+  // RightsAndReceivables API calls
+  static async getRightsAndReceivables(userId) {
+    const response = await fetch(`${API_BASE_URL}/api/user/${userId}/rights-and-receivables`, {
+      method: 'GET',
+      headers: this.getHeaders(),
+    });
+
+    return this.handleResponse(response);
+  }
+
+  static async updateRightsAndReceivables(userId, data) {
+    const url = `${API_BASE_URL}/api/user/${userId}/rights-and-receivables`;
+    console.log('=== API Call ===');
+    console.log('URL:', url);
+    console.log('Method: PUT');
+    console.log('Data:', JSON.stringify(data, null, 2));
+    
+    const response = await fetch(url, {
+      method: 'PUT',
+      headers: this.getHeaders(),
+      body: JSON.stringify(data),
+    });
+
+    console.log('=== Response Status ===');
+    console.log('Status:', response.status);
+    console.log('StatusText:', response.statusText);
+    console.log('OK:', response.ok);
+
+    return this.handleResponse(response);
   }
 }
 

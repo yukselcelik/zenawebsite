@@ -24,4 +24,5 @@ public class User : BaseEntity
     public ICollection<LegalDocument>? LegalDocuments { get; set; }
     public OffBoarding? OffBoarding { get; set; }
     public ICollection<OffBoardingDocument>? OffBoardingDocuments { get; set; }
+    public RightsAndReceivables? RightsAndReceivables { get; set; }
 }

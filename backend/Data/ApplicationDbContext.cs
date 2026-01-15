@@ -21,6 +21,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<SocialSecurityDocument> SocialSecurityDocuments { get; set; }
     public DbSet<OffBoarding> OffBoardings { get; set; }
     public DbSet<OffBoardingDocument> OffBoardingDocuments { get; set; }
+    public DbSet<RightsAndReceivables> RightsAndReceivables { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

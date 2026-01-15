@@ -6,6 +6,7 @@ import EmploymentInfoSection from './EmploymentInfoSection';
 import SocialSecuritySection from './SocialSecuritySection';
 import LegalDocumentsSection from './LegalDocumentsSection';
 import OffBoardingSection from './OffBoardingSection';
+import RightsAndReceivablesSection from './RightsAndReceivablesSection';
 import ContactInfoSection from '../user/ContactInfoSection';
 import EmergencyContactSection from '../user/EmergencyContactSection';
 import EducationInfoSection from '../user/EducationInfoSection';
@@ -13,6 +14,7 @@ import EducationInfoSection from '../user/EducationInfoSection';
 export default function PersonnelDetail({ userId, onBack }) {
   const [userDetail, setUserDetail] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentUserRole, setCurrentUserRole] = useState(null);
   const [roleEditing, setRoleEditing] = useState(false);
   const [selectedRole, setSelectedRole] = useState('Personel');
   const [roleSaving, setRoleSaving] = useState(false);
@@ -22,6 +24,9 @@ export default function PersonnelDetail({ userId, onBack }) {
   const [socialSecuritySaving, setSocialSecuritySaving] = useState(false);
 
   useEffect(() => {
+    // Giriş yapan kullanıcının rolünü localStorage'dan al
+    const role = localStorage.getItem('userRole');
+    setCurrentUserRole(role);
     fetchUserDetail(true); // İlk yüklemede loading göster
   }, [userId]);
 
@@ -34,6 +39,7 @@ export default function PersonnelDetail({ userId, onBack }) {
       if (data?.data) {
         console.log('User detail fetched:', data.data);
         console.log('OffBoarding data:', data.data.offBoarding);
+        console.log('User role:', data.data.role);
         setUserDetail(data.data);
         setSelectedRole(data.data.role === 'Manager' ? 'Manager' : 'Personel');
         setSocialSecurityNumber(data.data.socialSecurityNumber || '');
@@ -358,6 +364,16 @@ export default function PersonnelDetail({ userId, onBack }) {
         <OffBoardingSection 
           offBoarding={userDetail.offBoarding || null} 
           userId={userDetail.id}
+          onUpdate={() => fetchUserDetail(false)}
+        />
+      </div>
+
+      {/* Hak ve Alacaklar - Hem personel hem yönetici görebilir, sadece yönetici düzenleyebilir */}
+      <div className="bg-white rounded-lg shadow p-6">
+        <RightsAndReceivablesSection 
+          rightsAndReceivables={userDetail.rightsAndReceivables || null} 
+          userId={userDetail.id}
+          userRole={currentUserRole}
           onUpdate={() => fetchUserDetail(false)}
         />
       </div>

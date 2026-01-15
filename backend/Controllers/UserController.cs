@@ -17,13 +17,17 @@ public class UserController : ControllerBase
     private readonly SocialSecurityService _socialSecurityService;
     private readonly LegalDocumentService _legalDocumentService;
     private readonly OffBoardingService _offBoardingService;
+    private readonly RightsAndReceivablesService _rightsAndReceivablesService;
+    private readonly ILogger<UserController> _logger;
 
-    public UserController(UserService userService, SocialSecurityService socialSecurityService, LegalDocumentService legalDocumentService, OffBoardingService offBoardingService)
+    public UserController(UserService userService, SocialSecurityService socialSecurityService, LegalDocumentService legalDocumentService, OffBoardingService offBoardingService, RightsAndReceivablesService rightsAndReceivablesService, ILogger<UserController> logger)
     {
         _userService = userService;
         _socialSecurityService = socialSecurityService;
         _legalDocumentService = legalDocumentService;
         _offBoardingService = offBoardingService;
+        _rightsAndReceivablesService = rightsAndReceivablesService;
+        _logger = logger;
     }
 
     [HttpGet("{id:int}")]
@@ -294,6 +298,69 @@ public class UserController : ControllerBase
 
         Response.Headers.Append("Content-Disposition", $"attachment; filename=\"{result.Data.FileName}\"");
         return File(result.Data.FileBytes, result.Data.ContentType, result.Data.FileName);
+    }
+
+    [HttpGet("{userId:int}/rights-and-receivables")]
+    public async Task<ActionResult<ApiResult<RightsAndReceivablesDto>>> GetRightsAndReceivables(int userId)
+    {
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var roleClaim = User.FindFirst(ClaimTypes.Role)?.Value;
+
+        if (userIdClaim == null || !int.TryParse(userIdClaim, out var requestingUserId))
+            return Ok(ApiResult<RightsAndReceivablesDto>.Unauthorized());
+
+        if (!Enum.TryParse<UserRoleEnum>(roleClaim, out var requestingUserRole))
+            return Ok(ApiResult<RightsAndReceivablesDto>.Unauthorized("Invalid role"));
+
+        // Personel sadece kendi bilgilerini görebilir, Yönetici herkesi görebilir
+        if (requestingUserRole != UserRoleEnum.Manager && userId != requestingUserId)
+            return Ok(ApiResult<RightsAndReceivablesDto>.Unauthorized("Sadece kendi bilgilerinizi görüntüleyebilirsiniz"));
+
+        var result = await _rightsAndReceivablesService.GetRightsAndReceivablesByUserIdAsync(userId);
+        return Ok(result);
+    }
+
+    [HttpPut("{userId:int}/rights-and-receivables")]
+    public async Task<ActionResult<ApiResult<RightsAndReceivablesDto>>> UpdateRightsAndReceivables(
+        int userId, 
+        [FromBody] UpdateRightsAndReceivablesDto updateDto)
+    {
+        try
+        {
+            _logger.LogInformation("UpdateRightsAndReceivables called for userId: {UserId}", userId);
+            
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var roleClaim = User.FindFirst(ClaimTypes.Role)?.Value;
+
+            if (userIdClaim == null || !int.TryParse(userIdClaim, out var requestingUserId))
+            {
+                _logger.LogWarning("Unauthorized: userIdClaim is null or invalid");
+                return Ok(ApiResult<RightsAndReceivablesDto>.Unauthorized());
+            }
+
+            if (!Enum.TryParse<UserRoleEnum>(roleClaim, out var requestingUserRole))
+            {
+                _logger.LogWarning("Unauthorized: Invalid role - {Role}", roleClaim);
+                return Ok(ApiResult<RightsAndReceivablesDto>.Unauthorized("Invalid role"));
+            }
+
+            // Sadece Yönetici düzenleyebilir
+            if (requestingUserRole != UserRoleEnum.Manager)
+            {
+                _logger.LogWarning("Unauthorized: User {RequestingUserId} is not a Manager", requestingUserId);
+                return Ok(ApiResult<RightsAndReceivablesDto>.Unauthorized("Sadece yöneticiler bu bilgileri düzenleyebilir"));
+            }
+
+            _logger.LogInformation("Updating rights and receivables for user {UserId}", userId);
+            var result = await _rightsAndReceivablesService.CreateOrUpdateRightsAndReceivablesAsync(userId, updateDto);
+            _logger.LogInformation("Successfully updated rights and receivables for user {UserId}", userId);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error updating rights and receivables for user {UserId}", userId);
+            return Ok(ApiResult<RightsAndReceivablesDto>.BadRequest($"Bir hata oluştu: {ex.Message}"));
+        }
     }
 }
 

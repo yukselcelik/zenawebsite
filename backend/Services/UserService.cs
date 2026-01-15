@@ -28,6 +28,7 @@ public class UserService(ApplicationDbContext context, ILogger<UserService> logg
             .Include(u => u.LegalDocuments!.Where(d => !d.isDeleted))
             .Include(u => u.OffBoarding)
             .Include(u => u.OffBoardingDocuments!.Where(d => !d.isDeleted))
+            .Include(u => u.RightsAndReceivables)
             .AsNoTracking()
             .FirstOrDefaultAsync(u => u.Id == userId && !u.isDeleted);
 
@@ -282,6 +283,46 @@ public class UserService(ApplicationDbContext context, ILogger<UserService> logg
                         CreatedAt = d.CreatedAt
                     };
                 }).ToList() ?? new List<OffBoardingDocumentDto>()
+            } : null,
+            RightsAndReceivables = user.RightsAndReceivables != null && !user.RightsAndReceivables.isDeleted ? new RightsAndReceivablesDto
+            {
+                Id = user.RightsAndReceivables.Id,
+                NetSalaryAmount = user.RightsAndReceivables.NetSalaryAmount,
+                GrossSalaryAmount = user.RightsAndReceivables.GrossSalaryAmount,
+                AdvancesReceived = user.RightsAndReceivables.AdvancesReceived,
+                UnusedAnnualLeaveDays = user.RightsAndReceivables.UnusedAnnualLeaveDays,
+                UnusedAnnualLeaveAmount = user.RightsAndReceivables.UnusedAnnualLeaveAmount,
+                OvertimeHours = user.RightsAndReceivables.OvertimeHours,
+                OvertimeAmount = user.RightsAndReceivables.OvertimeAmount,
+                TravelSupportType = user.RightsAndReceivables.TravelSupportType.HasValue ? (int)user.RightsAndReceivables.TravelSupportType.Value : null,
+                TravelSupportTypeName = user.RightsAndReceivables.TravelSupportType.HasValue 
+                    ? CommonHelper.GetEnumDescription(user.RightsAndReceivables.TravelSupportType.Value) 
+                    : null,
+                TravelSupportDescription = user.RightsAndReceivables.TravelSupportDescription,
+                TravelSupportAmount = user.RightsAndReceivables.TravelSupportAmount,
+                FoodSupportType = user.RightsAndReceivables.FoodSupportType.HasValue ? (int)user.RightsAndReceivables.FoodSupportType.Value : null,
+                FoodSupportTypeName = user.RightsAndReceivables.FoodSupportType.HasValue 
+                    ? CommonHelper.GetEnumDescription(user.RightsAndReceivables.FoodSupportType.Value) 
+                    : null,
+                FoodSupportDailyAmount = user.RightsAndReceivables.FoodSupportDailyAmount,
+                FoodSupportCardCompanyInfo = user.RightsAndReceivables.FoodSupportCardCompanyInfo,
+                FoodSupportDescription = user.RightsAndReceivables.FoodSupportDescription,
+                BonusType = user.RightsAndReceivables.BonusType.HasValue ? (int)user.RightsAndReceivables.BonusType.Value : null,
+                BonusTypeName = user.RightsAndReceivables.BonusType.HasValue 
+                    ? CommonHelper.GetEnumDescription(user.RightsAndReceivables.BonusType.Value) 
+                    : null,
+                BonusPaymentPeriod = user.RightsAndReceivables.BonusPaymentPeriod.HasValue ? (int)user.RightsAndReceivables.BonusPaymentPeriod.Value : null,
+                BonusPaymentPeriodName = user.RightsAndReceivables.BonusPaymentPeriod.HasValue 
+                    ? CommonHelper.GetEnumDescription(user.RightsAndReceivables.BonusPaymentPeriod.Value) 
+                    : null,
+                BonusAmount = user.RightsAndReceivables.BonusAmount,
+                BonusDescription = user.RightsAndReceivables.BonusDescription,
+                OtherBenefitsPaymentPeriod = user.RightsAndReceivables.OtherBenefitsPaymentPeriod.HasValue ? (int)user.RightsAndReceivables.OtherBenefitsPaymentPeriod.Value : null,
+                OtherBenefitsPaymentPeriodName = user.RightsAndReceivables.OtherBenefitsPaymentPeriod.HasValue 
+                    ? CommonHelper.GetEnumDescription(user.RightsAndReceivables.OtherBenefitsPaymentPeriod.Value) 
+                    : null,
+                OtherBenefitsAmount = user.RightsAndReceivables.OtherBenefitsAmount,
+                OtherBenefitsDescription = user.RightsAndReceivables.OtherBenefitsDescription
             } : null
         };
 

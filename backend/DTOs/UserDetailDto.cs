@@ -24,6 +24,7 @@ public class UserDetailDto
     public List<SocialSecurityDocumentDto>? SocialSecurityDocuments { get; set; }
     public LegalDocumentDto? LegalDocuments { get; set; }
     public OffBoardingDto? OffBoarding { get; set; }
+    public RightsAndReceivablesDto? RightsAndReceivables { get; set; }
 }
 
 public class ContactInfoDto
