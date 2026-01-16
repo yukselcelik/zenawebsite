@@ -810,6 +810,26 @@ class ApiService {
     return this.handleResponse(response);
   }
 
+  // Employee Benefits (Yan Haklar) API calls
+  static async getEmployeeBenefits(userId) {
+    const response = await fetch(`${API_BASE_URL}/api/user/${userId}/benefits`, {
+      method: 'GET',
+      headers: this.getHeaders(),
+    });
+
+    return this.handleResponse(response);
+  }
+
+  static async upsertEmployeeBenefits(userId, data) {
+    const response = await fetch(`${API_BASE_URL}/api/user/${userId}/benefits`, {
+      method: 'PUT',
+      headers: this.getHeaders(),
+      body: JSON.stringify(data),
+    });
+
+    return this.handleResponse(response);
+  }
+
   // Expense Request API calls
   static async createExpenseRequest(formData, documentFile) {
     const url = `${API_BASE_URL}/api/expenserequest/request/with-document`;

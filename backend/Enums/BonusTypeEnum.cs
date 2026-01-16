@@ -11,6 +11,3 @@ public enum BonusTypeEnum
     [Description("Diğer")]
     Other = 3
 }
-
-
-

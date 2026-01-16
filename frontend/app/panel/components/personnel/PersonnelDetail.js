@@ -7,6 +7,7 @@ import SocialSecuritySection from './SocialSecuritySection';
 import LegalDocumentsSection from './LegalDocumentsSection';
 import OffBoardingSection from './OffBoardingSection';
 import RightsAndReceivablesSection from './RightsAndReceivablesSection';
+import EmployeeBenefitsSection from './EmployeeBenefitsSection';
 import ContactInfoSection from '../user/ContactInfoSection';
 import EmergencyContactSection from '../user/EmergencyContactSection';
 import EducationInfoSection from '../user/EducationInfoSection';
@@ -372,6 +373,15 @@ export default function PersonnelDetail({ userId, onBack }) {
       <div className="bg-white rounded-lg shadow p-6">
         <RightsAndReceivablesSection 
           rightsAndReceivables={userDetail.rightsAndReceivables || null} 
+          userId={userDetail.id}
+          userRole={currentUserRole}
+          onUpdate={() => fetchUserDetail(false)}
+        />
+      </div>
+
+      {/* Yan Haklar - Ayrı form */}
+      <div className="bg-white rounded-lg shadow p-6">
+        <EmployeeBenefitsSection
           userId={userDetail.id}
           userRole={currentUserRole}
           onUpdate={() => fetchUserDetail(false)}

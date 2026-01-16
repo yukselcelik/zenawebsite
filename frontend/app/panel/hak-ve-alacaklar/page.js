@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import ApiService from '../../../lib/api';
 import RightsAndReceivablesSection from '../components/personnel/RightsAndReceivablesSection';
+import EmployeeBenefitsSection from '../components/personnel/EmployeeBenefitsSection';
 
 export default function HakVeAlacaklarPage() {
   const [userData, setUserData] = useState(null);
@@ -88,6 +89,14 @@ export default function HakVeAlacaklarPage() {
           rightsAndReceivables={rightsAndReceivables}
           userId={userData?.userId ? parseInt(userData.userId) : null}
           userRole={userData?.role || 'Personel'} // Personel rolü ile görüntüleme modunda
+          onUpdate={handleUpdate}
+        />
+      </div>
+
+      <div className="bg-white rounded-lg shadow-sm p-6 mt-6">
+        <EmployeeBenefitsSection
+          userId={userData?.userId ? parseInt(userData.userId) : null}
+          userRole={userData?.role || 'Personel'}
           onUpdate={handleUpdate}
         />
       </div>

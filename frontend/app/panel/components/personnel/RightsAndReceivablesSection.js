@@ -3,42 +3,12 @@
 import { useState, useEffect } from 'react';
 import ApiService from '../../../../lib/api';
 
-const TRAVEL_SUPPORT_TYPES = [
-  { value: 1, label: 'Nakit' },
-  { value: 2, label: 'Servis' },
-  { value: 3, label: 'Şirket Aracı' },
-  { value: 4, label: 'Yok' }
-];
-
-const FOOD_SUPPORT_TYPES = [
-  { value: 1, label: 'Yemek Kartı' },
-  { value: 2, label: 'Nakit' },
-  { value: 3, label: 'Yemekhane' }
-];
-
-const BONUS_TYPES = [
-  { value: 1, label: 'Performans' },
-  { value: 2, label: 'Satış' },
-  { value: 3, label: 'Diğer' }
-];
-
-const PAYMENT_PERIODS = [
-  { value: 1, label: 'Aylık' },
-  { value: 2, label: 'Üç Aylık' },
-  { value: 3, label: 'Yıllık' },
-  { value: 4, label: 'Düzensiz' }
-];
-
 export default function RightsAndReceivablesSection({ rightsAndReceivables, userId, userRole, onUpdate }) {
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   // Accordion state'leri - başlangıçta kapalı
   const [showMainInfo, setShowMainInfo] = useState(false);
-  const [showSideBenefits, setShowSideBenefits] = useState(false);
-  const [showTravelSupport, setShowTravelSupport] = useState(false);
-  const [showFoodSupport, setShowFoodSupport] = useState(false);
-  const [showBonus, setShowBonus] = useState(false);
-  const [showOtherBenefits, setShowOtherBenefits] = useState(false);
+
   const [formData, setFormData] = useState({
     netSalaryAmount: '',
     grossSalaryAmount: '',
@@ -46,21 +16,7 @@ export default function RightsAndReceivablesSection({ rightsAndReceivables, user
     unusedAnnualLeaveDays: '',
     unusedAnnualLeaveAmount: '',
     overtimeHours: '',
-    overtimeAmount: '',
-    travelSupportType: '',
-    travelSupportDescription: '',
-    travelSupportAmount: '',
-    foodSupportType: '',
-    foodSupportDailyAmount: '',
-    foodSupportCardCompanyInfo: '',
-    foodSupportDescription: '',
-    bonusType: '',
-    bonusPaymentPeriod: '',
-    bonusAmount: '',
-    bonusDescription: '',
-    otherBenefitsPaymentPeriod: '',
-    otherBenefitsAmount: '',
-    otherBenefitsDescription: ''
+    overtimeAmount: ''
   });
 
   // userRole kontrolü - Manager veya Manager string'i olabilir
@@ -78,21 +34,7 @@ export default function RightsAndReceivablesSection({ rightsAndReceivables, user
         unusedAnnualLeaveDays: rightsAndReceivables.unusedAnnualLeaveDays?.toString() || '',
         unusedAnnualLeaveAmount: rightsAndReceivables.unusedAnnualLeaveAmount?.toString() || '',
         overtimeHours: rightsAndReceivables.overtimeHours?.toString() || '',
-        overtimeAmount: rightsAndReceivables.overtimeAmount?.toString() || '',
-        travelSupportType: rightsAndReceivables.travelSupportType?.toString() || '',
-        travelSupportDescription: rightsAndReceivables.travelSupportDescription || '',
-        travelSupportAmount: rightsAndReceivables.travelSupportAmount?.toString() || '',
-        foodSupportType: rightsAndReceivables.foodSupportType?.toString() || '',
-        foodSupportDailyAmount: rightsAndReceivables.foodSupportDailyAmount?.toString() || '',
-        foodSupportCardCompanyInfo: rightsAndReceivables.foodSupportCardCompanyInfo || '',
-        foodSupportDescription: rightsAndReceivables.foodSupportDescription || '',
-        bonusType: rightsAndReceivables.bonusType?.toString() || '',
-        bonusPaymentPeriod: rightsAndReceivables.bonusPaymentPeriod?.toString() || '',
-        bonusAmount: rightsAndReceivables.bonusAmount?.toString() || '',
-        bonusDescription: rightsAndReceivables.bonusDescription || '',
-        otherBenefitsPaymentPeriod: rightsAndReceivables.otherBenefitsPaymentPeriod?.toString() || '',
-        otherBenefitsAmount: rightsAndReceivables.otherBenefitsAmount?.toString() || '',
-        otherBenefitsDescription: rightsAndReceivables.otherBenefitsDescription || ''
+        overtimeAmount: rightsAndReceivables.overtimeAmount?.toString() || ''
       });
     }
   }, [rightsAndReceivables]);
@@ -107,21 +49,7 @@ export default function RightsAndReceivablesSection({ rightsAndReceivables, user
         unusedAnnualLeaveDays: formData.unusedAnnualLeaveDays ? parseInt(formData.unusedAnnualLeaveDays) : null,
         unusedAnnualLeaveAmount: parseCurrencyValue(formData.unusedAnnualLeaveAmount),
         overtimeHours: formData.overtimeHours ? parseInt(formData.overtimeHours) : null,
-        overtimeAmount: parseCurrencyValue(formData.overtimeAmount),
-        travelSupportType: formData.travelSupportType ? parseInt(formData.travelSupportType) : null,
-        travelSupportDescription: formData.travelSupportDescription || null,
-        travelSupportAmount: parseCurrencyValue(formData.travelSupportAmount),
-        foodSupportType: formData.foodSupportType ? parseInt(formData.foodSupportType) : null,
-        foodSupportDailyAmount: parseCurrencyValue(formData.foodSupportDailyAmount),
-        foodSupportCardCompanyInfo: formData.foodSupportCardCompanyInfo || null,
-        foodSupportDescription: formData.foodSupportDescription || null,
-        bonusType: formData.bonusType ? parseInt(formData.bonusType) : null,
-        bonusPaymentPeriod: formData.bonusPaymentPeriod ? parseInt(formData.bonusPaymentPeriod) : null,
-        bonusAmount: parseCurrencyValue(formData.bonusAmount),
-        bonusDescription: formData.bonusDescription || null,
-        otherBenefitsPaymentPeriod: formData.otherBenefitsPaymentPeriod ? parseInt(formData.otherBenefitsPaymentPeriod) : null,
-        otherBenefitsAmount: parseCurrencyValue(formData.otherBenefitsAmount),
-        otherBenefitsDescription: formData.otherBenefitsDescription || null
+        overtimeAmount: parseCurrencyValue(formData.overtimeAmount)
       };
 
       console.log('=== Sending updateData ===');
@@ -153,6 +81,21 @@ export default function RightsAndReceivablesSection({ rightsAndReceivables, user
       alert(error.message || 'Bilgiler kaydedilirken hata oluştu. Lütfen tekrar deneyin.');
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    if (rightsAndReceivables) {
+      setFormData({
+        netSalaryAmount: rightsAndReceivables.netSalaryAmount?.toString() || '',
+        grossSalaryAmount: rightsAndReceivables.grossSalaryAmount?.toString() || '',
+        advancesReceived: rightsAndReceivables.advancesReceived?.toString() || '',
+        unusedAnnualLeaveDays: rightsAndReceivables.unusedAnnualLeaveDays?.toString() || '',
+        unusedAnnualLeaveAmount: rightsAndReceivables.unusedAnnualLeaveAmount?.toString() || '',
+        overtimeHours: rightsAndReceivables.overtimeHours?.toString() || '',
+        overtimeAmount: rightsAndReceivables.overtimeAmount?.toString() || ''
+      });
     }
   };
 
@@ -226,64 +169,7 @@ export default function RightsAndReceivablesSection({ rightsAndReceivables, user
       {/* Ana Başlık - Sola Hizalı */}
       <div className="mb-6">
         <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-semibold text-gray-800">Hak ve Alacaklar</h3>
-          {isManager && (
-            <div className="flex gap-2">
-            {isEditing ? (
-              <>
-                <button
-                  onClick={() => {
-                    setIsEditing(false);
-                    if (rightsAndReceivables) {
-                      setFormData({
-                        netSalaryAmount: rightsAndReceivables.netSalaryAmount?.toString() || '',
-                        grossSalaryAmount: rightsAndReceivables.grossSalaryAmount?.toString() || '',
-                        advancesReceived: rightsAndReceivables.advancesReceived?.toString() || '',
-                        unusedAnnualLeaveDays: rightsAndReceivables.unusedAnnualLeaveDays?.toString() || '',
-                        unusedAnnualLeaveAmount: rightsAndReceivables.unusedAnnualLeaveAmount?.toString() || '',
-                        overtimeHours: rightsAndReceivables.overtimeHours?.toString() || '',
-                        overtimeAmount: rightsAndReceivables.overtimeAmount?.toString() || '',
-                        travelSupportType: rightsAndReceivables.travelSupportType?.toString() || '',
-                        travelSupportDescription: rightsAndReceivables.travelSupportDescription || '',
-                        travelSupportAmount: rightsAndReceivables.travelSupportAmount?.toString() || '',
-                        foodSupportType: rightsAndReceivables.foodSupportType?.toString() || '',
-                        foodSupportDailyAmount: rightsAndReceivables.foodSupportDailyAmount?.toString() || '',
-                        foodSupportCardCompanyInfo: rightsAndReceivables.foodSupportCardCompanyInfo || '',
-                        foodSupportDescription: rightsAndReceivables.foodSupportDescription || '',
-                        bonusType: rightsAndReceivables.bonusType?.toString() || '',
-                        bonusPaymentPeriod: rightsAndReceivables.bonusPaymentPeriod?.toString() || '',
-                        bonusAmount: rightsAndReceivables.bonusAmount?.toString() || '',
-                        bonusDescription: rightsAndReceivables.bonusDescription || '',
-                        otherBenefitsPaymentPeriod: rightsAndReceivables.otherBenefitsPaymentPeriod?.toString() || '',
-                        otherBenefitsAmount: rightsAndReceivables.otherBenefitsAmount?.toString() || '',
-                        otherBenefitsDescription: rightsAndReceivables.otherBenefitsDescription || ''
-                      });
-                    }
-                  }}
-                  className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 cursor-pointer text-sm"
-                >
-                  İptal
-                </button>
-                <button
-                  onClick={handleSave}
-                  disabled={isSaving}
-                  className={`px-4 py-2 rounded-lg text-sm cursor-pointer ${
-                    isSaving ? 'bg-gray-400 text-white' : 'bg-orange-500 hover:bg-orange-600 text-white'
-                  }`}
-                >
-                  {isSaving ? 'Kaydediliyor...' : 'Kaydet'}
-                </button>
-              </>
-            ) : (
-              <button
-                onClick={() => setIsEditing(true)}
-                className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm cursor-pointer"
-              >
-                Düzenle
-              </button>
-            )}
-            </div>
-          )}
+          <h3 className="text-lg font-semibold text-gray-800">Ana Bilgiler</h3>
         </div>
       </div>
 
@@ -441,394 +327,40 @@ export default function RightsAndReceivablesSection({ rightsAndReceivables, user
         )}
       </div>
 
-      {/* Yan Haklar - Accordion */}
-      <div className="mb-6">
-        <button
-          type="button"
-          onClick={() => setShowSideBenefits(!showSideBenefits)}
-          className="flex items-center justify-between w-full mb-4 text-left hover:bg-gray-50 p-3 rounded-lg transition-colors border border-gray-200"
-        >
-          <h4 className="text-md font-semibold text-gray-700">Yan Haklar</h4>
-          <svg
-            className="w-5 h-5 text-gray-600 transition-transform duration-200"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            {showSideBenefits ? (
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14" />
-            ) : (
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-            )}
-          </svg>
-        </button>
-        
-        {showSideBenefits && (
-          <div className="space-y-6">
-            {/* Yol Desteği - Accordion */}
-            <div className="border border-gray-200 rounded-lg">
+      {/* Form Altı Aksiyonlar (best practice: tek yerden yönetim) */}
+      {isManager && (
+        <div className="mt-6 pt-4 border-t border-gray-200 flex flex-wrap gap-2 justify-end">
+          {isEditing ? (
+            <>
               <button
                 type="button"
-                onClick={() => setShowTravelSupport(!showTravelSupport)}
-                className="flex items-center justify-between w-full p-4 bg-cyan-50 hover:bg-cyan-100 rounded-t-lg transition-colors"
+                onClick={handleCancelEdit}
+                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 text-sm"
               >
-                <h5 className="text-sm font-semibold text-gray-800">Yol Desteği</h5>
-                <svg
-                  className="w-5 h-5 text-gray-600 transition-transform duration-200"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  {showTravelSupport ? (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14" />
-                  ) : (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                  )}
-                </svg>
+                İptal
               </button>
-              {showTravelSupport && (
-                <div className="p-4 bg-cyan-50 rounded-b-lg border-t border-cyan-200">
-                  <div className="space-y-3">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Tür:</label>
-                {isEditing && isManager ? (
-                  <select
-                    value={formData.travelSupportType}
-                    onChange={(e) => setFormData({ ...formData, travelSupportType: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
-                  >
-                    <option value="">Seçiniz</option>
-                    {TRAVEL_SUPPORT_TYPES.map(type => (
-                      <option key={type.value} value={type.value}>{type.label}</option>
-                    ))}
-                  </select>
-                ) : (
-                  <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg min-h-[42px]">
-                    <span className="text-gray-900">{rightsAndReceivables?.travelSupportTypeName || ''}</span>
-                  </div>
-                )}
-              </div>
-              {/* Açıklama ve Tutar sadece "Yok" seçilmediğinde göster */}
-              {((isEditing && isManager && formData.travelSupportType && formData.travelSupportType !== '4') || 
-                (!isEditing && rightsAndReceivables?.travelSupportType && rightsAndReceivables.travelSupportType !== 4)) && (
-                <>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Açıklama:</label>
-                    {isEditing && isManager ? (
-                      <textarea
-                        value={formData.travelSupportDescription}
-                        onChange={(e) => setFormData({ ...formData, travelSupportDescription: e.target.value })}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
-                        rows="2"
-                        placeholder=""
-                      />
-                    ) : (
-                      <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg min-h-[42px]">
-                        <span className="text-gray-900">{rightsAndReceivables?.travelSupportDescription || ''}</span>
-                      </div>
-                    )}
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Tutar:</label>
-                    {isEditing && isManager ? (
-                      <input
-                        type="text"
-                        value={formData.travelSupportAmount}
-                        onChange={(e) => handleCurrencyInput(e.target.value, 'travelSupportAmount')}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
-                        placeholder=""
-                      />
-                    ) : (
-                      <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg min-h-[42px]">
-                        <span className="text-gray-900">{formatCurrency(rightsAndReceivables?.travelSupportAmount)}</span>
-                      </div>
-                    )}
-                  </div>
-                </>
-              )}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Yemek Desteği - Accordion */}
-            <div className="border border-gray-200 rounded-lg">
               <button
                 type="button"
-                onClick={() => setShowFoodSupport(!showFoodSupport)}
-                className="flex items-center justify-between w-full p-4 bg-green-50 hover:bg-green-100 rounded-t-lg transition-colors"
+                onClick={handleSave}
+                disabled={isSaving}
+                className={`px-4 py-2 rounded-lg text-sm ${
+                  isSaving ? 'bg-gray-400 text-white' : 'bg-orange-500 hover:bg-orange-600 text-white'
+                }`}
               >
-                <h5 className="text-sm font-semibold text-gray-800">Yemek Desteği</h5>
-                <svg
-                  className="w-5 h-5 text-gray-600 transition-transform duration-200"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  {showFoodSupport ? (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14" />
-                  ) : (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                  )}
-                </svg>
+                {isSaving ? 'Kaydediliyor...' : 'Kaydet'}
               </button>
-              {showFoodSupport && (
-                <div className="p-4 bg-green-50 rounded-b-lg border-t border-green-200">
-                  <div className="space-y-3">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Tür:</label>
-                {isEditing && isManager ? (
-                  <select
-                    value={formData.foodSupportType}
-                    onChange={(e) => setFormData({ ...formData, foodSupportType: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
-                  >
-                    <option value="">Seçiniz</option>
-                    {FOOD_SUPPORT_TYPES.map(type => (
-                      <option key={type.value} value={type.value}>{type.label}</option>
-                    ))}
-                  </select>
-                ) : (
-                  <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg min-h-[42px]">
-                    <span className="text-gray-900">{rightsAndReceivables?.foodSupportTypeName || ''}</span>
-                  </div>
-                )}
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Günlük Tutar:</label>
-                {isEditing && isManager ? (
-                  <input
-                    type="text"
-                    value={formData.foodSupportDailyAmount}
-                    onChange={(e) => handleCurrencyInput(e.target.value, 'foodSupportDailyAmount')}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
-                    placeholder=""
-                  />
-                ) : (
-                  <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg min-h-[42px]">
-                    <span className="text-gray-900">{formatCurrency(rightsAndReceivables?.foodSupportDailyAmount)}</span>
-                  </div>
-                )}
-              </div>
-              {/* Kart/Firma Bilgileri sadece "Yemek Kartı" (value: 1) seçildiğinde göster */}
-              {((isEditing && isManager && formData.foodSupportType === '1') || 
-                (!isEditing && rightsAndReceivables?.foodSupportType === 1)) && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Kart/Firma Bilgileri:</label>
-                  {isEditing && isManager ? (
-                    <input
-                      type="text"
-                      value={formData.foodSupportCardCompanyInfo}
-                      onChange={(e) => setFormData({ ...formData, foodSupportCardCompanyInfo: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
-                      placeholder=""
-                    />
-                  ) : (
-                    <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg min-h-[42px]">
-                      <span className="text-gray-900">{rightsAndReceivables?.foodSupportCardCompanyInfo || ''}</span>
-                    </div>
-                  )}
-                </div>
-              )}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Açıklama:</label>
-                {isEditing && isManager ? (
-                  <textarea
-                    value={formData.foodSupportDescription}
-                    onChange={(e) => setFormData({ ...formData, foodSupportDescription: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
-                    rows="2"
-                  />
-                ) : (
-                  <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg min-h-[42px]">
-                    <span className="text-gray-900">{rightsAndReceivables?.foodSupportDescription || ''}</span>
-                  </div>
-                )}
-              </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Prim - Accordion */}
-            <div className="border border-gray-200 rounded-lg">
-              <button
-                type="button"
-                onClick={() => setShowBonus(!showBonus)}
-                className="flex items-center justify-between w-full p-4 bg-amber-50 hover:bg-amber-100 rounded-t-lg transition-colors"
-              >
-                <h5 className="text-sm font-semibold text-gray-800">Prim</h5>
-                <svg
-                  className="w-5 h-5 text-gray-600 transition-transform duration-200"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  {showBonus ? (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14" />
-                  ) : (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                  )}
-                </svg>
-              </button>
-              {showBonus && (
-                <div className="p-4 bg-amber-50 rounded-b-lg border-t border-amber-200">
-                  <div className="space-y-3">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Tür:</label>
-                {isEditing && isManager ? (
-                  <select
-                    value={formData.bonusType}
-                    onChange={(e) => setFormData({ ...formData, bonusType: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
-                  >
-                    <option value="">Seçiniz</option>
-                    {BONUS_TYPES.map(type => (
-                      <option key={type.value} value={type.value}>{type.label}</option>
-                    ))}
-                  </select>
-                ) : (
-                  <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg min-h-[42px]">
-                    <span className="text-gray-900">{rightsAndReceivables?.bonusTypeName || ''}</span>
-                  </div>
-                )}
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Ödeme Periyodu:</label>
-                {isEditing && isManager ? (
-                  <select
-                    value={formData.bonusPaymentPeriod}
-                    onChange={(e) => setFormData({ ...formData, bonusPaymentPeriod: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
-                  >
-                    <option value="">Seçiniz</option>
-                    {PAYMENT_PERIODS.map(period => (
-                      <option key={period.value} value={period.value}>{period.label}</option>
-                    ))}
-                  </select>
-                ) : (
-                  <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg min-h-[42px]">
-                    <span className="text-gray-900">{rightsAndReceivables?.bonusPaymentPeriodName || ''}</span>
-                  </div>
-                )}
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Tutar:</label>
-                {isEditing && isManager ? (
-                  <input
-                    type="text"
-                    value={formData.bonusAmount}
-                    onChange={(e) => handleCurrencyInput(e.target.value, 'bonusAmount')}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
-                    placeholder=""
-                  />
-                ) : (
-                  <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg min-h-[42px]">
-                    <span className="text-gray-900">{formatCurrency(rightsAndReceivables?.bonusAmount)}</span>
-                  </div>
-                )}
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Açıklama:</label>
-                {isEditing && isManager ? (
-                  <textarea
-                    value={formData.bonusDescription}
-                    onChange={(e) => setFormData({ ...formData, bonusDescription: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
-                    rows="2"
-                  />
-                ) : (
-                  <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg min-h-[42px]">
-                    <span className="text-gray-900">{rightsAndReceivables?.bonusDescription || ''}</span>
-                  </div>
-                )}
-              </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Diğer Yan Haklar - Accordion */}
-            <div className="border border-gray-200 rounded-lg">
-              <button
-                type="button"
-                onClick={() => setShowOtherBenefits(!showOtherBenefits)}
-                className="flex items-center justify-between w-full p-4 bg-purple-50 hover:bg-purple-100 rounded-t-lg transition-colors"
-              >
-                <h5 className="text-sm font-semibold text-gray-800">Diğer Yan Haklar</h5>
-                <svg
-                  className="w-5 h-5 text-gray-600 transition-transform duration-200"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  {showOtherBenefits ? (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14" />
-                  ) : (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                  )}
-                </svg>
-              </button>
-              {showOtherBenefits && (
-                <div className="p-4 bg-purple-50 rounded-b-lg border-t border-purple-200">
-                  <div className="space-y-3">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Ödeme Periyodu:</label>
-                {isEditing && isManager ? (
-                  <select
-                    value={formData.otherBenefitsPaymentPeriod}
-                    onChange={(e) => setFormData({ ...formData, otherBenefitsPaymentPeriod: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
-                  >
-                    <option value="">Seçiniz</option>
-                    {PAYMENT_PERIODS.map(period => (
-                      <option key={period.value} value={period.value}>{period.label}</option>
-                    ))}
-                  </select>
-                ) : (
-                  <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg min-h-[42px]">
-                    <span className="text-gray-900">{rightsAndReceivables?.otherBenefitsPaymentPeriodName || ''}</span>
-                  </div>
-                )}
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Tutar:</label>
-                {isEditing && isManager ? (
-                  <input
-                    type="text"
-                    value={formData.otherBenefitsAmount}
-                    onChange={(e) => handleCurrencyInput(e.target.value, 'otherBenefitsAmount')}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
-                    placeholder=""
-                  />
-                ) : (
-                  <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg min-h-[42px]">
-                    <span className="text-gray-900">{formatCurrency(rightsAndReceivables?.otherBenefitsAmount)}</span>
-                  </div>
-                )}
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Açıklama:</label>
-                {isEditing && isManager ? (
-                  <textarea
-                    value={formData.otherBenefitsDescription}
-                    onChange={(e) => setFormData({ ...formData, otherBenefitsDescription: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
-                    rows="2"
-                  />
-                ) : (
-                  <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg min-h-[42px]">
-                    <span className="text-gray-900">{rightsAndReceivables?.otherBenefitsDescription || ''}</span>
-                  </div>
-                )}
-              </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-      </div>
+            </>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setIsEditing(true)}
+              className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm"
+            >
+              Düzenle
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }

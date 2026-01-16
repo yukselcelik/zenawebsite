@@ -18,15 +18,24 @@ public class UserController : ControllerBase
     private readonly LegalDocumentService _legalDocumentService;
     private readonly OffBoardingService _offBoardingService;
     private readonly RightsAndReceivablesService _rightsAndReceivablesService;
+    private readonly EmployeeBenefitService _employeeBenefitService;
     private readonly ILogger<UserController> _logger;
 
-    public UserController(UserService userService, SocialSecurityService socialSecurityService, LegalDocumentService legalDocumentService, OffBoardingService offBoardingService, RightsAndReceivablesService rightsAndReceivablesService, ILogger<UserController> logger)
+    public UserController(
+        UserService userService,
+        SocialSecurityService socialSecurityService,
+        LegalDocumentService legalDocumentService,
+        OffBoardingService offBoardingService,
+        RightsAndReceivablesService rightsAndReceivablesService,
+        EmployeeBenefitService employeeBenefitService,
+        ILogger<UserController> logger)
     {
         _userService = userService;
         _socialSecurityService = socialSecurityService;
         _legalDocumentService = legalDocumentService;
         _offBoardingService = offBoardingService;
         _rightsAndReceivablesService = rightsAndReceivablesService;
+        _employeeBenefitService = employeeBenefitService;
         _logger = logger;
     }
 
@@ -360,6 +369,57 @@ public class UserController : ControllerBase
         {
             _logger.LogError(ex, "Error updating rights and receivables for user {UserId}", userId);
             return Ok(ApiResult<RightsAndReceivablesDto>.BadRequest($"Bir hata oluştu: {ex.Message}"));
+        }
+    }
+
+    [HttpGet("{userId:int}/benefits")]
+    public async Task<ActionResult<ApiResult<List<EmployeeBenefitDto>>>> GetBenefits(int userId)
+    {
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var roleClaim = User.FindFirst(ClaimTypes.Role)?.Value;
+
+        if (userIdClaim == null || !int.TryParse(userIdClaim, out var requestingUserId))
+            return Ok(ApiResult<List<EmployeeBenefitDto>>.Unauthorized());
+
+        if (!Enum.TryParse<UserRoleEnum>(roleClaim, out var requestingUserRole))
+            return Ok(ApiResult<List<EmployeeBenefitDto>>.Unauthorized("Invalid role"));
+
+        // Personel sadece kendi bilgilerini görebilir, Yönetici herkesi görebilir
+        if (requestingUserRole != UserRoleEnum.Manager && userId != requestingUserId)
+            return Ok(ApiResult<List<EmployeeBenefitDto>>.Unauthorized("Sadece kendi bilgilerinizi görüntüleyebilirsiniz"));
+
+        var result = await _employeeBenefitService.GetBenefitsByUserIdAsync(userId);
+        return Ok(result);
+    }
+
+    [HttpPut("{userId:int}/benefits")]
+    public async Task<ActionResult<ApiResult<List<EmployeeBenefitDto>>>> UpsertBenefits(
+        int userId,
+        [FromBody] List<UpsertEmployeeBenefitDto> benefits)
+    {
+        try
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var roleClaim = User.FindFirst(ClaimTypes.Role)?.Value;
+
+            if (userIdClaim == null || !int.TryParse(userIdClaim, out var requestingUserId))
+                return Ok(ApiResult<List<EmployeeBenefitDto>>.Unauthorized());
+
+            if (!Enum.TryParse<UserRoleEnum>(roleClaim, out var requestingUserRole))
+                return Ok(ApiResult<List<EmployeeBenefitDto>>.Unauthorized("Invalid role"));
+
+            // Sadece Yönetici düzenleyebilir
+            if (requestingUserRole != UserRoleEnum.Manager)
+                return Ok(ApiResult<List<EmployeeBenefitDto>>.Unauthorized("Sadece yöneticiler bu bilgileri düzenleyebilir"));
+
+            _logger.LogInformation("UpsertBenefits called for userId: {UserId}", userId);
+            var result = await _employeeBenefitService.UpsertBenefitsAsync(userId, benefits);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error upserting benefits for user {UserId}", userId);
+            return Ok(ApiResult<List<EmployeeBenefitDto>>.BadRequest($"Bir hata oluştu: {ex.Message}"));
         }
     }
 }
