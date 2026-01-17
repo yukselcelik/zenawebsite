@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import ApiService from '../../../lib/api';
 
@@ -24,60 +24,25 @@ export default function MasrafTalepEtPage() {
     requestedAmount: '',
     description: ''
   });
-  const [dateInput, setDateInput] = useState({ day: '', month: '', year: '' });
+  const [errors, setErrors] = useState({});
   const [documentFile, setDocumentFile] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const router = useRouter();
+  const fileInputRef = useRef(null);
 
-  // Tarih input handler - gg.aa.yyyy formatı
-  const handleDateInput = (field, value) => {
-    // Sadece rakam kabul et
-    const cleaned = value.replace(/[^\d]/g, '');
-    
-    let newDateInput = { ...dateInput };
-    
-    if (field === 'day') {
-      // Gün: maksimum 2 rakam, 01-31 arası
-      if (cleaned.length <= 2) {
-        newDateInput.day = cleaned;
-        if (cleaned.length === 2 && (parseInt(cleaned) < 1 || parseInt(cleaned) > 31)) {
-          return; // Geçersiz gün
-        }
-      }
-    } else if (field === 'month') {
-      // Ay: maksimum 2 rakam, 01-12 arası
-      if (cleaned.length <= 2) {
-        newDateInput.month = cleaned;
-        if (cleaned.length === 2 && (parseInt(cleaned) < 1 || parseInt(cleaned) > 12)) {
-          return; // Geçersiz ay
-        }
-      }
-    } else if (field === 'year') {
-      // Yıl: maksimum 4 rakam
-      if (cleaned.length <= 4) {
-        newDateInput.year = cleaned;
-      }
+  // Default date = today for better UX
+  useEffect(() => {
+    if (!formData.requestDate) {
+      const today = new Date();
+      const yyyy = today.getFullYear();
+      const mm = String(today.getMonth() + 1).padStart(2, '0');
+      const dd = String(today.getDate()).padStart(2, '0');
+      setFormData((p) => ({ ...p, requestDate: `${yyyy}-${mm}-${dd}` }));
     }
-    
-    setDateInput(newDateInput);
-    
-    // Tarihi ISO formatına çevir (YYYY-MM-DD)
-    if (newDateInput.day.length === 2 && newDateInput.month.length === 2 && newDateInput.year.length === 4) {
-      const day = parseInt(newDateInput.day);
-      const month = parseInt(newDateInput.month);
-      const year = parseInt(newDateInput.year);
-      
-      // Tarih validasyonu
-      if (day >= 1 && day <= 31 && month >= 1 && month <= 12 && year >= 2000 && year <= 2100) {
-        const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-        setFormData({ ...formData, requestDate: dateStr });
-      }
-    } else {
-      setFormData({ ...formData, requestDate: '' });
-    }
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Para input validasyonu - sadece rakam ve 1 virgül (küsürat için)
   const handleCurrencyInput = (value) => {
@@ -99,8 +64,7 @@ export default function MasrafTalepEtPage() {
     setFormData({ ...formData, requestedAmount: cleaned });
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
+  const setFile = (file) => {
     if (file) {
       if (file.size > 10 * 1024 * 1024) {
         setError('Dosya boyutu 10MB\'dan büyük olamaz');
@@ -108,34 +72,50 @@ export default function MasrafTalepEtPage() {
       }
       setDocumentFile(file);
       setError('');
+      setErrors((p) => ({ ...p, documentFile: undefined }));
     }
   };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setFile(file);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files?.[0];
+    setFile(file);
+  };
+
+  const validate = () => {
+    const next = {};
+
+    if (!formData.requestDate) next.requestDate = 'Talep tarihi seçilmelidir';
+    if (!formData.expenseType) next.expenseType = 'Masraf türü seçilmelidir';
+
+    const amount = parseFloat((formData.requestedAmount || '').replace(',', '.'));
+    if (!formData.requestedAmount || isNaN(amount) || amount <= 0) {
+      next.requestedAmount = 'Talep edilen tutar girilmelidir';
+    }
+
+    if (!formData.description.trim()) next.description = 'Açıklama girilmelidir';
+
+    setErrors(next);
+    return Object.keys(next).length === 0;
+  };
+
+  const expenseTypeLabel = useMemo(() => {
+    const found = EXPENSE_TYPES.find((t) => t.value.toString() === (formData.expenseType || '').toString());
+    return found?.label || '-';
+  }, [formData.expenseType]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setSuccess('');
+    setErrors({});
 
-    // Validasyon
-    if (!formData.requestDate) {
-      setError('Talep tarihi seçilmelidir');
-      return;
-    }
-
-    if (!formData.expenseType) {
-      setError('Masraf türü seçilmelidir');
-      return;
-    }
-
-    if (!formData.requestedAmount || parseFloat(formData.requestedAmount.replace(',', '.')) <= 0) {
-      setError('Talep edilen tutar girilmelidir');
-      return;
-    }
-
-    if (!formData.description.trim()) {
-      setError('Açıklama girilmelidir');
-      return;
-    }
+    if (!validate()) return;
 
     setIsLoading(true);
 
@@ -156,15 +136,13 @@ export default function MasrafTalepEtPage() {
         setSuccess('Masraf talebiniz başarıyla oluşturuldu!');
         // Formu temizle
         setFormData({
-          requestDate: '',
+          requestDate: formData.requestDate, // keep last selected date for speed
           expenseType: '',
           requestedAmount: '',
           description: ''
         });
-        setDateInput({ day: '', month: '', year: '' });
         setDocumentFile(null);
-        const fileInput = document.getElementById('documentFile');
-        if (fileInput) fileInput.value = '';
+        if (fileInputRef.current) fileInputRef.current.value = '';
         
         setTimeout(() => {
           router.push('/panel/masraf-taleplerim');
@@ -203,97 +181,114 @@ export default function MasrafTalepEtPage() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Talep Tarihi ve Talep Numarası */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Quick summary */}
+          {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="p-4 bg-gray-50 rounded-lg">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Talep Tarihi: <span className="text-red-500">*</span>
-              </label>
-              <div className="flex items-center gap-2">
-                <input
-                  type="text"
-                  value={dateInput.day}
-                  onChange={(e) => handleDateInput('day', e.target.value)}
-                  onBlur={(e) => {
-                    if (e.target.value.length === 1) {
-                      setDateInput({ ...dateInput, day: e.target.value.padStart(2, '0') });
-                    }
-                  }}
-                  className="w-16 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 text-center"
-                  placeholder="gg"
-                  maxLength={2}
-                  inputMode="numeric"
-                />
-                <span className="text-gray-500">.</span>
-                <input
-                  type="text"
-                  value={dateInput.month}
-                  onChange={(e) => handleDateInput('month', e.target.value)}
-                  onBlur={(e) => {
-                    if (e.target.value.length === 1) {
-                      setDateInput({ ...dateInput, month: e.target.value.padStart(2, '0') });
-                    }
-                  }}
-                  className="w-16 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 text-center"
-                  placeholder="aa"
-                  maxLength={2}
-                  inputMode="numeric"
-                />
-                <span className="text-gray-500">.</span>
-                <input
-                  type="text"
-                  value={dateInput.year}
-                  onChange={(e) => handleDateInput('year', e.target.value)}
-                  className="w-20 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 text-center"
-                  placeholder="yyyy"
-                  maxLength={4}
-                  inputMode="numeric"
-                />
+              <div className="text-xs text-gray-500 mb-1">Talep Tarihi</div>
+              <div className="text-sm font-medium text-gray-900">{formData.requestDate || '-'}</div>
+            </div>
+            <div className="p-4 bg-gray-50 rounded-lg">
+              <div className="text-xs text-gray-500 mb-1">Masraf Türü</div>
+              <div className="text-sm font-medium text-gray-900">{expenseTypeLabel}</div>
+            </div>
+            <div className="p-4 bg-gray-50 rounded-lg">
+              <div className="text-xs text-gray-500 mb-1">Tutar</div>
+              <div className="text-sm font-medium text-gray-900">{formData.requestedAmount ? `${formData.requestedAmount} TL` : '-'}</div>
+            </div>
+          </div> */}
+
+          {/* Küçük alanlar - aynı satır */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Talep Tarihi */}
+            <div className="p-4 bg-gray-50 rounded-lg">
+              <div className="flex items-center justify-between gap-3 mb-2">
+                <label className="block text-sm font-medium text-gray-700">
+                  Talep Tarihi <span className="text-red-500">*</span>
+                </label>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const d = new Date();
+                      const yyyy = d.getFullYear();
+                      const mm = String(d.getMonth() + 1).padStart(2, '0');
+                      const dd = String(d.getDate()).padStart(2, '0');
+                      setFormData((p) => ({ ...p, requestDate: `${yyyy}-${mm}-${dd}` }));
+                    }}
+                    className="text-xs px-2 py-1 rounded border border-gray-200 bg-white hover:bg-gray-50 text-gray-700"
+                  >
+                    Bugün
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const d = new Date();
+                      d.setDate(d.getDate() - 1);
+                      const yyyy = d.getFullYear();
+                      const mm = String(d.getMonth() + 1).padStart(2, '0');
+                      const dd = String(d.getDate()).padStart(2, '0');
+                      setFormData((p) => ({ ...p, requestDate: `${yyyy}-${mm}-${dd}` }));
+                    }}
+                    className="text-xs px-2 py-1 rounded border border-gray-200 bg-white hover:bg-gray-50 text-gray-700"
+                  >
+                    Dün
+                  </button>
+                </div>
               </div>
+              <input
+                type="date"
+                value={formData.requestDate}
+                onChange={(e) => setFormData({ ...formData, requestDate: e.target.value })}
+                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 ${
+                  errors.requestDate ? 'border-red-300' : 'border-gray-300'
+                }`}
+              />
+              {errors.requestDate && <p className="text-xs text-red-600 mt-1">{errors.requestDate}</p>}
             </div>
 
+            {/* Masraf Türü */}
             <div className="p-4 bg-gray-50 rounded-lg">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Talep Numarası:
+                Masraf Türü: <span className="text-red-500">*</span>
               </label>
-              <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg">
-                <span className="text-gray-500 italic">Sistem tarafından otomatik oluşturulacak</span>
-              </div>
+              <select
+                value={formData.expenseType}
+                onChange={(e) => setFormData({ ...formData, expenseType: e.target.value })}
+                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 ${
+                  errors.expenseType ? 'border-red-300' : 'border-gray-300'
+                }`}
+                required
+              >
+                <option value="">Seçiniz</option>
+                {EXPENSE_TYPES.map(type => (
+                  <option key={type.value} value={type.value}>{type.label}</option>
+                ))}
+              </select>
+              {errors.expenseType && <p className="text-xs text-red-600 mt-1">{errors.expenseType}</p>}
             </div>
-          </div>
 
-          {/* Masraf Türü */}
-          <div className="p-4 bg-gray-50 rounded-lg">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Masraf Türü: <span className="text-red-500">*</span>
-            </label>
-            <select
-              value={formData.expenseType}
-              onChange={(e) => setFormData({ ...formData, expenseType: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
-              required
-            >
-              <option value="">Seçiniz</option>
-              {EXPENSE_TYPES.map(type => (
-                <option key={type.value} value={type.value}>{type.label}</option>
-              ))}
-            </select>
-          </div>
-
-          {/* Talep Edilen Tutar */}
-          <div className="p-4 bg-gray-50 rounded-lg">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Talep Edilen Tutar (TL): <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              value={formData.requestedAmount}
-              onChange={(e) => handleCurrencyInput(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
-              placeholder=""
-              required
-            />
-            <p className="text-xs text-gray-500 mt-1">Sadece rakam giriniz. Küsürat için virgül kullanabilirsiniz (örn: 1500,50)</p>
+            {/* Talep Edilen Tutar */}
+            <div className="p-4 bg-gray-50 rounded-lg">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Talep Edilen Tutar (TL): <span className="text-red-500">*</span>
+              </label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">₺</span>
+                <input
+                  type="text"
+                  inputMode="decimal"
+                  value={formData.requestedAmount}
+                  onChange={(e) => handleCurrencyInput(e.target.value)}
+                  className={`w-full pl-8 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 ${
+                    errors.requestedAmount ? 'border-red-300' : 'border-gray-300'
+                  }`}
+                  placeholder="0,00"
+                  required
+                />
+              </div>
+              <p className="text-xs text-gray-500 mt-1">Örn: 1500,50</p>
+              {errors.requestedAmount && <p className="text-xs text-red-600 mt-1">{errors.requestedAmount}</p>}
+            </div>
           </div>
 
           {/* Açıklama */}
@@ -304,11 +299,14 @@ export default function MasrafTalepEtPage() {
             <textarea
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 ${
+                errors.description ? 'border-red-300' : 'border-gray-300'
+              }`}
               rows="4"
-              placeholder="Masraf açıklamasını giriniz"
+              placeholder="Kısa ama net bir açıklama yazın (örn: müşteri toplantısı yemeği)"
               required
             />
+            {errors.description && <p className="text-xs text-red-600 mt-1">{errors.description}</p>}
           </div>
 
           {/* Fatura/Fiş/Belge */}
@@ -318,18 +316,49 @@ export default function MasrafTalepEtPage() {
             </label>
             <div className="space-y-3">
               <input
-                id="documentFile"
+                ref={fileInputRef}
                 type="file"
                 onChange={handleFileChange}
                 accept=".pdf,.jpg,.jpeg,.png"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                className="hidden"
               />
+
+              <div
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={handleDrop}
+                className="w-full p-4 border-2 border-dashed border-gray-300 rounded-lg bg-white hover:bg-gray-50"
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <div className="text-sm text-gray-700">
+                    <div className="font-medium">Belge ekle (opsiyonel)</div>
+                    <div className="text-xs text-gray-500">Sürükle-bırak yapın veya dosya seçin (PDF/JPG/PNG, max 10MB)</div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click?.()}
+                    className="px-3 py-2 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 text-sm text-gray-700"
+                  >
+                    Dosya Seç
+                  </button>
+                </div>
+              </div>
               {documentFile && (
-                <div className="text-sm text-gray-600">
-                  Seçilen dosya: <span className="font-medium">{documentFile.name}</span>
+                <div className="flex items-center justify-between gap-3 text-sm text-gray-700 bg-white border border-gray-200 rounded-lg px-4 py-3">
+                  <div className="truncate">
+                    Seçilen dosya: <span className="font-medium">{documentFile.name}</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setDocumentFile(null);
+                      if (fileInputRef.current) fileInputRef.current.value = '';
+                    }}
+                    className="text-sm text-red-600 hover:text-red-700"
+                  >
+                    Kaldır
+                  </button>
                 </div>
               )}
-              <p className="text-xs text-gray-500">PDF, JPG, PNG formatları kabul edilir. Maksimum dosya boyutu: 10MB</p>
             </div>
           </div>
 
@@ -338,14 +367,14 @@ export default function MasrafTalepEtPage() {
             <button
               type="button"
               onClick={() => router.back()}
-              className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 cursor-pointer"
+              className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
             >
               İptal
             </button>
             <button
               type="submit"
               disabled={isLoading}
-              className={`px-6 py-2 rounded-lg text-white cursor-pointer ${
+              className={`px-6 py-2 rounded-lg text-white ${
                 isLoading 
                   ? 'bg-gray-400 cursor-not-allowed' 
                   : 'bg-orange-500 hover:bg-orange-600'

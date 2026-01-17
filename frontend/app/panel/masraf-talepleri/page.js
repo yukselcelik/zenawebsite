@@ -405,8 +405,8 @@ export default function MasrafTalepleriPage() {
 
       {/* Reddet Modal */}
       <ConfirmDialog
-        isOpen={showRejectModal}
-        onClose={() => {
+        open={showRejectModal}
+        onCancel={() => {
           setShowRejectModal(false);
           setSelectedRequest(null);
         }}
@@ -415,7 +415,7 @@ export default function MasrafTalepleriPage() {
         message="Bu masraf talebini reddetmek istediğinizden emin misiniz? Bu işlem geri alınamaz."
         confirmText="Reddet"
         cancelText="İptal"
-        isLoading={isProcessing}
+        loading={isProcessing}
       />
         </>
       )}
@@ -439,6 +439,22 @@ function OdemeTakipContent() {
   useEffect(() => {
     fetchApprovedExpenseRequests();
   }, [pageNumber]);
+
+  // Close modal with ESC (native modal UX)
+  useEffect(() => {
+    if (!showPaymentModal) return;
+
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        if (isProcessing) return;
+        setShowPaymentModal(false);
+        setSelectedRequest(null);
+      }
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [showPaymentModal, isProcessing]);
 
   const fetchApprovedExpenseRequests = async () => {
     try {
@@ -587,50 +603,72 @@ function OdemeTakipContent() {
 
       {/* Ödeme Modal */}
       {showPaymentModal && selectedRequest && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-            <div className="mt-3">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">Ödeme Olarak İşaretle</h3>
-              
-              <div className="space-y-4">
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center">
+          <div
+            className="absolute inset-0 bg-black/20"
+            onClick={() => {
+              if (isProcessing) return;
+              setShowPaymentModal(false);
+              setSelectedRequest(null);
+            }}
+          />
+          <div className="relative w-full max-w-md mx-4 rounded-2xl bg-white shadow-2xl ring-1 ring-black/5 overflow-hidden">
+            <div className="px-6 pt-6">
+              <div className="flex items-start gap-3">
+                <div className="shrink-0 rounded-full bg-green-100 p-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-600" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.707a1 1 0 00-1.414-1.414L9 10.172 7.707 8.879a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="min-w-0">
+                  <h3 className="text-base font-semibold text-gray-900">Ödeme Olarak İşaretle</h3>
+                  <p className="mt-1 text-sm text-gray-600">
+                    Ödeme yöntemini seçerek masraf talebini <span className="font-medium">Ödendi</span> olarak işaretleyebilirsiniz.
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-5 space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Ödeme Yöntemi:
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Ödeme Yöntemi</label>
                   <select
                     value={paymentData.paymentMethod}
                     onChange={(e) => setPaymentData({ ...paymentData, paymentMethod: e.target.value })}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
                   >
                     <option value="">Seçiniz</option>
-                    {PAYMENT_METHODS.map(method => (
-                      <option key={method.value} value={method.value}>{method.label}</option>
+                    {PAYMENT_METHODS.map((method) => (
+                      <option key={method.value} value={method.value}>
+                        {method.label}
+                      </option>
                     ))}
                   </select>
                 </div>
               </div>
+            </div>
 
-              <div className="flex justify-end gap-3 mt-6">
-                <button
-                  onClick={() => {
-                    setShowPaymentModal(false);
-                    setSelectedRequest(null);
-                  }}
-                  className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
-                  disabled={isProcessing}
-                >
-                  İptal
-                </button>
-                <button
-                  onClick={confirmMarkAsPaid}
-                  disabled={isProcessing}
-                  className={`px-4 py-2 rounded-lg text-white ${
-                    isProcessing ? 'bg-gray-400' : 'bg-green-500 hover:bg-green-600'
-                  }`}
-                >
-                  {isProcessing ? 'İşaretleniyor...' : 'Ödendi Olarak İşaretle'}
-                </button>
-              </div>
+            <div className="mt-6 bg-gray-50 px-6 py-4 flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowPaymentModal(false);
+                  setSelectedRequest(null);
+                }}
+                className="px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-700 text-sm hover:bg-gray-100 transition"
+                disabled={isProcessing}
+              >
+                İptal
+              </button>
+              <button
+                type="button"
+                onClick={confirmMarkAsPaid}
+                disabled={isProcessing}
+                className={`px-4 py-2 rounded-lg text-sm text-white transition ${
+                  isProcessing ? 'bg-gray-400' : 'bg-green-600 hover:bg-green-700 active:bg-green-800'
+                }`}
+              >
+                {isProcessing ? 'İşaretleniyor...' : 'Ödendi Olarak İşaretle'}
+              </button>
             </div>
           </div>
         </div>

@@ -27,25 +27,27 @@ export default function Navbar({ userData, onLogout, isManager }) {
     <header className="sticky top-0 z-50 bg-white shadow-sm py-4">
       <div className="px-6 flex justify-between items-center">
         <div className="flex items-center gap-3">
-          <Link href="/" className="flex items-center">
-            <Image
-              src="/zena-logo.png"
-              alt="Zena Enerji"
-              width={96}
-              height={30}
-              priority
-              className="brightness-0 invert"
-            />
-          </Link>
           <h1 className="text-2xl font-extrabold text-gray-800">
             {getTitle()}
           </h1>
-          {isManager && (
+          {/* {isManager && (
             <div className="flex items-center gap-1.5 bg-gradient-to-r from-orange-500 to-orange-600 text-white px-2.5 py-1 rounded-full shadow-sm">
               <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
               </svg>
-              <span className="text-xs font-bold">ADMIN</span>
+              <span className="text-xs font-bold">Yönetici</span>
+            </div>
+          )} */}
+          {isManager ? (
+            <div className="flex items-center gap-1.5 bg-gradient-to-r from-orange-500 to-orange-600 text-white px-2.5 py-1 rounded-full shadow-sm">
+              <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+              <span className="text-xs font-bold">Yönetici</span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-1.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white px-2.5 py-1 rounded-full shadow-sm">
+              <span className="text-xs font-bold">Personel</span>
             </div>
           )}
         </div>
