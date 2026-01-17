@@ -176,7 +176,7 @@ export default function PanelLayout({ children }) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="h-screen bg-gray-50 flex overflow-hidden">
       {/* Sol Sidebar */}
       <Sidebar 
         isManager={isManager}
@@ -185,7 +185,7 @@ export default function PanelLayout({ children }) {
       />
 
       {/* Ana İçerik Alanı */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col min-w-0">
         {/* Üst Navbar */}
         <Navbar 
           userData={userData} 
@@ -194,7 +194,7 @@ export default function PanelLayout({ children }) {
         />
 
         {/* İçerik */}
-        <main className="flex-1 p-6 overflow-y-auto">
+        <main className="flex-1 p-6 overflow-y-auto min-w-0">
           {error && (
             <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
               {error}

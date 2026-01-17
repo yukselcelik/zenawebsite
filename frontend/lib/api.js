@@ -930,6 +930,49 @@ class ApiService {
   static getExpenseRequestDocumentUrl(id) {
     return `${API_BASE_URL}/api/expenserequest/${id}/document`;
   }
+
+  static async downloadExpenseRequestDocument(id) {
+    const token = this.getToken();
+    const headers = {};
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
+    const response = await fetch(`${API_BASE_URL}/api/expenserequest/${id}/document`, {
+      method: 'GET',
+      headers,
+    });
+
+    if (!response.ok) {
+      // Try to parse API-style error first
+      let msg = 'Belge indirilemedi';
+      try {
+        const json = await response.json();
+        msg = json?.message || msg;
+      } catch {}
+      throw new Error(msg);
+    }
+
+    const blob = await response.blob();
+    const contentDisposition = response.headers.get('Content-Disposition');
+    let fileName = `expense_document_${id}`;
+
+    if (contentDisposition) {
+      const fileNameMatch = contentDisposition.match(/filename="?(.+)"?/i);
+      if (fileNameMatch && fileNameMatch[1]) {
+        fileName = fileNameMatch[1].replace(/"/g, '');
+      }
+    }
+
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+  }
 }
 
 export default ApiService;

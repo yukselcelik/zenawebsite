@@ -124,14 +124,20 @@ export default function MasrafTaleplerimPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       {request.documentPath && (
-                        <a
-                          href={ApiService.getExpenseRequestDocumentUrl(request.id)}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                        <button
+                          type="button"
+                          onClick={async () => {
+                            try {
+                              await ApiService.downloadExpenseRequestDocument(request.id);
+                            } catch (e) {
+                              console.error('Error downloading expense document:', e);
+                              alert(e.message || 'Belge görüntülenirken hata oluştu');
+                            }
+                          }}
                           className="text-orange-600 hover:text-orange-900"
                         >
                           Belgeyi Görüntüle
-                        </a>
+                        </button>
                       )}
                     </td>
                   </tr>

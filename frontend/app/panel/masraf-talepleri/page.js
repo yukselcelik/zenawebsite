@@ -182,11 +182,10 @@ export default function MasrafTalepleriPage() {
 
   const handleViewDocument = async (requestId) => {
     try {
-      const url = ApiService.getExpenseRequestDocumentUrl(requestId);
-      window.open(url, '_blank');
+      await ApiService.downloadExpenseRequestDocument(requestId);
     } catch (error) {
       console.error('Error viewing document:', error);
-      alert('Belge görüntülenirken hata oluştu');
+      alert(error.message || 'Belge görüntülenirken hata oluştu');
     }
   };
 
