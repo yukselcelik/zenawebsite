@@ -43,7 +43,6 @@ services:
       - ./backend/logs:/app/logs
     networks:
       - zena_network
-      - monitoring
 
   frontend:
     build:
@@ -65,8 +64,3 @@ services:
 networks:
   zena_network:
     driver: bridge
-  monitoring:
-    external: true
-
-# volumes:
-#   pgdata:
