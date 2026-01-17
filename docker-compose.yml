@@ -26,12 +26,13 @@ services:
     ports:
       - "5133:5133"
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:5133
       - ConnectionStrings__DefaultConnection=Host=72.61.158.70:5432;Database=zenadb;Username=admin;Password=;TrustServerCertificate=True
       - Jwt__Key=e12126f62167195ccc74cb7309da6c03!
       - Jwt__Issuer=ZenaBackend
       - Jwt__Audience=ZenaBackend
+      - Cors__AllowAllOrigins=true
       - Cors__AllowedOrigins__0=http://localhost:3000
       - Cors__AllowedOrigins__1=http://localhost:3001
       - Cors__AllowedOrigins__2=http://frontend:3000

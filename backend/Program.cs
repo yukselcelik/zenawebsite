@@ -21,13 +21,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
-        // Enum'ları number olarak serialize et (string değil)
-        // JsonStringEnumConverter kaldırıldı - enum'lar artık number olarak gönderilecek
         options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
     });
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseInMemoryDatabase("ZenaInMemoryDb"));
+{
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
 
 var jwtKey = builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT Key not configured");
 var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? throw new InvalidOperationException("JWT Issuer not configured");
@@ -88,6 +88,7 @@ builder.Services.AddScoped<EmployeeBenefitService>();
 builder.Services.AddScoped<ExpenseRequestService>();
 builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 
+var allowAllOrigins = builder.Configuration.GetValue<bool>("Cors:AllowAllOrigins");
 var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
     ?? ["http://localhost:5133"];
 
@@ -95,10 +96,22 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("MyPolicy", policy =>
     {
-        policy.WithOrigins(allowedOrigins)
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials();
+        if (allowAllOrigins)
+        {
+            // NOTE: AllowAnyOrigin cannot be used with AllowCredentials.
+            // This allows any origin while still supporting credentials.
+            policy.SetIsOriginAllowed(_ => true)
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .AllowCredentials();
+        }
+        else
+        {
+            policy.WithOrigins(allowedOrigins)
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .AllowCredentials();
+        }
     });
 });
 
@@ -163,65 +176,91 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-    
-    var maxRetries = 10;
-    var retryDelay = TimeSpan.FromSeconds(3);
-    var migrationSuccess = false;
-    
-    for (int i = 0; i < maxRetries; i++)
+
+    // InMemory doesn't support connectivity checks/migrations; just ensure created + seed.
+    if (builder.Environment.IsDevelopment())
     {
         try
         {
-            Log.Information("Veritabanı bağlantısı test ediliyor... (Deneme {Attempt}/{MaxRetries})", i + 1, maxRetries);
-            
-            if (await db.Database.CanConnectAsync())
-            {
-                Log.Information("Veritabanı bağlantısı başarılı!");
-                
-                Log.Information("Veritabanı migration'ları uygulanıyor...");
-                // await db.Database.MigrateAsync();
-                Log.Information("Veritabanı migration'ları başarıyla uygulandı!");
-                
-                migrationSuccess = true;
-                break;
-            }
-            else
-            {
-                Log.Warning("Veritabanı bağlantısı başarısız. {Delay} saniye sonra tekrar denenecek...", retryDelay.TotalSeconds);
-            }
+            await db.Database.EnsureCreatedAsync();
         }
         catch (Exception ex)
         {
-            Log.Warning(ex, "Veritabanı bağlantı hatası (Deneme {Attempt}/{MaxRetries}): {Error}", i + 1, maxRetries, ex.Message);
-            
-            if (i == maxRetries - 1)
+            Log.Warning(ex, "InMemory EnsureCreated failed: {Error}", ex.Message);
+        }
+
+        try
+        {
+            Log.Information("InMemory seed işlemi başlatılıyor...");
+            await DatabaseSeeder.SeedAsync(db, logger);
+            Log.Information("InMemory seed işlemi tamamlandı!");
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "InMemory seed işlemi sırasında hata oluştu: {Error}", ex.Message);
+        }
+    }
+    else
+    {
+        var maxRetries = 10;
+        var retryDelay = TimeSpan.FromSeconds(3);
+        var migrationSuccess = false;
+
+        for (int i = 0; i < maxRetries; i++)
+        {
+            try
             {
-                Log.Fatal(ex, "Veritabanı bağlantısı {MaxRetries} denemede başarısız oldu. Uygulama başlatılamıyor.", maxRetries);
-                throw new InvalidOperationException($"Veritabanı bağlantısı kurulamadı: {ex.Message}", ex);
+                Log.Information("Veritabanı bağlantısı test ediliyor... (Deneme {Attempt}/{MaxRetries})", i + 1, maxRetries);
+
+                if (await db.Database.CanConnectAsync())
+                {
+                    Log.Information("Veritabanı bağlantısı başarılı!");
+
+                    Log.Information("Veritabanı migration'ları uygulanıyor...");
+                    // await db.Database.MigrateAsync();
+                    Log.Information("Veritabanı migration'ları başarıyla uygulandı!");
+
+                    migrationSuccess = true;
+                    break;
+                }
+                else
+                {
+                    Log.Warning("Veritabanı bağlantısı başarısız. {Delay} saniye sonra tekrar denenecek...", retryDelay.TotalSeconds);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Warning(ex, "Veritabanı bağlantı hatası (Deneme {Attempt}/{MaxRetries}): {Error}", i + 1, maxRetries, ex.Message);
+
+                if (i == maxRetries - 1)
+                {
+                    Log.Fatal(ex, "Veritabanı bağlantısı {MaxRetries} denemede başarısız oldu. Uygulama başlatılamıyor.", maxRetries);
+                    throw new InvalidOperationException($"Veritabanı bağlantısı kurulamadı: {ex.Message}", ex);
+                }
+            }
+
+            if (i < maxRetries - 1)
+            {
+                await Task.Delay(retryDelay);
             }
         }
-        
-        if (i < maxRetries - 1)
+
+        if (!migrationSuccess)
         {
-            await Task.Delay(retryDelay);
+            Log.Fatal("Veritabanı migration işlemi başarısız oldu. Uygulama başlatılamıyor.");
+            throw new InvalidOperationException("Veritabanı migration işlemi başarısız oldu.");
         }
-    }
-    
-    if (!migrationSuccess)
-    {
-        Log.Fatal("Veritabanı migration işlemi başarısız oldu. Uygulama başlatılamıyor.");
-        throw new InvalidOperationException("Veritabanı migration işlemi başarısız oldu.");
-    }
-    
-    try
-    {
-        Log.Information("Veritabanı seed işlemi başlatılıyor...");
-        await DatabaseSeeder.SeedAsync(db, logger);
-        Log.Information("Veritabanı seed işlemi tamamlandı!");
-    }
-    catch (Exception ex)
-    {
-        Log.Error(ex, "Veritabanı seed işlemi sırasında hata oluştu: {Error}", ex.Message);
+
+        try
+        {
+            Log.Information("Veritabanı seed işlemi başlatılıyor...");
+            await DatabaseSeeder.SeedAsync(db, logger);
+            Log.Information("Veritabanı seed işlemi tamamlandı!");
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Veritabanı seed işlemi sırasında hata oluştu: {Error}", ex.Message);
+        }
     }
 }
 

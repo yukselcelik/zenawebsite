@@ -12,15 +12,15 @@ using Zenabackend.Data;
 namespace Zenabackend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251119132012_sdsd")]
-    partial class sdsd
+    [Migration("20260117155653_InitialMigrations")]
+    partial class InitialMigrations
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.8")
+                .HasAnnotation("ProductVersion", "9.0.12")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -137,6 +137,84 @@ namespace Zenabackend.Migrations
                     b.ToTable("EmergencyContacts");
                 });
 
+            modelBuilder.Entity("Zenabackend.Models.EmployeeBenefit", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("BenefitType")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal?>("BonusAmount")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("BonusDescription")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("BonusPaymentPeriod")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("BonusType")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CustomBenefitName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("FoodSupportCardCompanyInfo")
+                        .HasColumnType("text");
+
+                    b.Property<decimal?>("FoodSupportDailyAmount")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("FoodSupportDescription")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("FoodSupportType")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal?>("OtherBenefitsAmount")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("OtherBenefitsDescription")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("OtherBenefitsPaymentPeriod")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal?>("TravelSupportAmount")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("TravelSupportDescription")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("TravelSupportType")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("isDeleted")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("EmployeeBenefits");
+                });
+
             modelBuilder.Entity("Zenabackend.Models.EmploymentInfo", b =>
                 {
                     b.Property<int>("Id")
@@ -179,6 +257,82 @@ namespace Zenabackend.Migrations
                     b.ToTable("EmploymentInfos");
                 });
 
+            modelBuilder.Entity("Zenabackend.Models.ExpenseRequest", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal?>("ApprovedAmount")
+                        .HasColumnType("numeric");
+
+                    b.Property<DateTime?>("ApprovedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("ApprovedByUserId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Department")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("DocumentPath")
+                        .HasColumnType("text");
+
+                    b.Property<int>("ExpenseType")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("OriginalFileName")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("PaidAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("PaymentMethod")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("RejectedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("RequestDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("RequestNumber")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("RequestedAmount")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("isDeleted")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApprovedByUserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ExpenseRequests");
+                });
+
             modelBuilder.Entity("Zenabackend.Models.InternshipApplication", b =>
                 {
                     b.Property<int>("Id")
@@ -214,10 +368,19 @@ namespace Zenabackend.Migrations
                         .HasMaxLength(2000)
                         .HasColumnType("character varying(2000)");
 
+                    b.Property<string>("OriginalFileName")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
+
+                    b.Property<string>("Position")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("School")
                         .IsRequired()
@@ -319,6 +482,129 @@ namespace Zenabackend.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("LegalDocuments");
+                });
+
+            modelBuilder.Entity("Zenabackend.Models.OffBoarding", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("OffBoardingDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("OffBoardingReason")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("isDeleted")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("OffBoardings");
+                });
+
+            modelBuilder.Entity("Zenabackend.Models.OffBoardingDocument", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("DocumentPath")
+                        .HasColumnType("text");
+
+                    b.Property<int>("DocumentType")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("DocumentTypeName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("OriginalFileName")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("isDeleted")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("OffBoardingDocuments");
+                });
+
+            modelBuilder.Entity("Zenabackend.Models.RightsAndReceivables", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal?>("AdvancesReceived")
+                        .HasColumnType("numeric");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<decimal?>("GrossSalaryAmount")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal?>("NetSalaryAmount")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal?>("OvertimeAmount")
+                        .HasColumnType("numeric");
+
+                    b.Property<int?>("OvertimeHours")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal?>("UnusedAnnualLeaveAmount")
+                        .HasColumnType("numeric");
+
+                    b.Property<int?>("UnusedAnnualLeaveDays")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("isDeleted")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("RightsAndReceivables");
                 });
 
             modelBuilder.Entity("Zenabackend.Models.SocialSecurityDocument", b =>
@@ -458,6 +744,17 @@ namespace Zenabackend.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Zenabackend.Models.EmployeeBenefit", b =>
+                {
+                    b.HasOne("Zenabackend.Models.User", "User")
+                        .WithMany("EmployeeBenefits")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Zenabackend.Models.EmploymentInfo", b =>
                 {
                     b.HasOne("Zenabackend.Models.User", "User")
@@ -465,6 +762,23 @@ namespace Zenabackend.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Zenabackend.Models.ExpenseRequest", b =>
+                {
+                    b.HasOne("Zenabackend.Models.User", "ApprovedByUser")
+                        .WithMany()
+                        .HasForeignKey("ApprovedByUserId");
+
+                    b.HasOne("Zenabackend.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApprovedByUser");
 
                     b.Navigation("User");
                 });
@@ -491,6 +805,39 @@ namespace Zenabackend.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Zenabackend.Models.OffBoarding", b =>
+                {
+                    b.HasOne("Zenabackend.Models.User", "User")
+                        .WithOne("OffBoarding")
+                        .HasForeignKey("Zenabackend.Models.OffBoarding", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Zenabackend.Models.OffBoardingDocument", b =>
+                {
+                    b.HasOne("Zenabackend.Models.User", "User")
+                        .WithMany("OffBoardingDocuments")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Zenabackend.Models.RightsAndReceivables", b =>
+                {
+                    b.HasOne("Zenabackend.Models.User", "User")
+                        .WithOne("RightsAndReceivables")
+                        .HasForeignKey("Zenabackend.Models.RightsAndReceivables", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Zenabackend.Models.SocialSecurityDocument", b =>
                 {
                     b.HasOne("Zenabackend.Models.User", "User")
@@ -510,9 +857,17 @@ namespace Zenabackend.Migrations
 
                     b.Navigation("EmergencyContacts");
 
+                    b.Navigation("EmployeeBenefits");
+
                     b.Navigation("EmploymentInfos");
 
                     b.Navigation("LegalDocuments");
+
+                    b.Navigation("OffBoarding");
+
+                    b.Navigation("OffBoardingDocuments");
+
+                    b.Navigation("RightsAndReceivables");
 
                     b.Navigation("SocialSecurityDocuments");
                 });
