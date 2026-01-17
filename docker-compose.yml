@@ -32,7 +32,6 @@ services:
       - Jwt__Key=e12126f62167195ccc74cb7309da6c03!
       - Jwt__Issuer=ZenaBackend
       - Jwt__Audience=ZenaBackend
-      - Cors__AllowAllOrigins=true
       - Cors__AllowedOrigins__0=http://localhost:3000
       - Cors__AllowedOrigins__1=http://localhost:3001
       - Cors__AllowedOrigins__2=http://frontend:3000
@@ -42,9 +41,6 @@ services:
     volumes:
       - ./backend/wwwroot:/app/wwwroot
       - ./backend/logs:/app/logs
-    # depends_on:
-    #   db:
-    #     condition: service_healthy
     networks:
       - zena_network
       - monitoring
