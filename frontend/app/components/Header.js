@@ -204,6 +204,12 @@ export default function Header({ forceDark = false }) {
               Haberler
             </Link>
             <Link
+              href="/blog"
+              className="font-bold transition-colors text-gray-800 hover:text-orange-500"
+            >
+              Blog
+            </Link>
+            <Link
               href="/kariyer"
               className="font-bold transition-colors text-gray-800 hover:text-orange-500"
             >
@@ -216,22 +222,14 @@ export default function Header({ forceDark = false }) {
               İletişim
             </Link>
 
-            {/* Giriş butonu ve dil seçici */}
+            {/* Çıkış butonu - sadece giriş yapıldığında görünür */}
             {isLoggedIn && (
-              <>
-                <Link
-                  href="/panel"
-                  className="font-bold transition-colors text-gray-800 hover:text-orange-500"
-                >
-                  Panel
-                </Link>
-                <button
-                  onClick={handleLogout}
-                  className="font-bold transition-colors text-gray-800 hover:text-orange-500"
-                >
-                  Çıkış
-                </button>
-              </>
+              <button
+                onClick={handleLogout}
+                className="font-bold transition-colors text-gray-800 hover:text-orange-500"
+              >
+                Çıkış
+              </button>
             )}
           </nav>
 
