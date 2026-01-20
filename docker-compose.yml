@@ -32,10 +32,6 @@ services:
       - Jwt__Key=e12126f62167195ccc74cb7309da6c03!
       - Jwt__Issuer=ZenaBackend
       - Jwt__Audience=ZenaBackend
-      - Cors__AllowedOrigins__0=http://localhost:3000
-      - Cors__AllowedOrigins__1=http://localhost:3001
-      - Cors__AllowedOrigins__2=http://frontend:3000
-      - Cors__AllowedOrigins__3=http://72.61.158.70:3000
       - Loki__Url=http://loki:3100
       - OpenTelemetry__OtlpEndpoint=http://otel-collector:4317
     volumes:

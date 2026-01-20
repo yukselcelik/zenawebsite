@@ -1,6 +1,5 @@
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -11,10 +10,6 @@ using Zenabackend.Common;
 using Zenabackend.Data;
 using Zenabackend.Services;
 using Prometheus;
-using OpenTelemetry.Metrics;
-using OpenTelemetry.Resources;
-using OpenTelemetry.Trace;
-using OpenTelemetry.Logs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,10 +19,20 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
     });
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
+if (builder.Environment.IsDevelopment())
 {
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+   {
+       options.UseInMemoryDatabase("InMemoryDatabase");
+   });
+}
+else
+{
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    {
+        options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+    });
+}
 
 var jwtKey = builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT Key not configured");
 var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? throw new InvalidOperationException("JWT Issuer not configured");
@@ -68,8 +73,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 context.Response.StatusCode = 200;
                 context.Response.ContentType = "application/json";
                 var result = ApiResult<object>.Unauthorized("Unauthorized");
-                return context.Response.WriteAsync(JsonSerializer.Serialize(result, new 
-                JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }));
+                return context.Response.WriteAsync(JsonSerializer.Serialize(result, new
+                JsonSerializerOptions
+                { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }));
             }
         };
     });
@@ -151,118 +157,13 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+builder.Host.UseSerilog();
+
 builder.Services.AddAppObservability(builder.Configuration, builder.Environment, "zena-backend");
 
 var app = builder.Build();
 
-try
-{
-    var configuredLokiUrl = builder.Configuration["Loki:Url"] ?? builder.Configuration["Grafana:LokiEndpoint"] ?? "http://localhost:3100";
-    if (!string.IsNullOrWhiteSpace(configuredLokiUrl))
-    {
-        Log.Information("Loki logging configured: {LokiUrl}", configuredLokiUrl);
-    }
-    else
-    {
-        Log.Warning("Loki URL not configured, using default: http://localhost:3100");
-    }
-}
-catch (Exception ex)
-{
-    Log.Warning(ex, "Loki configuration check failed: {Error}", ex.Message);
-}
-
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-
-    // InMemory doesn't support connectivity checks/migrations; just ensure created + seed.
-    if (builder.Environment.IsDevelopment())
-    {
-        try
-        {
-            await db.Database.EnsureCreatedAsync();
-        }
-        catch (Exception ex)
-        {
-            Log.Warning(ex, "InMemory EnsureCreated failed: {Error}", ex.Message);
-        }
-
-        try
-        {
-            Log.Information("InMemory seed işlemi başlatılıyor...");
-            await DatabaseSeeder.SeedAsync(db, logger);
-            Log.Information("InMemory seed işlemi tamamlandı!");
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "InMemory seed işlemi sırasında hata oluştu: {Error}", ex.Message);
-        }
-    }
-    else
-    {
-        var maxRetries = 10;
-        var retryDelay = TimeSpan.FromSeconds(3);
-        var migrationSuccess = false;
-
-        for (int i = 0; i < maxRetries; i++)
-        {
-            try
-            {
-                Log.Information("Veritabanı bağlantısı test ediliyor... (Deneme {Attempt}/{MaxRetries})", i + 1, maxRetries);
-
-                if (await db.Database.CanConnectAsync())
-                {
-                    Log.Information("Veritabanı bağlantısı başarılı!");
-
-                    Log.Information("Veritabanı migration'ları uygulanıyor...");
-                    // await db.Database.MigrateAsync();
-                    Log.Information("Veritabanı migration'ları başarıyla uygulandı!");
-
-                    migrationSuccess = true;
-                    break;
-                }
-                else
-                {
-                    Log.Warning("Veritabanı bağlantısı başarısız. {Delay} saniye sonra tekrar denenecek...", retryDelay.TotalSeconds);
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Warning(ex, "Veritabanı bağlantı hatası (Deneme {Attempt}/{MaxRetries}): {Error}", i + 1, maxRetries, ex.Message);
-
-                if (i == maxRetries - 1)
-                {
-                    Log.Fatal(ex, "Veritabanı bağlantısı {MaxRetries} denemede başarısız oldu. Uygulama başlatılamıyor.", maxRetries);
-                    throw new InvalidOperationException($"Veritabanı bağlantısı kurulamadı: {ex.Message}", ex);
-                }
-            }
-
-            if (i < maxRetries - 1)
-            {
-                await Task.Delay(retryDelay);
-            }
-        }
-
-        if (!migrationSuccess)
-        {
-            Log.Fatal("Veritabanı migration işlemi başarısız oldu. Uygulama başlatılamıyor.");
-            throw new InvalidOperationException("Veritabanı migration işlemi başarısız oldu.");
-        }
-
-        try
-        {
-            Log.Information("Veritabanı seed işlemi başlatılıyor...");
-            await DatabaseSeeder.SeedAsync(db, logger);
-            Log.Information("Veritabanı seed işlemi tamamlandı!");
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Veritabanı seed işlemi sırasında hata oluştu: {Error}", ex.Message);
-        }
-    }
-}
+await app.ConfigureDatabase();
 
 if (app.Environment.IsDevelopment())
 {
@@ -275,20 +176,15 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseCors("MyPolicy");
-
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.UseHttpMetrics();
-
 app.MapMetrics();
 app.MapControllers();
+app.UseSerilogRequestLogging();
 
 try
 {
@@ -303,4 +199,121 @@ catch (Exception ex)
 finally
 {
     Log.CloseAndFlush();
+}
+
+
+public static class ProgramExtensions
+{
+    public static async Task ConfigureDatabase(this WebApplication app)
+    {
+
+        try
+        {
+            var configuredLokiUrl = app.Configuration["Loki:Url"] ?? "http://localhost:3100";
+            if (!string.IsNullOrWhiteSpace(configuredLokiUrl))
+            {
+                Log.Information("Loki logging configured: {LokiUrl}", configuredLokiUrl);
+            }
+            else
+            {
+                Log.Warning("Loki URL not configured, using default: http://localhost:3100");
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Warning(ex, "Loki configuration check failed: {Error}", ex.Message);
+        }
+
+        using (var scope = app.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+
+            // InMemory doesn't support connectivity checks/migrations; just ensure created + seed.
+            if (app.Environment.IsDevelopment())
+            {
+                try
+                {
+                    await db.Database.EnsureCreatedAsync();
+                }
+                catch (Exception ex)
+                {
+                    Log.Warning(ex, "InMemory EnsureCreated failed: {Error}", ex.Message);
+                }
+
+                try
+                {
+                    Log.Information("InMemory seed işlemi başlatılıyor...");
+                    await DatabaseSeeder.SeedAsync(db, logger);
+                    Log.Information("InMemory seed işlemi tamamlandı!");
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "InMemory seed işlemi sırasında hata oluştu: {Error}", ex.Message);
+                }
+            }
+            else
+            {
+                var maxRetries = 10;
+                var retryDelay = TimeSpan.FromSeconds(3);
+                var migrationSuccess = false;
+
+                for (int i = 0; i < maxRetries; i++)
+                {
+                    try
+                    {
+                        Log.Information("Veritabanı bağlantısı test ediliyor... (Deneme {Attempt}/{MaxRetries})", i + 1, maxRetries);
+
+                        if (db.Database.CanConnect())
+                        {
+                            Log.Information("Veritabanı bağlantısı başarılı!");
+
+                            Log.Information("Veritabanı migration'ları uygulanıyor...");
+                            await db.Database.MigrateAsync();
+                            Log.Information("Veritabanı migration'ları başarıyla uygulandı!");
+
+                            migrationSuccess = true;
+                            break;
+                        }
+                        else
+                        {
+                            Log.Warning("Veritabanı bağlantısı başarısız. {Delay} saniye sonra tekrar denenecek...", retryDelay.TotalSeconds);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Warning(ex, "Veritabanı bağlantı hatası (Deneme {Attempt}/{MaxRetries}): {Error}", i + 1, maxRetries, ex.Message);
+
+                        if (i == maxRetries - 1)
+                        {
+                            Log.Fatal(ex, "Veritabanı bağlantısı {MaxRetries} denemede başarısız oldu. Uygulama başlatılamıyor.", maxRetries);
+                            throw new InvalidOperationException($"Veritabanı bağlantısı kurulamadı: {ex.Message}", ex);
+                        }
+                    }
+
+                    if (i < maxRetries - 1)
+                    {
+                        await Task.Delay(retryDelay);
+                    }
+                }
+
+                if (!migrationSuccess)
+                {
+                    Log.Fatal("Veritabanı migration işlemi başarısız oldu. Uygulama başlatılamıyor.");
+                    throw new InvalidOperationException("Veritabanı migration işlemi başarısız oldu.");
+                }
+
+                try
+                {
+                    Log.Information("Veritabanı seed işlemi başlatılıyor...");
+                    await DatabaseSeeder.SeedAsync(db, logger);
+                    Log.Information("Veritabanı seed işlemi tamamlandı!");
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "Veritabanı seed işlemi sırasında hata oluştu: {Error}", ex.Message);
+                }
+            }
+        }
+    }
 }
