@@ -9,6 +9,8 @@ public class User : BaseEntity
     public string Surname { get; set; } = string.Empty;
     public string Phone { get; set; } = string.Empty;
     public string? TcNo { get; set; }
+    public string? BirthPlace { get; set; }
+    public DateTime? BirthDate { get; set; }
     public string PasswordHash { get; set; } = string.Empty;
     public UserRoleEnum Role { get; set; } = UserRoleEnum.Personel;
     public string? PhotoPath { get; set; }

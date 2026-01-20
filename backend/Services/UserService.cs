@@ -70,6 +70,8 @@ public class UserService(ApplicationDbContext context, ILogger<UserService> logg
             Surname = user.Surname,
             Phone = user.Phone,
             TcNo = user.TcNo,
+            BirthPlace = user.BirthPlace,
+            BirthDate = user.BirthDate,
             PhotoPath = photoPath,
             Role = user.Role.ToString(),
             IsApproved = user.IsApproved,
@@ -323,6 +325,20 @@ public class UserService(ApplicationDbContext context, ILogger<UserService> logg
         if (updateDto.Surname != null) user.Surname = updateDto.Surname;
         if (updateDto.Phone != null) user.Phone = updateDto.Phone;
         if (updateDto.PhotoPath != null) user.PhotoPath = updateDto.PhotoPath;
+
+        if (updateDto.BirthPlace != null)
+        {
+            var trimmed = updateDto.BirthPlace.Trim();
+            user.BirthPlace = string.IsNullOrWhiteSpace(trimmed) ? null : trimmed;
+        }
+
+        if (updateDto.BirthDate.HasValue)
+        {
+            var birthDate = updateDto.BirthDate.Value;
+            user.BirthDate = birthDate.Kind == DateTimeKind.Unspecified
+                ? DateTime.SpecifyKind(birthDate, DateTimeKind.Utc)
+                : birthDate.ToUniversalTime();
+        }
 
         if (updateDto.TcNo != null)
         {

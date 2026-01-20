@@ -8,6 +8,8 @@ public class UserDetailDto
     public string Surname { get; set; } = string.Empty;
     public string Phone { get; set; } = string.Empty;
     public string? TcNo { get; set; }
+    public string? BirthPlace { get; set; }
+    public DateTime? BirthDate { get; set; }
     public string? PhotoPath { get; set; }
     public string Role { get; set; } = string.Empty;
     public bool IsApproved { get; set; }

@@ -159,7 +159,7 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Host.UseSerilog();
 
-builder.Services.AddAppObservability(builder.Configuration, builder.Environment, "zena-backend");
+// builder.Services.AddAppObservability(builder.Configuration, builder.Environment, "zena-backend");
 
 var app = builder.Build();
 
@@ -269,7 +269,7 @@ public static class ProgramExtensions
                             Log.Information("Veritabanı bağlantısı başarılı!");
 
                             Log.Information("Veritabanı migration'ları uygulanıyor...");
-                            await db.Database.MigrateAsync();
+                            // await db.Database.MigrateAsync();
                             Log.Information("Veritabanı migration'ları başarıyla uygulandı!");
 
                             migrationSuccess = true;

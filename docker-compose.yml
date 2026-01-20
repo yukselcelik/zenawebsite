@@ -28,10 +28,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:5133
-      - ConnectionStrings__DefaultConnection=Host=72.61.158.70:5432;Database=zenadb;Username=admin;Password=;TrustServerCertificate=True
-      - Jwt__Key=e12126f62167195ccc74cb7309da6c03!
-      - Jwt__Issuer=ZenaBackend
-      - Jwt__Audience=ZenaBackend
+      - ConnectionStrings__DefaultConnection=Host=72.61.158.70:5432;Database=zenadb2;Username=admin;Password=;TrustServerCertificate=True
       - Loki__Url=http://loki:3100
       - OpenTelemetry__OtlpEndpoint=http://otel-collector:4317
     volumes:
@@ -40,22 +37,22 @@ services:
     networks:
       - zena_network
 
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-      args:
-        - NEXT_PUBLIC_API_URL=http://72.61.158.70:5133
-    container_name: zena_frontend
-    ports:
-      - "3000:3000"
-    environment:
-      - NODE_ENV=production
-      - NEXT_PUBLIC_API_URL=http://72.61.158.70:5133
-    depends_on:
-      - backend
-    networks:
-      - zena_network
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #     args:
+  #       - NEXT_PUBLIC_API_URL=http://72.61.158.70:5133
+  #   container_name: zena_frontend
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     - NODE_ENV=production
+  #     - NEXT_PUBLIC_API_URL=http://72.61.158.70:5133
+  #   depends_on:
+  #     - backend
+  #   networks:
+  #     - zena_network
 
 networks:
   zena_network:

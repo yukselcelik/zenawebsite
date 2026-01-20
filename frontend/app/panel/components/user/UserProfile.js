@@ -8,6 +8,25 @@ import EmergencyContactSection from './EmergencyContactSection';
 import EducationInfoSection from './EducationInfoSection';
 import PhoneInput from '../common/PhoneInput';
 
+function toDateInputValue(value) {
+  if (!value) return '';
+  if (typeof value === 'string') return value.slice(0, 10);
+  try {
+    return new Date(value).toISOString().slice(0, 10);
+  } catch {
+    return '';
+  }
+}
+
+function formatDateTR(value) {
+  if (!value) return '-';
+  try {
+    return new Date(value).toLocaleDateString('tr-TR', { timeZone: 'UTC' });
+  } catch {
+    return '-';
+  }
+}
+
 export default function UserProfile({ userDetail, onUpdate, onUserDetailUpdate }) {
   const [isEditing, setIsEditing] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -20,7 +39,9 @@ export default function UserProfile({ userDetail, onUpdate, onUserDetailUpdate }
     surname: userDetail?.surname || '',
     phone: userDetail?.phone || '',
     photoPath: userDetail?.photoPath || '',
-    tcNo: userDetail?.tcNo || ''
+    tcNo: userDetail?.tcNo || '',
+    birthPlace: userDetail?.birthPlace || '',
+    birthDate: toDateInputValue(userDetail?.birthDate)
   });
 
   // userDetail değişince formData'yı güncelle
@@ -31,7 +52,9 @@ export default function UserProfile({ userDetail, onUpdate, onUserDetailUpdate }
         surname: userDetail.surname || '',
         phone: userDetail.phone || '',
         photoPath: userDetail.photoPath || '',
-        tcNo: userDetail.tcNo || ''
+        tcNo: userDetail.tcNo || '',
+        birthPlace: userDetail.birthPlace || '',
+        birthDate: toDateInputValue(userDetail.birthDate)
       });
     }
   }, [userDetail]);
@@ -81,7 +104,9 @@ export default function UserProfile({ userDetail, onUpdate, onUserDetailUpdate }
         surname: formData.surname,
         phone: formData.phone,
         photoPath: formData.photoPath,
-        tcNo: formData.tcNo && formData.tcNo.trim() !== '' ? formData.tcNo.trim() : null
+        tcNo: formData.tcNo && formData.tcNo.trim() !== '' ? formData.tcNo.trim() : null,
+        birthPlace: formData.birthPlace,
+        birthDate: formData.birthDate && formData.birthDate.trim() !== '' ? formData.birthDate : null
       };
       
       await onUpdate(userDetail.id, updateData);
@@ -281,6 +306,33 @@ export default function UserProfile({ userDetail, onUpdate, onUserDetailUpdate }
               />
             ) : (
               <p className="text-gray-900">{userDetail.tcNo || '-'}</p>
+            )}
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Doğum Yeri</label>
+            {isEditing ? (
+              <input
+                type="text"
+                value={formData.birthPlace}
+                onChange={(e) => setFormData({ ...formData, birthPlace: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                placeholder="Örn: İstanbul"
+              />
+            ) : (
+              <p className="text-gray-900">{userDetail.birthPlace || '-'}</p>
+            )}
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Doğum Tarihi</label>
+            {isEditing ? (
+              <input
+                type="date"
+                value={formData.birthDate}
+                onChange={(e) => setFormData({ ...formData, birthDate: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+              />
+            ) : (
+              <p className="text-gray-900">{formatDateTR(userDetail.birthDate)}</p>
             )}
           </div>
         </div>
