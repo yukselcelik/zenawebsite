@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import ApiService from '../../../../lib/api';
 
 export default function DigerTaleplerForm({ onSuccess, onCancel }) {
   const [formData, setFormData] = useState({
@@ -38,15 +39,20 @@ export default function DigerTaleplerForm({ onSuccess, onCancel }) {
     setIsLoading(true);
 
     try {
-      // TODO: API endpoint oluşturulduğunda buraya eklenecek
-      // const result = await ApiService.createOtherRequest(formData);
+      const result = await ApiService.createOtherRequest({
+        title: formData.title.trim(),
+        description: formData.description.trim()
+      });
       
-      // Şimdilik sadece başarı mesajı göster
+      if (result && result.success) {
       setSuccess('Talebiniz alınmıştır. En kısa sürede değerlendirilecektir.');
       
       setTimeout(() => {
         if (onSuccess) onSuccess();
       }, 2000);
+      } else {
+        setError(result?.message || 'Talep oluşturulurken hata oluştu');
+      }
     } catch (error) {
       console.error('Error creating other request:', error);
       setError(error.message || 'Talep oluşturulurken hata oluştu');

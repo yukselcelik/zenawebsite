@@ -93,6 +93,7 @@ builder.Services.AddScoped<RightsAndReceivablesService>();
 builder.Services.AddScoped<EmployeeBenefitService>();
 builder.Services.AddScoped<ExpenseRequestService>();
 builder.Services.AddScoped<MeetingRoomRequestService>();
+builder.Services.AddScoped<OtherRequestService>();
 builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 
 var allowAllOrigins = builder.Configuration.GetValue<bool>("Cors:AllowAllOrigins");

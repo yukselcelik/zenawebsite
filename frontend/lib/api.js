@@ -1025,6 +1025,40 @@ class ApiService {
 
     return this.handleResponse(response);
   }
+
+  // Other Request API calls
+  static async createOtherRequest(requestData) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/otherrequest/request`, {
+        method: 'POST',
+        headers: this.getHeaders(),
+        body: JSON.stringify(requestData),
+      });
+
+      return this.handleResponse(response);
+    } catch (error) {
+      console.error('Fetch error:', error);
+      throw error;
+    }
+  }
+
+  static async getMyOtherRequests(pageNumber = 1, pageSize = 10) {
+    const response = await fetch(`${API_BASE_URL}/api/otherrequest/my-requests?pageNumber=${pageNumber}&pageSize=${pageSize}`, {
+      method: 'GET',
+      headers: this.getHeaders(),
+    });
+
+    return this.handleResponse(response);
+  }
+
+  static async getAllOtherRequests(pageNumber = 1, pageSize = 10) {
+    const response = await fetch(`${API_BASE_URL}/api/otherrequest/all-requests?pageNumber=${pageNumber}&pageSize=${pageSize}`, {
+      method: 'GET',
+      headers: this.getHeaders(),
+    });
+
+    return this.handleResponse(response);
+  }
 }
 
 export default ApiService;

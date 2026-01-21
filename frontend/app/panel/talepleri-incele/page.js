@@ -7,7 +7,8 @@ import ConfirmDialog from '../components/common/ConfirmDialog';
 const TABS = {
   LEAVE: 'leave',
   EXPENSE: 'expense',
-  MEETING_ROOM: 'meeting-room'
+  MEETING_ROOM: 'meeting-room',
+  OTHER: 'other'
 };
 
 export default function TalepleriIncelePage() {
@@ -15,6 +16,7 @@ export default function TalepleriIncelePage() {
   const [leaveRequests, setLeaveRequests] = useState([]);
   const [expenseRequests, setExpenseRequests] = useState([]);
   const [meetingRoomRequests, setMeetingRoomRequests] = useState([]);
+  const [otherRequests, setOtherRequests] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [pageNumber, setPageNumber] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -59,6 +61,12 @@ export default function TalepleriIncelePage() {
         const result = await ApiService.getAllMeetingRoomRequests(pageNumber, 10);
         if (result && result.success && result.data) {
           setMeetingRoomRequests(result.data.items || []);
+          setTotalPages(result.data.totalPages || 1);
+        }
+      } else if (activeTab === TABS.OTHER) {
+        const result = await ApiService.getAllOtherRequests(pageNumber, 10);
+        if (result && result.success && result.data) {
+          setOtherRequests(result.data.items || []);
           setTotalPages(result.data.totalPages || 1);
         }
       }
@@ -452,6 +460,58 @@ export default function TalepleriIncelePage() {
     );
   };
 
+  const renderOtherRequests = () => {
+    if (isLoading) {
+      return <div className="text-center py-8">Yükleniyor...</div>;
+    }
+
+    if (otherRequests.length === 0) {
+      return <div className="text-center py-8 text-gray-500">Henüz diğer talep bulunmamaktadır.</div>;
+    }
+
+    return (
+      <div className="overflow-x-auto">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Personel</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Başlık</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Açıklama</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tarih</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Durum</th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {otherRequests.map((request) => (
+              <tr key={request.id} className="hover:bg-gray-50">
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="text-sm font-medium text-gray-900">{request.userName} {request.userSurname}</div>
+                  <div className="text-sm text-gray-500">{request.userEmail}</div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  {request.title}
+                </td>
+                <td className="px-6 py-4 text-sm text-gray-900">
+                  <div className="max-w-md truncate" title={request.description}>
+                    {request.description}
+                  </div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {formatDate(request.createdAt)}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadge(request.status)}`}>
+                    {getStatusText(request.status)}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  };
+
   return (
     <div className="p-6">
       <div className="mb-6">
@@ -503,6 +563,19 @@ export default function TalepleriIncelePage() {
           >
             Toplantı Odası Talepleri
           </button>
+          <button
+            onClick={() => {
+              setActiveTab(TABS.OTHER);
+              setPageNumber(1);
+            }}
+            className={`py-4 px-1 border-b-2 font-medium text-sm ${
+              activeTab === TABS.OTHER
+                ? 'border-orange-500 text-orange-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            Diğer Talepler
+          </button>
         </nav>
       </div>
 
@@ -511,6 +584,7 @@ export default function TalepleriIncelePage() {
         {activeTab === TABS.LEAVE && renderLeaveRequests()}
         {activeTab === TABS.EXPENSE && renderExpenseRequests()}
         {activeTab === TABS.MEETING_ROOM && renderMeetingRoomRequests()}
+        {activeTab === TABS.OTHER && renderOtherRequests()}
 
         {/* Pagination */}
         {totalPages > 1 && (
