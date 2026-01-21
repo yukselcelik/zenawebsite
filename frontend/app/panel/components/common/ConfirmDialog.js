@@ -8,7 +8,8 @@ export default function ConfirmDialog({
   cancelText = 'Vazgeç',
   onConfirm,
   onCancel,
-  loading = false
+  loading = false,
+  confirmButtonClass = 'bg-orange-600 hover:bg-orange-700 active:bg-orange-800'
 }) {
   if (!open) return null;
 
@@ -40,7 +41,7 @@ export default function ConfirmDialog({
             type="button"
             onClick={onConfirm}
             disabled={loading}
-            className={`px-4 py-2 rounded-lg text-sm text-white transition ${loading ? 'bg-gray-400' : 'bg-orange-600 hover:bg-orange-700 active:bg-orange-800'}`}
+            className={`px-4 py-2 rounded-lg text-sm text-white transition ${loading ? 'bg-gray-400' : confirmButtonClass}`}
           >
             {loading ? 'İşleniyor...' : confirmText}
           </button>

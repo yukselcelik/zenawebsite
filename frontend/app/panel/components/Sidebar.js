@@ -30,18 +30,6 @@ export default function Sidebar({ isManager, pendingCount, pendingLeaveCount }) 
       visible: true
     },
     {
-      id: 'leaves',
-      label: 'İzin Talepleri',
-      href: '/panel/izin-talepleri',
-      icon: (
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-        </svg>
-      ),
-      visible: !isManager, // Sadece personel için görünür
-      badge: pendingLeaveCount > 0 ? pendingLeaveCount : null
-    },
-    {
       id: 'rights-receivables',
       label: 'Hak ve Alacaklar',
       href: '/panel/hak-ve-alacaklar',
@@ -51,6 +39,17 @@ export default function Sidebar({ isManager, pendingCount, pendingLeaveCount }) 
         </svg>
       ),
       visible: false // Personel için Profilim altında gösteriliyor
+    },
+    {
+      id: 'my-requests',
+      label: 'Taleplerim',
+      href: '/panel/taleplerim',
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+        </svg>
+      ),
+      visible: !isManager // Sadece personel için görünür
     },
     {
       id: 'request',
@@ -84,7 +83,7 @@ export default function Sidebar({ isManager, pendingCount, pendingLeaveCount }) 
         </svg>
       ),
       visible: isManager,
-      badge: isManager ? (pendingCount || 0) : null
+      badge: isManager && pendingCount > 0 ? pendingCount : null
     },
     {
       id: 'review-requests',
@@ -149,18 +148,10 @@ export default function Sidebar({ isManager, pendingCount, pendingLeaveCount }) 
                 <div className="flex items-center space-x-3">
                   {item.icon}
                   <span>{item.label}</span>
-                  {(item.id === 'leaves' || item.id === 'personnel') ? (
-                    <span
-                      className={`ml-auto text-xs px-2 py-1 rounded-full ${item.badge > 0 ? 'bg-red-500 text-white' : 'invisible'}`}
-                    >
-                      {item.badge || 0}
+                  {item.badge && (
+                    <span className="ml-auto bg-red-500 text-white text-xs px-2 py-1 rounded-full">
+                      {item.badge}
                     </span>
-                  ) : (
-                    item.badge && (
-                      <span className="ml-auto bg-red-500 text-white text-xs px-2 py-1 rounded-full">
-                        {item.badge}
-                      </span>
-                    )
                   )}
                 </div>
               </Link>

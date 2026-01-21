@@ -13,6 +13,7 @@ export default function Navbar({ userData, onLogout, isManager }) {
     if (pathname?.includes('/izin-talepleri/yeni')) return 'Yeni İzin Talebi';
     if (pathname?.includes('/izin-talepleri')) return 'İzin Talepleri';
     if (pathname?.includes('/hak-ve-alacaklar')) return 'Hak ve Alacaklar';
+    if (pathname?.includes('/taleplerim')) return 'Taleplerim';
     if (pathname?.includes('/talep-et')) return 'Talep Et';
     if (pathname?.includes('/masraf-talep-et')) return 'Masraf Talep Et';
     if (pathname?.includes('/masraf-taleplerim')) return 'Masraf Taleplerim';
