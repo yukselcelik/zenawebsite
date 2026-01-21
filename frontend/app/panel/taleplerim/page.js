@@ -10,7 +10,7 @@ const TABS = {
   MEETING_ROOM: 'meeting-room'
 };
 
-export default function TalepleriIncelePage() {
+export default function TaleplerimPage() {
   const [activeTab, setActiveTab] = useState(TABS.LEAVE);
   const [leaveRequests, setLeaveRequests] = useState([]);
   const [expenseRequests, setExpenseRequests] = useState([]);
@@ -19,22 +19,8 @@ export default function TalepleriIncelePage() {
   const [pageNumber, setPageNumber] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [selectedRequest, setSelectedRequest] = useState(null);
-  const [showApproveModal, setShowApproveModal] = useState(false);
-  const [showRejectModal, setShowRejectModal] = useState(false);
+  const [showCancelModal, setShowCancelModal] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [expenseApprovalData, setExpenseApprovalData] = useState({
-    approvedAmount: '',
-    department: ''
-  });
-  const [isManager, setIsManager] = useState(false);
-
-  // Check if user is Manager/Admin
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const userRole = localStorage.getItem('userRole');
-      setIsManager(userRole === 'Manager' || userRole === 'Yönetici' || userRole?.toLowerCase() === 'manager');
-    }
-  }, []);
 
   useEffect(() => {
     fetchData();
@@ -44,19 +30,19 @@ export default function TalepleriIncelePage() {
     setIsLoading(true);
     try {
       if (activeTab === TABS.LEAVE) {
-        const result = await ApiService.getAllLeaveRequests(pageNumber, 10);
+        const result = await ApiService.getMyLeaveRequests(pageNumber, 10);
         if (result && result.success && result.data) {
           setLeaveRequests(result.data.items || []);
           setTotalPages(result.data.totalPages || 1);
         }
       } else if (activeTab === TABS.EXPENSE) {
-        const result = await ApiService.getAllExpenseRequests(pageNumber, 10);
+        const result = await ApiService.getMyExpenseRequests(pageNumber, 10);
         if (result && result.success && result.data) {
           setExpenseRequests(result.data.items || []);
           setTotalPages(result.data.totalPages || 1);
         }
       } else if (activeTab === TABS.MEETING_ROOM) {
-        const result = await ApiService.getAllMeetingRoomRequests(pageNumber, 10);
+        const result = await ApiService.getMyMeetingRoomRequests(pageNumber, 10);
         if (result && result.success && result.data) {
           setMeetingRoomRequests(result.data.items || []);
           setTotalPages(result.data.totalPages || 1);
@@ -76,16 +62,6 @@ export default function TalepleriIncelePage() {
       month: 'long',
       day: 'numeric'
     });
-  };
-
-  const formatDateTime = (dateString, timeString) => {
-    if (!dateString) return '-';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('tr-TR', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    }) + (timeString ? ` ${timeString}` : '');
   };
 
   // Helper function to normalize status (handles both numeric and string values)
@@ -139,66 +115,34 @@ export default function TalepleriIncelePage() {
     return statusMap[normalized] || normalized || status;
   };
 
-  const handleApprove = async () => {
+  const handleCancel = async () => {
     if (!selectedRequest) return;
 
     setIsProcessing(true);
     try {
       let result;
       if (activeTab === TABS.LEAVE) {
-        result = await ApiService.approveLeaveRequest(selectedRequest.id);
+        result = await ApiService.deleteLeaveRequest(selectedRequest.id);
       } else if (activeTab === TABS.EXPENSE) {
-        const approvedAmount = expenseApprovalData.approvedAmount 
-          ? parseFloat(expenseApprovalData.approvedAmount.replace(',', '.'))
-          : selectedRequest.requestedAmount;
-        result = await ApiService.approveExpenseRequest(selectedRequest.id, {
-          approvedAmount: approvedAmount,
-          department: expenseApprovalData.department || selectedRequest.department || ''
-        });
+        // Expense request cancellation - API endpoint kontrol et
+        alert('Masraf talebi iptal işlemi henüz desteklenmiyor');
+        return;
       } else if (activeTab === TABS.MEETING_ROOM) {
-        result = await ApiService.approveMeetingRoomRequest(selectedRequest.id);
+        // Meeting room request cancellation - API endpoint kontrol et
+        alert('Toplantı odası talebi iptal işlemi henüz desteklenmiyor');
+        return;
       }
 
       if (result && result.success) {
-        setShowApproveModal(false);
-        setSelectedRequest(null);
-        setExpenseApprovalData({ approvedAmount: '', department: '' });
-        fetchData();
-      } else {
-        alert(result?.message || 'Onaylama işlemi başarısız oldu');
-      }
-    } catch (error) {
-      console.error('Error approving request:', error);
-      alert(error.message || 'Onaylama işlemi sırasında hata oluştu');
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  const handleReject = async () => {
-    if (!selectedRequest) return;
-
-    setIsProcessing(true);
-    try {
-      let result;
-      if (activeTab === TABS.LEAVE) {
-        result = await ApiService.rejectLeaveRequest(selectedRequest.id);
-      } else if (activeTab === TABS.EXPENSE) {
-        result = await ApiService.rejectExpenseRequest(selectedRequest.id);
-      } else if (activeTab === TABS.MEETING_ROOM) {
-        result = await ApiService.rejectMeetingRoomRequest(selectedRequest.id);
-      }
-
-      if (result && result.success) {
-        setShowRejectModal(false);
+        setShowCancelModal(false);
         setSelectedRequest(null);
         fetchData();
       } else {
-        alert(result?.message || 'Reddetme işlemi başarısız oldu');
+        alert(result?.message || 'İptal işlemi başarısız oldu');
       }
     } catch (error) {
-      console.error('Error rejecting request:', error);
-      alert(error.message || 'Reddetme işlemi sırasında hata oluştu');
+      console.error('Error cancelling request:', error);
+      alert(error.message || 'İptal işlemi sırasında hata oluştu');
     } finally {
       setIsProcessing(false);
     }
@@ -237,7 +181,6 @@ export default function TalepleriIncelePage() {
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Personel</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">İzin Türü</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Başlangıç</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bitiş</th>
@@ -249,10 +192,6 @@ export default function TalepleriIncelePage() {
           <tbody className="bg-white divide-y divide-gray-200">
             {leaveRequests.map((request) => (
               <tr key={request.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900">{request.userName} {request.userSurname}</div>
-                  <div className="text-sm text-gray-500">{request.userEmail}</div>
-                </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                   {getLeaveTypeText(request.leaveType)}
                 </td>
@@ -271,27 +210,16 @@ export default function TalepleriIncelePage() {
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  {isManager && isPendingStatus(request.status) && (
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => {
-                          setSelectedRequest(request);
-                          setShowApproveModal(true);
-                        }}
-                        className="px-3 py-1 bg-green-500 hover:bg-green-600 text-white rounded text-sm font-medium transition-colors"
-                      >
-                        Onayla
-                      </button>
-                      <button
-                        onClick={() => {
-                          setSelectedRequest(request);
-                          setShowRejectModal(true);
-                        }}
-                        className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded text-sm font-medium transition-colors"
-                      >
-                        Reddet
-                      </button>
-                    </div>
+                  {isPendingStatus(request.status) && (
+                    <button
+                      onClick={() => {
+                        setSelectedRequest(request);
+                        setShowCancelModal(true);
+                      }}
+                      className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded text-sm font-medium transition-colors"
+                    >
+                      İptal Et
+                    </button>
                   )}
                 </td>
               </tr>
@@ -316,21 +244,15 @@ export default function TalepleriIncelePage() {
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Personel</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Talep Tarihi</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Masraf Türü</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tutar</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Durum</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">İşlemler</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {expenseRequests.map((request) => (
               <tr key={request.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900">{request.userName} {request.userSurname}</div>
-                  <div className="text-sm text-gray-500">{request.userEmail}</div>
-                </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                   {formatDate(request.requestDate)}
                 </td>
@@ -344,30 +266,6 @@ export default function TalepleriIncelePage() {
                   <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadge(request.statusName)}`}>
                     {request.statusName}
                   </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  {request.statusName === 'Beklemede' && (
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => {
-                          setSelectedRequest(request);
-                          setShowApproveModal(true);
-                        }}
-                        className="text-green-600 hover:text-green-900"
-                      >
-                        Onayla
-                      </button>
-                      <button
-                        onClick={() => {
-                          setSelectedRequest(request);
-                          setShowRejectModal(true);
-                        }}
-                        className="text-red-600 hover:text-red-900"
-                      >
-                        Reddet
-                      </button>
-                    </div>
-                  )}
                 </td>
               </tr>
             ))}
@@ -391,21 +289,15 @@ export default function TalepleriIncelePage() {
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Personel</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Toplantı Salonu</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tarih</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Saat</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Durum</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">İşlemler</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {meetingRoomRequests.map((request) => (
               <tr key={request.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900">{request.userName} {request.userSurname}</div>
-                  <div className="text-sm text-gray-500">{request.userEmail}</div>
-                </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                   {getMeetingRoomText(request.meetingRoom)}
                 </td>
@@ -420,30 +312,6 @@ export default function TalepleriIncelePage() {
                     {getStatusText(request.status)}
                   </span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  {isManager && isPendingStatus(request.status) && (
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => {
-                          setSelectedRequest(request);
-                          setShowApproveModal(true);
-                        }}
-                        className="px-3 py-1 bg-green-500 hover:bg-green-600 text-white rounded text-sm font-medium transition-colors"
-                      >
-                        Onayla
-                      </button>
-                      <button
-                        onClick={() => {
-                          setSelectedRequest(request);
-                          setShowRejectModal(true);
-                        }}
-                        className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded text-sm font-medium transition-colors"
-                      >
-                        Reddet
-                      </button>
-                    </div>
-                  )}
-                </td>
               </tr>
             ))}
           </tbody>
@@ -455,9 +323,9 @@ export default function TalepleriIncelePage() {
   return (
     <div className="p-6">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Talepleri İncele</h1>
+        <h1 className="text-2xl font-bold text-gray-800">Taleplerim</h1>
         <p className="text-gray-600 mt-2">
-          Personel taleplerini buradan görüntüleyebilir, onaylayabilir veya reddedebilirsiniz.
+          Tüm taleplerinizi buradan görüntüleyebilir ve durumlarını takip edebilirsiniz.
         </p>
       </div>
 
@@ -538,91 +406,18 @@ export default function TalepleriIncelePage() {
         )}
       </div>
 
-      {/* Approve Modal */}
-      {showApproveModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-            <h3 className="text-lg font-bold text-gray-800 mb-4">Talebi Onayla</h3>
-            {activeTab === TABS.EXPENSE && selectedRequest ? (
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Onaylanan Tutar (TL)
-                  </label>
-                  <input
-                    type="text"
-                    value={expenseApprovalData.approvedAmount}
-                    onChange={(e) => {
-                      let cleaned = e.target.value.replace(/[^\d,]/g, '');
-                      const commaIndex = cleaned.indexOf(',');
-                      if (commaIndex !== -1) {
-                        const afterComma = cleaned.substring(commaIndex + 1);
-                        if (afterComma.length > 2) {
-                          cleaned = cleaned.substring(0, commaIndex + 3);
-                        }
-                      }
-                      setExpenseApprovalData({ ...expenseApprovalData, approvedAmount: cleaned });
-                    }}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                    placeholder="0,00"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">Talep edilen: {new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(selectedRequest.requestedAmount)}</p>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Departman (Opsiyonel)
-                  </label>
-                  <input
-                    type="text"
-                    value={expenseApprovalData.department}
-                    onChange={(e) => setExpenseApprovalData({ ...expenseApprovalData, department: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                    placeholder="Departman adı"
-                  />
-                </div>
-                <p className="text-sm text-gray-600">Bu talebi onaylamak istediğinizden emin misiniz?</p>
-              </div>
-            ) : (
-              <p className="text-sm text-gray-600">Bu talebi onaylamak istediğinizden emin misiniz?</p>
-            )}
-            <div className="flex justify-end gap-3 mt-6">
-              <button
-                onClick={() => {
-                  setShowApproveModal(false);
-                  setSelectedRequest(null);
-                  setExpenseApprovalData({ approvedAmount: '', department: '' });
-                }}
-                disabled={isProcessing}
-                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50"
-              >
-                İptal
-              </button>
-              <button
-                onClick={handleApprove}
-                disabled={isProcessing}
-                className={`px-4 py-2 rounded-lg text-white ${
-                  isProcessing ? 'bg-gray-400' : 'bg-green-500 hover:bg-green-600'
-                }`}
-              >
-                {isProcessing ? 'Onaylanıyor...' : 'Onayla'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Reject Modal */}
+      {/* Cancel Modal */}
       <ConfirmDialog
-        open={showRejectModal}
+        open={showCancelModal}
         onCancel={() => {
-          setShowRejectModal(false);
+          setShowCancelModal(false);
           setSelectedRequest(null);
         }}
-        onConfirm={handleReject}
-        title="Talebi Reddet"
-        message="Bu talebi reddetmek istediğinizden emin misiniz? Bu işlem geri alınamaz."
-        confirmText="Reddet"
-        cancelText="İptal"
+        onConfirm={handleCancel}
+        title="Talebi İptal Et"
+        message="Bu talebi iptal etmek istediğinizden emin misiniz? Bu işlem geri alınamaz."
+        confirmText="Evet, İptal Et"
+        cancelText="Vazgeç"
         loading={isProcessing}
         confirmButtonClass="bg-red-500 hover:bg-red-600 active:bg-red-700"
       />
