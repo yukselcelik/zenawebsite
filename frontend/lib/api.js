@@ -973,6 +973,58 @@ class ApiService {
     window.URL.revokeObjectURL(url);
     document.body.removeChild(a);
   }
+
+  // Meeting Room Request API calls
+  static async createMeetingRoomRequest(meetingData) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/meetingroomrequest/request`, {
+        method: 'POST',
+        headers: this.getHeaders(),
+        body: JSON.stringify(meetingData),
+      });
+
+      return this.handleResponse(response);
+    } catch (error) {
+      console.error('Fetch error:', error);
+      throw error;
+    }
+  }
+
+  static async getMyMeetingRoomRequests(pageNumber = 1, pageSize = 10) {
+    const response = await fetch(`${API_BASE_URL}/api/meetingroomrequest/my-requests?pageNumber=${pageNumber}&pageSize=${pageSize}`, {
+      method: 'GET',
+      headers: this.getHeaders(),
+    });
+
+    return this.handleResponse(response);
+  }
+
+  static async getAllMeetingRoomRequests(pageNumber = 1, pageSize = 10) {
+    const response = await fetch(`${API_BASE_URL}/api/meetingroomrequest/all-requests?pageNumber=${pageNumber}&pageSize=${pageSize}`, {
+      method: 'GET',
+      headers: this.getHeaders(),
+    });
+
+    return this.handleResponse(response);
+  }
+
+  static async approveMeetingRoomRequest(id) {
+    const response = await fetch(`${API_BASE_URL}/api/meetingroomrequest/${id}/approve`, {
+      method: 'PUT',
+      headers: this.getHeaders(),
+    });
+
+    return this.handleResponse(response);
+  }
+
+  static async rejectMeetingRoomRequest(id) {
+    const response = await fetch(`${API_BASE_URL}/api/meetingroomrequest/${id}/reject`, {
+      method: 'PUT',
+      headers: this.getHeaders(),
+    });
+
+    return this.handleResponse(response);
+  }
 }
 
 export default ApiService;

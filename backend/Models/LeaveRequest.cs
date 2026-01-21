@@ -14,10 +14,17 @@ public class LeaveRequest : BaseEntity
     public User User { get; set; } = null!;
     
     [Required]
+    public LeaveTypeEnum LeaveType { get; set; }
+    
+    [Required]
     public DateTime StartDate { get; set; }
     
     [Required]
     public DateTime EndDate { get; set; }
+    
+    public int? Days { get; set; } // Yıllık izin için gün sayısı
+    
+    public int? Hours { get; set; } // Saatlik izin için saat sayısı
     
     [Required]
     [MaxLength(1000)]

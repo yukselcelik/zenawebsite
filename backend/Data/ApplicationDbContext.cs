@@ -24,6 +24,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<RightsAndReceivables> RightsAndReceivables { get; set; }
     public DbSet<EmployeeBenefit> EmployeeBenefits { get; set; }
     public DbSet<ExpenseRequest> ExpenseRequests { get; set; }
+    public DbSet<MeetingRoomRequest> MeetingRoomRequests { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

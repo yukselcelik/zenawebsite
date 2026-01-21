@@ -15,15 +15,26 @@ export default function IzinTalepleriPage() {
       try {
         const profileData = await ApiService.getProfile();
         setUserData(profileData.data);
+        
+        // Admin ise "Talepleri İncele" sayfasına yönlendir
+        if (profileData.data?.role === 'Manager') {
+          router.push('/panel/talepleri-incele');
+          return;
+        }
       } catch (error) {
         console.error('Error fetching user data:', error);
       }
     };
 
     fetchUserData();
-  }, []);
+  }, [router]);
 
   const isManager = userData?.role === 'Manager';
+
+  // Admin ise hiçbir şey render etme (yönlendirme yapıldı)
+  if (isManager) {
+    return null;
+  }
 
   return (
     <LeaveRequests 

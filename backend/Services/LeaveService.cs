@@ -14,7 +14,66 @@ public class LeaveService(ApplicationDbContext context, ILogger<LeaveService> lo
         var startDate = dto.StartDate.Date.ToUniversalTime();
         var endDate = dto.EndDate.Date.ToUniversalTime();
 
-        if (startDate >= endDate)
+        // LeaveType enum'a çevir
+        LeaveTypeEnum leaveType;
+        if (string.IsNullOrEmpty(dto.LeaveType))
+        {
+            return ApiResult<LeaveRequestResponseDto>.BadRequest("İzin türü belirtilmelidir");
+        }
+
+        switch (dto.LeaveType.ToLower())
+        {
+            case "annual":
+                leaveType = LeaveTypeEnum.Annual;
+                break;
+            case "unpaid":
+                leaveType = LeaveTypeEnum.Unpaid;
+                break;
+            case "hourly":
+                leaveType = LeaveTypeEnum.Hourly;
+                break;
+            case "excuse":
+                leaveType = LeaveTypeEnum.Excuse;
+                break;
+            default:
+                return ApiResult<LeaveRequestResponseDto>.BadRequest("Geçersiz izin türü");
+        }
+
+        // Yıllık izin için gün sayısı kontrolü
+        if (leaveType == LeaveTypeEnum.Annual)
+        {
+            if (!dto.Days.HasValue || dto.Days.Value <= 0)
+            {
+                return ApiResult<LeaveRequestResponseDto>.BadRequest("Yıllık izin için gün sayısı belirtilmelidir");
+            }
+
+            // Kullanıcının yıllık izin gününü kontrol et
+            var rightsAndReceivables = await context.RightsAndReceivables
+                .FirstOrDefaultAsync(r => r.UserId == userId);
+
+            if (rightsAndReceivables == null || 
+                !rightsAndReceivables.UnusedAnnualLeaveDays.HasValue ||
+                rightsAndReceivables.UnusedAnnualLeaveDays.Value < dto.Days.Value)
+            {
+                return ApiResult<LeaveRequestResponseDto>.BadRequest("Yeterli yıllık izin gününüz bulunmamaktadır");
+            }
+
+            // Bitiş tarihini gün sayısına göre hesapla
+            endDate = startDate.AddDays(dto.Days.Value - 1);
+        }
+
+        // Saatlik izin için saat kontrolü
+        if (leaveType == LeaveTypeEnum.Hourly)
+        {
+            if (!dto.Hours.HasValue || dto.Hours.Value <= 0)
+            {
+                return ApiResult<LeaveRequestResponseDto>.BadRequest("Saatlik izin için saat sayısı belirtilmelidir");
+            }
+            // Saatlik izin için başlangıç ve bitiş tarihi aynı
+            endDate = startDate;
+        }
+
+        if (startDate > endDate)
         {
             return ApiResult<LeaveRequestResponseDto>.BadRequest("Başlangıç tarihi bitiş tarihinden önce olmalıdır");
         }
@@ -30,8 +89,11 @@ public class LeaveService(ApplicationDbContext context, ILogger<LeaveService> lo
         var leaveRequest = new LeaveRequest
         {
             UserId = userId,
+            LeaveType = leaveType,
             StartDate = startDate,
             EndDate = endDate,
+            Days = dto.Days,
+            Hours = dto.Hours,
             Reason = dto.Reason,
             Status = LeaveStatusEnum.Pending,
             CreatedAt = now,
@@ -41,7 +103,7 @@ public class LeaveService(ApplicationDbContext context, ILogger<LeaveService> lo
         context.LeaveRequests.Add(leaveRequest);
         await context.SaveChangesAsync();
 
-        logger.LogInformation("Leave request created: {Id} by user {UserId}", leaveRequest.Id, userId);
+        logger.LogInformation("Leave request created: {Id} by user {UserId}, Type: {Type}", leaveRequest.Id, userId, leaveType);
 
         var user = await context.Users.FindAsync(userId);
         var response = new LeaveRequestResponseDto
@@ -51,8 +113,11 @@ public class LeaveService(ApplicationDbContext context, ILogger<LeaveService> lo
             UserName = user?.Name ?? string.Empty,
             UserSurname = user?.Surname ?? string.Empty,
             UserEmail = user?.Email ?? string.Empty,
+            LeaveType = leaveType.ToString().ToLower(),
             StartDate = leaveRequest.StartDate,
             EndDate = leaveRequest.EndDate,
+            Days = leaveRequest.Days,
+            Hours = leaveRequest.Hours,
             Reason = leaveRequest.Reason,
             Status = leaveRequest.Status,
             CreatedAt = leaveRequest.CreatedAt,
@@ -85,8 +150,11 @@ public class LeaveService(ApplicationDbContext context, ILogger<LeaveService> lo
             UserName = lr.User.Name,
             UserSurname = lr.User.Surname,
             UserEmail = lr.User.Email,
+            LeaveType = lr.LeaveType.ToString().ToLower(),
             StartDate = lr.StartDate,
             EndDate = lr.EndDate,
+            Days = lr.Days,
+            Hours = lr.Hours,
             Reason = lr.Reason,
             Status = lr.Status,
             CreatedAt = lr.CreatedAt,
@@ -135,8 +203,11 @@ public class LeaveService(ApplicationDbContext context, ILogger<LeaveService> lo
             UserName = lr.User.Name,
             UserSurname = lr.User.Surname,
             UserEmail = lr.User.Email,
+            LeaveType = lr.LeaveType.ToString().ToLower(),
             StartDate = lr.StartDate,
             EndDate = lr.EndDate,
+            Days = lr.Days,
+            Hours = lr.Hours,
             Reason = lr.Reason,
             Status = lr.Status,
             CreatedAt = lr.CreatedAt,
@@ -177,8 +248,11 @@ public class LeaveService(ApplicationDbContext context, ILogger<LeaveService> lo
             UserName = lr.User.Name,
             UserSurname = lr.User.Surname,
             UserEmail = lr.User.Email,
+            LeaveType = lr.LeaveType.ToString().ToLower(),
             StartDate = lr.StartDate,
             EndDate = lr.EndDate,
+            Days = lr.Days,
+            Hours = lr.Hours,
             Reason = lr.Reason,
             Status = lr.Status,
             CreatedAt = lr.CreatedAt,
@@ -228,7 +302,9 @@ public class LeaveService(ApplicationDbContext context, ILogger<LeaveService> lo
 
     public async Task<ApiResult<bool>> ApproveLeaveRequestAsync(int leaveRequestId)
     {
-        var leaveRequest = await context.LeaveRequests.FindAsync(leaveRequestId);
+        var leaveRequest = await context.LeaveRequests
+            .Include(lr => lr.User)
+            .FirstOrDefaultAsync(lr => lr.Id == leaveRequestId);
 
         if (leaveRequest == null)
         {
@@ -240,12 +316,52 @@ public class LeaveService(ApplicationDbContext context, ILogger<LeaveService> lo
             return ApiResult<bool>.BadRequest("Sadece bekleyen izin talepleri onaylanabilir");
         }
 
+        // Yıllık izin onaylandığında RightsAndReceivables'tan düş
+        if (leaveRequest.LeaveType == LeaveTypeEnum.Annual && leaveRequest.Days.HasValue)
+        {
+            var rightsAndReceivables = await context.RightsAndReceivables
+                .FirstOrDefaultAsync(r => r.UserId == leaveRequest.UserId);
+
+            if (rightsAndReceivables != null)
+            {
+                if (rightsAndReceivables.UnusedAnnualLeaveDays.HasValue)
+                {
+                    var newDays = rightsAndReceivables.UnusedAnnualLeaveDays.Value - leaveRequest.Days.Value;
+                    if (newDays < 0)
+                    {
+                        return ApiResult<bool>.BadRequest("Yeterli yıllık izin günü bulunmamaktadır");
+                    }
+                    rightsAndReceivables.UnusedAnnualLeaveDays = newDays;
+                    
+                    // Ücret hesaplaması (basit bir hesaplama - günlük ücret varsa)
+                    // Bu kısım iş kurallarına göre güncellenebilir
+                    if (rightsAndReceivables.UnusedAnnualLeaveAmount.HasValue && 
+                        rightsAndReceivables.UnusedAnnualLeaveDays.HasValue && 
+                        rightsAndReceivables.UnusedAnnualLeaveDays.Value > 0)
+                    {
+                        var dailyAmount = rightsAndReceivables.UnusedAnnualLeaveAmount.Value / 
+                                         (rightsAndReceivables.UnusedAnnualLeaveDays.Value + leaveRequest.Days.Value);
+                        rightsAndReceivables.UnusedAnnualLeaveAmount = dailyAmount * newDays;
+                    }
+                }
+            }
+        }
+
+        // Saatlik izin onaylandığında - kullanılan saatlik izin panele düşecek
+        // Bu bilgiyi başka bir yerde saklamak gerekebilir, şimdilik sadece logluyoruz
+        if (leaveRequest.LeaveType == LeaveTypeEnum.Hourly && leaveRequest.Hours.HasValue)
+        {
+            logger.LogInformation("Hourly leave approved: {Hours} hours for user {UserId}", 
+                leaveRequest.Hours.Value, leaveRequest.UserId);
+            // TODO: Kullanılan saatlik izin bilgisini saklamak için yeni bir tablo veya alan eklenebilir
+        }
+
         leaveRequest.Status = LeaveStatusEnum.Approved;
         leaveRequest.UpdatedAt = DateTime.UtcNow;
 
         await context.SaveChangesAsync();
 
-        logger.LogInformation("Leave request approved: {Id}", leaveRequestId);
+        logger.LogInformation("Leave request approved: {Id}, Type: {Type}", leaveRequestId, leaveRequest.LeaveType);
 
         return ApiResult<bool>.Ok(true);
     }

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import ApiService from '../../../lib/api';
 import ConfirmDialog from '../components/common/ConfirmDialog';
 
@@ -25,8 +26,22 @@ export default function MasrafTalepleriPage() {
   const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
-    fetchExpenseRequests();
-  }, [pageNumber]);
+    // Admin kontrolü yap
+    const checkUserRole = async () => {
+      try {
+        const profileData = await ApiService.getProfile();
+        if (profileData.data?.role === 'Manager') {
+          router.push('/panel/talepleri-incele');
+          return;
+        }
+        fetchExpenseRequests();
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+        fetchExpenseRequests();
+      }
+    };
+    checkUserRole();
+  }, [pageNumber, router]);
 
   const fetchExpenseRequests = async () => {
     try {

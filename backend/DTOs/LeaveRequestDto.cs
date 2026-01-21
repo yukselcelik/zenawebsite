@@ -15,6 +15,12 @@ public class CreateLeaveRequestDto
     [Required]
     [MaxLength(1000)]
     public string Reason { get; set; } = string.Empty;
+    
+    public string? LeaveType { get; set; } // "annual", "unpaid", "hourly", "excuse"
+    
+    public int? Days { get; set; } // Yıllık izin için gün sayısı
+    
+    public int? Hours { get; set; } // Saatlik izin için saat sayısı
 }
 
 public class LeaveRequestResponseDto
@@ -24,8 +30,11 @@ public class LeaveRequestResponseDto
     public string UserName { get; set; } = string.Empty;
     public string UserSurname { get; set; } = string.Empty;
     public string UserEmail { get; set; } = string.Empty;
+    public string LeaveType { get; set; } = string.Empty;
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
+    public int? Days { get; set; }
+    public int? Hours { get; set; }
     public string Reason { get; set; } = string.Empty;
     public LeaveStatusEnum Status { get; set; }
     public DateTime CreatedAt { get; set; }
