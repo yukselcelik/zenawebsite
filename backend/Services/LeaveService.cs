@@ -48,15 +48,15 @@ public class LeaveService(ApplicationDbContext context, ILogger<LeaveService> lo
             }
 
             // Kullanıcının yıllık izin gününü kontrol et
-            var rightsAndReceivables = await context.RightsAndReceivables
-                .FirstOrDefaultAsync(r => r.UserId == userId);
+            // var rightsAndReceivables = await context.RightsAndReceivables
+            //     .FirstOrDefaultAsync(r => r.UserId == userId);
 
-            if (rightsAndReceivables == null || 
-                !rightsAndReceivables.UnusedAnnualLeaveDays.HasValue ||
-                rightsAndReceivables.UnusedAnnualLeaveDays.Value < dto.Days.Value)
-            {
-                return ApiResult<LeaveRequestResponseDto>.BadRequest("Yeterli yıllık izin gününüz bulunmamaktadır");
-            }
+            // if (rightsAndReceivables == null || 
+            //     !rightsAndReceivables.UnusedAnnualLeaveDays.HasValue ||
+            //     rightsAndReceivables.UnusedAnnualLeaveDays.Value < dto.Days.Value)
+            // {
+            //     return ApiResult<LeaveRequestResponseDto>.BadRequest("Yeterli yıllık izin gününüz bulunmamaktadır");
+            // }
 
             // Bitiş tarihini gün sayısına göre hesapla
             endDate = startDate.AddDays(dto.Days.Value - 1);

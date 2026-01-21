@@ -110,9 +110,6 @@ export default function ToplantiOdasiTalepEtForm({ onSuccess, onCancel }) {
     <div>
       <div className="mb-6">
         <h2 className="text-xl font-bold text-gray-800">Toplantı Odası Kullanımı Talep Et</h2>
-        <p className="text-gray-600 mt-2">
-          Toplantı salonu rezervasyonu için aşağıdaki formu doldurunuz.
-        </p>
       </div>
 
       {error && (

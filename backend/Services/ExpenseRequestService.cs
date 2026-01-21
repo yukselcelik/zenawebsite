@@ -250,6 +250,68 @@ public class ExpenseRequestService(ApplicationDbContext context, ILogger<Expense
         return ApiResult<ExpenseRequestDto>.Ok(result);
     }
 
+    public async Task<ApiResult<ExpenseRequestDto>> UpdateExpenseStatusAsync(int id, int actingUserId, UpdateExpenseStatusDto dto)
+    {
+        var expenseRequest = await context.ExpenseRequests
+            .Include(er => er.User)
+            .Include(er => er.ApprovedByUser)
+            .FirstOrDefaultAsync(er => er.Id == id);
+
+        if (expenseRequest == null)
+        {
+            return ApiResult<ExpenseRequestDto>.NotFound("Masraf talebi bulunamadı");
+        }
+
+        if (!Enum.TryParse<ExpenseStatusEnum>(dto.Status, true, out var newStatus))
+        {
+            return ApiResult<ExpenseRequestDto>.BadRequest("Geçersiz durum");
+        }
+
+        // Allow manager to set any status among Pending/Approved/Rejected/Paid.
+        // Apply minimal state housekeeping so UI stays consistent.
+        expenseRequest.Status = newStatus;
+        expenseRequest.UpdatedAt = DateTime.UtcNow;
+
+        if (newStatus == ExpenseStatusEnum.Pending)
+        {
+            expenseRequest.ApprovedAmount = null;
+            expenseRequest.ApprovedAt = null;
+            expenseRequest.RejectedAt = null;
+            expenseRequest.PaidAt = null;
+            expenseRequest.PaymentMethod = null;
+            expenseRequest.ApprovedByUserId = null;
+        }
+        else if (newStatus == ExpenseStatusEnum.Approved)
+        {
+            expenseRequest.ApprovedAmount ??= expenseRequest.RequestedAmount;
+            expenseRequest.ApprovedAt ??= DateTime.UtcNow;
+            expenseRequest.RejectedAt = null;
+            expenseRequest.PaidAt = null;
+            expenseRequest.ApprovedByUserId = actingUserId;
+        }
+        else if (newStatus == ExpenseStatusEnum.Rejected)
+        {
+            expenseRequest.RejectedAt ??= DateTime.UtcNow;
+            expenseRequest.PaidAt = null;
+            expenseRequest.ApprovedByUserId = actingUserId;
+        }
+        else if (newStatus == ExpenseStatusEnum.Paid)
+        {
+            // If not approved yet, auto-approve first (best-effort)
+            expenseRequest.ApprovedAmount ??= expenseRequest.RequestedAmount;
+            expenseRequest.ApprovedAt ??= DateTime.UtcNow;
+            expenseRequest.PaidAt ??= DateTime.UtcNow;
+            expenseRequest.ApprovedByUserId = actingUserId;
+        }
+
+        await context.SaveChangesAsync();
+
+        logger.LogInformation("Expense request status updated: {Id} -> {Status} by {UserId}", id, newStatus, actingUserId);
+
+        var mapped = await MapToDtoAsync(expenseRequest);
+        return ApiResult<ExpenseRequestDto>.Ok(mapped);
+    }
+
     private async Task<ExpenseRequestDto> MapToDtoAsync(ExpenseRequest er)
     {
         var dto = new ExpenseRequestDto

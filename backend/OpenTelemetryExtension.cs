@@ -28,6 +28,7 @@ public static class OpenTelemetryExtension
             .MinimumLevel.Information()
             .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
             .Enrich.FromLogContext()
+            .WriteTo.Console()
             .WriteTo.OpenTelemetry(o =>
             {
                 o.Endpoint = serilogOtlpEndpoint;

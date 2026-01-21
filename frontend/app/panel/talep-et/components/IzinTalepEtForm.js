@@ -161,9 +161,6 @@ export default function IzinTalepEtForm({ onSuccess, onCancel }) {
       <div>
         <div className="mb-6">
           <h2 className="text-xl font-bold text-gray-800">İzin Talep Et</h2>
-          <p className="text-gray-600 mt-2">
-            Talep etmek istediğiniz izin türünü seçiniz.
-          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

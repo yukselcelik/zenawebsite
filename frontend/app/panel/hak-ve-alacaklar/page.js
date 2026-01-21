@@ -25,6 +25,10 @@ export default function HakVeAlacaklarPage() {
           return;
         }
 
+        // Personelde bu bilgi artık Profilim altında gösteriliyor
+        router.replace('/panel/profilim');
+        return;
+
         // Kullanıcının kendi hak ve alacaklarını al
         if (profileData.data?.userId) {
           const userId = parseInt(profileData.data.userId);

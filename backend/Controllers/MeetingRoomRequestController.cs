@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Zenabackend.Common;
 using Zenabackend.DTOs;
+using Zenabackend.Enums;
 using Zenabackend.Services;
 
 namespace Zenabackend.Controllers;
@@ -65,6 +66,19 @@ public class MeetingRoomRequestController(MeetingRoomRequestService meetingRoomR
     public async Task<ActionResult<ApiResult<bool>>> RejectMeetingRoomRequest(int id)
     {
         var result = await meetingRoomRequestService.RejectMeetingRoomRequestAsync(id);
+        return Ok(result);
+    }
+
+    [HttpPut("{id:int}/status")]
+    [Authorize(Roles = "Manager")]
+    public async Task<ActionResult<ApiResult<bool>>> UpdateMeetingRoomRequestStatus(int id, [FromBody] UpdateLeaveStatusDto dto)
+    {
+        if (!Enum.TryParse<LeaveStatusEnum>(dto.Status, out var status))
+        {
+            return Ok(ApiResult<bool>.BadRequest("Geçersiz durum"));
+        }
+
+        var result = await meetingRoomRequestService.UpdateMeetingRoomRequestStatusAsync(id, status);
         return Ok(result);
     }
 }

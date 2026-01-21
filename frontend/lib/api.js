@@ -1025,6 +1025,26 @@ class ApiService {
 
     return this.handleResponse(response);
   }
+
+  static async updateMeetingRoomRequestStatus(id, status) {
+    const response = await fetch(`${API_BASE_URL}/api/meetingroomrequest/${id}/status`, {
+      method: 'PUT',
+      headers: this.getHeaders(),
+      body: JSON.stringify({ status }),
+    });
+
+    return this.handleResponse(response);
+  }
+
+  static async updateExpenseRequestStatus(id, status) {
+    const response = await fetch(`${API_BASE_URL}/api/expenserequest/${id}/status`, {
+      method: 'PUT',
+      headers: this.getHeaders(),
+      body: JSON.stringify({ status }),
+    });
+
+    return this.handleResponse(response);
+  }
 }
 
 export default ApiService;

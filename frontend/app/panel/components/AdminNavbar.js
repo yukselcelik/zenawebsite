@@ -26,7 +26,7 @@ export default function Navbar({ userData, onLogout, isManager }) {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-white shadow-sm py-4">
+    <header className="sticky top-0 z-50 bg-white py-4">
       <div className="px-6 flex justify-between items-center">
         <div className="flex items-center gap-3">
           <h1 className="text-2xl font-extrabold text-gray-800">

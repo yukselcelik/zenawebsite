@@ -33,13 +33,13 @@ export default function TalepEtPage() {
   const renderForm = () => {
     switch (selectedType) {
       case REQUEST_TYPES.EXPENSE:
-        return <MasrafTalepEtForm onSuccess={() => router.push('/panel/masraf-taleplerim')} onCancel={handleBack} />;
+        return <MasrafTalepEtForm onSuccess={() => router.back()} onCancel={handleBack} />;
       case REQUEST_TYPES.LEAVE:
-        return <IzinTalepEtForm onSuccess={() => router.push('/panel/izin-talepleri')} onCancel={handleBack} />;
+        return <IzinTalepEtForm onSuccess={() => router.back()} onCancel={handleBack} />;
       case REQUEST_TYPES.MEETING_ROOM:
-        return <ToplantiOdasiTalepEtForm onSuccess={() => router.push('/panel/toplanti-taleplerim')} onCancel={handleBack} />;
+        return <ToplantiOdasiTalepEtForm onSuccess={() => router.back()} onCancel={handleBack} />;
       case REQUEST_TYPES.OTHER:
-        return <DigerTaleplerForm onSuccess={() => router.push('/panel/taleplerim')} onCancel={handleBack} />;
+        return <DigerTaleplerForm onSuccess={() => router.back()} onCancel={handleBack} />;
       default:
         return null;
     }
@@ -52,20 +52,14 @@ export default function TalepEtPage() {
           {selectedType && (
             <button
               onClick={handleBack}
-              className="text-gray-600 hover:text-gray-800 transition-colors cursor-pointer"
+              className="text-gray-600 hover:text-gray-800 transition-colors cursor-pointer p-2 rounded-full hover:bg-gray-100"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
             </button>
           )}
-          <h1 className="text-2xl font-bold text-gray-800">Talep Et</h1>
         </div>
-        {!selectedType && (
-          <p className="text-gray-600 mt-2">
-            Talep etmek istediğiniz kategoriyi seçiniz.
-          </p>
-        )}
       </div>
 
       {!selectedType ? (

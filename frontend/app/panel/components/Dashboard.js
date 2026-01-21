@@ -1,7 +1,238 @@
 'use client';
 
-export default function Dashboard({ isManager, stats, userDetail, onTabChange }) {
+import Link from 'next/link';
+import { useMemo, useState } from 'react';
+import ApiService from '../../../lib/api';
+import { isPendingStatus } from '../utils/requestStatus';
+
+function getStatusBadgeClass(status) {
+  const s = typeof status === 'string' ? status : String(status ?? '');
+  switch (s) {
+    case 'Approved':
+    case '1':
+    case 'Onaylandı':
+      return 'bg-green-100 text-green-800';
+    case 'Rejected':
+    case '2':
+    case 'Reddedildi':
+      return 'bg-red-100 text-red-800';
+    case 'Cancelled':
+    case '3':
+    case 'İptal':
+    case 'İptal Edildi':
+      return 'bg-gray-100 text-gray-800';
+    case 'Ödendi':
+      return 'bg-blue-100 text-blue-800';
+    case 'Pending':
+    case '0':
+    case 'Beklemede':
+    default:
+      return 'bg-yellow-100 text-yellow-800';
+  }
+}
+
+function getStatusText(status, statusName) {
+  if (statusName) return statusName;
+  const s = typeof status === 'string' ? status : String(status ?? '');
+  switch (s) {
+    case 'Approved':
+    case '1':
+      return 'Onaylandı';
+    case 'Rejected':
+    case '2':
+      return 'Reddedildi';
+    case 'Cancelled':
+    case '3':
+      return 'İptal';
+    case 'Pending':
+    case '0':
+    default:
+      return 'Beklemede';
+  }
+}
+
+function getLeaveTypeText(type) {
+  const typeMap = {
+    annual: 'Yıllık İzin',
+    unpaid: 'Ücretsiz İzin',
+    hourly: 'Saatlik İzin',
+    excuse: 'Mazeret İzni'
+  };
+  return typeMap[type] || type || 'İzin';
+}
+
+function getMeetingRoomText(room) {
+  const roomMap = {
+    tonyukuk: 'Tonyukuk Toplantı Salonu',
+    atatürk: 'Mustafa Kemal Atatürk Toplantı Salonu',
+    ataturk: 'Mustafa Kemal Atatürk Toplantı Salonu'
+  };
+  return roomMap[room] || room || 'Toplantı Salonu';
+}
+
+function formatDateTR(dateString) {
+  if (!dateString) return '-';
+  try {
+    return new Date(dateString).toLocaleDateString('tr-TR');
+  } catch {
+    return '-';
+  }
+}
+
+export default function Dashboard({ isManager, stats, userDetail, onTabChange, myRequests, allRequests, onRequestsUpdated }) {
   const isPendingApproval = userDetail && !userDetail.isApproved && !isManager;
+  const [actionLoading, setActionLoading] = useState(false);
+
+  const unifiedMyRequests = useMemo(() => {
+    if (!myRequests) return [];
+    const leaveItems = myRequests.leave?.items || [];
+    const expenseItems = myRequests.expense?.items || [];
+    const meetingItems = myRequests.meetingRoom?.items || [];
+
+    const normalized = [];
+
+    for (const r of leaveItems) {
+      normalized.push({
+        id: `leave-${r.id}`,
+        kind: 'İzin',
+        date: r.createdAt || r.startDate || r.endDate,
+        title: getLeaveTypeText(r.leaveType),
+        statusText: getStatusText(r.status),
+        statusClass: getStatusBadgeClass(r.status),
+        href: '/panel/izin-talepleri'
+      });
+    }
+
+    for (const r of expenseItems) {
+      normalized.push({
+        id: `expense-${r.id}`,
+        kind: 'Masraf',
+        date: r.requestDate || r.createdAt,
+        title: r.expenseTypeName || r.requestNumber || 'Masraf Talebi',
+        statusText: getStatusText(null, r.statusName),
+        statusClass: getStatusBadgeClass(r.statusName),
+        href: '/panel/dashboard'
+      });
+    }
+
+    for (const r of meetingItems) {
+      normalized.push({
+        id: `meeting-${r.id}`,
+        kind: 'Toplantı Odası',
+        date: r.date || r.createdAt,
+        title: `${getMeetingRoomText(r.meetingRoom)} (${r.startTime || '--:--'}-${r.endTime || '--:--'})`,
+        statusText: getStatusText(r.status),
+        statusClass: getStatusBadgeClass(r.status),
+        href: '/panel/dashboard'
+      });
+    }
+
+    normalized.sort((a, b) => {
+      const da = a.date ? new Date(a.date).getTime() : 0;
+      const db = b.date ? new Date(b.date).getTime() : 0;
+      return db - da;
+    });
+
+    return normalized;
+  }, [myRequests]);
+
+  const unifiedAllRequests = useMemo(() => {
+    if (!isManager) return [];
+
+    const source = allRequests || {};
+    const leaveItems = source.leave?.items || [];
+    const expenseItems = source.expense?.items || [];
+    const meetingItems = source.meetingRoom?.items || [];
+
+    const normalized = [];
+
+    for (const r of leaveItems) {
+      normalized.push({
+        id: `leave-${r.id}`,
+        rawId: r.id,
+        kindKey: 'leave',
+        kind: 'İzin',
+        person: `${r.userName || ''} ${r.userSurname || ''}`.trim() || '-',
+        date: r.startDate || r.createdAt || r.endDate,
+        title: getLeaveTypeText(r.leaveType),
+        statusText: getStatusText(r.status),
+        statusClass: getStatusBadgeClass(r.status),
+        statusRaw: r.status,
+        href: '/panel/talepleri-incele'
+      });
+    }
+
+    for (const r of expenseItems) {
+      normalized.push({
+        id: `expense-${r.id}`,
+        rawId: r.id,
+        kindKey: 'expense',
+        kind: 'Masraf',
+        person: `${r.userName || ''} ${r.userSurname || ''}`.trim() || '-',
+        date: r.requestDate || r.createdAt,
+        title: r.expenseTypeName || r.requestNumber || 'Masraf Talebi',
+        statusText: getStatusText(null, r.statusName),
+        statusClass: getStatusBadgeClass(r.statusName),
+        statusRaw: r.statusName,
+        requestedAmount: r.requestedAmount,
+        department: r.department || '',
+        href: '/panel/talepleri-incele'
+      });
+    }
+
+    for (const r of meetingItems) {
+      normalized.push({
+        id: `meeting-${r.id}`,
+        rawId: r.id,
+        kindKey: 'meetingRoom',
+        kind: 'Toplantı Odası',
+        person: `${r.userName || ''} ${r.userSurname || ''}`.trim() || '-',
+        date: r.date || r.createdAt,
+        title: `${getMeetingRoomText(r.meetingRoom)} (${r.startTime || '--:--'}-${r.endTime || '--:--'})`,
+        statusText: getStatusText(r.status),
+        statusClass: getStatusBadgeClass(r.status),
+        statusRaw: r.status,
+        href: '/panel/talepleri-incele'
+      });
+    }
+
+    normalized.sort((a, b) => {
+      const da = a.date ? new Date(a.date).getTime() : 0;
+      const db = b.date ? new Date(b.date).getTime() : 0;
+      return db - da;
+    });
+
+    return normalized;
+  }, [isManager, allRequests]);
+
+  const refreshRequests = async () => {
+    if (onRequestsUpdated) {
+      await onRequestsUpdated();
+    }
+  };
+
+  const handleManagerStatusChange = async (row, nextStatus) => {
+    if (!row || actionLoading) return;
+    try {
+      setActionLoading(true);
+
+      // Leave & MeetingRoom use LeaveStatusEnum strings
+      if (row.kindKey === 'leave') {
+        await ApiService.updateLeaveStatus(row.rawId, nextStatus);
+      } else if (row.kindKey === 'meetingRoom') {
+        await ApiService.updateMeetingRoomRequestStatus(row.rawId, nextStatus);
+      } else if (row.kindKey === 'expense') {
+        // Expense uses ExpenseStatusEnum strings
+        await ApiService.updateExpenseRequestStatus(row.rawId, nextStatus);
+      }
+
+      await refreshRequests();
+    } catch (e) {
+      alert(e.message || 'Durum güncellenirken hata oluştu');
+    } finally {
+      setActionLoading(false);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -29,13 +260,71 @@ export default function Dashboard({ isManager, stats, userDetail, onTabChange })
         </div>
       )}
 
-      <div className="bg-white rounded-lg shadow p-6">
-        <p className="text-gray-600">
-          {isManager 
-            ? 'Yönetici paneline hoş geldiniz. Tüm sistem yönetim işlemlerini buradan yapabilirsiniz.'
-            : 'Personel paneline hoş geldiniz. İzin taleplerinizi ve profil bilgilerinizi buradan yönetebilirsiniz.'}
-        </p>
-      </div>
+      {!isManager && (
+        <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+          <div className="p-6 flex items-center justify-between gap-4">
+            <div>
+              <h2 className="text-lg font-semibold text-gray-800">Talepler</h2>
+              <p className="text-sm text-gray-500 mt-1">
+                İzin, masraf ve toplantı odası taleplerinizin son durumunu burada görebilirsiniz.
+              </p>
+            </div>
+            <Link
+              href="/panel/talep-et"
+              className="inline-flex items-center gap-2 rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition cursor-pointer"
+            >
+              Yeni Talep Oluştur
+            </Link>
+          </div>
+
+          <div className="border-t border-gray-200">
+            {unifiedMyRequests.length === 0 ? (
+              <div className="p-6 text-sm text-gray-500">
+                Henüz bir talebiniz bulunmuyor.
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tür</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tarih</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Özet</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Durum</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {unifiedMyRequests.slice(0, 10).map((r) => (
+                      <tr key={r.id} className="hover:bg-gray-50">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                          {r.kind}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {formatDateTR(r.date)}
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-900">
+                          {r.kind === 'İzin' ? (
+                            <Link href={r.href} className="text-orange-600 hover:text-orange-800">
+                              {r.title}
+                            </Link>
+                          ) : (
+                            <span>{r.title}</span>
+                          )}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${r.statusClass}`}>
+                            {r.statusText}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {isManager && stats && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -92,6 +381,134 @@ export default function Dashboard({ isManager, stats, userDetail, onTabChange })
             </div>
             <p className="text-xs text-gray-500 mt-3 group-hover:text-blue-500 transition-colors">Detayları görüntüle →</p>
           </button>
+        </div>
+      )}
+
+      {isManager && (
+        <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+          <div className="p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+              <h2 className="text-lg font-semibold text-gray-800">Talepler</h2>
+              <p className="text-sm text-gray-500 mt-1">
+                İzin, masraf ve toplantı odası taleplerinin son durumunu burada görebilirsiniz.
+              </p>
+              {stats && (
+                <div className="mt-2 flex flex-wrap gap-2">
+                  <span className="text-xs px-2 py-1 rounded-full bg-yellow-100 text-yellow-800">
+                    Bekleyen İzin: {stats.pendingLeaves || 0}
+                  </span>
+                  <span className="text-xs px-2 py-1 rounded-full bg-yellow-100 text-yellow-800">
+                    Bekleyen Masraf: {stats.pendingExpenses || 0}
+                  </span>
+                  <span className="text-xs px-2 py-1 rounded-full bg-yellow-100 text-yellow-800">
+                    Bekleyen Toplantı: {stats.pendingMeetingRooms || 0}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            <div className="flex gap-2">
+              <Link
+                href="/panel/talepleri-incele"
+                className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition cursor-pointer"
+              >
+                Talepleri İncele
+              </Link>
+              <Link
+                href="/panel/talep-et"
+                className="inline-flex items-center gap-2 rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition cursor-pointer"
+              >
+                Yeni Talep Oluştur
+              </Link>
+            </div>
+          </div>
+
+          <div className="border-t border-gray-200">
+            {unifiedAllRequests.length === 0 ? (
+              <div className="p-6 text-sm text-gray-500">
+                Görüntülenecek talep bulunamadı.
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Personel</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tür</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tarih</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Özet</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Durum</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {unifiedAllRequests.slice(0, 15).map((r) => (
+                      <tr key={r.id} className="hover:bg-gray-50">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {r.person}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                          {r.kind}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {formatDateTR(r.date)}
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-900">
+                          <Link href={r.href} className="text-orange-600 hover:text-orange-800">
+                            {r.title}
+                          </Link>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {r.kindKey === 'expense' ? (
+                            <select
+                              value={r.statusText}
+                              onChange={(e) => {
+                                const label = e.target.value;
+                                const map = {
+                                  'Beklemede': 'Pending',
+                                  'Onaylandı': 'Approved',
+                                  'Reddedildi': 'Rejected',
+                                  'Ödendi': 'Paid'
+                                };
+                                handleManagerStatusChange(r, map[label] || 'Pending');
+                              }}
+                              disabled={actionLoading}
+                              className="px-3 py-2 rounded-lg text-sm font-medium border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 cursor-pointer"
+                            >
+                              <option>Beklemede</option>
+                              <option>Onaylandı</option>
+                              <option>Reddedildi</option>
+                              <option>Ödendi</option>
+                            </select>
+                          ) : (
+                            <select
+                              value={r.statusText}
+                              onChange={(e) => {
+                                const label = e.target.value;
+                                const map = {
+                                  'Beklemede': 'Pending',
+                                  'Onaylandı': 'Approved',
+                                  'Reddedildi': 'Rejected',
+                                  'İptal Edildi': 'Cancelled'
+                                };
+                                handleManagerStatusChange(r, map[label] || 'Pending');
+                              }}
+                              disabled={actionLoading}
+                              className={`px-3 py-2 rounded-lg text-sm font-medium border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 cursor-pointer ${r.statusClass}`}
+                            >
+                              <option>Beklemede</option>
+                              <option>Onaylandı</option>
+                              <option>Reddedildi</option>
+                              <option>İptal Edildi</option>
+                            </select>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>

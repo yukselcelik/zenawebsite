@@ -50,7 +50,7 @@ export default function Sidebar({ isManager, pendingCount, pendingLeaveCount }) 
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
       ),
-      visible: !isManager // Sadece personel için görünür
+      visible: false // Personel için Profilim altında gösteriliyor
     },
     {
       id: 'request',
@@ -61,7 +61,7 @@ export default function Sidebar({ isManager, pendingCount, pendingLeaveCount }) 
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
         </svg>
       ),
-      visible: !isManager // Sadece personel için görünür
+      visible: true // Yönetici de talep oluşturabilsin
     },
     {
       id: 'my-expense-requests',
@@ -72,7 +72,7 @@ export default function Sidebar({ isManager, pendingCount, pendingLeaveCount }) 
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
         </svg>
       ),
-      visible: !isManager // Sadece personel için görünür
+      visible: false // Talepler dashboard'da gösteriliyor
     },
     {
       id: 'personnel',

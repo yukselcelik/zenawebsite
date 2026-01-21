@@ -256,5 +256,40 @@ public class MeetingRoomRequestService(ApplicationDbContext context, ILogger<Mee
 
         return ApiResult<bool>.Ok(true);
     }
+
+    public async Task<ApiResult<bool>> UpdateMeetingRoomRequestStatusAsync(int requestId, LeaveStatusEnum newStatus)
+    {
+        var request = await context.MeetingRoomRequests.FirstOrDefaultAsync(r => r.Id == requestId);
+        if (request == null)
+        {
+            return ApiResult<bool>.NotFound("Toplantı odası talebi bulunamadı");
+        }
+
+        // Pending'e alınacaksa çakışma kontrolü yap
+        if (newStatus == LeaveStatusEnum.Pending)
+        {
+            var conflictingRequest = await context.MeetingRoomRequests
+                .Where(mrr => mrr.Id != request.Id &&
+                             mrr.MeetingRoom == request.MeetingRoom &&
+                             mrr.Date.Date == request.Date.Date &&
+                             mrr.Status == LeaveStatusEnum.Pending &&
+                             ((mrr.StartTime <= request.StartTime && mrr.EndTime > request.StartTime) ||
+                              (mrr.StartTime < request.EndTime && mrr.EndTime >= request.EndTime) ||
+                              (mrr.StartTime >= request.StartTime && mrr.EndTime <= request.EndTime)))
+                .FirstOrDefaultAsync();
+
+            if (conflictingRequest != null)
+            {
+                return ApiResult<bool>.BadRequest("Bu tarih ve saatte toplantı salonu zaten rezerve edilmiş (bekleyen)");
+            }
+        }
+
+        request.Status = newStatus;
+        request.UpdatedAt = DateTime.UtcNow;
+        await context.SaveChangesAsync();
+
+        logger.LogInformation("Meeting room request status updated: {Id} -> {Status}", requestId, newStatus);
+        return ApiResult<bool>.Ok(true);
+    }
 }
 

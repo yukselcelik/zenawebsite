@@ -145,7 +145,7 @@ export default function MasrafTalepEtPage() {
         if (fileInputRef.current) fileInputRef.current.value = '';
         
         setTimeout(() => {
-          router.push('/panel/masraf-taleplerim');
+          router.push('/panel/dashboard');
         }, 2000);
       } else {
         setError(result?.message || 'Masraf talebi oluşturulurken hata oluştu');

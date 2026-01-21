@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import ApiService from '../../../lib/api';
-import ConfirmDialog from '../components/common/ConfirmDialog';
+import { getStatusBadgeClass, getStatusTextTR, normalizeStatusKey } from '../utils/requestStatus';
 
 const TABS = {
   LEAVE: 'leave',
@@ -18,14 +18,21 @@ export default function TalepleriIncelePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [pageNumber, setPageNumber] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [selectedRequest, setSelectedRequest] = useState(null);
-  const [showApproveModal, setShowApproveModal] = useState(false);
-  const [showRejectModal, setShowRejectModal] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [expenseApprovalData, setExpenseApprovalData] = useState({
-    approvedAmount: '',
-    department: ''
-  });
+
+  const LEAVE_STATUS_OPTIONS = [
+    { key: 'pending', label: 'Beklemede', api: 'Pending' },
+    { key: 'approved', label: 'Onaylandı', api: 'Approved' },
+    { key: 'rejected', label: 'Reddedildi', api: 'Rejected' },
+    { key: 'cancelled', label: 'İptal Edildi', api: 'Cancelled' }
+  ];
+
+  const EXPENSE_STATUS_OPTIONS = [
+    { key: 'pending', label: 'Beklemede', api: 'Pending' },
+    { key: 'approved', label: 'Onaylandı', api: 'Approved' },
+    { key: 'rejected', label: 'Reddedildi', api: 'Rejected' },
+    { key: 'paid', label: 'Ödendi', api: 'Paid' }
+  ];
 
   useEffect(() => {
     fetchData();
@@ -79,90 +86,23 @@ export default function TalepleriIncelePage() {
     }) + (timeString ? ` ${timeString}` : '');
   };
 
-  const getStatusBadge = (status) => {
-    const statusMap = {
-      'Pending': 'bg-yellow-100 text-yellow-800',
-      'Approved': 'bg-green-100 text-green-800',
-      'Rejected': 'bg-red-100 text-red-800',
-      'Cancelled': 'bg-gray-100 text-gray-800',
-      'Beklemede': 'bg-yellow-100 text-yellow-800',
-      'Onaylandı': 'bg-green-100 text-green-800',
-      'Reddedildi': 'bg-red-100 text-red-800',
-      'Ödendi': 'bg-blue-100 text-blue-800'
-    };
-    return statusMap[status] || 'bg-gray-100 text-gray-800';
-  };
+  const getStatusBadge = (status) => getStatusBadgeClass(status);
+  const getStatusText = (status) => getStatusTextTR(status);
 
-  const getStatusText = (status) => {
-    const statusMap = {
-      'Pending': 'Beklemede',
-      'Approved': 'Onaylandı',
-      'Rejected': 'Reddedildi',
-      'Cancelled': 'İptal Edildi'
-    };
-    return statusMap[status] || status;
-  };
-
-  const handleApprove = async () => {
-    if (!selectedRequest) return;
-
+  const updateStatus = async (kind, id, apiStatus) => {
     setIsProcessing(true);
     try {
-      let result;
-      if (activeTab === TABS.LEAVE) {
-        result = await ApiService.approveLeaveRequest(selectedRequest.id);
-      } else if (activeTab === TABS.EXPENSE) {
-        const approvedAmount = expenseApprovalData.approvedAmount 
-          ? parseFloat(expenseApprovalData.approvedAmount.replace(',', '.'))
-          : selectedRequest.requestedAmount;
-        result = await ApiService.approveExpenseRequest(selectedRequest.id, {
-          approvedAmount: approvedAmount,
-          department: expenseApprovalData.department || selectedRequest.department || ''
-        });
-      } else if (activeTab === TABS.MEETING_ROOM) {
-        result = await ApiService.approveMeetingRoomRequest(selectedRequest.id);
+      if (kind === TABS.LEAVE) {
+        await ApiService.updateLeaveStatus(id, apiStatus);
+      } else if (kind === TABS.MEETING_ROOM) {
+        await ApiService.updateMeetingRoomRequestStatus(id, apiStatus);
+      } else if (kind === TABS.EXPENSE) {
+        await ApiService.updateExpenseRequestStatus(id, apiStatus);
       }
-
-      if (result && result.success) {
-        setShowApproveModal(false);
-        setSelectedRequest(null);
-        setExpenseApprovalData({ approvedAmount: '', department: '' });
-        fetchData();
-      } else {
-        alert(result?.message || 'Onaylama işlemi başarısız oldu');
-      }
+      await fetchData();
     } catch (error) {
-      console.error('Error approving request:', error);
-      alert(error.message || 'Onaylama işlemi sırasında hata oluştu');
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  const handleReject = async () => {
-    if (!selectedRequest) return;
-
-    setIsProcessing(true);
-    try {
-      let result;
-      if (activeTab === TABS.LEAVE) {
-        result = await ApiService.rejectLeaveRequest(selectedRequest.id);
-      } else if (activeTab === TABS.EXPENSE) {
-        result = await ApiService.rejectExpenseRequest(selectedRequest.id);
-      } else if (activeTab === TABS.MEETING_ROOM) {
-        result = await ApiService.rejectMeetingRoomRequest(selectedRequest.id);
-      }
-
-      if (result && result.success) {
-        setShowRejectModal(false);
-        setSelectedRequest(null);
-        fetchData();
-      } else {
-        alert(result?.message || 'Reddetme işlemi başarısız oldu');
-      }
-    } catch (error) {
-      console.error('Error rejecting request:', error);
-      alert(error.message || 'Reddetme işlemi sırasında hata oluştu');
+      console.error('Error updating request status:', error);
+      alert(error.message || 'Durum güncellenirken hata oluştu');
     } finally {
       setIsProcessing(false);
     }
@@ -207,7 +147,6 @@ export default function TalepleriIncelePage() {
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bitiş</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gün/Saat</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Durum</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">İşlemler</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
@@ -230,33 +169,20 @@ export default function TalepleriIncelePage() {
                   {request.days ? `${request.days} Gün` : request.hours ? `${request.hours} Saat` : '-'}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadge(request.status)}`}>
-                    {getStatusText(request.status)}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  {request.status === 'Pending' && (
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => {
-                          setSelectedRequest(request);
-                          setShowApproveModal(true);
-                        }}
-                        className="text-green-600 hover:text-green-900"
-                      >
-                        Onayla
-                      </button>
-                      <button
-                        onClick={() => {
-                          setSelectedRequest(request);
-                          setShowRejectModal(true);
-                        }}
-                        className="text-red-600 hover:text-red-900"
-                      >
-                        Reddet
-                      </button>
-                    </div>
-                  )}
+                  <select
+                    value={normalizeStatusKey(request.status)}
+                    onChange={(e) => {
+                      const nextKey = e.target.value;
+                      const opt = LEAVE_STATUS_OPTIONS.find(o => o.key === nextKey) || LEAVE_STATUS_OPTIONS[0];
+                      updateStatus(TABS.LEAVE, request.id, opt.api);
+                    }}
+                    disabled={isProcessing}
+                    className={`px-3 py-2 rounded-lg text-sm font-medium border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 cursor-pointer ${getStatusBadge(request.status)}`}
+                  >
+                    {LEAVE_STATUS_OPTIONS.map(o => (
+                      <option key={o.key} value={o.key}>{o.label}</option>
+                    ))}
+                  </select>
                 </td>
               </tr>
             ))}
@@ -285,7 +211,6 @@ export default function TalepleriIncelePage() {
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Masraf Türü</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tutar</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Durum</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">İşlemler</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
@@ -305,33 +230,20 @@ export default function TalepleriIncelePage() {
                   {new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(request.requestedAmount)}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadge(request.statusName)}`}>
-                    {request.statusName}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  {request.statusName === 'Beklemede' && (
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => {
-                          setSelectedRequest(request);
-                          setShowApproveModal(true);
-                        }}
-                        className="text-green-600 hover:text-green-900"
-                      >
-                        Onayla
-                      </button>
-                      <button
-                        onClick={() => {
-                          setSelectedRequest(request);
-                          setShowRejectModal(true);
-                        }}
-                        className="text-red-600 hover:text-red-900"
-                      >
-                        Reddet
-                      </button>
-                    </div>
-                  )}
+                  <select
+                    value={normalizeStatusKey(request.statusName)}
+                    onChange={(e) => {
+                      const nextKey = e.target.value;
+                      const opt = EXPENSE_STATUS_OPTIONS.find(o => o.key === nextKey) || EXPENSE_STATUS_OPTIONS[0];
+                      updateStatus(TABS.EXPENSE, request.id, opt.api);
+                    }}
+                    disabled={isProcessing}
+                    className={`px-3 py-2 rounded-lg text-sm font-medium border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 cursor-pointer ${getStatusBadge(request.statusName)}`}
+                  >
+                    {EXPENSE_STATUS_OPTIONS.map(o => (
+                      <option key={o.key} value={o.key}>{o.label}</option>
+                    ))}
+                  </select>
                 </td>
               </tr>
             ))}
@@ -360,7 +272,6 @@ export default function TalepleriIncelePage() {
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tarih</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Saat</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Durum</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">İşlemler</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
@@ -380,33 +291,20 @@ export default function TalepleriIncelePage() {
                   {request.startTime} - {request.endTime}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadge(request.status)}`}>
-                    {getStatusText(request.status)}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  {request.status === 'Pending' && (
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => {
-                          setSelectedRequest(request);
-                          setShowApproveModal(true);
-                        }}
-                        className="text-green-600 hover:text-green-900"
-                      >
-                        Onayla
-                      </button>
-                      <button
-                        onClick={() => {
-                          setSelectedRequest(request);
-                          setShowRejectModal(true);
-                        }}
-                        className="text-red-600 hover:text-red-900"
-                      >
-                        Reddet
-                      </button>
-                    </div>
-                  )}
+                  <select
+                    value={normalizeStatusKey(request.status)}
+                    onChange={(e) => {
+                      const nextKey = e.target.value;
+                      const opt = LEAVE_STATUS_OPTIONS.find(o => o.key === nextKey) || LEAVE_STATUS_OPTIONS[0];
+                      updateStatus(TABS.MEETING_ROOM, request.id, opt.api);
+                    }}
+                    disabled={isProcessing}
+                    className={`px-3 py-2 rounded-lg text-sm font-medium border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 cursor-pointer ${getStatusBadge(request.status)}`}
+                  >
+                    {LEAVE_STATUS_OPTIONS.map(o => (
+                      <option key={o.key} value={o.key}>{o.label}</option>
+                    ))}
+                  </select>
                 </td>
               </tr>
             ))}
@@ -502,94 +400,6 @@ export default function TalepleriIncelePage() {
         )}
       </div>
 
-      {/* Approve Modal */}
-      {showApproveModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-            <h3 className="text-lg font-bold text-gray-800 mb-4">Talebi Onayla</h3>
-            {activeTab === TABS.EXPENSE && selectedRequest ? (
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Onaylanan Tutar (TL)
-                  </label>
-                  <input
-                    type="text"
-                    value={expenseApprovalData.approvedAmount}
-                    onChange={(e) => {
-                      let cleaned = e.target.value.replace(/[^\d,]/g, '');
-                      const commaIndex = cleaned.indexOf(',');
-                      if (commaIndex !== -1) {
-                        const afterComma = cleaned.substring(commaIndex + 1);
-                        if (afterComma.length > 2) {
-                          cleaned = cleaned.substring(0, commaIndex + 3);
-                        }
-                      }
-                      setExpenseApprovalData({ ...expenseApprovalData, approvedAmount: cleaned });
-                    }}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                    placeholder="0,00"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">Talep edilen: {new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(selectedRequest.requestedAmount)}</p>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Departman (Opsiyonel)
-                  </label>
-                  <input
-                    type="text"
-                    value={expenseApprovalData.department}
-                    onChange={(e) => setExpenseApprovalData({ ...expenseApprovalData, department: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                    placeholder="Departman adı"
-                  />
-                </div>
-                <p className="text-sm text-gray-600">Bu talebi onaylamak istediğinizden emin misiniz?</p>
-              </div>
-            ) : (
-              <p className="text-sm text-gray-600">Bu talebi onaylamak istediğinizden emin misiniz?</p>
-            )}
-            <div className="flex justify-end gap-3 mt-6">
-              <button
-                onClick={() => {
-                  setShowApproveModal(false);
-                  setSelectedRequest(null);
-                  setExpenseApprovalData({ approvedAmount: '', department: '' });
-                }}
-                disabled={isProcessing}
-                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50"
-              >
-                İptal
-              </button>
-              <button
-                onClick={handleApprove}
-                disabled={isProcessing}
-                className={`px-4 py-2 rounded-lg text-white ${
-                  isProcessing ? 'bg-gray-400' : 'bg-green-500 hover:bg-green-600'
-                }`}
-              >
-                {isProcessing ? 'Onaylanıyor...' : 'Onayla'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Reject Modal */}
-      <ConfirmDialog
-        isOpen={showRejectModal}
-        onClose={() => {
-          setShowRejectModal(false);
-          setSelectedRequest(null);
-        }}
-        onConfirm={handleReject}
-        title="Talebi Reddet"
-        message="Bu talebi reddetmek istediğinizden emin misiniz? Bu işlem geri alınamaz."
-        confirmText="Reddet"
-        cancelText="İptal"
-        isProcessing={isProcessing}
-        confirmButtonClass="bg-red-500 hover:bg-red-600"
-      />
     </div>
   );
 }

@@ -160,7 +160,7 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Host.UseSerilog();
 
-// builder.Services.AddAppObservability(builder.Configuration, builder.Environment, "zena-backend");
+builder.Services.AddAppObservability(builder.Configuration, builder.Environment, "zena-backend");
 
 var app = builder.Build();
 
