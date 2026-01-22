@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import ApiService from '../../../../lib/api';
 
 const LEAVE_TYPES = {
@@ -158,95 +159,131 @@ export default function IzinTalepEtForm({ onSuccess, onCancel }) {
 
   if (!selectedLeaveType) {
     return (
-      <div>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3 }}
+      >
         <div className="mb-6">
-          <h2 className="text-xl font-bold text-gray-800">İzin Talep Et</h2>
+          <h2 className="text-xl font-bold text-white">İzin Talep Et</h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            whileHover={{ scale: 1.02, y: -2 }}
             onClick={() => handleLeaveTypeSelect(LEAVE_TYPES.ANNUAL)}
-            className="p-4 border border-gray-200 rounded-lg cursor-pointer hover:border-orange-500 hover:bg-orange-50 transition-colors"
+            className="p-4 border border-gray-700 rounded-lg cursor-pointer hover:border-orange-500/50 hover:bg-gray-700/50 transition-all bg-gray-800"
           >
-            <h3 className="font-semibold text-gray-800 mb-2">Yıllık İzin Talep Et</h3>
-            <p className="text-sm text-gray-600">
+            <h3 className="font-semibold text-white mb-2">Yıllık İzin Talep Et</h3>
+            <p className="text-sm text-gray-400">
               {availableDays !== null ? `Kalan izin gününüz: ${availableDays} gün` : 'Yıllık izin talebi oluşturun'}
             </p>
-          </div>
+          </motion.div>
 
-          <div
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            whileHover={{ scale: 1.02, y: -2 }}
             onClick={() => handleLeaveTypeSelect(LEAVE_TYPES.UNPAID)}
-            className="p-4 border border-gray-200 rounded-lg cursor-pointer hover:border-orange-500 hover:bg-orange-50 transition-colors"
+            className="p-4 border border-gray-700 rounded-lg cursor-pointer hover:border-orange-500/50 hover:bg-gray-700/50 transition-all bg-gray-800"
           >
-            <h3 className="font-semibold text-gray-800 mb-2">Ücretsiz İzin Talep Et</h3>
-            <p className="text-sm text-gray-600">Ücretsiz izin talebi oluşturun</p>
-          </div>
+            <h3 className="font-semibold text-white mb-2">Ücretsiz İzin Talep Et</h3>
+            <p className="text-sm text-gray-400">Ücretsiz izin talebi oluşturun</p>
+          </motion.div>
 
-          <div
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            whileHover={{ scale: 1.02, y: -2 }}
             onClick={() => handleLeaveTypeSelect(LEAVE_TYPES.HOURLY)}
-            className="p-4 border border-gray-200 rounded-lg cursor-pointer hover:border-orange-500 hover:bg-orange-50 transition-colors"
+            className="p-4 border border-gray-700 rounded-lg cursor-pointer hover:border-orange-500/50 hover:bg-gray-700/50 transition-all bg-gray-800"
           >
-            <h3 className="font-semibold text-gray-800 mb-2">Saatlik İzin Talep Et</h3>
-            <p className="text-sm text-gray-600">Saatlik izin talebi oluşturun</p>
-          </div>
+            <h3 className="font-semibold text-white mb-2">Saatlik İzin Talep Et</h3>
+            <p className="text-sm text-gray-400">Saatlik izin talebi oluşturun</p>
+          </motion.div>
 
-          <div
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            whileHover={{ scale: 1.02, y: -2 }}
             onClick={() => handleLeaveTypeSelect(LEAVE_TYPES.EXCUSE)}
-            className="p-4 border border-gray-200 rounded-lg cursor-pointer hover:border-orange-500 hover:bg-orange-50 transition-colors"
+            className="p-4 border border-gray-700 rounded-lg cursor-pointer hover:border-orange-500/50 hover:bg-gray-700/50 transition-all bg-gray-800"
           >
-            <h3 className="font-semibold text-gray-800 mb-2">Mazeret İzni Talep Et</h3>
-            <p className="text-sm text-gray-600">Mazeret izni talebi oluşturun</p>
-          </div>
+            <h3 className="font-semibold text-white mb-2">Mazeret İzni Talep Et</h3>
+            <p className="text-sm text-gray-400">Mazeret izni talebi oluşturun</p>
+          </motion.div>
         </div>
 
         <div className="mt-6 flex justify-end">
-          <button
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             type="button"
             onClick={onCancel}
-            className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+            className="px-6 py-2 border border-gray-600 rounded-lg text-gray-300 bg-gray-700 hover:bg-gray-600 transition-colors"
           >
             İptal
-          </button>
+          </motion.button>
         </div>
-      </div>
+      </motion.div>
     );
   }
 
   return (
-    <div>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+    >
       <div className="mb-6">
         <div className="flex items-center gap-4 mb-4">
-          <button
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
             onClick={() => setSelectedLeaveType(null)}
-            className="text-gray-600 hover:text-gray-800 transition-colors cursor-pointer"
+            className="text-gray-400 hover:text-white transition-colors cursor-pointer"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
-          </button>
-          <h2 className="text-xl font-bold text-gray-800">{LEAVE_TYPE_LABELS[selectedLeaveType]}</h2>
+          </motion.button>
+          <h2 className="text-xl font-bold text-white">{LEAVE_TYPE_LABELS[selectedLeaveType]}</h2>
         </div>
       </div>
 
       {error && (
-        <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+        <motion.div 
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="mb-4 bg-red-900/50 border border-red-700 text-red-300 px-4 py-3 rounded-lg"
+        >
           {error}
-        </div>
+        </motion.div>
       )}
 
       {success && (
-        <div className="mb-4 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">
+        <motion.div 
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="mb-4 bg-green-900/50 border border-green-700 text-green-300 px-4 py-3 rounded-lg"
+        >
           {success}
-        </div>
+        </motion.div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {formData.leaveType === LEAVE_TYPES.ANNUAL && (
-          <div className="p-4 bg-gray-50 rounded-lg">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Gün Sayısı <span className="text-red-500">*</span>
+          <div className="p-4 bg-gray-700/50 rounded-lg border border-gray-600">
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Gün Sayısı <span className="text-red-400">*</span>
               {availableDays !== null && (
-                <span className="text-xs text-gray-500 ml-2">(Kalan: {availableDays} gün)</span>
+                <span className="text-xs text-gray-400 ml-2">(Kalan: {availableDays} gün)</span>
               )}
             </label>
             <input
@@ -255,19 +292,19 @@ export default function IzinTalepEtForm({ onSuccess, onCancel }) {
               max={availableDays || 365}
               value={formData.days}
               onChange={(e) => setFormData({ ...formData, days: e.target.value })}
-              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 ${
-                errors.days ? 'border-red-300' : 'border-gray-300'
+              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-gray-700 text-white ${
+                errors.days ? 'border-red-500' : 'border-gray-600'
               }`}
               required
             />
-            {errors.days && <p className="text-xs text-red-600 mt-1">{errors.days}</p>}
+            {errors.days && <p className="text-xs text-red-400 mt-1">{errors.days}</p>}
           </div>
         )}
 
         {formData.leaveType === LEAVE_TYPES.HOURLY && (
-          <div className="p-4 bg-gray-50 rounded-lg">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Saat Sayısı <span className="text-red-500">*</span>
+          <div className="p-4 bg-gray-700/50 rounded-lg border border-gray-600">
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Saat Sayısı <span className="text-red-400">*</span>
             </label>
             <input
               type="number"
@@ -275,92 +312,96 @@ export default function IzinTalepEtForm({ onSuccess, onCancel }) {
               max="8"
               value={formData.hours}
               onChange={(e) => setFormData({ ...formData, hours: e.target.value })}
-              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 ${
-                errors.hours ? 'border-red-300' : 'border-gray-300'
+              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-gray-700 text-white ${
+                errors.hours ? 'border-red-500' : 'border-gray-600'
               }`}
               required
             />
-            {errors.hours && <p className="text-xs text-red-600 mt-1">{errors.hours}</p>}
+            {errors.hours && <p className="text-xs text-red-400 mt-1">{errors.hours}</p>}
           </div>
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="p-4 bg-gray-50 rounded-lg">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              {formData.leaveType === LEAVE_TYPES.HOURLY ? 'Tarih' : 'Başlangıç Tarihi'} <span className="text-red-500">*</span>
+          <div className="p-4 bg-gray-700/50 rounded-lg border border-gray-600">
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              {formData.leaveType === LEAVE_TYPES.HOURLY ? 'Tarih' : 'Başlangıç Tarihi'} <span className="text-red-400">*</span>
             </label>
             <input
               type="date"
               min={todayStr}
               value={formData.startDate}
               onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 ${
-                errors.startDate ? 'border-red-300' : 'border-gray-300'
+              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-gray-700 text-white ${
+                errors.startDate ? 'border-red-500' : 'border-gray-600'
               }`}
               required
             />
-            {errors.startDate && <p className="text-xs text-red-600 mt-1">{errors.startDate}</p>}
+            {errors.startDate && <p className="text-xs text-red-400 mt-1">{errors.startDate}</p>}
           </div>
 
           {formData.leaveType !== LEAVE_TYPES.ANNUAL && formData.leaveType !== LEAVE_TYPES.HOURLY && (
-            <div className="p-4 bg-gray-50 rounded-lg">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Bitiş Tarihi <span className="text-red-500">*</span>
+            <div className="p-4 bg-gray-700/50 rounded-lg border border-gray-600">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Bitiş Tarihi <span className="text-red-400">*</span>
               </label>
               <input
                 type="date"
                 min={formData.startDate || todayStr}
                 value={formData.endDate}
                 onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 ${
-                  errors.endDate ? 'border-red-300' : 'border-gray-300'
+                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-gray-700 text-white ${
+                  errors.endDate ? 'border-red-500' : 'border-gray-600'
                 }`}
                 required
               />
-              {errors.endDate && <p className="text-xs text-red-600 mt-1">{errors.endDate}</p>}
+              {errors.endDate && <p className="text-xs text-red-400 mt-1">{errors.endDate}</p>}
             </div>
           )}
         </div>
 
-        <div className="p-4 bg-gray-50 rounded-lg">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Sebep <span className="text-red-500">*</span>
+        <div className="p-4 bg-gray-700/50 rounded-lg border border-gray-600">
+          <label className="block text-sm font-medium text-gray-300 mb-2">
+            Sebep <span className="text-red-400">*</span>
           </label>
           <textarea
             value={formData.reason}
             onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
-            className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 ${
-              errors.reason ? 'border-red-300' : 'border-gray-300'
+            className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-gray-700 text-white placeholder-gray-400 ${
+              errors.reason ? 'border-red-500' : 'border-gray-600'
             }`}
             rows="4"
             placeholder="İzin talebinizin sebebini detaylı olarak açıklayın..."
             required
           />
-          {errors.reason && <p className="text-xs text-red-600 mt-1">{errors.reason}</p>}
+          {errors.reason && <p className="text-xs text-red-400 mt-1">{errors.reason}</p>}
         </div>
 
         <div className="flex justify-end gap-3">
-          <button
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             type="button"
             onClick={() => setSelectedLeaveType(null)}
-            className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+            className="px-6 py-2 border border-gray-600 rounded-lg text-gray-300 bg-gray-700 hover:bg-gray-600 transition-colors"
           >
             Geri
-          </button>
-          <button
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: isLoading ? 1 : 1.05 }}
+            whileTap={{ scale: isLoading ? 1 : 0.95 }}
             type="submit"
             disabled={isLoading}
-            className={`px-6 py-2 rounded-lg text-white ${
+            className={`px-6 py-2 rounded-lg text-white transition-all ${
               isLoading 
-                ? 'bg-gray-400 cursor-not-allowed' 
-                : 'bg-orange-500 hover:bg-orange-600'
+                ? 'bg-gray-600 cursor-not-allowed' 
+                : 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 shadow-lg shadow-orange-500/50'
             }`}
           >
             {isLoading ? 'Gönderiliyor...' : 'Talep Oluştur'}
-          </button>
+          </motion.button>
         </div>
       </form>
-    </div>
+    </motion.div>
   );
 }
 

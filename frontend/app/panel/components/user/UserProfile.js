@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import ApiService from '../../../../lib/api';
 import ConfirmDialog from '../common/ConfirmDialog';
 import ContactInfoSection from './ContactInfoSection';
@@ -121,8 +122,8 @@ export default function UserProfile({ userDetail, onUpdate, onUserDetailUpdate }
 
   if (!userDetail) {
     return (
-      <div className="bg-white rounded-lg shadow p-6">
-        <p className="text-gray-500">Yükleniyor...</p>
+      <div className="bg-gray-800 border border-gray-700 rounded-lg shadow-lg p-6">
+        <p className="text-gray-300">Yükleniyor...</p>
       </div>
     );
   }
@@ -134,12 +135,25 @@ export default function UserProfile({ userDetail, onUpdate, onUserDetailUpdate }
   };
 
   return (
-    <div className="space-y-6">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+      className="space-y-6"
+    >
       {/* Profil Fotoğrafı */}
-      <div className="rounded-xl border border-gray-200 bg-gradient-to-br from-white to-gray-50 p-6 shadow-sm">
+      <motion.div 
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.1 }}
+        className="rounded-xl border border-gray-700 bg-gradient-to-br from-gray-800 to-gray-900 p-6 shadow-lg"
+      >
         <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
           <div className="relative w-28 h-28">
-            <div className="w-28 h-28 rounded-full overflow-hidden bg-gray-100 ring-2 ring-white shadow">
+            <motion.div 
+              whileHover={{ scale: 1.05 }}
+              className="w-28 h-28 rounded-full overflow-hidden bg-gray-700 ring-2 ring-gray-600 shadow-lg"
+            >
               {(previewUrl || userDetail?.photoPath) ? (
                 <img
                   src={previewUrl || userDetail.photoPath}
@@ -150,23 +164,25 @@ export default function UserProfile({ userDetail, onUpdate, onUserDetailUpdate }
                   }}
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                <div className="w-full h-full flex items-center justify-center bg-gray-700">
                   <span className="text-gray-400 text-sm">Fotoğraf yok</span>
                 </div>
               )}
-            </div>
+            </motion.div>
           </div>
 
           <div className="flex-1 w-full">
-            <div className="rounded-lg border-2 border-dashed border-gray-300 bg-white px-4 py-5">
+            <div className="rounded-lg border-2 border-dashed border-gray-600 bg-gray-800 px-4 py-5">
               <div className="flex flex-col sm:flex-row items-center gap-3">
-                <label
+                <motion.label
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   htmlFor="photo-upload-input"
-                  className="inline-flex items-center gap-2 cursor-pointer rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 active:bg-gray-100 transition"
+                  className="inline-flex items-center gap-2 cursor-pointer rounded-lg border border-gray-600 bg-gray-700 px-4 py-2 text-sm font-medium text-white hover:bg-gray-600 active:bg-gray-500 transition"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-600" viewBox="0 0 20 20" fill="currentColor"><path d="M4 3a2 2 0 00-2 2v3h2V5h3V3H4zM13 3v2h3v3h2V5a2 2 0 00-2-2h-3zM4 12H2v3a2 2 0 002 2h3v-2H4v-3zM18 12h-2v3h-3v2h3a2 2 0 002-2v-3z" /><path d="M7 10a3 3 0 116 0 3 3 0 01-6 0z" /></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-300" viewBox="0 0 20 20" fill="currentColor"><path d="M4 3a2 2 0 00-2 2v3h2V5h3V3H4zM13 3v2h3v3h2V5a2 2 0 00-2-2h-3zM4 12H2v3a2 2 0 002 2h3v-2H4v-3zM18 12h-2v3h-3v2h3a2 2 0 002-2v-3z" /><path d="M7 10a3 3 0 116 0 3 3 0 01-6 0z" /></svg>
                   Fotoğraf Seç
-                </label>
+                </motion.label>
                 <input
                   id="photo-upload-input"
                   type="file"
@@ -174,10 +190,16 @@ export default function UserProfile({ userDetail, onUpdate, onUserDetailUpdate }
                   onChange={handlePhotoChange}
                   className="hidden"
                 />
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   disabled={!selectedPhoto || uploading}
                   onClick={handlePhotoUpload}
-                  className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm text-white cursor-pointer transition ${(!selectedPhoto || uploading) ? 'bg-gray-300' : 'bg-orange-500 hover:bg-orange-600 active:bg-orange-700'}`}
+                  className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm text-white cursor-pointer transition shadow-lg ${
+                    (!selectedPhoto || uploading) 
+                      ? 'bg-gray-600' 
+                      : 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 shadow-orange-500/50'
+                  }`}
                 >
                   {uploading ? (
                     <>
@@ -190,30 +212,32 @@ export default function UserProfile({ userDetail, onUpdate, onUserDetailUpdate }
                       Fotoğraf Yükle
                     </>
                   )}
-                </button>
-                <button
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   type="button"
                   onClick={() => {
                     if (!userDetail?.photoPath) return;
                     setConfirmOpen(true);
                   }}
-                  className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 active:bg-gray-100 transition"
+                  className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm text-gray-300 bg-gray-700 border border-gray-600 hover:bg-gray-600 active:bg-gray-500 transition"
                 >
                   Fotoğrafı Kaldır
-                </button>
+                </motion.button>
                 {selectedPhoto && (
-                  <span className="text-xs text-gray-600 truncate max-w-full sm:max-w-xs">
+                  <span className="text-xs text-gray-400 truncate max-w-full sm:max-w-xs">
                     {selectedPhoto.name}
                   </span>
                 )}
               </div>
-              <p className="mt-3 text-xs text-gray-500">
+              <p className="mt-3 text-xs text-gray-400">
                 JPG, PNG desteklenir. Önerilen boyut: 400x400+. Maks. 5MB.
               </p>
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
       <ConfirmDialog
         open={confirmOpen}
         title="Profil fotoğrafı kaldırılsın mı?"
@@ -244,50 +268,57 @@ export default function UserProfile({ userDetail, onUpdate, onUserDetailUpdate }
       />
 
       {/* Temel Bilgiler */}
-      <div className="bg-white rounded-lg shadow p-6">
+      <motion.div 
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.2 }}
+        className="bg-gray-800 border border-gray-700 rounded-lg shadow-lg p-6"
+      >
         <div className="flex justify-end items-center mb-6">
-          <button
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             onClick={() => isEditing ? handleSave() : setIsEditing(true)}
-            className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm cursor-pointer"
+            className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-4 py-2 rounded-lg text-sm cursor-pointer shadow-lg shadow-orange-500/50 transition-all"
           >
             {isEditing ? 'Kaydet' : 'Düzenle'}
-          </button>
+          </motion.button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Ad</label>
+            <label className="block text-sm font-medium text-gray-300 mb-2">Ad</label>
             {isEditing ? (
               <input
                 type="text"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                className="w-full px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-white placeholder-gray-400"
               />
             ) : (
-              <p className="text-gray-900">{userDetail.name}</p>
+              <p className="text-white">{userDetail.name}</p>
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Soyad</label>
+            <label className="block text-sm font-medium text-gray-300 mb-2">Soyad</label>
             {isEditing ? (
               <input
                 type="text"
                 value={formData.surname}
                 onChange={(e) => setFormData({ ...formData, surname: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                className="w-full px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-white placeholder-gray-400"
               />
             ) : (
-              <p className="text-gray-900">{userDetail.surname}</p>
+              <p className="text-white">{userDetail.surname}</p>
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">E-posta</label>
-            <p className="text-gray-900">{userDetail.email}</p>
-            <p className="text-xs text-gray-500 mt-1">E-posta değiştirilemez</p>
+            <label className="block text-sm font-medium text-gray-300 mb-2">E-posta</label>
+            <p className="text-white">{userDetail.email}</p>
+            <p className="text-xs text-gray-400 mt-1">E-posta değiştirilemez</p>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Telefon</label>
+            <label className="block text-sm font-medium text-gray-300 mb-2">Telefon</label>
             {isEditing ? (
               <PhoneInput
                 value={formData.phone}
@@ -295,55 +326,55 @@ export default function UserProfile({ userDetail, onUpdate, onUserDetailUpdate }
                 placeholder="5XX XXX XX XX"
               />
             ) : (
-              <p className="text-gray-900">{userDetail.phone || '-'}</p>
+              <p className="text-white">{userDetail.phone || '-'}</p>
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">TC No</label>
+            <label className="block text-sm font-medium text-gray-300 mb-2">TC No</label>
             {isEditing ? (
               <input
                 type="text"
                 value={formData.tcNo}
                 onChange={(e) => setFormData({ ...formData, tcNo: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                className="w-full px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-white placeholder-gray-400"
                 maxLength={11}
                 inputMode="numeric"
                 pattern="[0-9]*"
                 placeholder="11 haneli TC No"
               />
             ) : (
-              <p className="text-gray-900">{userDetail.tcNo || '-'}</p>
+              <p className="text-white">{userDetail.tcNo || '-'}</p>
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Doğum Yeri</label>
+            <label className="block text-sm font-medium text-gray-300 mb-2">Doğum Yeri</label>
             {isEditing ? (
               <input
                 type="text"
                 value={formData.birthPlace}
                 onChange={(e) => setFormData({ ...formData, birthPlace: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                className="w-full px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-white placeholder-gray-400"
                 placeholder="Örn: İstanbul"
               />
             ) : (
-              <p className="text-gray-900">{userDetail.birthPlace || '-'}</p>
+              <p className="text-white">{userDetail.birthPlace || '-'}</p>
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Doğum Tarihi</label>
+            <label className="block text-sm font-medium text-gray-300 mb-2">Doğum Tarihi</label>
             {isEditing ? (
               <input
                 type="date"
                 value={formData.birthDate}
                 onChange={(e) => setFormData({ ...formData, birthDate: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                className="w-full px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-white"
               />
             ) : (
-              <p className="text-gray-900">{formatDateTR(userDetail.birthDate)}</p>
+              <p className="text-white">{formatDateTR(userDetail.birthDate)}</p>
             )}
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* İletişim Bilgileri */}
       <ContactInfoSection 
@@ -370,10 +401,15 @@ export default function UserProfile({ userDetail, onUpdate, onUserDetailUpdate }
 
       {/* Hak ve Alacaklar (Personel - salt okunur) */}
       {userDetail?.role !== 'Manager' && (
-        <div className="bg-white rounded-lg shadow p-6">
+        <motion.div 
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.3 }}
+          className="bg-gray-800 border border-gray-700 rounded-lg shadow-lg p-6"
+        >
           <div className="mb-4">
-            <h2 className="text-lg font-semibold text-gray-800">Hak ve Alacaklar</h2>
-            <p className="text-sm text-gray-500 mt-1">
+            <h2 className="text-lg font-semibold text-white">Hak ve Alacaklar</h2>
+            <p className="text-sm text-gray-400 mt-1">
               Bu bilgiler yönetici tarafından güncellenir. Personel sadece görüntüleyebilir.
             </p>
           </div>
@@ -383,9 +419,9 @@ export default function UserProfile({ userDetail, onUpdate, onUserDetailUpdate }
             userRole={userDetail.role || 'Personel'}
             onUpdate={refreshUserDetail}
           />
-        </div>
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   );
 }
 

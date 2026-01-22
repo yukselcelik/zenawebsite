@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
+import { motion } from 'framer-motion';
 import ApiService from '../../../lib/api';
 import { isPendingStatus } from '../utils/requestStatus';
 
@@ -11,23 +12,23 @@ function getStatusBadgeClass(status) {
     case 'Approved':
     case '1':
     case 'Onaylandı':
-      return 'bg-green-100 text-green-800';
+      return 'bg-green-900/50 text-green-300 border border-green-700';
     case 'Rejected':
     case '2':
     case 'Reddedildi':
-      return 'bg-red-100 text-red-800';
+      return 'bg-red-900/50 text-red-300 border border-red-700';
     case 'Cancelled':
     case '3':
     case 'İptal':
     case 'İptal Edildi':
-      return 'bg-gray-100 text-gray-800';
+      return 'bg-gray-700 text-gray-300 border border-gray-600';
     case 'Ödendi':
-      return 'bg-blue-100 text-blue-800';
+      return 'bg-blue-900/50 text-blue-300 border border-blue-700';
     case 'Pending':
     case '0':
     case 'Beklemede':
     default:
-      return 'bg-yellow-100 text-yellow-800';
+      return 'bg-yellow-900/50 text-yellow-300 border border-yellow-700';
   }
 }
 
@@ -235,21 +236,34 @@ export default function Dashboard({ isManager, stats, userDetail, onTabChange, m
   };
 
   return (
-    <div className="space-y-6">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+      className="space-y-6"
+    >
       {/* Onay Bekleyen Kullanıcı Bildirimi */}
       {isPendingApproval && (
-        <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg">
+        <motion.div 
+          initial={{ x: -50, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          className="bg-yellow-900/30 border-l-4 border-yellow-500 p-4 rounded-lg"
+        >
           <div className="flex items-start">
-            <div className="flex-shrink-0">
+            <motion.div 
+              animate={{ rotate: [0, 10, -10, 0] }}
+              transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+              className="flex-shrink-0"
+            >
               <svg className="h-5 w-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
               </svg>
-            </div>
+            </motion.div>
             <div className="ml-3 flex-1">
-              <h3 className="text-sm font-medium text-yellow-800">
+              <h3 className="text-sm font-medium text-yellow-300">
                 Hesabınız Onay Bekliyor
               </h3>
-              <div className="mt-2 text-sm text-yellow-700">
+              <div className="mt-2 text-sm text-yellow-200">
                 <p>
                   Kayıt işleminiz başarıyla tamamlandı. Hesabınız yönetici onayı bekliyor. 
                   Onaylandıktan sonra tüm özelliklere erişebileceksiniz.
@@ -257,54 +271,67 @@ export default function Dashboard({ isManager, stats, userDetail, onTabChange, m
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
       )}
 
       {!isManager && (
-        <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          className="bg-gray-800 rounded-lg shadow-lg border border-gray-700 overflow-hidden"
+        >
           <div className="p-6 flex items-center justify-between gap-4">
             <div>
-              <h2 className="text-lg font-semibold text-gray-800">Talepler</h2>
-              <p className="text-sm text-gray-500 mt-1">
+              <h2 className="text-lg font-semibold text-white">Talepler</h2>
+              <p className="text-sm text-gray-400 mt-1">
                 İzin, masraf ve toplantı odası taleplerinizin son durumunu burada görebilirsiniz.
               </p>
             </div>
-            <Link
-              href="/panel/talep-et"
-              className="inline-flex items-center gap-2 rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition cursor-pointer"
-            >
-              Yeni Talep Oluştur
-            </Link>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Link
+                href="/panel/talep-et"
+                className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-orange-500 to-orange-600 px-4 py-2 text-sm font-medium text-white hover:from-orange-600 hover:to-orange-700 transition shadow-lg shadow-orange-500/50 cursor-pointer"
+              >
+                Yeni Talep Oluştur
+              </Link>
+            </motion.div>
           </div>
 
-          <div className="border-t border-gray-200">
+          <div className="border-t border-gray-700">
             {unifiedMyRequests.length === 0 ? (
-              <div className="p-6 text-sm text-gray-500">
+              <div className="p-6 text-sm text-gray-400">
                 Henüz bir talebiniz bulunmuyor.
               </div>
             ) : (
               <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
+                <table className="min-w-full divide-y divide-gray-700">
+                  <thead className="bg-gray-700/50">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tür</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tarih</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Özet</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Durum</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Tür</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Tarih</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Özet</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Durum</th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {unifiedMyRequests.slice(0, 10).map((r) => (
-                      <tr key={r.id} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  <tbody className="bg-gray-800 divide-y divide-gray-700">
+                    {unifiedMyRequests.slice(0, 10).map((r, index) => (
+                      <motion.tr 
+                        key={r.id} 
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.05 }}
+                        className="hover:bg-gray-700/50 transition-colors"
+                      >
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">
                           {r.kind}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                           {formatDateTR(r.date)}
                         </td>
-                        <td className="px-6 py-4 text-sm text-gray-900">
+                        <td className="px-6 py-4 text-sm text-white">
                           {r.kind === 'İzin' ? (
-                            <Link href={r.href} className="text-orange-600 hover:text-orange-800">
+                            <Link href={r.href} className="text-orange-400 hover:text-orange-300 transition-colors">
                               {r.title}
                             </Link>
                           ) : (
@@ -316,144 +343,226 @@ export default function Dashboard({ isManager, stats, userDetail, onTabChange, m
                             {r.statusText}
                           </span>
                         </td>
-                      </tr>
+                      </motion.tr>
                     ))}
                   </tbody>
                 </table>
               </div>
             )}
           </div>
-        </div>
+        </motion.div>
       )}
 
       {isManager && stats && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <button
+          <motion.button
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            whileHover={{ scale: 1.05, y: -5 }}
             onClick={() => onTabChange && onTabChange('personnel')}
-            className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-all duration-200 text-left w-full group cursor-pointer"
+            className="bg-gray-800 border border-gray-700 rounded-lg shadow-lg p-6 hover:shadow-xl hover:border-orange-500/50 transition-all duration-300 text-left w-full group cursor-pointer"
           >
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-lg font-semibold text-gray-800 group-hover:text-orange-500 transition-colors">Toplam Personel</h3>
-              <svg className="w-5 h-5 text-gray-400 group-hover:text-orange-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <h3 className="text-lg font-semibold text-white group-hover:text-orange-400 transition-colors">Toplam Personel</h3>
+              <motion.svg 
+                animate={{ rotate: [0, 10, -10, 0] }}
+                transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+                className="w-5 h-5 text-gray-400 group-hover:text-orange-400 transition-colors" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-              </svg>
+              </motion.svg>
             </div>
-            <p className="text-3xl font-bold text-orange-500">{stats.personnelCount || 0}</p>
-            <p className="text-xs text-gray-500 mt-2 group-hover:text-orange-500 transition-colors">Detayları görüntüle →</p>
-          </button>
+            <motion.p 
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.3, type: "spring" }}
+              className="text-3xl font-bold text-orange-400"
+            >
+              {stats.personnelCount || 0}
+            </motion.p>
+            <p className="text-xs text-gray-400 mt-2 group-hover:text-orange-400 transition-colors">Detayları görüntüle →</p>
+          </motion.button>
           
-          <button
+          <motion.button
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            whileHover={{ scale: 1.05, y: -5 }}
             onClick={() => onTabChange && onTabChange('leaves')}
-            className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-all duration-200 text-left w-full group cursor-pointer"
+            className="bg-gray-800 border border-gray-700 rounded-lg shadow-lg p-6 hover:shadow-xl hover:border-yellow-500/50 transition-all duration-300 text-left w-full group cursor-pointer"
           >
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-lg font-semibold text-gray-800 group-hover:text-yellow-500 transition-colors">Bekleyen İzin Talepleri</h3>
-              <svg className="w-5 h-5 text-gray-400 group-hover:text-yellow-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <h3 className="text-lg font-semibold text-white group-hover:text-yellow-400 transition-colors">Bekleyen İzin Talepleri</h3>
+              <motion.svg 
+                animate={{ rotate: [0, -5, 5, 0] }}
+                transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 2 }}
+                className="w-5 h-5 text-gray-400 group-hover:text-yellow-400 transition-colors" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
+              </motion.svg>
             </div>
-            <p className="text-3xl font-bold text-yellow-500">{stats.pendingLeaves || 0}</p>
-            <p className="text-xs text-gray-500 mt-2 group-hover:text-yellow-500 transition-colors">Detayları görüntüle →</p>
-          </button>
+            <motion.p 
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.4, type: "spring" }}
+              className="text-3xl font-bold text-yellow-400"
+            >
+              {stats.pendingLeaves || 0}
+            </motion.p>
+            <p className="text-xs text-gray-400 mt-2 group-hover:text-yellow-400 transition-colors">Detayları görüntüle →</p>
+          </motion.button>
           
-          <button
+          <motion.button
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            whileHover={{ scale: 1.05, y: -5 }}
             onClick={() => onTabChange && onTabChange('internships')}
-            className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-all duration-200 text-left w-full group cursor-pointer"
+            className="bg-gray-800 border border-gray-700 rounded-lg shadow-lg p-6 hover:shadow-xl hover:border-blue-500/50 transition-all duration-300 text-left w-full group cursor-pointer"
           >
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-lg font-semibold text-gray-800 group-hover:text-blue-500 transition-colors">İş/Staj Başvuruları</h3>
-              <svg className="w-5 h-5 text-gray-400 group-hover:text-blue-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <h3 className="text-lg font-semibold text-white group-hover:text-blue-400 transition-colors">İş/Staj Başvuruları</h3>
+              <motion.svg 
+                animate={{ y: [0, -3, 0] }}
+                transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 2 }}
+                className="w-5 h-5 text-gray-400 group-hover:text-blue-400 transition-colors" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
+              </motion.svg>
             </div>
             <div className="space-y-2">
               <div>
-                <p className="text-3xl font-bold text-blue-500">{stats.internshipCount || 0}</p>
-                <p className="text-sm text-gray-500 mt-1">Toplam Başvuru</p>
+                <motion.p 
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.5, type: "spring" }}
+                  className="text-3xl font-bold text-blue-400"
+                >
+                  {stats.internshipCount || 0}
+                </motion.p>
+                <p className="text-sm text-gray-400 mt-1">Toplam Başvuru</p>
               </div>
-              <div className="pt-2 border-t border-gray-200">
+              <div className="pt-2 border-t border-gray-700">
                 <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <p className="text-lg font-semibold text-gray-700">{stats.internshipLastMonthCount || 0}</p>
-                  <p className="text-sm text-gray-500">Son 1 Ayda</p>
+                  <motion.div 
+                    animate={{ scale: [1, 1.2, 1] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                    className="w-2 h-2 bg-green-500 rounded-full"
+                  ></motion.div>
+                  <p className="text-lg font-semibold text-white">{stats.internshipLastMonthCount || 0}</p>
+                  <p className="text-sm text-gray-400">Son 1 Ayda</p>
                 </div>
               </div>
             </div>
-            <p className="text-xs text-gray-500 mt-3 group-hover:text-blue-500 transition-colors">Detayları görüntüle →</p>
-          </button>
+            <p className="text-xs text-gray-400 mt-3 group-hover:text-blue-400 transition-colors">Detayları görüntüle →</p>
+          </motion.button>
         </div>
       )}
 
       {isManager && (
-        <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="bg-gray-800 border border-gray-700 rounded-lg shadow-lg overflow-hidden"
+        >
           <div className="p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <h2 className="text-lg font-semibold text-gray-800">Talepler</h2>
-              <p className="text-sm text-gray-500 mt-1">
+              <h2 className="text-lg font-semibold text-white">Talepler</h2>
+              <p className="text-sm text-gray-400 mt-1">
                 İzin, masraf ve toplantı odası taleplerinin son durumunu burada görebilirsiniz.
               </p>
               {stats && (
                 <div className="mt-2 flex flex-wrap gap-2">
-                  <span className="text-xs px-2 py-1 rounded-full bg-yellow-100 text-yellow-800">
+                  <motion.span 
+                    whileHover={{ scale: 1.1 }}
+                    className="text-xs px-2 py-1 rounded-full bg-orange-500/20 text-orange-400 border border-orange-500/50"
+                  >
                     Bekleyen İzin: {stats.pendingLeaves || 0}
-                  </span>
-                  <span className="text-xs px-2 py-1 rounded-full bg-yellow-100 text-yellow-800">
+                  </motion.span>
+                  <motion.span 
+                    whileHover={{ scale: 1.1 }}
+                    className="text-xs px-2 py-1 rounded-full bg-orange-500/20 text-orange-400 border border-orange-500/50"
+                  >
                     Bekleyen Masraf: {stats.pendingExpenses || 0}
-                  </span>
-                  <span className="text-xs px-2 py-1 rounded-full bg-yellow-100 text-yellow-800">
+                  </motion.span>
+                  <motion.span 
+                    whileHover={{ scale: 1.1 }}
+                    className="text-xs px-2 py-1 rounded-full bg-orange-500/20 text-orange-400 border border-orange-500/50"
+                  >
                     Bekleyen Toplantı: {stats.pendingMeetingRooms || 0}
-                  </span>
+                  </motion.span>
                 </div>
               )}
             </div>
 
             <div className="flex gap-2">
-              <Link
-                href="/panel/talepleri-incele"
-                className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition cursor-pointer"
-              >
-                Talepleri İncele
-              </Link>
-              <Link
-                href="/panel/talep-et"
-                className="inline-flex items-center gap-2 rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600 transition cursor-pointer"
-              >
-                Yeni Talep Oluştur
-              </Link>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Link
+                  href="/panel/talepleri-incele"
+                  className="inline-flex items-center gap-2 rounded-lg border border-gray-600 bg-gray-700 px-4 py-2 text-sm font-medium text-white hover:bg-gray-600 transition cursor-pointer"
+                >
+                  Talepleri İncele
+                </Link>
+              </motion.div>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Link
+                  href="/panel/talep-et"
+                  className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-orange-500 to-orange-600 px-4 py-2 text-sm font-medium text-white hover:from-orange-600 hover:to-orange-700 transition shadow-lg shadow-orange-500/50 cursor-pointer"
+                >
+                  Yeni Talep Oluştur
+                </Link>
+              </motion.div>
             </div>
           </div>
 
-          <div className="border-t border-gray-200">
+          <div className="border-t border-gray-700">
             {unifiedAllRequests.length === 0 ? (
-              <div className="p-6 text-sm text-gray-500">
+              <div className="p-6 text-sm text-gray-400">
                 Görüntülenecek talep bulunamadı.
               </div>
             ) : (
               <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
+                <table className="min-w-full divide-y divide-gray-700">
+                  <thead className="bg-gray-700/50">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Personel</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tür</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tarih</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Özet</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Durum</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Personel</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Tür</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Tarih</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Özet</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Durum</th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {unifiedAllRequests.slice(0, 15).map((r) => (
-                      <tr key={r.id} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <tbody className="bg-gray-800 divide-y divide-gray-700">
+                    {unifiedAllRequests.slice(0, 15).map((r, index) => (
+                      <motion.tr 
+                        key={r.id} 
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.5 + index * 0.03 }}
+                        className="hover:bg-gray-700/50 transition-colors"
+                      >
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                           {r.person}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">
                           {r.kind}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                           {formatDateTR(r.date)}
                         </td>
-                        <td className="px-6 py-4 text-sm text-gray-900">
-                          <Link href={r.href} className="text-orange-600 hover:text-orange-800">
+                        <td className="px-6 py-4 text-sm text-white">
+                          <Link href={r.href} className="text-orange-400 hover:text-orange-300 transition-colors">
                             {r.title}
                           </Link>
                         </td>
@@ -472,12 +581,12 @@ export default function Dashboard({ isManager, stats, userDetail, onTabChange, m
                                 handleManagerStatusChange(r, map[label] || 'Pending');
                               }}
                               disabled={actionLoading}
-                              className="px-3 py-2 rounded-lg text-sm font-medium border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 cursor-pointer"
+                              className="px-3 py-2 rounded-lg text-sm font-medium border border-gray-600 bg-gray-700 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-white cursor-pointer"
                             >
-                              <option>Beklemede</option>
-                              <option>Onaylandı</option>
-                              <option>Reddedildi</option>
-                              <option>Ödendi</option>
+                              <option className="bg-gray-700">Beklemede</option>
+                              <option className="bg-gray-700">Onaylandı</option>
+                              <option className="bg-gray-700">Reddedildi</option>
+                              <option className="bg-gray-700">Ödendi</option>
                             </select>
                           ) : (
                             <select
@@ -493,25 +602,25 @@ export default function Dashboard({ isManager, stats, userDetail, onTabChange, m
                                 handleManagerStatusChange(r, map[label] || 'Pending');
                               }}
                               disabled={actionLoading}
-                              className={`px-3 py-2 rounded-lg text-sm font-medium border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 cursor-pointer ${r.statusClass}`}
+                              className={`px-3 py-2 rounded-lg text-sm font-medium border border-gray-600 bg-gray-700 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-white cursor-pointer ${r.statusClass}`}
                             >
-                              <option>Beklemede</option>
-                              <option>Onaylandı</option>
-                              <option>Reddedildi</option>
-                              <option>İptal Edildi</option>
+                              <option className="bg-gray-700">Beklemede</option>
+                              <option className="bg-gray-700">Onaylandı</option>
+                              <option className="bg-gray-700">Reddedildi</option>
+                              <option className="bg-gray-700">İptal Edildi</option>
                             </select>
                           )}
                         </td>
-                      </tr>
+                      </motion.tr>
                     ))}
                   </tbody>
                 </table>
               </div>
             )}
           </div>
-        </div>
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   );
 }
 

@@ -116,20 +116,20 @@ export default function PhoneInput({ value, onChange, disabled, className = '', 
         className={`
           w-full px-4 py-2 border rounded-lg
           focus:ring-2 focus:ring-orange-500 focus:border-orange-500
-          disabled:bg-gray-100 disabled:cursor-not-allowed
-          text-gray-900
+          disabled:bg-gray-600 disabled:cursor-not-allowed
+          bg-gray-700 text-white placeholder-gray-400
           transition-all duration-200
-          ${!isEmpty && !isValid ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300'}
+          ${!isEmpty && !isValid ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-600'}
           ${className}
         `}
       />
       {!isEmpty && !isValid && (
-        <p className="mt-1 text-xs text-red-500">
+        <p className="mt-1 text-xs text-red-400">
           10 haneli telefon numarası giriniz
         </p>
       )}
       {isEmpty && required && (
-        <p className="mt-1 text-xs text-gray-500">
+        <p className="mt-1 text-xs text-gray-400">
           Örnek: {placeholder}
         </p>
       )}

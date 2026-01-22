@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import ApiService from '../../../../lib/api';
 import ConfirmDialog from '../common/ConfirmDialog';
 
@@ -111,145 +112,180 @@ export default function InternshipApplications() {
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg shadow p-6">
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="bg-gray-800 border border-gray-700 rounded-lg shadow-lg p-6"
+      >
         <div className="text-center py-8">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Yükleniyor...</p>
+          <p className="text-gray-300">Yükleniyor...</p>
         </div>
-      </div>
+      </motion.div>
     );
   }
 
   return (
-    <div className="bg-white rounded-lg shadow overflow-hidden">
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="bg-gray-800 border border-gray-700 rounded-lg shadow-lg overflow-hidden"
+    >
       <div className="p-6">
         <div className="space-y-4">
           {applications.length === 0 ? (
-            <p className="text-gray-500 text-center py-8">Henüz iş/staj başvurusu bulunmamaktadır.</p>
+            <p className="text-gray-400 text-center py-8">Henüz iş/staj başvurusu bulunmamaktadır.</p>
           ) : (
-            applications.map((application) => {
+            applications.map((application, index) => {
               const isExpanded = expandedApplications[application.id];
               return (
-                <div key={application.id} className="border border-gray-200 rounded-lg overflow-hidden">
+                <motion.div 
+                  key={application.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="border border-gray-700 rounded-lg overflow-hidden bg-gray-800 hover:border-gray-600 transition-colors"
+                >
                   {/* Header - Tıklanabilir */}
-                  <button
+                  <motion.button
+                    whileHover={{ scale: 1.01 }}
                     onClick={() => toggleApplication(application.id)}
-                    className="w-full p-4 flex justify-between items-center hover:bg-gray-50 transition-colors text-left"
+                    className="w-full p-4 flex justify-between items-center hover:bg-gray-700/50 transition-colors text-left"
                   >
                     <div className="flex-1">
                       <div className="flex items-center gap-3">
-                        <h3 className="text-lg font-semibold text-gray-800">
+                        <h3 className="text-lg font-semibold text-white">
                           {application.fullName}
                         </h3>
-                        <span className="text-xs text-gray-500">
+                        <span className="text-xs text-gray-400">
                           {new Date(application.createdAt).toLocaleDateString('tr-TR')}
                         </span>
                       </div>
-                      <div className="mt-1 flex flex-wrap gap-4 text-sm text-gray-600">
-                        <span><span className="font-medium">E-posta:</span> {application.email}</span>
-                        <span><span className="font-medium">Telefon:</span> {application.phone}</span>
-                        <span><span className="font-medium">Pozisyon:</span> {application.position}</span>
+                      <div className="mt-1 flex flex-wrap gap-4 text-sm text-gray-400">
+                        <span><span className="font-medium text-gray-300">E-posta:</span> {application.email}</span>
+                        <span><span className="font-medium text-gray-300">Telefon:</span> {application.phone}</span>
+                        <span><span className="font-medium text-gray-300">Pozisyon:</span> {application.position}</span>
                       </div>
                     </div>
-                    <div className="ml-4 flex items-center">
+                    <motion.div 
+                      animate={{ rotate: isExpanded ? 180 : 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="ml-4 flex items-center"
+                    >
                       <svg
-                        className={`w-5 h-5 text-gray-400 transition-transform ${isExpanded ? 'transform rotate-180' : ''}`}
+                        className="w-5 h-5 text-gray-400"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
                       >
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                       </svg>
-                    </div>
-                  </button>
+                    </motion.div>
+                  </motion.button>
 
                   {/* Detaylar - Açılır/Kapanır */}
-                  {isExpanded && (
-                    <div className="px-4 pb-4 border-t border-gray-200 bg-gray-50">
-                      <div className="pt-4 space-y-3">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                          <p className="text-sm text-gray-600">
-                            <span className="font-medium">Okul:</span> {application.school}
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            <span className="font-medium">Bölüm:</span> {application.department}
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            <span className="font-medium">Sınıf:</span> {application.year || '-'}
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            <span className="font-medium">Başvuru Tarihi:</span>{' '}
-                            {new Date(application.createdAt).toLocaleString('tr-TR')}
-                          </p>
-                        </div>
+                  <AnimatePresence>
+                    {isExpanded && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="px-4 pb-4 border-t border-gray-700 bg-gray-700/30">
+                          <div className="pt-4 space-y-3">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                              <p className="text-sm text-gray-300">
+                                <span className="font-medium text-white">Okul:</span> {application.school}
+                              </p>
+                              <p className="text-sm text-gray-300">
+                                <span className="font-medium text-white">Bölüm:</span> {application.department}
+                              </p>
+                              <p className="text-sm text-gray-300">
+                                <span className="font-medium text-white">Sınıf:</span> {application.year || '-'}
+                              </p>
+                              <p className="text-sm text-gray-300">
+                                <span className="font-medium text-white">Başvuru Tarihi:</span>{' '}
+                                {new Date(application.createdAt).toLocaleString('tr-TR')}
+                              </p>
+                            </div>
 
-                        {application.message && (
-                          <div className="mt-3">
-                            <p className="text-sm font-medium text-gray-700 mb-1">Mesaj:</p>
-                            <p className="text-sm text-gray-600 whitespace-pre-wrap bg-white p-3 rounded border border-gray-200">
-                              {application.message}
-                            </p>
-                          </div>
-                        )}
+                            {application.message && (
+                              <div className="mt-3">
+                                <p className="text-sm font-medium text-white mb-1">Mesaj:</p>
+                                <p className="text-sm text-gray-300 whitespace-pre-wrap bg-gray-800 p-3 rounded border border-gray-600">
+                                  {application.message}
+                                </p>
+                              </div>
+                            )}
 
-                        {application.cvFilePath && (
-                          <div className="mt-3">
-                            <p className="text-sm font-medium text-gray-700 mb-1">CV Dosyası:</p>
-                            <p className="text-xs text-gray-600 font-mono bg-white p-2 rounded border border-gray-200">
-                              {getFileName(application)}
-                            </p>
-                          </div>
-                        )}
+                            {application.cvFilePath && (
+                              <div className="mt-3">
+                                <p className="text-sm font-medium text-white mb-1">CV Dosyası:</p>
+                                <p className="text-xs text-gray-400 font-mono bg-gray-800 p-2 rounded border border-gray-600">
+                                  {getFileName(application)}
+                                </p>
+                              </div>
+                            )}
 
-                        {/* Butonlar */}
-                        <div className="flex gap-2 mt-4">
-                          {application.cvFilePath && (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleDownloadCv(application.id, application.originalFileName);
-                              }}
-                              disabled={downloadingCv[application.id]}
-                              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer flex items-center gap-2 ${downloadingCv[application.id]
-                                  ? 'bg-gray-400 text-white cursor-not-allowed'
-                                  : 'bg-orange-500 hover:bg-orange-600 text-white'
-                                }`}
-                            >
-                              {downloadingCv[application.id] ? (
-                                <>
-                                  <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                  </svg>
-                                  İndiriliyor...
-                                </>
-                              ) : (
-                                <>
-                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                  </svg>
-                                  CV İndir
-                                </>
+                            {/* Butonlar */}
+                            <div className="flex gap-2 mt-4">
+                              {application.cvFilePath && (
+                                <motion.button
+                                  whileHover={{ scale: 1.05 }}
+                                  whileTap={{ scale: 0.95 }}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDownloadCv(application.id, application.originalFileName);
+                                  }}
+                                  disabled={downloadingCv[application.id]}
+                                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer flex items-center gap-2 shadow-lg ${
+                                    downloadingCv[application.id]
+                                      ? 'bg-gray-600 text-white cursor-not-allowed'
+                                      : 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white shadow-orange-500/50'
+                                  }`}
+                                >
+                                  {downloadingCv[application.id] ? (
+                                    <>
+                                      <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                      </svg>
+                                      İndiriliyor...
+                                    </>
+                                  ) : (
+                                    <>
+                                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                      </svg>
+                                      CV İndir
+                                    </>
+                                  )}
+                                </motion.button>
                               )}
-                            </button>
-                          )}
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDeleteClick(application.id, application.fullName);
-                            }}
-                            className="px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white"
-                          >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>
-                            Sil
-                          </button>
+                              <motion.button
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDeleteClick(application.id, application.fullName);
+                                }}
+                                className="px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer flex items-center gap-2 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-lg shadow-red-500/50"
+                              >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                                Sil
+                              </motion.button>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
               );
             })
           )}
@@ -257,27 +293,36 @@ export default function InternshipApplications() {
 
         {/* Pagination */}
         {pagination.totalPages > 1 && (
-          <div className="mt-6 flex items-center justify-between">
-            <div className="text-sm text-gray-700">
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            className="mt-6 flex items-center justify-between"
+          >
+            <div className="text-sm text-gray-400">
               Toplam {pagination.totalCount} kayıttan {((pagination.pageNumber - 1) * pagination.pageSize) + 1} ile {Math.min(pagination.pageNumber * pagination.pageSize, pagination.totalCount)} arası gösteriliyor
             </div>
             <div className="flex space-x-2">
-              <button
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={() => setPagination({ ...pagination, pageNumber: pagination.pageNumber - 1 })}
                 disabled={pagination.pageNumber === 1}
-                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                className="px-4 py-2 border border-gray-600 rounded-lg text-gray-300 bg-gray-700 hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors"
               >
                 Önceki
-              </button>
-              <button
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={() => setPagination({ ...pagination, pageNumber: pagination.pageNumber + 1 })}
                 disabled={pagination.pageNumber >= pagination.totalPages}
-                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                className="px-4 py-2 border border-gray-600 rounded-lg text-gray-300 bg-gray-700 hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors"
               >
                 Sonraki
-              </button>
+              </motion.button>
             </div>
-          </div>
+          </motion.div>
         )}
       </div>
 
@@ -292,7 +337,7 @@ export default function InternshipApplications() {
         onConfirm={handleDeleteConfirm}
         onCancel={handleDeleteCancel}
       />
-    </div>
+    </motion.div>
   );
 }
 

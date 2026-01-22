@@ -56,10 +56,10 @@ export default function ProfilimPage() {
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-gray-800 border border-gray-700 rounded-lg shadow-lg p-6">
         <div className="text-center py-8">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Yükleniyor...</p>
+          <p className="text-gray-300">Yükleniyor...</p>
         </div>
       </div>
     );

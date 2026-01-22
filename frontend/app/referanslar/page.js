@@ -215,31 +215,35 @@ export default function ReferanslarPage() {
                       };
                     }
                     
-                    // PNG/JPG dosyaları için beyaz yazı sorunu olanlar - invert ile düzelt
-                    // Sadece gerçekten beyaz yazılı olanlara uygula
+                    // PNG/JPG dosyaları için beyaz yazı sorunu olanlar - gri yap
                     const whiteTextLogos = [
                       'GEN İlaç.png',
                       'Pimsa Otomotiv.png',
-                      'Şıkmakas.png'
+                      'Şıkmakas.png',
+                      'İstanbul Aydın Üniversitesi.png'
                     ];
                     
                     if (whiteTextLogos.includes(logo)) {
                       return {
-                        filter: 'invert(1) brightness(0.5) contrast(1.3) saturate(100%)',
+                        filter: 'invert(1) brightness(0.4) contrast(1.2) saturate(100%)',
                         mixBlendMode: 'multiply'
                       };
                     }
                     
-                    // SVG dosyaları için standart filter (beyaz SVG'ler için)
+                    // SVG dosyaları için - beyaz yazıları gri yap
                     if (logo.endsWith('.svg')) {
                       return {
-                        filter: 'brightness(0) saturate(100%)',
+                        filter: 'brightness(0) saturate(100%) invert(0.3)',
                         mixBlendMode: 'multiply'
                       };
                     }
                     
-                    // Diğer logolar için filter yok
-                    return {};
+                    // Tüm PNG/JPG logolar için beyaz yazıları gri yapmak için genel filter
+                    // Beyaz renkleri griye çevir
+                    return {
+                      filter: 'brightness(0.8) contrast(1.1)',
+                      mixBlendMode: 'multiply'
+                    };
                   };
                   
                   return (
@@ -259,7 +263,7 @@ export default function ReferanslarPage() {
                         transition: { duration: 0.2 }
                       }}
                     >
-                      <div className="relative bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden p-6 h-32 flex items-center justify-center">
+                      <div className="relative bg-white rounded-xl transition-all duration-300 border border-gray-200 overflow-hidden p-6 h-32 flex items-center justify-center">
                         {/* Hover efekti için arkaplan */}
                         <div className="absolute inset-0 bg-gradient-to-br from-green-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                         
@@ -340,7 +344,7 @@ export default function ReferanslarPage() {
                         transition: { duration: 0.2 }
                       }}
                     >
-                      <div className="relative bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden p-6 h-32 flex items-center justify-center">
+                      <div className="relative bg-white rounded-xl transition-all duration-300 border border-gray-200 overflow-hidden p-6 h-32 flex items-center justify-center">
                         {/* Hover efekti için arkaplan */}
                         <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                         
@@ -352,10 +356,13 @@ export default function ReferanslarPage() {
                           style={
                             logo.endsWith('.svg')
                               ? {
-                                  filter: 'brightness(0) saturate(100%)',
+                                  filter: 'brightness(0) saturate(100%) invert(0.3)',
                                   mixBlendMode: 'multiply'
                                 }
-                              : {}
+                              : {
+                                  filter: 'brightness(0.8) contrast(1.1)',
+                                  mixBlendMode: 'multiply'
+                                }
                           }
                           loading="lazy"
                           onError={(e) => {

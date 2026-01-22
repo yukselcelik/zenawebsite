@@ -58,13 +58,13 @@ export function getStatusTextTR(status) {
 export function getStatusBadgeClass(status) {
   const key = normalizeStatusKey(status);
   switch (key) {
-    case 'approved': return 'bg-green-100 text-green-800';
-    case 'rejected': return 'bg-red-100 text-red-800';
-    case 'cancelled': return 'bg-gray-100 text-gray-800';
-    case 'paid': return 'bg-blue-100 text-blue-800';
+    case 'approved': return 'bg-green-900/50 text-green-300 border border-green-700';
+    case 'rejected': return 'bg-red-900/50 text-red-300 border border-red-700';
+    case 'cancelled': return 'bg-gray-700 text-gray-300 border border-gray-600';
+    case 'paid': return 'bg-blue-900/50 text-blue-300 border border-blue-700';
     case 'pending':
     default:
-      return 'bg-yellow-100 text-yellow-800';
+      return 'bg-yellow-900/50 text-yellow-300 border border-yellow-700';
   }
 }
 

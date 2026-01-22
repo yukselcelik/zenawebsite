@@ -166,17 +166,17 @@ export default function PanelLayout({ children }) {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
-          <p className="text-gray-600"></p>
+          <p className="text-gray-300"></p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="h-screen bg-gray-50 flex overflow-hidden">
+    <div className="h-screen bg-gray-900 flex overflow-hidden">
       {/* Sol Sidebar */}
       <Sidebar 
         isManager={isManager}
@@ -194,9 +194,9 @@ export default function PanelLayout({ children }) {
         />
 
         {/* İçerik */}
-        <main className="flex-1 p-6 overflow-y-auto min-w-0">
+        <main className="flex-1 p-6 overflow-y-auto min-w-0 bg-gray-900">
           {error && (
-            <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+            <div className="mb-4 bg-red-900/30 border border-red-700/50 text-red-300 px-4 py-3 rounded-lg animate-fadeIn">
               {error}
             </div>
           )}

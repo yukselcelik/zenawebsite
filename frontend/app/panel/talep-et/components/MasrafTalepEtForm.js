@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { motion } from 'framer-motion';
 import ApiService from '../../../../lib/api';
 
 const EXPENSE_TYPES = [
@@ -152,34 +153,48 @@ export default function MasrafTalepEtForm({ onSuccess, onCancel }) {
   };
 
   return (
-    <div>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+    >
       <div className="mb-6">
-        <h2 className="text-xl font-bold text-gray-800">Masraf Talep Et</h2>
+        <h2 className="text-xl font-bold text-white">Masraf Talep Et</h2>
       </div>
 
       {error && (
-        <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+        <motion.div 
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="mb-4 bg-red-900/50 border border-red-700 text-red-300 px-4 py-3 rounded-lg"
+        >
           {error}
-        </div>
+        </motion.div>
       )}
 
       {success && (
-        <div className="mb-4 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">
+        <motion.div 
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="mb-4 bg-green-900/50 border border-green-700 text-green-300 px-4 py-3 rounded-lg"
+        >
           {success}
-        </div>
+        </motion.div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Küçük alanlar - aynı satır */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Talep Tarihi */}
-          <div className="p-4 bg-gray-50 rounded-lg">
+          <div className="p-4 bg-gray-700/50 rounded-lg border border-gray-600">
             <div className="flex items-center justify-between gap-3 mb-2">
-              <label className="block text-sm font-medium text-gray-700">
-                Talep Tarihi <span className="text-red-500">*</span>
+              <label className="block text-sm font-medium text-gray-300">
+                Talep Tarihi <span className="text-red-400">*</span>
               </label>
               <div className="flex gap-2">
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   type="button"
                   onClick={() => {
                     const d = new Date();
@@ -188,11 +203,13 @@ export default function MasrafTalepEtForm({ onSuccess, onCancel }) {
                     const dd = String(d.getDate()).padStart(2, '0');
                     setFormData((p) => ({ ...p, requestDate: `${yyyy}-${mm}-${dd}` }));
                   }}
-                  className="text-xs px-2 py-1 rounded border border-gray-200 bg-white hover:bg-gray-50 text-gray-700"
+                  className="text-xs px-2 py-1 rounded border border-gray-600 bg-gray-700 hover:bg-gray-600 text-gray-300 transition-colors"
                 >
                   Bugün
-                </button>
-                <button
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   type="button"
                   onClick={() => {
                     const d = new Date();
@@ -202,89 +219,89 @@ export default function MasrafTalepEtForm({ onSuccess, onCancel }) {
                     const dd = String(d.getDate()).padStart(2, '0');
                     setFormData((p) => ({ ...p, requestDate: `${yyyy}-${mm}-${dd}` }));
                   }}
-                  className="text-xs px-2 py-1 rounded border border-gray-200 bg-white hover:bg-gray-50 text-gray-700"
+                  className="text-xs px-2 py-1 rounded border border-gray-600 bg-gray-700 hover:bg-gray-600 text-gray-300 transition-colors"
                 >
                   Dün
-                </button>
+                </motion.button>
               </div>
             </div>
             <input
               type="date"
               value={formData.requestDate}
               onChange={(e) => setFormData({ ...formData, requestDate: e.target.value })}
-              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 ${
-                errors.requestDate ? 'border-red-300' : 'border-gray-300'
+              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-gray-700 text-white ${
+                errors.requestDate ? 'border-red-500' : 'border-gray-600'
               }`}
             />
-            {errors.requestDate && <p className="text-xs text-red-600 mt-1">{errors.requestDate}</p>}
+            {errors.requestDate && <p className="text-xs text-red-400 mt-1">{errors.requestDate}</p>}
           </div>
 
           {/* Masraf Türü */}
-          <div className="p-4 bg-gray-50 rounded-lg">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Masraf Türü: <span className="text-red-500">*</span>
+          <div className="p-4 bg-gray-700/50 rounded-lg border border-gray-600">
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Masraf Türü: <span className="text-red-400">*</span>
             </label>
             <select
               value={formData.expenseType}
               onChange={(e) => setFormData({ ...formData, expenseType: e.target.value })}
-              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 ${
-                errors.expenseType ? 'border-red-300' : 'border-gray-300'
+              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-gray-700 text-white ${
+                errors.expenseType ? 'border-red-500' : 'border-gray-600'
               }`}
               required
             >
-              <option value="">Seçiniz</option>
+              <option value="" className="bg-gray-700">Seçiniz</option>
               {EXPENSE_TYPES.map(type => (
-                <option key={type.value} value={type.value}>{type.label}</option>
+                <option key={type.value} value={type.value} className="bg-gray-700">{type.label}</option>
               ))}
             </select>
-            {errors.expenseType && <p className="text-xs text-red-600 mt-1">{errors.expenseType}</p>}
+            {errors.expenseType && <p className="text-xs text-red-400 mt-1">{errors.expenseType}</p>}
           </div>
 
           {/* Talep Edilen Tutar */}
-          <div className="p-4 bg-gray-50 rounded-lg">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Talep Edilen Tutar (TL): <span className="text-red-500">*</span>
+          <div className="p-4 bg-gray-700/50 rounded-lg border border-gray-600">
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Talep Edilen Tutar (TL): <span className="text-red-400">*</span>
             </label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">₺</span>
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">₺</span>
               <input
                 type="text"
                 inputMode="decimal"
                 value={formData.requestedAmount}
                 onChange={(e) => handleCurrencyInput(e.target.value)}
-                className={`w-full pl-8 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 ${
-                  errors.requestedAmount ? 'border-red-300' : 'border-gray-300'
+                className={`w-full pl-8 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-gray-700 text-white placeholder-gray-400 ${
+                  errors.requestedAmount ? 'border-red-500' : 'border-gray-600'
                 }`}
                 placeholder="0,00"
                 required
               />
             </div>
-            <p className="text-xs text-gray-500 mt-1">Örn: 1500,50</p>
-            {errors.requestedAmount && <p className="text-xs text-red-600 mt-1">{errors.requestedAmount}</p>}
+            <p className="text-xs text-gray-400 mt-1">Örn: 1500,50</p>
+            {errors.requestedAmount && <p className="text-xs text-red-400 mt-1">{errors.requestedAmount}</p>}
           </div>
         </div>
 
         {/* Açıklama */}
-        <div className="p-4 bg-gray-50 rounded-lg">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Açıklama: <span className="text-red-500">*</span>
+        <div className="p-4 bg-gray-700/50 rounded-lg border border-gray-600">
+          <label className="block text-sm font-medium text-gray-300 mb-2">
+            Açıklama: <span className="text-red-400">*</span>
           </label>
           <textarea
             value={formData.description}
             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 ${
-              errors.description ? 'border-red-300' : 'border-gray-300'
+            className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-gray-700 text-white placeholder-gray-400 ${
+              errors.description ? 'border-red-500' : 'border-gray-600'
             }`}
             rows="4"
             placeholder="Kısa ama net bir açıklama yazın (örn: müşteri toplantısı yemeği)"
             required
           />
-          {errors.description && <p className="text-xs text-red-600 mt-1">{errors.description}</p>}
+          {errors.description && <p className="text-xs text-red-400 mt-1">{errors.description}</p>}
         </div>
 
         {/* Fatura/Fiş/Belge */}
-        <div className="p-4 bg-gray-50 rounded-lg">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+        <div className="p-4 bg-gray-700/50 rounded-lg border border-gray-600">
+          <label className="block text-sm font-medium text-gray-300 mb-2">
             Fatura/Fiş/Belge:
           </label>
           <div className="space-y-3">
@@ -299,26 +316,28 @@ export default function MasrafTalepEtForm({ onSuccess, onCancel }) {
             <div
               onDragOver={(e) => e.preventDefault()}
               onDrop={handleDrop}
-              className="w-full p-4 border-2 border-dashed border-gray-300 rounded-lg bg-white hover:bg-gray-50"
+              className="w-full p-4 border-2 border-dashed border-gray-600 rounded-lg bg-gray-800 hover:bg-gray-700/50 transition-colors"
             >
               <div className="flex items-center justify-between gap-3">
-                <div className="text-sm text-gray-700">
-                  <div className="font-medium">Belge ekle (opsiyonel)</div>
-                  <div className="text-xs text-gray-500">Sürükle-bırak yapın veya dosya seçin (PDF/JPG/PNG, max 10MB)</div>
+                <div className="text-sm text-gray-300">
+                  <div className="font-medium text-white">Belge ekle (opsiyonel)</div>
+                  <div className="text-xs text-gray-400">Sürükle-bırak yapın veya dosya seçin (PDF/JPG/PNG, max 10MB)</div>
                 </div>
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   type="button"
                   onClick={() => fileInputRef.current?.click?.()}
-                  className="px-3 py-2 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 text-sm text-gray-700"
+                  className="px-3 py-2 rounded-lg border border-gray-600 bg-gray-700 hover:bg-gray-600 text-sm text-gray-300 transition-colors"
                 >
                   Dosya Seç
-                </button>
+                </motion.button>
               </div>
             </div>
             {documentFile && (
-              <div className="flex items-center justify-between gap-3 text-sm text-gray-700 bg-white border border-gray-200 rounded-lg px-4 py-3">
+              <div className="flex items-center justify-between gap-3 text-sm text-gray-300 bg-gray-800 border border-gray-600 rounded-lg px-4 py-3">
                 <div className="truncate">
-                  Seçilen dosya: <span className="font-medium">{documentFile.name}</span>
+                  Seçilen dosya: <span className="font-medium text-white">{documentFile.name}</span>
                 </div>
                 <button
                   type="button"
@@ -326,7 +345,7 @@ export default function MasrafTalepEtForm({ onSuccess, onCancel }) {
                     setDocumentFile(null);
                     if (fileInputRef.current) fileInputRef.current.value = '';
                   }}
-                  className="text-sm text-red-600 hover:text-red-700"
+                  className="text-sm text-red-400 hover:text-red-300 transition-colors"
                 >
                   Kaldır
                 </button>
@@ -337,27 +356,31 @@ export default function MasrafTalepEtForm({ onSuccess, onCancel }) {
 
         {/* Submit Button */}
         <div className="flex justify-end gap-3">
-          <button
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             type="button"
             onClick={onCancel}
-            className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+            className="px-6 py-2 border border-gray-600 rounded-lg text-gray-300 bg-gray-700 hover:bg-gray-600 transition-colors"
           >
             İptal
-          </button>
-          <button
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: isLoading ? 1 : 1.05 }}
+            whileTap={{ scale: isLoading ? 1 : 0.95 }}
             type="submit"
             disabled={isLoading}
-            className={`px-6 py-2 rounded-lg text-white ${
+            className={`px-6 py-2 rounded-lg text-white transition-all ${
               isLoading 
-                ? 'bg-gray-400 cursor-not-allowed' 
-                : 'bg-orange-500 hover:bg-orange-600'
+                ? 'bg-gray-600 cursor-not-allowed' 
+                : 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 shadow-lg shadow-orange-500/50'
             }`}
           >
             {isLoading ? 'Gönderiliyor...' : 'Talep Oluştur'}
-          </button>
+          </motion.button>
         </div>
       </form>
-    </div>
+    </motion.div>
   );
 }
 

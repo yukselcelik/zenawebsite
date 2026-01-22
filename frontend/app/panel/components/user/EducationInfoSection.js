@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 import ApiService from '../../../../lib/api';
 
 export default function EducationInfoSection({ educationInfos, userId, onUpdate }) {
@@ -47,91 +48,114 @@ export default function EducationInfoSection({ educationInfos, userId, onUpdate 
   };
 
   return (
-    <div className="bg-white rounded-lg shadow p-6">
+    <motion.div 
+      initial={{ y: 20, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ delay: 0.5 }}
+      className="bg-gray-800 border border-gray-700 rounded-lg shadow-lg p-6"
+    >
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-semibold text-gray-800">Eğitim Bilgileri</h3>
-        <button
+        <h3 className="text-lg font-semibold text-white">Eğitim Bilgileri</h3>
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           onClick={() => setShowForm(!showForm)}
-          className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm cursor-pointer"
+          className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-4 py-2 rounded-lg text-sm cursor-pointer shadow-lg shadow-orange-500/50 transition-all"
         >
           {showForm ? 'İptal' : 'Yeni Ekle'}
-        </button>
+        </motion.button>
       </div>
 
       {showForm && (
-        <form onSubmit={handleAdd} className="mb-6 p-4 bg-gray-50 rounded-lg space-y-4">
+        <motion.form 
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          exit={{ opacity: 0, height: 0 }}
+          onSubmit={handleAdd} 
+          className="mb-6 p-4 bg-gray-700/50 rounded-lg space-y-4 border border-gray-600"
+        >
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Üniversite</label>
+            <label className="block text-sm font-medium text-gray-300 mb-2">Üniversite</label>
             <input
               type="text"
               value={formData.university}
               onChange={(e) => setFormData({ ...formData, university: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+              className="w-full px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-white placeholder-gray-400"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Bölüm</label>
+            <label className="block text-sm font-medium text-gray-300 mb-2">Bölüm</label>
             <input
               type="text"
               value={formData.department}
               onChange={(e) => setFormData({ ...formData, department: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+              className="w-full px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-white placeholder-gray-400"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Mezuniyet Yılı</label>
+            <label className="block text-sm font-medium text-gray-300 mb-2">Mezuniyet Yılı</label>
             <input
               type="number"
               value={formData.graduationYear}
               onChange={(e) => setFormData({ ...formData, graduationYear: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+              className="w-full px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-white placeholder-gray-400"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Sertifika</label>
+            <label className="block text-sm font-medium text-gray-300 mb-2">Sertifika</label>
             <input
               type="text"
               value={formData.certification}
               onChange={(e) => setFormData({ ...formData, certification: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+              className="w-full px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-white placeholder-gray-400"
             />
           </div>
           <div className="flex justify-end space-x-3">
-            <button
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               type="button"
               onClick={() => {
                 setShowForm(false);
                 setFormData({ university: '', department: '', graduationYear: '', certification: '' });
               }}
-              className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 cursor-pointer"
+              className="px-4 py-2 border border-gray-600 rounded-lg text-gray-300 bg-gray-700 hover:bg-gray-600 cursor-pointer transition-colors"
             >
               İptal
-            </button>
-            <button
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               type="submit"
-              className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg cursor-pointer"
+              className="px-4 py-2 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-lg cursor-pointer shadow-lg shadow-orange-500/50 transition-all"
             >
               Kaydet
-            </button>
+            </motion.button>
           </div>
-        </form>
+        </motion.form>
       )}
 
       <div className="space-y-4">
         {educationInfos && educationInfos.length > 0 ? (
-          educationInfos.map((education) => (
-            <div key={education.id} className="border border-gray-200 rounded-lg p-4">
-              <p className="text-sm text-gray-600"><span className="font-medium">Üniversite:</span> {education.university || '-'}</p>
-              <p className="text-sm text-gray-600"><span className="font-medium">Bölüm:</span> {education.department || '-'}</p>
-              <p className="text-sm text-gray-600"><span className="font-medium">Mezuniyet Yılı:</span> {education.graduationYear || '-'}</p>
-              <p className="text-sm text-gray-600"><span className="font-medium">Sertifika:</span> {education.certification || '-'}</p>
-            </div>
+          educationInfos.map((education, index) => (
+            <motion.div 
+              key={education.id}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: index * 0.1 }}
+              className="border border-gray-700 rounded-lg p-4 bg-gray-700/30 hover:bg-gray-700/50 transition-colors"
+            >
+              <p className="text-sm text-gray-300"><span className="font-medium text-white">Üniversite:</span> {education.university || '-'}</p>
+              <p className="text-sm text-gray-300"><span className="font-medium text-white">Bölüm:</span> {education.department || '-'}</p>
+              <p className="text-sm text-gray-300"><span className="font-medium text-white">Mezuniyet Yılı:</span> {education.graduationYear || '-'}</p>
+              <p className="text-sm text-gray-300"><span className="font-medium text-white">Sertifika:</span> {education.certification || '-'}</p>
+            </motion.div>
           ))
         ) : (
-          <p className="text-gray-500 text-sm">Eğitim bilgisi bulunmamaktadır.</p>
+          <p className="text-gray-400 text-sm">Eğitim bilgisi bulunmamaktadır.</p>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 }
 

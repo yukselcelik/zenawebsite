@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 import ApiService from '../../../../lib/api';
 import ConfirmDialog from '../common/ConfirmDialog';
 import PhoneInput from '../common/PhoneInput';
@@ -117,10 +118,17 @@ export default function ContactInfoSection({ contactInfos, userId, onUpdate, isA
   };
 
   return (
-    <div className="bg-white rounded-lg shadow p-6">
+    <motion.div 
+      initial={{ y: 20, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ delay: 0.3 }}
+      className="bg-gray-800 border border-gray-700 rounded-lg shadow-lg p-6"
+    >
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-semibold text-gray-800">İletişim Bilgileri</h3>
-        <button
+        <h3 className="text-lg font-semibold text-white">İletişim Bilgileri</h3>
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           onClick={() => {
             if (canAdd) {
               setShowForm(!showForm);
@@ -129,30 +137,36 @@ export default function ContactInfoSection({ contactInfos, userId, onUpdate, isA
             }
           }}
           disabled={!canAdd}
-          className={`px-4 py-2 rounded-lg text-sm ${
+          className={`px-4 py-2 rounded-lg text-sm transition-all ${
             canAdd
-              ? 'bg-orange-500 hover:bg-orange-600 text-white cursor-pointer'
-              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              ? 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white cursor-pointer shadow-lg shadow-orange-500/50'
+              : 'bg-gray-600 text-gray-400 cursor-not-allowed'
           }`}
         >
           {showForm ? 'İptal' : 'Yeni Ekle'}
-        </button>
+        </motion.button>
       </div>
 
       {showForm && (
-        <form onSubmit={isEditing ? (e) => { e.preventDefault(); handleUpdate(contactInfos[0]?.id); } : handleAdd} className="mb-6 p-4 bg-gray-50 rounded-lg space-y-4">
+        <motion.form 
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          exit={{ opacity: 0, height: 0 }}
+          onSubmit={isEditing ? (e) => { e.preventDefault(); handleUpdate(contactInfos[0]?.id); } : handleAdd} 
+          className="mb-6 p-4 bg-gray-700/50 rounded-lg space-y-4 border border-gray-600"
+        >
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Adres</label>
+            <label className="block text-sm font-medium text-gray-300 mb-2">Adres</label>
             <input
               type="text"
               value={formData.address}
               onChange={(e) => setFormData({ ...formData, address: e.target.value })}
               disabled={!isApproved}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 disabled:bg-gray-100 disabled:cursor-not-allowed text-gray-900"
+              className="w-full px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 disabled:bg-gray-600 disabled:cursor-not-allowed text-white placeholder-gray-400"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Telefon</label>
+            <label className="block text-sm font-medium text-gray-300 mb-2">Telefon</label>
             <PhoneInput
               value={formData.phoneNumber}
               onChange={(value) => setFormData({ ...formData, phoneNumber: value })}
@@ -161,81 +175,95 @@ export default function ContactInfoSection({ contactInfos, userId, onUpdate, isA
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">E-posta</label>
+            <label className="block text-sm font-medium text-gray-300 mb-2">E-posta</label>
             <input
               type="email"
               value={formData.mail}
               onChange={(e) => setFormData({ ...formData, mail: e.target.value })}
               disabled={!isApproved}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 disabled:bg-gray-100 disabled:cursor-not-allowed text-gray-900"
+              className="w-full px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 disabled:bg-gray-600 disabled:cursor-not-allowed text-white placeholder-gray-400"
             />
           </div>
           <div className="flex justify-end space-x-3">
-            <button
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               type="button"
               onClick={() => {
                 setShowForm(false);
                 setIsEditing(false);
                 setFormData({ address: '', phoneNumber: '', mail: '' });
               }}
-              className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 cursor-pointer"
+              className="px-4 py-2 border border-gray-600 rounded-lg text-gray-300 bg-gray-700 hover:bg-gray-600 cursor-pointer transition-colors"
             >
               İptal
-            </button>
-            <button
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               type="submit"
               disabled={!isApproved}
-              className={`px-4 py-2 rounded-lg ${
+              className={`px-4 py-2 rounded-lg transition-all ${
                 isApproved
-                  ? 'bg-orange-500 hover:bg-orange-600 text-white cursor-pointer'
-                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  ? 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white cursor-pointer shadow-lg shadow-orange-500/50'
+                  : 'bg-gray-600 text-gray-400 cursor-not-allowed'
               }`}
             >
               {isEditing ? 'Güncelle' : 'Kaydet'}
-            </button>
+            </motion.button>
           </div>
-        </form>
+        </motion.form>
       )}
 
       <div className="space-y-4">
         {contactInfos && contactInfos.length > 0 ? (
-          contactInfos.map((contact) => (
-            <div key={contact.id} className="border border-gray-200 rounded-lg p-4">
+          contactInfos.map((contact, index) => (
+            <motion.div 
+              key={contact.id}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: index * 0.1 }}
+              className="border border-gray-700 rounded-lg p-4 bg-gray-700/30 hover:bg-gray-700/50 transition-colors"
+            >
               <div className="flex justify-between items-start">
                 <div className="flex-1">
-                  <p className="text-sm text-gray-600"><span className="font-medium">Adres:</span> {contact.address || '-'}</p>
-                  <p className="text-sm text-gray-600"><span className="font-medium">Telefon:</span> {contact.phoneNumber || '-'}</p>
-                  <p className="text-sm text-gray-600"><span className="font-medium">E-posta:</span> {contact.mail || '-'}</p>
+                  <p className="text-sm text-gray-300"><span className="font-medium text-white">Adres:</span> {contact.address || '-'}</p>
+                  <p className="text-sm text-gray-300"><span className="font-medium text-white">Telefon:</span> {contact.phoneNumber || '-'}</p>
+                  <p className="text-sm text-gray-300"><span className="font-medium text-white">E-posta:</span> {contact.mail || '-'}</p>
                 </div>
                 <div className="flex space-x-2">
-                  <button
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                     onClick={() => handleEdit(contact)}
                     disabled={!canEdit}
-                    className={`px-3 py-1 rounded text-sm ${
+                    className={`px-3 py-1 rounded text-sm transition-colors ${
                       canEdit
-                        ? 'bg-blue-500 hover:bg-blue-600 text-white cursor-pointer'
-                        : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                        ? 'bg-blue-600 hover:bg-blue-700 text-white cursor-pointer'
+                        : 'bg-gray-600 text-gray-400 cursor-not-allowed'
                     }`}
                   >
                     Düzenle
-                  </button>
-                  <button
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                     onClick={handleDelete}
                     disabled={!canDelete}
-                    className={`px-3 py-1 rounded text-sm ${
+                    className={`px-3 py-1 rounded text-sm transition-colors ${
                       canDelete
-                        ? 'bg-red-500 hover:bg-red-600 text-white cursor-pointer'
-                        : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                        ? 'bg-red-600 hover:bg-red-700 text-white cursor-pointer'
+                        : 'bg-gray-600 text-gray-400 cursor-not-allowed'
                     }`}
                   >
                     Sil
-                  </button>
+                  </motion.button>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))
         ) : (
-          <p className="text-gray-500 text-sm">İletişim bilgisi bulunmamaktadır.</p>
+          <p className="text-gray-400 text-sm">İletişim bilgisi bulunmamaktadır.</p>
         )}
       </div>
       <ConfirmDialog
@@ -248,7 +276,7 @@ export default function ContactInfoSection({ contactInfos, userId, onUpdate, isA
         onCancel={() => setConfirmOpen(false)}
         onConfirm={handleConfirmDelete}
       />
-    </div>
+    </motion.div>
   );
 }
 
