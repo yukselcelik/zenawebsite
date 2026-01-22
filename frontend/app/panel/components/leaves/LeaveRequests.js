@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import ApiService from '../../../../lib/api';
 import ConfirmDialog from '../common/ConfirmDialog';
+import { getStatusBadgeClass, getStatusTextTR, isPendingStatus } from '../../utils/requestStatus';
 
 export default function LeaveRequests({ isManager, onLeaveRequestsChange, onCreateNew }) {
   const [leaveRequests, setLeaveRequests] = useState([]);
@@ -42,8 +43,7 @@ export default function LeaveRequests({ isManager, onLeaveRequestsChange, onCrea
       // Pending count'u hesapla ve parent'a bildir
       if (onLeaveRequestsChange) {
         const pendingCount = items.filter(r => {
-          const status = r.status;
-          return status === 'Pending' || status === 'pending' || status === 0 || status === '0';
+          return isPendingStatus(r.status);
         }).length;
         onLeaveRequestsChange(pendingCount);
       }
@@ -55,43 +55,8 @@ export default function LeaveRequests({ isManager, onLeaveRequestsChange, onCrea
     }
   };
 
-  const getStatusColor = (status) => {
-    const statusStr = typeof status === 'string' ? status : String(status);
-    switch (statusStr) {
-      case 'Approved':
-      case '1':
-        return 'bg-green-100 text-green-800';
-      case 'Rejected':
-      case '2':
-        return 'bg-red-100 text-red-800';
-      case 'Cancelled':
-      case '3':
-        return 'bg-gray-100 text-gray-800';
-      case 'Pending':
-      case '0':
-      default:
-        return 'bg-yellow-100 text-yellow-800';
-    }
-  };
-
-  const getStatusText = (status) => {
-    const statusStr = typeof status === 'string' ? status : String(status);
-    switch (statusStr) {
-      case 'Approved':
-      case '1':
-        return 'Onaylandı';
-      case 'Rejected':
-      case '2':
-        return 'Reddedildi';
-      case 'Cancelled':
-      case '3':
-        return 'İptal Edildi';
-      case 'Pending':
-      case '0':
-      default:
-        return 'Beklemede';
-    }
-  };
+  const getStatusColor = (status) => getStatusBadgeClass(status);
+  const getStatusText = (status) => getStatusTextTR(status);
 
 
   const handleCancelLeaveRequest = (id) => {
@@ -207,7 +172,7 @@ export default function LeaveRequests({ isManager, onLeaveRequestsChange, onCrea
                         <option value="Cancelled">İptal Edildi</option>
                       </select>
                     )}
-                    {!isManager && (request.status === 'Pending' || request.status === 0 || request.status === '0') && (
+                    {!isManager && isPendingStatus(request.status) && (
                       <button
                         onClick={() => handleCancelLeaveRequest(request.id)}
                         className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded text-sm font-medium transition-colors cursor-pointer"

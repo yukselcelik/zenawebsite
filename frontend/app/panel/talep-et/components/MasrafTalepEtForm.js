@@ -155,9 +155,6 @@ export default function MasrafTalepEtForm({ onSuccess, onCancel }) {
     <div>
       <div className="mb-6">
         <h2 className="text-xl font-bold text-gray-800">Masraf Talep Et</h2>
-        <p className="text-gray-600 mt-2">
-          Masraf talebinizi oluşturmak için aşağıdaki formu doldurunuz.
-        </p>
       </div>
 
       {error && (

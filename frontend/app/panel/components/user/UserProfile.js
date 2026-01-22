@@ -7,6 +7,7 @@ import ContactInfoSection from './ContactInfoSection';
 import EmergencyContactSection from './EmergencyContactSection';
 import EducationInfoSection from './EducationInfoSection';
 import PhoneInput from '../common/PhoneInput';
+import RightsAndReceivablesSection from '../personnel/RightsAndReceivablesSection';
 
 function toDateInputValue(value) {
   if (!value) return '';
@@ -125,6 +126,12 @@ export default function UserProfile({ userDetail, onUpdate, onUserDetailUpdate }
       </div>
     );
   }
+
+  const refreshUserDetail = async () => {
+    if (onUserDetailUpdate) {
+      await onUserDetailUpdate(userDetail.id);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -360,6 +367,24 @@ export default function UserProfile({ userDetail, onUpdate, onUserDetailUpdate }
         userId={userDetail.id}
         onUpdate={onUserDetailUpdate}
       />
+
+      {/* Hak ve Alacaklar (Personel - salt okunur) */}
+      {userDetail?.role !== 'Manager' && (
+        <div className="bg-white rounded-lg shadow p-6">
+          <div className="mb-4">
+            <h2 className="text-lg font-semibold text-gray-800">Hak ve Alacaklar</h2>
+            <p className="text-sm text-gray-500 mt-1">
+              Bu bilgiler yönetici tarafından güncellenir. Personel sadece görüntüleyebilir.
+            </p>
+          </div>
+          <RightsAndReceivablesSection
+            rightsAndReceivables={userDetail.rightsAndReceivables || null}
+            userId={userDetail.id}
+            userRole={userDetail.role || 'Personel'}
+            onUpdate={refreshUserDetail}
+          />
+        </div>
+      )}
     </div>
   );
 }

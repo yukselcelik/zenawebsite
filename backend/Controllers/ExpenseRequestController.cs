@@ -176,6 +176,16 @@ public class ExpenseRequestController(ExpenseRequestService expenseRequestServic
         return Ok(result);
     }
 
+    [HttpPut("{id:int}/status")]
+    [Authorize(Roles = "Manager")]
+    public async Task<ActionResult<ApiResult<ExpenseRequestDto>>> UpdateExpenseStatus(
+        int id, [FromBody] UpdateExpenseStatusDto dto)
+    {
+        var approvedByUserId = GetUserId();
+        var result = await expenseRequestService.UpdateExpenseStatusAsync(id, approvedByUserId, dto);
+        return Ok(result);
+    }
+
     [HttpGet("{id:int}/document")]
     public async Task<IActionResult> GetDocument(int id)
     {
