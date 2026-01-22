@@ -7,6 +7,8 @@ import EmployeeBenefitsTabs from './EmployeeBenefitsTabs';
 export default function EmployeeBenefitsSection({ userId, userRole, onUpdate }) {
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  // Accordion state'i - RightsAndReceivablesSection ile aynı UX
+  const [showBenefits, setShowBenefits] = useState(false);
   const tabsRef = useRef(null);
 
   const isManager = userRole === 'Manager' || userRole === 'Yönetici' || userRole?.toLowerCase() === 'manager';
@@ -83,61 +85,91 @@ export default function EmployeeBenefitsSection({ userId, userRole, onUpdate }) 
 
   return (
     <div className="mb-6">
+      {/* Ana Başlık - Sola Hizalı */}
       <div className="mb-6">
         <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-semibold text-gray-800">Yan Haklar</h3>
+          <h3 className="text-lg font-semibold text-white">Yan Haklar</h3>
         </div>
       </div>
 
-      <EmployeeBenefitsTabs
-        ref={tabsRef}
-        userId={userId}
-        isManager={isManager}
-        isEditing={isEditing}
-        onRequestEdit={() => setIsEditing(true)}
-      />
+      {/* Yan Haklar - Accordion */}
+      <div className="mb-6">
+        <button
+          type="button"
+          onClick={() => setShowBenefits(!showBenefits)}
+          className="flex items-center justify-between w-full mb-4 text-left hover:bg-gray-700/40 p-3 rounded-lg transition-colors border border-gray-700 bg-gray-900/30"
+        >
+          <h4 className="text-md font-semibold text-gray-200">Yan Haklar</h4>
+          <svg
+            className="w-5 h-5 text-gray-300 transition-transform duration-200"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            {showBenefits ? (
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14" />
+            ) : (
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            )}
+          </svg>
+        </button>
 
-      <div className="mt-6 pt-4 border-t border-gray-200 flex flex-wrap gap-2 justify-end">
-        {isManager ? (
-          isEditing ? (
-            <>
-              <button
-                type="button"
-                onClick={handleDeleteActive}
-                className="px-4 py-2 rounded-lg text-sm border border-red-200 text-red-700 hover:bg-red-50"
-              >
-                Sil
-              </button>
+        {showBenefits && (
+          <div className="p-4 bg-gray-900/30 border border-gray-700 rounded-lg">
+            <EmployeeBenefitsTabs
+              ref={tabsRef}
+              userId={userId}
+              isManager={isManager}
+              isEditing={isEditing}
+              onRequestEdit={() => setIsEditing(true)}
+            />
 
-              <button
-                type="button"
-                onClick={handleCancel}
-                className="px-4 py-2 rounded-lg text-sm border border-gray-300 text-gray-700 hover:bg-gray-50"
-              >
-                İptal
-              </button>
+            {isManager && (
+              <div className="mt-6 pt-4 border-t border-gray-700 flex flex-wrap gap-2 justify-end">
+                {isEditing ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={handleDeleteActive}
+                      className="px-4 py-2 rounded-lg text-sm border border-red-700 text-red-200 hover:bg-red-900/30 transition-colors cursor-pointer"
+                    >
+                      Sil
+                    </button>
 
-              <button
-                type="button"
-                onClick={handleSave}
-                disabled={isSaving}
-                className={`px-4 py-2 rounded-lg text-sm ${
-                  isSaving ? 'bg-gray-400 text-white cursor-not-allowed' : 'bg-orange-500 hover:bg-orange-600 text-white'
-                }`}
-              >
-                {isSaving ? 'Kaydediliyor...' : 'Kaydet'}
-              </button>
-            </>
-          ) : (
-            <button
-              type="button"
-              onClick={() => setIsEditing(true)}
-              className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm"
-            >
-              Düzenle
-            </button>
-          )
-        ) : null}
+                    <button
+                      type="button"
+                      onClick={handleCancel}
+                      className="px-4 py-2 rounded-lg text-sm border border-gray-600 bg-gray-700 text-gray-200 hover:bg-gray-600 transition-colors cursor-pointer"
+                    >
+                      İptal
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={handleSave}
+                      disabled={isSaving}
+                      className={`px-4 py-2 rounded-lg text-sm ${
+                        isSaving
+                          ? 'bg-gray-600 text-gray-200 cursor-not-allowed'
+                          : 'bg-orange-500 hover:bg-orange-600 text-white cursor-pointer transition-colors'
+                      }`}
+                    >
+                      {isSaving ? 'Kaydediliyor...' : 'Kaydet'}
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setIsEditing(true)}
+                    className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm transition-colors cursor-pointer"
+                  >
+                    Düzenle
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

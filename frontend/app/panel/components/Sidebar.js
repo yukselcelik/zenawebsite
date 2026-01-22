@@ -128,7 +128,7 @@ export default function Sidebar({ isManager, pendingCount, pendingLeaveCount }) 
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.1 }}
-        className="p-6 border-b border-gray-700"
+        className="p-6"
       >
         <div className="flex items-center space-x-2">
           <motion.div 

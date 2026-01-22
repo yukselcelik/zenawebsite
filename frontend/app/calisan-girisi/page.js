@@ -101,17 +101,17 @@ export default function CalisanGirisi() {
   // Giriş kontrolü yapılırken loading göster
   if (isCheckingAuth) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Kontrol ediliyor...</p>
+          <p className="text-gray-300">Kontrol ediliyor...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         
         {/* Logo ve başlık */}
@@ -124,25 +124,25 @@ export default function CalisanGirisi() {
               </svg>
             </div>
             <div>
-              <span className="text-2xl font-bold text-gray-800">ZENA</span>
+              <span className="text-2xl font-bold text-white">ZENA</span>
               <span className="text-sm text-orange-500 block -mt-1">enerji</span>
             </div>
           </div>
-          <h2 className="text-3xl font-bold text-gray-900">
+          <h2 className="text-3xl font-bold text-white">
             Çalışan Girişi
           </h2>
-          <p className="mt-2 text-sm text-gray-600">
+          <p className="mt-2 text-sm text-gray-400">
             Çalışan paneline erişmek için giriş yapın
           </p>
         </div>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+        <div className="bg-gray-800 border border-gray-700 py-8 px-4 shadow-2xl sm:rounded-lg sm:px-10">
           
           {/* Hata mesajı */}
           {error && (
-            <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+            <div className="mb-4 bg-red-900/20 border border-red-800 text-red-200 px-4 py-3 rounded-lg">
               {error}
             </div>
           )}
@@ -152,7 +152,7 @@ export default function CalisanGirisi() {
             
             {/* E-posta alanı */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-300">
                 E-posta
               </label>
               <div className="mt-1">
@@ -164,7 +164,7 @@ export default function CalisanGirisi() {
                   required
                   // value="admin@zena.com"
                   onChange={handleInputChange}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
+                  className="appearance-none block w-full px-3 py-2 border border-gray-600 bg-gray-700 rounded-md placeholder-gray-400 text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
                   placeholder="E-posta adresinizi girin"
                 />
               </div>
@@ -172,7 +172,7 @@ export default function CalisanGirisi() {
 
             {/* Şifre alanı */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-300">
                 Şifre
               </label>
               <div className="mt-1">
@@ -183,7 +183,7 @@ export default function CalisanGirisi() {
                   autoComplete="current-password"
                   required
                   onChange={handleInputChange}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
+                  className="appearance-none block w-full px-3 py-2 border border-gray-600 bg-gray-700 rounded-md placeholder-gray-400 text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
                   placeholder="Şifrenizi girin"
                 />
               </div>
@@ -197,7 +197,7 @@ export default function CalisanGirisi() {
                 className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
                   isLoading 
                     ? 'bg-gray-400 cursor-not-allowed' 
-                    : 'bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500'
+                    : 'bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500'
                 }`}
               >
                 {isLoading ? (
@@ -217,11 +217,11 @@ export default function CalisanGirisi() {
 
           {/* Kayıt ol linki */}
           <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-400">
               Hesabınız yok mu?{' '}
               <Link 
                 href="/kayit-ol" 
-                className="font-medium text-orange-600 hover:text-orange-500 transition-colors"
+                className="font-medium text-orange-400 hover:text-orange-300 transition-colors"
               >
                 Kayıt olun
               </Link>
@@ -232,7 +232,7 @@ export default function CalisanGirisi() {
           <div className="mt-4 text-center">
             <a 
               href="/" 
-              className="text-sm text-orange-600 hover:text-orange-500 transition-colors"
+              className="text-sm text-orange-400 hover:text-orange-300 transition-colors"
             >
               ← Ana sayfaya dön
             </a>

@@ -120,17 +120,17 @@ export default function KayitOl() {
   // Giriş kontrolü yapılırken loading göster
   if (isCheckingAuth) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Kontrol ediliyor...</p>
+          <p className="text-gray-300">Kontrol ediliyor...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         
         {/* Logo ve başlık */}
@@ -143,25 +143,25 @@ export default function KayitOl() {
               </svg>
             </div>
             <div>
-              <span className="text-2xl font-bold text-gray-800">ZENA</span>
+              <span className="text-2xl font-bold text-white">ZENA</span>
               <span className="text-sm text-orange-500 block -mt-1">enerji</span>
             </div>
           </div>
-          <h2 className="text-3xl font-bold text-gray-900">
+          <h2 className="text-3xl font-bold text-white">
             Kayıt Ol
           </h2>
-          <p className="mt-2 text-sm text-gray-600">
+          <p className="mt-2 text-sm text-gray-400">
             Yeni hesap oluşturun
           </p>
         </div>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+        <div className="bg-gray-800 border border-gray-700 py-8 px-4 shadow-2xl sm:rounded-lg sm:px-10">
           
           {/* Başarı mesajı */}
           {successMessage && (
-            <div className="mb-4 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">
+            <div className="mb-4 bg-green-900/20 border border-green-800 text-green-200 px-4 py-3 rounded-lg">
               <div className="flex items-center">
                 <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
@@ -173,7 +173,7 @@ export default function KayitOl() {
 
           {/* Hata mesajı */}
           {error && (
-            <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+            <div className="mb-4 bg-red-900/20 border border-red-800 text-red-200 px-4 py-3 rounded-lg">
               {error}
             </div>
           )}
@@ -183,7 +183,7 @@ export default function KayitOl() {
             
             {/* E-posta alanı */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-300">
                 E-posta
               </label>
               <div className="mt-1">
@@ -195,18 +195,18 @@ export default function KayitOl() {
                   required
                   value={registerData.email}
                   onChange={handleInputChange}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
+                  className="appearance-none block w-full px-3 py-2 border border-gray-600 bg-gray-700 rounded-md placeholder-gray-400 text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
                   placeholder="ornek@zenaenerji.com"
                 />
               </div>
-              <p className="mt-1 text-xs text-gray-500">
+              <p className="mt-1 text-xs text-gray-400">
                 Sadece @zenaenerji.com uzantılı e-posta adresleri kabul edilir.
               </p>
             </div>
 
             {/* Şifre alanı */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-300">
                 Şifre
               </label>
               <div className="mt-1">
@@ -218,7 +218,7 @@ export default function KayitOl() {
                   required
                   value={registerData.password}
                   onChange={handleInputChange}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
+                  className="appearance-none block w-full px-3 py-2 border border-gray-600 bg-gray-700 rounded-md placeholder-gray-400 text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
                   placeholder="En az 6 karakter"
                 />
               </div>
@@ -226,7 +226,7 @@ export default function KayitOl() {
 
             {/* Şifre tekrar alanı */}
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300">
                 Şifre Tekrar
               </label>
               <div className="mt-1">
@@ -238,7 +238,7 @@ export default function KayitOl() {
                   required
                   value={registerData.confirmPassword}
                   onChange={handleInputChange}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
+                  className="appearance-none block w-full px-3 py-2 border border-gray-600 bg-gray-700 rounded-md placeholder-gray-400 text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
                   placeholder="Şifrenizi tekrar girin"
                 />
               </div>
@@ -252,7 +252,7 @@ export default function KayitOl() {
                 className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
                   isLoading 
                     ? 'bg-gray-400 cursor-not-allowed' 
-                    : 'bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500'
+                    : 'bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500'
                 }`}
               >
                 {isLoading ? (
@@ -272,11 +272,11 @@ export default function KayitOl() {
 
           {/* Giriş yap linki */}
           <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-400">
               Zaten hesabınız var mı?{' '}
               <Link 
                 href="/calisan-girisi" 
-                className="font-medium text-orange-600 hover:text-orange-500 transition-colors"
+                className="font-medium text-orange-400 hover:text-orange-300 transition-colors"
               >
                 Giriş yapın
               </Link>
@@ -287,7 +287,7 @@ export default function KayitOl() {
           <div className="mt-4 text-center">
             <a 
               href="/" 
-              className="text-sm text-orange-600 hover:text-orange-500 transition-colors"
+              className="text-sm text-orange-400 hover:text-orange-300 transition-colors"
             >
               ← Ana sayfaya dön
             </a>
