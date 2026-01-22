@@ -213,13 +213,13 @@ export default function OffBoardingSection({ offBoarding, userId, onUpdate }) {
     <div className="mb-6">
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center gap-2">
-          <h3 className="text-lg font-semibold text-gray-800">İşten Ayrılma Bilgileri:</h3>
+          <h3 className="text-lg font-semibold text-white">İşten Ayrılma Bilgileri:</h3>
           {isTerminated ? (
-            <span className="text-lg font-semibold text-gray-800">
+            <span className="text-lg font-semibold text-white">
               {offBoarding?.offBoardingReasonName ? `(${offBoarding.offBoardingReasonName})` : 'İşten Ayrıldı'}
             </span>
           ) : (
-            <span className="text-base font-normal text-gray-500">
+            <span className="text-base font-normal text-gray-400">
               Güncel Olarak Çalışmaya Devam Ediyor
             </span>
           )}
@@ -235,7 +235,7 @@ export default function OffBoardingSection({ offBoarding, userId, onUpdate }) {
                   offBoardingReason: offBoarding?.offBoardingReason || ''
                 });
               }}
-              className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 cursor-pointer text-sm"
+              className="px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg text-gray-200 hover:bg-gray-600 cursor-pointer text-sm transition-colors"
             >
               İptal
             </button>
@@ -249,7 +249,7 @@ export default function OffBoardingSection({ offBoarding, userId, onUpdate }) {
                   offBoardingReason: offBoarding?.offBoardingReason || ''
                 });
               }}
-              className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 cursor-pointer text-sm"
+              className="px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg text-gray-200 hover:bg-gray-600 cursor-pointer text-sm transition-colors"
             >
               İptal
             </button>
@@ -293,9 +293,9 @@ export default function OffBoardingSection({ offBoarding, userId, onUpdate }) {
       {(isTerminated || (isEditing && showOffBoardingForm)) && (
         <>
           {/* İşten Ayrılma Tarihi */}
-          <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+          <div className="mb-6 p-4 bg-gray-900/30 border border-gray-700 rounded-lg">
             <div className="flex items-center gap-4">
-              <label className="block text-sm font-medium text-gray-700 min-w-[180px]">
+              <label className="block text-sm font-medium text-gray-300 min-w-[180px]">
                 İşten Ayrılma Tarihi:
               </label>
               {isEditing ? (
@@ -304,35 +304,35 @@ export default function OffBoardingSection({ offBoarding, userId, onUpdate }) {
                     type="date"
                     value={formData.offBoardingDate}
                     onChange={(e) => setFormData({ ...formData, offBoardingDate: e.target.value })}
-                    className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                    className="px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-white"
                   />
                   {formData.offBoardingDate && (
                     <button
                       type="button"
                       onClick={() => setFormData({ ...formData, offBoardingDate: '' })}
-                      className="text-xs text-red-600 hover:text-red-800 underline self-start"
+                      className="text-xs text-red-300 hover:text-red-200 underline self-start"
                     >
                       Tarihi Temizle (Kullanıcıyı Tekrar Aktif Et)
                     </button>
                   )}
                   {formData.offBoardingDate && (
-                    <p className="text-xs text-amber-600">
+                    <p className="text-xs text-amber-300">
                       ⚠️ Tarih girildiğinde kullanıcı sisteme giriş yapamayacak. Tarihi temizleyerek tekrar aktif edebilirsiniz.
                     </p>
                   )}
                 </div>
               ) : (
-                <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg min-w-[200px]">
+                <div className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg min-w-[200px]">
                   {offBoarding?.offBoardingDate 
                     ? (() => {
                         try {
                           const date = new Date(offBoarding.offBoardingDate);
-                          return !isNaN(date.getTime()) ? <span className="text-gray-900">{date.toLocaleDateString('tr-TR')}</span> : <span className="text-gray-500">Devam Ediyor</span>;
+                          return !isNaN(date.getTime()) ? <span className="text-gray-100">{date.toLocaleDateString('tr-TR')}</span> : <span className="text-gray-400">Devam Ediyor</span>;
                         } catch {
-                          return <span className="text-gray-500">Devam Ediyor</span>;
+                          return <span className="text-gray-400">Devam Ediyor</span>;
                         }
                       })()
-                    : <span className="text-gray-500">Devam Ediyor</span>
+                    : <span className="text-gray-400">Devam Ediyor</span>
                   }
                 </div>
               )}
@@ -341,25 +341,25 @@ export default function OffBoardingSection({ offBoarding, userId, onUpdate }) {
 
           {/* İşten Ayrılma Nedeni - Tarih girildiğinde (kaydetmeden önce) veya kaydedilmiş tarih varsa göster */}
           {((isEditing && showOffBoardingForm && formData.offBoardingDate) || isActive) && (
-            <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+            <div className="mb-6 p-4 bg-gray-900/30 border border-gray-700 rounded-lg">
               <div className="flex items-center gap-4">
-                <label className="block text-sm font-medium text-gray-700 min-w-[180px]">
+                <label className="block text-sm font-medium text-gray-300 min-w-[180px]">
                   İşten Ayrılma Nedeni:
                 </label>
                 {isEditing ? (
                   <select
                     value={formData.offBoardingReason}
                     onChange={(e) => setFormData({ ...formData, offBoardingReason: e.target.value })}
-                    className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 min-w-[300px]"
+                    className="px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-white min-w-[300px]"
                   >
-                    <option value="">Seçiniz</option>
+                    <option value="" className="bg-gray-700">Seçiniz</option>
                     {OFFBOARDING_REASONS.map(reason => (
-                      <option key={reason.value} value={reason.value}>{reason.label}</option>
+                      <option key={reason.value} value={reason.value} className="bg-gray-700">{reason.label}</option>
                     ))}
                   </select>
                 ) : (
-                  <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg min-w-[300px]">
-                    <span className="text-gray-900">{offBoarding?.offBoardingReasonName || '-'}</span>
+                  <div className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg min-w-[300px]">
+                    <span className="text-gray-100">{offBoarding?.offBoardingReasonName || '-'}</span>
                   </div>
                 )}
               </div>
@@ -371,11 +371,11 @@ export default function OffBoardingSection({ offBoarding, userId, onUpdate }) {
             <button
               type="button"
               onClick={() => setDocumentsExpanded(!documentsExpanded)}
-              className="flex items-center justify-between w-full mb-4 text-left hover:bg-gray-50 p-2 rounded-lg transition-colors"
+              className="flex items-center justify-between w-full mb-4 text-left hover:bg-gray-700/40 p-2 rounded-lg transition-colors border border-gray-700 bg-gray-900/30"
             >
-              <h4 className="text-md font-semibold text-gray-800">İşten Ayrılma Belgeleri</h4>
+              <h4 className="text-md font-semibold text-gray-200">İşten Ayrılma Belgeleri</h4>
               <svg
-                className={`w-5 h-5 text-gray-600 transition-transform duration-200 ${documentsExpanded ? 'transform rotate-180' : ''}`}
+                className={`w-5 h-5 text-gray-300 transition-transform duration-200 ${documentsExpanded ? 'transform rotate-180' : ''}`}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -390,9 +390,9 @@ export default function OffBoardingSection({ offBoarding, userId, onUpdate }) {
                 const hasDocument = !!document;
                 
                 return (
-                  <div key={docType.value} className="border border-gray-200 rounded-lg p-4">
+                  <div key={docType.value} className="border border-gray-700 bg-gray-900/30 rounded-lg p-4">
                     <div className="flex items-center justify-between">
-                      <label className="block text-sm font-medium text-gray-700 min-w-[250px]">
+                      <label className="block text-sm font-medium text-gray-300 min-w-[250px]">
                         {docType.label}:
                       </label>
                       <div className="flex gap-2">
@@ -406,7 +406,7 @@ export default function OffBoardingSection({ offBoarding, userId, onUpdate }) {
                           disabled={uploadingDocuments[docType.value]}
                           className={`px-3 py-1 rounded text-sm ${
                             uploadingDocuments[docType.value]
-                              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                              ? 'bg-gray-700 text-gray-300 cursor-not-allowed'
                               : 'bg-blue-500 hover:bg-blue-600 text-white cursor-pointer'
                           }`}
                         >
@@ -441,7 +441,7 @@ export default function OffBoardingSection({ offBoarding, userId, onUpdate }) {
                       </div>
                     </div>
                     {hasDocument && (
-                      <p className="text-xs text-gray-500 mt-2">
+                      <p className="text-xs text-gray-400 mt-2">
                         {document.originalFileName || 'Belge yüklü'}
                       </p>
                     )}

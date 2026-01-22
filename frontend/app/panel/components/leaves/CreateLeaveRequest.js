@@ -59,12 +59,12 @@ export default function CreateLeaveRequest({ onSuccess, onCancel }) {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-gray-800 border border-gray-700 rounded-lg shadow-lg p-6">
         <div className="mb-6">
           <div className="flex items-center space-x-4 mb-4">
             <button
               onClick={onCancel}
-              className="text-gray-600 hover:text-gray-800 transition-colors cursor-pointer"
+              className="text-gray-300 hover:text-white transition-colors cursor-pointer"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -74,7 +74,7 @@ export default function CreateLeaveRequest({ onSuccess, onCancel }) {
         </div>
 
         {error && (
-          <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+          <div className="mb-4 bg-red-900/20 border border-red-800 text-red-200 px-4 py-3 rounded">
             {error}
           </div>
         )}
@@ -82,7 +82,7 @@ export default function CreateLeaveRequest({ onSuccess, onCancel }) {
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Başlangıç Tarihi */}
           <div>
-            <label htmlFor="startDate" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="startDate" className="block text-sm font-medium text-gray-300 mb-2">
               Başlangıç Tarihi <span className="text-red-500">*</span>
             </label>
             <input
@@ -92,13 +92,13 @@ export default function CreateLeaveRequest({ onSuccess, onCancel }) {
             min={todayStr}
               value={formData.startDate}
               onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 bg-white"
+              className="w-full px-4 py-2.5 border border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-white bg-gray-700"
             />
           </div>
 
           {/* Bitiş Tarihi */}
           <div>
-            <label htmlFor="endDate" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="endDate" className="block text-sm font-medium text-gray-300 mb-2">
               Bitiş Tarihi <span className="text-red-500">*</span>
             </label>
             <input
@@ -108,13 +108,13 @@ export default function CreateLeaveRequest({ onSuccess, onCancel }) {
               value={formData.endDate}
               onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
               min={formData.startDate}
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 bg-white"
+              className="w-full px-4 py-2.5 border border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-white bg-gray-700"
             />
           </div>
 
           {/* Sebep */}
           <div>
-            <label htmlFor="reason" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="reason" className="block text-sm font-medium text-gray-300 mb-2">
               Sebep <span className="text-red-500">*</span>
             </label>
             <textarea
@@ -123,17 +123,17 @@ export default function CreateLeaveRequest({ onSuccess, onCancel }) {
               rows={6}
               value={formData.reason}
               onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 bg-white resize-none"
+              className="w-full px-4 py-2.5 border border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-white bg-gray-700 resize-none placeholder:text-gray-400"
               placeholder="İzin talebinizin sebebini detaylı olarak açıklayın..."
             />
           </div>
 
           {/* Butonlar */}
-          <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
+          <div className="flex justify-end gap-3 pt-4 border-t border-gray-700">
             <button
               type="button"
               onClick={onCancel}
-              className="px-5 py-2.5 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors cursor-pointer"
+              className="px-5 py-2.5 border border-gray-600 rounded-lg text-gray-200 bg-gray-700 font-medium hover:bg-gray-600 transition-colors cursor-pointer"
             >
               İptal
             </button>

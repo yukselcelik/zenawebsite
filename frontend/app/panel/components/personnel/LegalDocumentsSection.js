@@ -126,7 +126,7 @@ export default function LegalDocumentsSection({ legalDocuments: initialLegalDocu
   return (
     <div className="mb-6">
       <div className="flex justify-between items-center mb-4">
-        <h4 className="text-md font-semibold text-gray-700">Yasal Belgeler</h4>
+        <h4 className="text-md font-semibold text-gray-200">Yasal Belgeler</h4>
         <button
           onClick={() => setShowDocumentForm(!showDocumentForm)}
           className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm cursor-pointer"
@@ -136,23 +136,23 @@ export default function LegalDocumentsSection({ legalDocuments: initialLegalDocu
       </div>
 
       {showDocumentForm && (
-        <form onSubmit={handleDocumentUpload} className="mb-6 p-4 bg-gray-50 rounded-lg space-y-4">
+        <form onSubmit={handleDocumentUpload} className="mb-6 p-4 bg-gray-900/30 border border-gray-700 rounded-lg space-y-4">
           {documentTypeOptions.length === 0 ? (
-            <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-              <p className="text-sm text-blue-800">
+            <div className="p-4 bg-blue-900/20 border border-blue-800 rounded-lg">
+              <p className="text-sm text-blue-200">
                 Tüm belge tipleri zaten eklenmiş. Yeni belge eklemek için mevcut belgelerden birini silmeniz gerekmektedir.
               </p>
             </div>
           ) : (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Belge Tipi</label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Belge Tipi</label>
               <select
                 value={documentFormData.documentType}
                 onChange={(e) => setDocumentFormData({ ...documentFormData, documentType: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 cursor-pointer"
+                className="w-full px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-white cursor-pointer"
               >
                 {documentTypeOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
+                  <option key={option.value} value={option.value} className="bg-gray-700">
                     {option.label}
                   </option>
                 ))}
@@ -160,12 +160,12 @@ export default function LegalDocumentsSection({ legalDocuments: initialLegalDocu
             </div>
           )}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Dosya</label>
+            <label className="block text-sm font-medium text-gray-300 mb-2">Dosya</label>
             <input
               type="file"
               accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
               onChange={(e) => setDocumentFormData({ ...documentFormData, file: e.target.files[0] })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 cursor-pointer"
+              className="w-full px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-white cursor-pointer"
             />
           </div>
           <div className="flex justify-end space-x-3">
@@ -178,7 +178,7 @@ export default function LegalDocumentsSection({ legalDocuments: initialLegalDocu
                   file: null
                 });
               }}
-              className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 cursor-pointer"
+              className="px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg text-gray-200 hover:bg-gray-600 cursor-pointer transition-colors"
             >
               İptal
             </button>
@@ -220,12 +220,12 @@ export default function LegalDocumentsSection({ legalDocuments: initialLegalDocu
               return (
                 <div
                   key={doc.id}
-                  className="relative bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                  className="relative bg-gray-800 border border-gray-700 rounded-lg p-4 hover:shadow-lg transition-shadow"
                 >
                   {/* Delete Button - Top Right */}
                   <button
                     onClick={() => handleDelete(doc.id)}
-                    className="absolute top-2 right-2 text-red-600 hover:text-red-800 cursor-pointer bg-white rounded-full p-1 shadow-sm hover:bg-red-50 transition-colors"
+                    className="absolute top-2 right-2 text-red-300 hover:text-red-200 cursor-pointer bg-gray-900/60 rounded-full p-1 shadow-sm hover:bg-red-900/20 transition-colors"
                     title="Sil"
                   >
                     <svg
@@ -250,13 +250,13 @@ export default function LegalDocumentsSection({ legalDocuments: initialLegalDocu
                     </div>
                     
                     {/* File Type */}
-                    <div className="text-sm font-medium text-gray-700 text-center mb-1 line-clamp-2">
+                    <div className="text-sm font-medium text-gray-200 text-center mb-1 line-clamp-2">
                       {doc.legalDocumentTypeName}
                     </div>
                     
                     {/* Original File Name */}
                     {doc.originalFileName && (
-                      <div className="text-xs text-gray-600 text-center mb-1 line-clamp-1" title={doc.originalFileName}>
+                      <div className="text-xs text-gray-300 text-center mb-1 line-clamp-1" title={doc.originalFileName}>
                         {doc.originalFileName.length > 20 
                           ? doc.originalFileName.substring(0, 20) + '...' 
                           : doc.originalFileName}
@@ -264,7 +264,7 @@ export default function LegalDocumentsSection({ legalDocuments: initialLegalDocu
                     )}
                     
                     {/* Upload Date */}
-                    <div className="text-xs text-gray-500 text-center mb-2">
+                    <div className="text-xs text-gray-400 text-center mb-2">
                       {new Date(doc.createdAt).toLocaleDateString('tr-TR', {
                         day: '2-digit',
                         month: '2-digit',
@@ -273,7 +273,7 @@ export default function LegalDocumentsSection({ legalDocuments: initialLegalDocu
                     </div>
                     
                     {/* File Extension */}
-                    <div className="text-xs text-gray-400 text-center mb-3">
+                    <div className="text-xs text-gray-500 text-center mb-3">
                       {getFileExtension(doc.originalFileName || doc.documentUrl)}
                     </div>
 
@@ -304,7 +304,7 @@ export default function LegalDocumentsSection({ legalDocuments: initialLegalDocu
             })}
           </div>
         ) : (
-          <div className="text-center py-8 text-gray-500 text-sm">
+          <div className="text-center py-8 text-gray-400 text-sm">
             Belge bulunmamaktadır.
           </div>
         )}

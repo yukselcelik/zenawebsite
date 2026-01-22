@@ -61,10 +61,10 @@ export default function PersonnelDetail({ userId, onBack }) {
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-gray-800 border border-gray-700 rounded-lg shadow-lg p-6">
         <div className="text-center py-8">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Yükleniyor...</p>
+          <p className="text-gray-300">Yükleniyor...</p>
         </div>
       </div>
     );
@@ -72,8 +72,8 @@ export default function PersonnelDetail({ userId, onBack }) {
 
   if (!userDetail) {
     return (
-      <div className="bg-white rounded-lg shadow p-6">
-        <p className="text-gray-500">Kullanıcı bulunamadı</p>
+      <div className="bg-gray-800 border border-gray-700 rounded-lg shadow-lg p-6">
+        <p className="text-gray-400">Kullanıcı bulunamadı</p>
       </div>
     );
   }
@@ -81,10 +81,10 @@ export default function PersonnelDetail({ userId, onBack }) {
   return (
     <div className="space-y-6">
       {/* Profil Fotoğrafı */}
-      <div className="rounded-xl border border-gray-200 bg-gradient-to-br from-white to-gray-50 p-6 shadow-sm">
+      <div className="rounded-xl border border-gray-700 bg-gradient-to-br from-gray-800 to-gray-900 p-6 shadow-lg">
         <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
           <div className="relative w-28 h-28">
-            <div className="w-28 h-28 rounded-full overflow-hidden bg-gray-100 ring-2 ring-white shadow">
+            <div className="w-28 h-28 rounded-full overflow-hidden bg-gray-700 ring-2 ring-gray-800 shadow">
               {userDetail?.photoPath ? (
                 <img
                   src={userDetail.photoPath}
@@ -95,20 +95,20 @@ export default function PersonnelDetail({ userId, onBack }) {
                   }}
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gray-100">
-                  <span className="text-gray-400 text-sm">Fotoğraf yok</span>
+                <div className="w-full h-full flex items-center justify-center bg-gray-700">
+                  <span className="text-gray-300 text-sm">Fotoğraf yok</span>
                 </div>
               )}
             </div>
           </div>
           <div className="flex-1 w-full">
             <div className="flex items-center gap-4 mb-4">
-              <h2 className="text-2xl font-semibold text-gray-900">
+              <h2 className="text-2xl font-semibold text-white">
                 {userDetail.name} {userDetail.surname}
               </h2>
               <button
                 onClick={onBack}
-                className="text-gray-600 hover:text-gray-800 transition-colors hover:bg-gray-100 rounded-full p-2"
+                className="text-gray-300 hover:text-white transition-colors hover:bg-gray-700 rounded-full p-2"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -120,77 +120,77 @@ export default function PersonnelDetail({ userId, onBack }) {
       </div>
 
       {/* Temel Bilgiler */}
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-gray-800 border border-gray-700 rounded-lg shadow-lg p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <p className="text-sm text-gray-700">
-              <span className="font-medium">Ad:</span> <span className="text-gray-900 ml-2">{userDetail.name}</span>
+            <p className="text-sm text-gray-300">
+              <span className="font-medium">Ad:</span> <span className="text-white ml-2">{userDetail.name}</span>
             </p>
           </div>
           <div>
-            <p className="text-sm text-gray-700">
-              <span className="font-medium">Soyad:</span> <span className="text-gray-900 ml-2">{userDetail.surname}</span>
+            <p className="text-sm text-gray-300">
+              <span className="font-medium">Soyad:</span> <span className="text-white ml-2">{userDetail.surname}</span>
             </p>
           </div>
           <div>
-            <p className="text-sm text-gray-700">
-              <span className="font-medium">E-posta:</span> <span className="text-gray-900 ml-2">{userDetail.email}</span>
+            <p className="text-sm text-gray-300">
+              <span className="font-medium">E-posta:</span> <span className="text-white ml-2">{userDetail.email}</span>
             </p>
           </div>
           <div>
-            <p className="text-sm text-gray-700">
-              <span className="font-medium">Telefon:</span> <span className="text-gray-900 ml-2">{userDetail.phone || '-'}</span>
+            <p className="text-sm text-gray-300">
+              <span className="font-medium">Telefon:</span> <span className="text-white ml-2">{userDetail.phone || '-'}</span>
             </p>
           </div>
           <div>
-            <p className="text-sm text-gray-700">
-              <span className="font-medium">TC No:</span> <span className="text-gray-900 ml-2">{userDetail.tcNo || '-'}</span>
+            <p className="text-sm text-gray-300">
+              <span className="font-medium">TC No:</span> <span className="text-white ml-2">{userDetail.tcNo || '-'}</span>
             </p>
           </div>
           <div>
-            <p className="text-sm text-gray-700">
+            <p className="text-sm text-gray-300">
               <span className="font-medium">Sosyal Güvenlik Numarası:</span>{' '}
               {socialSecurityEditing ? (
                 <input
                   type="text"
                   value={socialSecurityNumber}
                   onChange={(e) => setSocialSecurityNumber(e.target.value)}
-                  className="inline-block ml-2 px-3 py-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                  className="inline-block ml-2 px-3 py-1 border border-gray-600 bg-gray-700 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-white placeholder:text-gray-400"
                   placeholder="Sosyal güvenlik numarası"
                 />
               ) : (
-                <span className="text-gray-900 ml-2">{userDetail.socialSecurityNumber || '-'}</span>
+                <span className="text-white ml-2">{userDetail.socialSecurityNumber || '-'}</span>
               )}
             </p>
           </div>
           <div>
-            <p className="text-sm text-gray-700">
+            <p className="text-sm text-gray-300">
               <span className="font-medium">Vergi Numarası:</span>{' '}
               {socialSecurityEditing ? (
                 <input
                   type="text"
                   value={taxNumber}
                   onChange={(e) => setTaxNumber(e.target.value)}
-                  className="inline-block ml-2 px-3 py-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                  className="inline-block ml-2 px-3 py-1 border border-gray-600 bg-gray-700 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-white placeholder:text-gray-400"
                   placeholder="Vergi numarası"
                 />
               ) : (
-                <span className="text-gray-900 ml-2">{userDetail.taxNumber || '-'}</span>
+                <span className="text-white ml-2">{userDetail.taxNumber || '-'}</span>
               )}
             </p>
           </div>
           <div>
-            <p className="text-sm text-gray-700">
+            <p className="text-sm text-gray-300">
               <span className="font-medium">Rol:</span>{' '}
               {roleEditing ? (
                 <span className="inline-flex items-center gap-3 ml-2">
                   <select
                     value={selectedRole}
                     onChange={(e) => setSelectedRole(e.target.value)}
-                    className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                    className="px-3 py-2 border border-gray-600 bg-gray-700 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-white cursor-pointer"
                   >
-                    <option value="Personel">Personel</option>
-                    <option value="Manager">Yönetici</option>
+                    <option value="Personel" className="bg-gray-700">Personel</option>
+                    <option value="Manager" className="bg-gray-700">Yönetici</option>
                   </select>
                   <button
                     disabled={roleSaving}
@@ -217,14 +217,14 @@ export default function PersonnelDetail({ userId, onBack }) {
                       setSelectedRole(userDetail.role === 'Manager' ? 'Manager' : 'Personel');
                       setRoleEditing(false);
                     }}
-                    className="px-3 py-2 rounded-lg text-sm text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 cursor-pointer"
+                    className="px-3 py-2 rounded-lg text-sm text-gray-200 bg-gray-700 border border-gray-600 hover:bg-gray-600 cursor-pointer"
                   >
                     Vazgeç
                   </button>
                 </span>
               ) : (
                 <span className="inline-flex items-center gap-3 ml-2">
-                  <span className="text-gray-900">{userDetail.role === 'Manager' ? 'Yönetici' : 'Personel'}</span>
+                  <span className="text-white">{userDetail.role === 'Manager' ? 'Yönetici' : 'Personel'}</span>
                   <button
                     onClick={() => setRoleEditing(true)}
                     className="px-3 py-1.5 rounded-lg text-sm text-white bg-orange-500 hover:bg-orange-600 cursor-pointer"
@@ -236,10 +236,12 @@ export default function PersonnelDetail({ userId, onBack }) {
             </p>
           </div>
           <div>
-            <p className="text-sm text-gray-700">
+            <p className="text-sm text-gray-300">
               <span className="font-medium">Onay Durumu:</span>{' '}
               <span className={`inline-block ml-2 px-2 py-1 rounded text-sm font-medium ${
-                userDetail.isApproved ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                userDetail.isApproved
+                  ? 'bg-green-900/50 text-green-300 border border-green-700'
+                  : 'bg-yellow-900/50 text-yellow-300 border border-yellow-700'
               }`}>
                 {userDetail.isApproved ? 'Onaylandı' : 'Onay Bekliyor'}
               </span>
@@ -247,13 +249,13 @@ export default function PersonnelDetail({ userId, onBack }) {
           </div>
           {userDetail.approvedAt && (
             <div>
-              <p className="text-sm text-gray-700">
-                <span className="font-medium">Onay Tarihi:</span> <span className="text-gray-900 ml-2">{new Date(userDetail.approvedAt).toLocaleDateString('tr-TR')}</span>
+              <p className="text-sm text-gray-300">
+                <span className="font-medium">Onay Tarihi:</span> <span className="text-white ml-2">{new Date(userDetail.approvedAt).toLocaleDateString('tr-TR')}</span>
               </p>
             </div>
           )}
           <div>
-            <p className="text-sm text-gray-700">
+            <p className="text-sm text-gray-300">
               <span className="font-medium">Sosyal Güvenlik & Vergi:</span>{' '}
               {socialSecurityEditing ? (
                 <span className="inline-flex items-center gap-3 ml-2">
@@ -286,7 +288,7 @@ export default function PersonnelDetail({ userId, onBack }) {
                       setTaxNumber(userDetail.taxNumber || '');
                       setSocialSecurityEditing(false);
                     }}
-                    className="px-3 py-2 rounded-lg text-sm text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 cursor-pointer"
+                    className="px-3 py-2 rounded-lg text-sm text-gray-200 bg-gray-700 border border-gray-600 hover:bg-gray-600 cursor-pointer"
                   >
                     Vazgeç
                   </button>
@@ -334,7 +336,7 @@ export default function PersonnelDetail({ userId, onBack }) {
       />
 
       {/* İstihdam Bilgileri - Sadece yönetici için */}
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-gray-800 border border-gray-700 rounded-lg shadow-lg p-6">
         <EmploymentInfoSection 
           employmentInfos={userDetail.employmentInfos || []} 
           userId={userDetail.id}
@@ -343,7 +345,7 @@ export default function PersonnelDetail({ userId, onBack }) {
       </div>
 
       {/* Sosyal Güvenlik Bilgileri - Sadece yönetici için */}
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-gray-800 border border-gray-700 rounded-lg shadow-lg p-6">
         <SocialSecuritySection 
           socialSecurity={userDetail.socialSecurity} 
           userId={userDetail.id}
@@ -351,7 +353,7 @@ export default function PersonnelDetail({ userId, onBack }) {
         />
         
         {/* Yasal Belgeler - Sosyal Güvenlik Bilgileri altında */}
-        <div className="mt-6 pt-6 border-t border-gray-200">
+        <div className="mt-6 pt-6 border-t border-gray-700">
           <LegalDocumentsSection 
             legalDocuments={userDetail.legalDocuments} 
             userId={userDetail.id}
@@ -361,7 +363,7 @@ export default function PersonnelDetail({ userId, onBack }) {
       </div>
 
       {/* İşten Ayrılma Bilgileri - Sadece yönetici için */}
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-gray-800 border border-gray-700 rounded-lg shadow-lg p-6">
         <OffBoardingSection 
           offBoarding={userDetail.offBoarding || null} 
           userId={userDetail.id}
@@ -370,7 +372,7 @@ export default function PersonnelDetail({ userId, onBack }) {
       </div>
 
       {/* Hak ve Alacaklar - Hem personel hem yönetici görebilir, sadece yönetici düzenleyebilir */}
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-gray-800 border border-gray-700 rounded-lg shadow-lg p-6">
         <RightsAndReceivablesSection 
           rightsAndReceivables={userDetail.rightsAndReceivables || null} 
           userId={userDetail.id}
@@ -380,7 +382,7 @@ export default function PersonnelDetail({ userId, onBack }) {
       </div>
 
       {/* Yan Haklar - Ayrı form */}
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-gray-800 border border-gray-700 rounded-lg shadow-lg p-6">
         <EmployeeBenefitsSection
           userId={userDetail.id}
           userRole={currentUserRole}

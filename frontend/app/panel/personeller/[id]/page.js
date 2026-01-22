@@ -10,8 +10,8 @@ export default function PersonelDetayPage() {
 
   if (!userId) {
     return (
-      <div className="bg-white rounded-lg shadow p-6">
-        <p className="text-gray-500">Geçersiz personel ID</p>
+      <div className="bg-gray-800 border border-gray-700 rounded-lg shadow-lg p-6">
+        <p className="text-gray-400">Geçersiz personel ID</p>
       </div>
     );
   }

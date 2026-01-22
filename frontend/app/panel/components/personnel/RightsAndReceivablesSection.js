@@ -169,7 +169,7 @@ export default function RightsAndReceivablesSection({ rightsAndReceivables, user
       {/* Ana Başlık - Sola Hizalı */}
       <div className="mb-6">
         <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-semibold text-gray-800">Ana Bilgiler</h3>
+          <h3 className="text-lg font-semibold text-white">Ana Bilgiler</h3>
         </div>
       </div>
 
@@ -178,11 +178,11 @@ export default function RightsAndReceivablesSection({ rightsAndReceivables, user
         <button
           type="button"
           onClick={() => setShowMainInfo(!showMainInfo)}
-          className="flex items-center justify-between w-full mb-4 text-left hover:bg-gray-50 p-3 rounded-lg transition-colors border border-gray-200"
+          className="flex items-center justify-between w-full mb-4 text-left hover:bg-gray-700/40 p-3 rounded-lg transition-colors border border-gray-700 bg-gray-900/30"
         >
-          <h4 className="text-md font-semibold text-gray-700">Ana Bilgiler</h4>
+          <h4 className="text-md font-semibold text-gray-200">Ana Bilgiler</h4>
           <svg
-            className="w-5 h-5 text-gray-600 transition-transform duration-200"
+            className="w-5 h-5 text-gray-300 transition-transform duration-200"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -197,70 +197,70 @@ export default function RightsAndReceivablesSection({ rightsAndReceivables, user
         
         {showMainInfo && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="p-4 bg-gray-50 rounded-lg">
-            <label className="block text-sm font-medium text-gray-700 mb-2">Net Ücret Tutarı:</label>
+          <div className="p-4 bg-gray-900/30 border border-gray-700 rounded-lg">
+            <label className="block text-sm font-medium text-gray-300 mb-2">Net Ücret Tutarı:</label>
             {isEditing && isManager ? (
               <input
                 type="text"
                 value={formData.netSalaryAmount}
                 onChange={(e) => handleCurrencyInput(e.target.value, 'netSalaryAmount')}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                className="w-full px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-white"
                 placeholder=""
               />
             ) : (
-              <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg min-h-[42px]">
-                <span className="text-gray-900">{formatCurrency(rightsAndReceivables?.netSalaryAmount)}</span>
+              <div className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg min-h-[42px]">
+                <span className="text-gray-100">{formatCurrency(rightsAndReceivables?.netSalaryAmount)}</span>
               </div>
             )}
           </div>
 
-          <div className="p-4 bg-gray-50 rounded-lg">
-            <label className="block text-sm font-medium text-gray-700 mb-2">Brüt Ücret Tutarı:</label>
+          <div className="p-4 bg-gray-900/30 border border-gray-700 rounded-lg">
+            <label className="block text-sm font-medium text-gray-300 mb-2">Brüt Ücret Tutarı:</label>
             {isEditing && isManager ? (
               <input
                 type="text"
                 value={formData.grossSalaryAmount}
                 onChange={(e) => handleCurrencyInput(e.target.value, 'grossSalaryAmount')}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                className="w-full px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-white"
                 placeholder=""
               />
             ) : (
-              <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg min-h-[42px]">
-                <span className="text-gray-900">{formatCurrency(rightsAndReceivables?.grossSalaryAmount)}</span>
+              <div className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg min-h-[42px]">
+                <span className="text-gray-100">{formatCurrency(rightsAndReceivables?.grossSalaryAmount)}</span>
               </div>
             )}
           </div>
 
-          <div className="p-4 bg-gray-50 rounded-lg">
-            <label className="block text-sm font-medium text-gray-700 mb-2">Alınan Avanslar:</label>
+          <div className="p-4 bg-gray-900/30 border border-gray-700 rounded-lg">
+            <label className="block text-sm font-medium text-gray-300 mb-2">Alınan Avanslar:</label>
             {isEditing && isManager ? (
               <input
                 type="text"
                 value={formData.advancesReceived}
                 onChange={(e) => handleCurrencyInput(e.target.value, 'advancesReceived')}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                className="w-full px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-white"
                 placeholder=""
               />
             ) : (
-              <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg min-h-[42px]">
-                <span className="text-gray-900">{formatCurrency(rightsAndReceivables?.advancesReceived)}</span>
+              <div className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg min-h-[42px]">
+                <span className="text-gray-100">{formatCurrency(rightsAndReceivables?.advancesReceived)}</span>
               </div>
             )}
           </div>
 
-          <div className="p-4 bg-gray-50 rounded-lg">
-            <label className="block text-sm font-medium text-gray-700 mb-2">Kullanılmamış Yıllık İzin Süreleri:</label>
+          <div className="p-4 bg-gray-900/30 border border-gray-700 rounded-lg">
+            <label className="block text-sm font-medium text-gray-300 mb-2">Kullanılmamış Yıllık İzin Süreleri:</label>
             {isEditing && isManager ? (
               <input
                 type="text"
                 value={formData.unusedAnnualLeaveDays}
                 onChange={(e) => handleNumberInput(e.target.value, 'unusedAnnualLeaveDays')}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                className="w-full px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-white"
                 placeholder=""
               />
             ) : (
-              <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg min-h-[42px]">
-                <span className="text-gray-900">
+              <div className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg min-h-[42px]">
+                <span className="text-gray-100">
                   {rightsAndReceivables?.unusedAnnualLeaveDays != null 
                     ? `${formatNumber(rightsAndReceivables.unusedAnnualLeaveDays)} Gün` 
                     : ''}
@@ -269,36 +269,36 @@ export default function RightsAndReceivablesSection({ rightsAndReceivables, user
             )}
           </div>
 
-          <div className="p-4 bg-gray-50 rounded-lg">
-            <label className="block text-sm font-medium text-gray-700 mb-2">Kullanılmamış Yıllık İzin Ücretleri:</label>
+          <div className="p-4 bg-gray-900/30 border border-gray-700 rounded-lg">
+            <label className="block text-sm font-medium text-gray-300 mb-2">Kullanılmamış Yıllık İzin Ücretleri:</label>
             {isEditing && isManager ? (
               <input
                 type="text"
                 value={formData.unusedAnnualLeaveAmount}
                 onChange={(e) => handleCurrencyInput(e.target.value, 'unusedAnnualLeaveAmount')}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                className="w-full px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-white"
                 placeholder=""
               />
             ) : (
-              <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg min-h-[42px]">
-                <span className="text-gray-900">{formatCurrency(rightsAndReceivables?.unusedAnnualLeaveAmount)}</span>
+              <div className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg min-h-[42px]">
+                <span className="text-gray-100">{formatCurrency(rightsAndReceivables?.unusedAnnualLeaveAmount)}</span>
               </div>
             )}
           </div>
 
-          <div className="p-4 bg-gray-50 rounded-lg">
-            <label className="block text-sm font-medium text-gray-700 mb-2">Fazla Mesai Süreleri:</label>
+          <div className="p-4 bg-gray-900/30 border border-gray-700 rounded-lg">
+            <label className="block text-sm font-medium text-gray-300 mb-2">Fazla Mesai Süreleri:</label>
             {isEditing && isManager ? (
               <input
                 type="text"
                 value={formData.overtimeHours}
                 onChange={(e) => handleNumberInput(e.target.value, 'overtimeHours')}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                className="w-full px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-white"
                 placeholder=""
               />
             ) : (
-              <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg min-h-[42px]">
-                <span className="text-gray-900">
+              <div className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg min-h-[42px]">
+                <span className="text-gray-100">
                   {rightsAndReceivables?.overtimeHours != null 
                     ? `${formatNumber(rightsAndReceivables.overtimeHours)} Saat` 
                     : ''}
@@ -307,19 +307,19 @@ export default function RightsAndReceivablesSection({ rightsAndReceivables, user
             )}
           </div>
 
-          <div className="p-4 bg-gray-50 rounded-lg">
-            <label className="block text-sm font-medium text-gray-700 mb-2">Fazla Mesai Ücreti:</label>
+          <div className="p-4 bg-gray-900/30 border border-gray-700 rounded-lg">
+            <label className="block text-sm font-medium text-gray-300 mb-2">Fazla Mesai Ücreti:</label>
             {isEditing && isManager ? (
               <input
                 type="text"
                 value={formData.overtimeAmount}
                 onChange={(e) => handleCurrencyInput(e.target.value, 'overtimeAmount')}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                className="w-full px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-white"
                 placeholder=""
               />
             ) : (
-              <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg min-h-[42px]">
-                <span className="text-gray-900">{formatCurrency(rightsAndReceivables?.overtimeAmount)}</span>
+              <div className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg min-h-[42px]">
+                <span className="text-gray-100">{formatCurrency(rightsAndReceivables?.overtimeAmount)}</span>
               </div>
             )}
           </div>
@@ -329,13 +329,13 @@ export default function RightsAndReceivablesSection({ rightsAndReceivables, user
 
       {/* Form Altı Aksiyonlar (best practice: tek yerden yönetim) */}
       {isManager && (
-        <div className="mt-6 pt-4 border-t border-gray-200 flex flex-wrap gap-2 justify-end">
+        <div className="mt-6 pt-4 border-t border-gray-700 flex flex-wrap gap-2 justify-end">
           {isEditing ? (
             <>
               <button
                 type="button"
                 onClick={handleCancelEdit}
-                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 text-sm"
+                className="px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg text-gray-200 hover:bg-gray-600 text-sm transition-colors"
               >
                 İptal
               </button>

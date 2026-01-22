@@ -147,7 +147,7 @@ export default function Sidebar({ isManager, pendingCount, pendingLeaveCount }) 
         </div>
       </motion.div>
 
-      <nav className="flex-1 overflow-y-auto px-6 pb-6 space-y-2">
+      <nav className="flex-1 overflow-y-auto px-6 pb-6 space-y-2 mt-3">
           {menuItems.filter(item => item.visible).map((item, index) => {
             const active = isActive(item.href);
             return (

@@ -28,7 +28,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:5133
-      - ConnectionStrings__DefaultConnection=Host=72.61.158.70:5432;Database=zenadb2;Username=admin;Password=;TrustServerCertificate=True
+      # - ConnectionStrings__DefaultConnection=Host=72.61.158.70:5432;Database=zenadb2;Username=admin;Password=;TrustServerCertificate=True
       - Loki__Url=http://loki:3100
       - OpenTelemetry__OtlpEndpoint=http://otel-collector:4317
     volumes:

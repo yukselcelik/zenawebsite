@@ -70,45 +70,45 @@ export default function PendingUsers() {
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-gray-800 border border-gray-700 rounded-lg shadow-lg p-6">
         <div className="text-center py-8">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Yükleniyor...</p>
+          <p className="text-gray-300">Yükleniyor...</p>
         </div>
       </div>
     );
   }
 
   return (
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="bg-gray-800 border border-gray-700 rounded-lg shadow-lg overflow-hidden">
         <div className="p-6">
           <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-gray-700">
+            <thead className="bg-gray-700/50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ad Soyad</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">E-posta</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Telefon</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kayıt Tarihi</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">İşlemler</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Ad Soyad</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">E-posta</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Telefon</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Kayıt Tarihi</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">İşlemler</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-gray-800 divide-y divide-gray-700">
               {pendingUsers.length === 0 ? (
                 <tr>
-                  <td colSpan="5" className="px-6 py-4 text-center text-gray-500">
+                  <td colSpan="5" className="px-6 py-4 text-center text-gray-400">
                     Onay bekleyen kullanıcı bulunamadı
                   </td>
                 </tr>
               ) : (
                 pendingUsers.map((user) => (
-                  <tr key={user.id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <tr key={user.id} className="hover:bg-gray-700/40 transition-colors">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                       {user.name} {user.surname}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.email}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.phone || '-'}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{user.email}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{user.phone || '-'}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                       {new Date(user.createdAt).toLocaleDateString('tr-TR')}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -116,18 +116,18 @@ export default function PendingUsers() {
                         <select
                           value={user.isApproved ? 'true' : 'false'}
                           onChange={(e) => handleApprovalStatusChange(user.id, e.target.value === 'true')}
-                          className={`px-3 py-2 rounded text-sm font-medium border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 cursor-pointer ${
-                            user.isApproved 
-                              ? 'bg-green-100 text-green-800' 
-                              : 'bg-yellow-100 text-yellow-800'
+                          className={`px-3 py-2 rounded text-sm font-medium border border-gray-600 bg-gray-700 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-white cursor-pointer ${
+                            user.isApproved
+                              ? 'bg-green-900/50 text-green-300 border-green-700'
+                              : 'bg-yellow-900/50 text-yellow-300 border-yellow-700'
                           }`}
                         >
-                          <option value="false">Onaylanmadı</option>
-                          <option value="true">Onaylandı</option>
+                          <option value="false" className="bg-gray-700">Onaylanmadı</option>
+                          <option value="true" className="bg-gray-700">Onaylandı</option>
                         </select>
                         <button
                           onClick={() => handleDelete(user.id)}
-                          className="text-red-600 hover:text-red-900 px-3 py-2 rounded border border-red-300 hover:bg-red-50 transition-colors cursor-pointer"
+                          className="text-red-300 hover:text-red-200 px-3 py-2 rounded border border-red-700 hover:bg-red-900/20 transition-colors cursor-pointer"
                         >
                           Sil
                         </button>
@@ -143,21 +143,21 @@ export default function PendingUsers() {
         {/* Pagination */}
         {pagination.totalPages > 1 && (
           <div className="mt-6 flex items-center justify-between">
-            <div className="text-sm text-gray-700">
+            <div className="text-sm text-gray-400">
               Toplam {pagination.totalCount} kayıttan {((pagination.pageNumber - 1) * pagination.pageSize) + 1} ile {Math.min(pagination.pageNumber * pagination.pageSize, pagination.totalCount)} arası gösteriliyor
             </div>
             <div className="flex space-x-2">
               <button
                 onClick={() => setPagination({ ...pagination, pageNumber: pagination.pageNumber - 1 })}
                 disabled={pagination.pageNumber === 1}
-                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                className="px-4 py-2 border border-gray-600 rounded-lg text-gray-200 bg-gray-700 hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors"
               >
                 Önceki
               </button>
               <button
                 onClick={() => setPagination({ ...pagination, pageNumber: pagination.pageNumber + 1 })}
                 disabled={pagination.pageNumber >= pagination.totalPages}
-                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                className="px-4 py-2 border border-gray-600 rounded-lg text-gray-200 bg-gray-700 hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors"
               >
                 Sonraki
               </button>

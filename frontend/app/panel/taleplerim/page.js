@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import ApiService from '../../../lib/api';
 import ConfirmDialog from '../components/common/ConfirmDialog';
+import { getStatusBadgeClass, getStatusTextTR, isPendingStatus } from '../utils/requestStatus';
 
 const TABS = {
   LEAVE: 'leave',
@@ -49,6 +50,12 @@ export default function TaleplerimPage() {
           setMeetingRoomRequests(result.data.items || []);
           setTotalPages(result.data.totalPages || 1);
         }
+      } else if (activeTab === TABS.OTHER) {
+        const result = await ApiService.getMyOtherRequests(pageNumber, 10);
+        if (result && result.success && result.data) {
+          setOtherRequests(result.data.items || []);
+          setTotalPages(result.data.totalPages || 1);
+        }
       }
     } catch (error) {
       console.error('Error fetching requests:', error);
@@ -64,57 +71,6 @@ export default function TaleplerimPage() {
       month: 'long',
       day: 'numeric'
     });
-  };
-
-  // Helper function to normalize status (handles both numeric and string values)
-  const normalizeStatus = (status) => {
-    if (status === null || status === undefined) return null;
-    
-    // If it's a number, convert to string enum name
-    if (typeof status === 'number') {
-      const statusMap = {
-        0: 'Pending',
-        1: 'Approved',
-        2: 'Rejected',
-        3: 'Cancelled'
-      };
-      return statusMap[status] || status;
-    }
-    
-    // If it's already a string, return as is
-    return status;
-  };
-
-  // Helper function to check if status is Pending
-  const isPendingStatus = (status) => {
-    const normalized = normalizeStatus(status);
-    return normalized === 'Pending' || normalized === 0 || normalized === '0';
-  };
-
-  const getStatusBadge = (status) => {
-    const normalized = normalizeStatus(status);
-    const statusMap = {
-      'Pending': 'bg-yellow-100 text-yellow-800',
-      'Approved': 'bg-green-100 text-green-800',
-      'Rejected': 'bg-red-100 text-red-800',
-      'Cancelled': 'bg-gray-100 text-gray-800',
-      'Beklemede': 'bg-yellow-100 text-yellow-800',
-      'Onaylandı': 'bg-green-100 text-green-800',
-      'Reddedildi': 'bg-red-100 text-red-800',
-      'Ödendi': 'bg-blue-100 text-blue-800'
-    };
-    return statusMap[normalized] || 'bg-gray-100 text-gray-800';
-  };
-
-  const getStatusText = (status) => {
-    const normalized = normalizeStatus(status);
-    const statusMap = {
-      'Pending': 'Beklemede',
-      'Approved': 'Onaylandı',
-      'Rejected': 'Reddedildi',
-      'Cancelled': 'İptal Edildi'
-    };
-    return statusMap[normalized] || normalized || status;
   };
 
   const handleCancel = async () => {
@@ -171,44 +127,44 @@ export default function TaleplerimPage() {
 
   const renderLeaveRequests = () => {
     if (isLoading) {
-      return <div className="text-center py-8">Yükleniyor...</div>;
+      return <div className="text-center py-8 text-gray-300">Yükleniyor...</div>;
     }
 
     if (leaveRequests.length === 0) {
-      return <div className="text-center py-8 text-gray-500">Henüz izin talebi bulunmamaktadır.</div>;
+      return <div className="text-center py-8 text-gray-400">Henüz izin talebi bulunmamaktadır.</div>;
     }
 
     return (
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+        <table className="min-w-full divide-y divide-gray-700">
+          <thead className="bg-gray-700/50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">İzin Türü</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Başlangıç</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bitiş</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gün/Saat</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Durum</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">İşlemler</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">İzin Türü</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Başlangıç</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Bitiş</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Gün/Saat</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Durum</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">İşlemler</th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-gray-800 divide-y divide-gray-700">
             {leaveRequests.map((request) => (
-              <tr key={request.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              <tr key={request.id} className="hover:bg-gray-700/50 transition-colors">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                   {getLeaveTypeText(request.leaveType)}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-200">
                   {formatDate(request.startDate)}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-200">
                   {formatDate(request.endDate)}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-200">
                   {request.days ? `${request.days} Gün` : request.hours ? `${request.hours} Saat` : '-'}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadge(request.status)}`}>
-                    {getStatusText(request.status)}
+                  <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeClass(request.status)}`}>
+                    {getStatusTextTR(request.status)}
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -234,39 +190,39 @@ export default function TaleplerimPage() {
 
   const renderExpenseRequests = () => {
     if (isLoading) {
-      return <div className="text-center py-8">Yükleniyor...</div>;
+      return <div className="text-center py-8 text-gray-300">Yükleniyor...</div>;
     }
 
     if (expenseRequests.length === 0) {
-      return <div className="text-center py-8 text-gray-500">Henüz masraf talebi bulunmamaktadır.</div>;
+      return <div className="text-center py-8 text-gray-400">Henüz masraf talebi bulunmamaktadır.</div>;
     }
 
     return (
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+        <table className="min-w-full divide-y divide-gray-700">
+          <thead className="bg-gray-700/50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Talep Tarihi</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Masraf Türü</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tutar</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Durum</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Talep Tarihi</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Masraf Türü</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Tutar</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Durum</th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-gray-800 divide-y divide-gray-700">
             {expenseRequests.map((request) => (
-              <tr key={request.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              <tr key={request.id} className="hover:bg-gray-700/50 transition-colors">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-200">
                   {formatDate(request.requestDate)}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                   {request.expenseTypeName}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-white font-medium">
                   {new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(request.requestedAmount)}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadge(request.statusName)}`}>
-                    {request.statusName}
+                  <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeClass(request.statusName)}`}>
+                    {getStatusTextTR(request.statusName)}
                   </span>
                 </td>
               </tr>
@@ -279,39 +235,39 @@ export default function TaleplerimPage() {
 
   const renderMeetingRoomRequests = () => {
     if (isLoading) {
-      return <div className="text-center py-8">Yükleniyor...</div>;
+      return <div className="text-center py-8 text-gray-300">Yükleniyor...</div>;
     }
 
     if (meetingRoomRequests.length === 0) {
-      return <div className="text-center py-8 text-gray-500">Henüz toplantı odası talebi bulunmamaktadır.</div>;
+      return <div className="text-center py-8 text-gray-400">Henüz toplantı odası talebi bulunmamaktadır.</div>;
     }
 
     return (
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+        <table className="min-w-full divide-y divide-gray-700">
+          <thead className="bg-gray-700/50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Toplantı Salonu</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tarih</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Saat</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Durum</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Toplantı Salonu</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Tarih</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Saat</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Durum</th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-gray-800 divide-y divide-gray-700">
             {meetingRoomRequests.map((request) => (
-              <tr key={request.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              <tr key={request.id} className="hover:bg-gray-700/50 transition-colors">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                   {getMeetingRoomText(request.meetingRoom)}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-200">
                   {formatDate(request.date)}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-200">
                   {request.startTime} - {request.endTime}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadge(request.status)}`}>
-                    {getStatusText(request.status)}
+                  <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeClass(request.status)}`}>
+                    {getStatusTextTR(request.status)}
                   </span>
                 </td>
               </tr>
@@ -324,39 +280,39 @@ export default function TaleplerimPage() {
 
   const renderOtherRequests = () => {
     if (isLoading) {
-      return <div className="text-center py-8">Yükleniyor...</div>;
+      return <div className="text-center py-8 text-gray-300">Yükleniyor...</div>;
     }
 
     if (otherRequests.length === 0) {
-      return <div className="text-center py-8 text-gray-500">Henüz diğer talep bulunmamaktadır.</div>;
+      return <div className="text-center py-8 text-gray-400">Henüz diğer talep bulunmamaktadır.</div>;
     }
 
     return (
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+        <table className="min-w-full divide-y divide-gray-700">
+          <thead className="bg-gray-700/50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Başlık</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Açıklama</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tarih</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Durum</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Başlık</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Açıklama</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Tarih</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Durum</th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-gray-800 divide-y divide-gray-700">
             {otherRequests.map((request) => (
-              <tr key={request.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+              <tr key={request.id} className="hover:bg-gray-700/50 transition-colors">
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">
                   {request.title}
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-900">
+                <td className="px-6 py-4 text-sm text-gray-200">
                   <div className="max-w-md">{request.description}</div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-200">
                   {formatDate(request.createdAt)}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadge(request.status)}`}>
-                    {getStatusText(request.status)}
+                  <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeClass(request.status)}`}>
+                    {getStatusTextTR(request.status)}
                   </span>
                 </td>
               </tr>
@@ -370,14 +326,14 @@ export default function TaleplerimPage() {
   return (
     <div className="p-6">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Taleplerim</h1>
-        <p className="text-gray-600 mt-2">
+        <h1 className="text-2xl font-bold text-white">Taleplerim</h1>
+        <p className="text-gray-400 mt-2">
           Tüm taleplerinizi buradan görüntüleyebilir ve durumlarını takip edebilirsiniz.
         </p>
       </div>
 
       {/* Tabs */}
-      <div className="mb-6 border-b border-gray-200">
+      <div className="mb-6 border-b border-gray-700">
         <nav className="-mb-px flex space-x-8">
           <button
             onClick={() => {
@@ -386,8 +342,8 @@ export default function TaleplerimPage() {
             }}
             className={`py-4 px-1 border-b-2 font-medium text-sm ${
               activeTab === TABS.LEAVE
-                ? 'border-orange-500 text-orange-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ? 'border-orange-500 text-orange-400'
+                : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-600'
             }`}
           >
             İzin Talepleri
@@ -399,8 +355,8 @@ export default function TaleplerimPage() {
             }}
             className={`py-4 px-1 border-b-2 font-medium text-sm ${
               activeTab === TABS.EXPENSE
-                ? 'border-orange-500 text-orange-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ? 'border-orange-500 text-orange-400'
+                : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-600'
             }`}
           >
             Masraf Talepleri
@@ -412,8 +368,8 @@ export default function TaleplerimPage() {
             }}
             className={`py-4 px-1 border-b-2 font-medium text-sm ${
               activeTab === TABS.MEETING_ROOM
-                ? 'border-orange-500 text-orange-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ? 'border-orange-500 text-orange-400'
+                : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-600'
             }`}
           >
             Toplantı Odası Talepleri
@@ -425,8 +381,8 @@ export default function TaleplerimPage() {
             }}
             className={`py-4 px-1 border-b-2 font-medium text-sm ${
               activeTab === TABS.OTHER
-                ? 'border-orange-500 text-orange-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ? 'border-orange-500 text-orange-400'
+                : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-600'
             }`}
           >
             Diğer Talepler
@@ -435,7 +391,7 @@ export default function TaleplerimPage() {
       </div>
 
       {/* Content */}
-      <div className="bg-white rounded-lg shadow-sm">
+      <div className="bg-gray-800 border border-gray-700 rounded-lg shadow-lg">
         {activeTab === TABS.LEAVE && renderLeaveRequests()}
         {activeTab === TABS.EXPENSE && renderExpenseRequests()}
         {activeTab === TABS.MEETING_ROOM && renderMeetingRoomRequests()}
@@ -443,22 +399,22 @@ export default function TaleplerimPage() {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-            <div className="text-sm text-gray-700">
+          <div className="px-6 py-4 border-t border-gray-700 flex items-center justify-between">
+            <div className="text-sm text-gray-400">
               Sayfa {pageNumber} / {totalPages}
             </div>
             <div className="flex gap-2">
               <button
                 onClick={() => setPageNumber(p => Math.max(1, p - 1))}
                 disabled={pageNumber === 1}
-                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 border border-gray-600 rounded-lg text-gray-200 bg-gray-700 hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 Önceki
               </button>
               <button
                 onClick={() => setPageNumber(p => Math.min(totalPages, p + 1))}
                 disabled={pageNumber === totalPages}
-                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 border border-gray-600 rounded-lg text-gray-200 bg-gray-700 hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 Sonraki
               </button>

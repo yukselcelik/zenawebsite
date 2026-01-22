@@ -92,10 +92,10 @@ export default function LeaveRequests({ isManager, onLeaveRequestsChange, onCrea
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-gray-800 border border-gray-700 rounded-lg shadow-lg p-6">
         <div className="text-center py-8">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Yükleniyor...</p>
+          <p className="text-gray-300">Yükleniyor...</p>
         </div>
       </div>
     );
@@ -105,12 +105,12 @@ export default function LeaveRequests({ isManager, onLeaveRequestsChange, onCrea
     <div className="space-y-6">
       {/* Hata mesajı */}
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+        <div className="bg-red-900/20 border border-red-800 text-red-200 px-4 py-3 rounded">
           {error}
         </div>
       )}
 
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="bg-gray-800 border border-gray-700 rounded-lg shadow-lg overflow-hidden">
         <div className="p-6">
           {!isManager && (
             <div className="flex justify-end items-center mb-4">
@@ -125,15 +125,15 @@ export default function LeaveRequests({ isManager, onLeaveRequestsChange, onCrea
           <div className="space-y-4">
           {leaveRequests.length === 0 && !isLoading ? (
             <div className="text-center py-8">
-              <p className="text-gray-500 mb-2">Henüz izin talebi bulunmamaktadır.</p>
+              <p className="text-gray-400 mb-2">Henüz izin talebi bulunmamaktadır.</p>
               {pagination.totalCount > 0 && (
-                <p className="text-xs text-gray-400">Toplam kayıt: {pagination.totalCount} (farklı sayfada olabilir)</p>
+                <p className="text-xs text-gray-500">Toplam kayıt: {pagination.totalCount} (farklı sayfada olabilir)</p>
               )}
             </div>
           ) : (
             leaveRequests.length > 0 && (
             leaveRequests.map((request) => (
-              <div key={request.id} className="border border-gray-200 rounded-lg p-4">
+              <div key={request.id} className="border border-gray-700 bg-gray-900/30 rounded-lg p-4">
                 <div className="flex justify-between items-start">
                   <div className="flex-1">
                     <div className="flex items-center space-x-2 mb-2">
@@ -141,21 +141,21 @@ export default function LeaveRequests({ isManager, onLeaveRequestsChange, onCrea
                         {getStatusText(request.status)}
                       </span>
                       {isManager && request.userName && (
-                        <span className="text-xs text-gray-500">
+                        <span className="text-xs text-gray-400">
                           ({request.userName} {request.userSurname})
                         </span>
                       )}
                     </div>
-                    <p className="text-sm text-gray-600">
-                      <span className="font-medium">Başlangıç:</span> {new Date(request.startDate).toLocaleDateString('tr-TR')}
+                    <p className="text-sm text-gray-300">
+                      <span className="font-medium text-gray-200">Başlangıç:</span> {new Date(request.startDate).toLocaleDateString('tr-TR')}
                     </p>
-                    <p className="text-sm text-gray-600">
-                      <span className="font-medium">Bitiş:</span> {new Date(request.endDate).toLocaleDateString('tr-TR')}
+                    <p className="text-sm text-gray-300">
+                      <span className="font-medium text-gray-200">Bitiş:</span> {new Date(request.endDate).toLocaleDateString('tr-TR')}
                     </p>
-                    <p className="text-sm text-gray-600 mt-2">
-                      <span className="font-medium">Sebep:</span> {request.reason}
+                    <p className="text-sm text-gray-300 mt-2">
+                      <span className="font-medium text-gray-200">Sebep:</span> {request.reason}
                     </p>
-                    <p className="text-xs text-gray-500 mt-2">
+                    <p className="text-xs text-gray-400 mt-2">
                       Oluşturulma: {new Date(request.createdAt).toLocaleString('tr-TR')}
                     </p>
                   </div>
@@ -164,12 +164,12 @@ export default function LeaveRequests({ isManager, onLeaveRequestsChange, onCrea
                       <select
                         value={typeof request.status === 'string' ? request.status : String(request.status)}
                         onChange={(e) => handleStatusChange(request.id, e.target.value)}
-                        className={`px-3 py-2 rounded text-sm font-medium border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 cursor-pointer ${getStatusColor(request.status)}`}
+                        className={`px-3 py-2 rounded text-sm font-medium border border-gray-600 bg-gray-700 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-white cursor-pointer ${getStatusColor(request.status)}`}
                       >
-                        <option value="Pending">Beklemede</option>
-                        <option value="Approved">Onaylandı</option>
-                        <option value="Rejected">Reddedildi</option>
-                        <option value="Cancelled">İptal Edildi</option>
+                        <option value="Pending" className="bg-gray-700">Beklemede</option>
+                        <option value="Approved" className="bg-gray-700">Onaylandı</option>
+                        <option value="Rejected" className="bg-gray-700">Reddedildi</option>
+                        <option value="Cancelled" className="bg-gray-700">İptal Edildi</option>
                       </select>
                     )}
                     {!isManager && isPendingStatus(request.status) && (
@@ -191,7 +191,7 @@ export default function LeaveRequests({ isManager, onLeaveRequestsChange, onCrea
         {/* Pagination */}
         {pagination.totalPages > 1 && (
           <div className="mt-6 flex items-center justify-between">
-            <div className="text-sm text-gray-700">
+            <div className="text-sm text-gray-400">
               Toplam {pagination.totalCount} kayıttan {((pagination.pageNumber - 1) * pagination.pageSize) + 1} ile {Math.min(pagination.pageNumber * pagination.pageSize, pagination.totalCount)} arası gösteriliyor
             </div>
             <div className="flex space-x-2">
@@ -200,7 +200,7 @@ export default function LeaveRequests({ isManager, onLeaveRequestsChange, onCrea
                   setPagination({ ...pagination, pageNumber: pagination.pageNumber - 1 })
                 }
                 disabled={pagination.pageNumber === 1}
-                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                className="px-4 py-2 border border-gray-600 rounded-lg text-gray-200 bg-gray-700 hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors"
               >
                 Önceki
               </button>
@@ -209,7 +209,7 @@ export default function LeaveRequests({ isManager, onLeaveRequestsChange, onCrea
                   setPagination({ ...pagination, pageNumber: pagination.pageNumber + 1 })
                 }
                 disabled={pagination.pageNumber >= pagination.totalPages}
-                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                className="px-4 py-2 border border-gray-600 rounded-lg text-gray-200 bg-gray-700 hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors"
               >
                 Sonraki
               </button>

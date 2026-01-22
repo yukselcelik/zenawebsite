@@ -19,20 +19,20 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
     });
 
-if (builder.Environment.IsDevelopment())
+// if (builder.Environment.IsDevelopment())
+// {
+//     builder.Services.AddDbContext<ApplicationDbContext>(options =>
+//     {
+//         options.UseInMemoryDatabase("InMemoryDatabase");
+//     });
+// }
+// else
+// {
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
-    builder.Services.AddDbContext<ApplicationDbContext>(options =>
-   {
-       options.UseInMemoryDatabase("InMemoryDatabase");
-   });
-}
-else
-{
-    builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    {
-        options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
-    });
-}
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
+// }
 
 var jwtKey = builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT Key not configured");
 var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? throw new InvalidOperationException("JWT Issuer not configured");
@@ -271,7 +271,7 @@ public static class ProgramExtensions
                             Log.Information("Veritabanı bağlantısı başarılı!");
 
                             Log.Information("Veritabanı migration'ları uygulanıyor...");
-                            // await db.Database.MigrateAsync();
+                            await db.Database.MigrateAsync();
                             Log.Information("Veritabanı migration'ları başarıyla uygulandı!");
 
                             migrationSuccess = true;

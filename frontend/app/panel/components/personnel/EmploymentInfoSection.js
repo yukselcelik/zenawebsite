@@ -65,7 +65,7 @@ export default function EmploymentInfoSection({ employmentInfos, userId, onUpdat
   return (
     <div className="mb-6">
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-semibold text-gray-800">İstihdam Bilgileri</h3>
+        <h3 className="text-lg font-semibold text-white">İstihdam Bilgileri</h3>
         <button
           onClick={() => setShowForm(!showForm)}
           className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm cursor-pointer"
@@ -75,55 +75,55 @@ export default function EmploymentInfoSection({ employmentInfos, userId, onUpdat
       </div>
 
       {showForm && (
-        <form onSubmit={handleAdd} className="mb-6 p-4 bg-gray-50 rounded-lg space-y-4">
+        <form onSubmit={handleAdd} className="mb-6 p-4 bg-gray-900/30 border border-gray-700 rounded-lg space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Başlangıç Tarihi</label>
+            <label className="block text-sm font-medium text-gray-300 mb-2">Başlangıç Tarihi</label>
             <input
               type="date"
               required
               value={formData.startDate}
               onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 cursor-pointer"
+              className="w-full px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-white cursor-pointer"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Pozisyon</label>
+            <label className="block text-sm font-medium text-gray-300 mb-2">Pozisyon</label>
             <input
               type="text"
               value={formData.position}
               onChange={(e) => setFormData({ ...formData, position: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 cursor-pointer"
+              className="w-full px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-white cursor-pointer"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Çalışma Tipi</label>
+            <label className="block text-sm font-medium text-gray-300 mb-2">Çalışma Tipi</label>
             <select
               value={formData.workType}
               onChange={(e) => setFormData({ ...formData, workType: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 cursor-pointer"
+              className="w-full px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-white cursor-pointer"
             >
-              <option value="FullTime">Tam Zamanlı</option>
-              <option value="PartTime">Yarı Zamanlı</option>
+              <option value="FullTime" className="bg-gray-700">Tam Zamanlı</option>
+              <option value="PartTime" className="bg-gray-700">Yarı Zamanlı</option>
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Sözleşme Tipi</label>
+            <label className="block text-sm font-medium text-gray-300 mb-2">Sözleşme Tipi</label>
             <select
               value={formData.contractType}
               onChange={(e) => setFormData({ ...formData, contractType: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 cursor-pointer"
+              className="w-full px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-white cursor-pointer"
             >
-              <option value="FixedTerm">Belirli Süreli</option>
-              <option value="Continuous">Sürekli</option>
+              <option value="FixedTerm" className="bg-gray-700">Belirli Süreli</option>
+              <option value="Continuous" className="bg-gray-700">Sürekli</option>
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">İş Yeri Numarası</label>
+            <label className="block text-sm font-medium text-gray-300 mb-2">İş Yeri Numarası</label>
             <input
               type="text"
               value={formData.workplaceNumber}
               onChange={(e) => setFormData({ ...formData, workplaceNumber: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900 cursor-pointer"
+              className="w-full px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-white cursor-pointer"
             />
           </div>
           <div className="flex justify-end space-x-3">
@@ -139,7 +139,7 @@ export default function EmploymentInfoSection({ employmentInfos, userId, onUpdat
                   workplaceNumber: ''
                 });
               }}
-              className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 cursor-pointer"
+              className="px-4 py-2 border border-gray-600 bg-gray-700 rounded-lg text-gray-200 hover:bg-gray-600 cursor-pointer transition-colors"
             >
               İptal
             </button>
@@ -156,20 +156,20 @@ export default function EmploymentInfoSection({ employmentInfos, userId, onUpdat
       <div className="space-y-4">
         {employmentInfos && employmentInfos.length > 0 ? (
           employmentInfos.map((emp) => (
-            <div key={emp.id} className="border border-gray-200 rounded-lg p-4">
+            <div key={emp.id} className="border border-gray-700 bg-gray-900/30 rounded-lg p-4">
               <div className="flex justify-between items-start">
                 <div className="flex-1">
-                  <p className="text-sm text-gray-600"><span className="font-medium">Pozisyon:</span> {emp.position || '-'}</p>
-                  <p className="text-sm text-gray-600"><span className="font-medium">Başlangıç:</span> {new Date(emp.startDate).toLocaleDateString('tr-TR')}</p>
-                  <p className="text-sm text-gray-600"><span className="font-medium">Çalışma Tipi:</span> {emp.workType === 'FullTime' ? 'Tam Zamanlı' : 'Yarı Zamanlı'}</p>
-                  <p className="text-sm text-gray-600"><span className="font-medium">Sözleşme Tipi:</span> {emp.contractType === 'FixedTerm' ? 'Belirli Süreli' : 'Sürekli'}</p>
+                  <p className="text-sm text-gray-300"><span className="font-medium text-gray-200">Pozisyon:</span> {emp.position || '-'}</p>
+                  <p className="text-sm text-gray-300"><span className="font-medium text-gray-200">Başlangıç:</span> {new Date(emp.startDate).toLocaleDateString('tr-TR')}</p>
+                  <p className="text-sm text-gray-300"><span className="font-medium text-gray-200">Çalışma Tipi:</span> {emp.workType === 'FullTime' ? 'Tam Zamanlı' : 'Yarı Zamanlı'}</p>
+                  <p className="text-sm text-gray-300"><span className="font-medium text-gray-200">Sözleşme Tipi:</span> {emp.contractType === 'FixedTerm' ? 'Belirli Süreli' : 'Sürekli'}</p>
                   {emp.workplaceNumber && (
-                    <p className="text-sm text-gray-600"><span className="font-medium">İş Yeri No:</span> {emp.workplaceNumber}</p>
+                    <p className="text-sm text-gray-300"><span className="font-medium text-gray-200">İş Yeri No:</span> {emp.workplaceNumber}</p>
                   )}
                 </div>
                 <button
                   onClick={() => handleDelete(emp.id)}
-                  className="text-red-600 hover:text-red-800 text-sm cursor-pointer"
+                  className="text-red-300 hover:text-red-200 text-sm cursor-pointer"
                 >
                   Sil
                 </button>
@@ -177,7 +177,7 @@ export default function EmploymentInfoSection({ employmentInfos, userId, onUpdat
             </div>
           ))
         ) : (
-          <p className="text-gray-500 text-sm">İstihdam bilgisi bulunmamaktadır.</p>
+          <p className="text-gray-400 text-sm">İstihdam bilgisi bulunmamaktadır.</p>
         )}
       </div>
       <ConfirmDialog
