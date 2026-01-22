@@ -262,9 +262,9 @@ const EmployeeBenefitsTabs = forwardRef(function EmployeeBenefitsTabs(
   const type = b.benefitType?.toString() || '';
 
   return (
-    <div className="border border-gray-200 rounded-lg bg-white">
+    <div className="border border-gray-700 rounded-lg bg-gray-800">
       {/* Tabs */}
-      <div className="flex items-center gap-2 border-b border-gray-200 p-3 overflow-x-auto">
+      <div className="flex items-center gap-2 border-b border-gray-700 p-3 overflow-x-auto">
         <div className="flex items-center gap-2">
           {(benefits || []).map((item, idx) => (
             <button
@@ -274,7 +274,7 @@ const EmployeeBenefitsTabs = forwardRef(function EmployeeBenefitsTabs(
               className={`px-3 py-2 rounded-lg text-sm whitespace-nowrap border ${
                 idx === activeTab
                   ? 'bg-orange-500 text-white border-orange-500'
-                  : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'
+                  : 'bg-gray-700 text-gray-300 border-gray-600 hover:bg-gray-600'
               }`}
             >
               {getTabTitle(item, idx)}
@@ -293,11 +293,11 @@ const EmployeeBenefitsTabs = forwardRef(function EmployeeBenefitsTabs(
           }}
           disabled={!isManager}
           className={`ml-auto inline-flex items-center justify-center w-9 h-9 rounded-lg border ${
-            !isManager ? 'border-gray-100 bg-gray-50 cursor-not-allowed' : 'border-gray-200 hover:bg-gray-50'
+            !isManager ? 'border-gray-600 bg-gray-700 cursor-not-allowed' : 'border-gray-600 hover:bg-gray-700'
           }`}
           title={!isManager ? 'Yetkiniz yok' : 'Yeni tab ekle'}
         >
-          <svg className={`w-5 h-5 ${!isManager ? 'text-gray-300' : 'text-gray-700'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className={`w-5 h-5 ${!isManager ? 'text-gray-500' : 'text-gray-300'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
           </svg>
         </button>
@@ -306,16 +306,16 @@ const EmployeeBenefitsTabs = forwardRef(function EmployeeBenefitsTabs(
       {/* Active tab content */}
       <div className="p-4">
         {isLoading ? (
-          <div className="text-sm text-gray-600">Yan haklar yükleniyor...</div>
+          <div className="text-sm text-gray-400">Yan haklar yükleniyor...</div>
         ) : (
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Hak Türü:</label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Hak Türü:</label>
               {isEditing && isManager ? (
                 <select
                   value={type}
                   onChange={(e) => updateField(activeTab, 'benefitType', e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                  className="w-full px-4 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-gray-700 text-white"
                 >
                   <option value="">Seçiniz</option>
                   {BENEFIT_TYPES.map((t) => (
@@ -325,8 +325,8 @@ const EmployeeBenefitsTabs = forwardRef(function EmployeeBenefitsTabs(
                   ))}
                 </select>
               ) : (
-                <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg min-h-[42px]">
-                  <span className="text-gray-900">{b.benefitTypeName || getTabTitle(b, activeTab)}</span>
+                <div className="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg min-h-[42px]">
+                  <span className="text-white">{b.benefitTypeName || getTabTitle(b, activeTab)}</span>
                 </div>
               )}
             </div>
@@ -335,12 +335,12 @@ const EmployeeBenefitsTabs = forwardRef(function EmployeeBenefitsTabs(
             {type === '2' && (
               <div className="space-y-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Tür:</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Tür:</label>
                   {isEditing && isManager ? (
                     <select
                       value={b.travelSupportType}
                       onChange={(e) => updateField(activeTab, 'travelSupportType', e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                      className="w-full px-4 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-gray-700 text-white"
                     >
                       <option value="">Seçiniz</option>
                       {TRAVEL_SUPPORT_TYPES.map((t) => (
@@ -350,8 +350,8 @@ const EmployeeBenefitsTabs = forwardRef(function EmployeeBenefitsTabs(
                       ))}
                     </select>
                   ) : (
-                    <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg min-h-[42px]">
-                      <span className="text-gray-900">
+                    <div className="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg min-h-[42px]">
+                      <span className="text-white">
                         {TRAVEL_SUPPORT_TYPES.find((t) => t.value.toString() === (b.travelSupportType || '').toString())
                           ?.label || ''}
                       </span>
@@ -363,32 +363,32 @@ const EmployeeBenefitsTabs = forwardRef(function EmployeeBenefitsTabs(
                   (!isEditing && b.travelSupportType && b.travelSupportType !== '4')) && (
                   <>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Açıklama:</label>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Açıklama:</label>
                       {isEditing && isManager ? (
                         <textarea
                           value={b.travelSupportDescription}
                           onChange={(e) => updateField(activeTab, 'travelSupportDescription', e.target.value)}
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                          className="w-full px-4 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-gray-700 text-white"
                           rows="2"
                         />
                       ) : (
-                        <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg min-h-[42px]">
-                          <span className="text-gray-900">{b.travelSupportDescription || ''}</span>
+                        <div className="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg min-h-[42px]">
+                          <span className="text-white">{b.travelSupportDescription || ''}</span>
                         </div>
                       )}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Tutar:</label>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Tutar:</label>
                       {isEditing && isManager ? (
                         <input
                           type="text"
                           value={b.travelSupportAmount}
                           onChange={(e) => handleCurrencyInput(activeTab, e.target.value, 'travelSupportAmount')}
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                          className="w-full px-4 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-gray-700 text-white"
                         />
                       ) : (
-                        <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg min-h-[42px]">
-                          <span className="text-gray-900">{formatCurrency(parseCurrencyValue(b.travelSupportAmount))}</span>
+                        <div className="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg min-h-[42px]">
+                          <span className="text-white">{formatCurrency(parseCurrencyValue(b.travelSupportAmount))}</span>
                         </div>
                       )}
                     </div>
@@ -401,12 +401,12 @@ const EmployeeBenefitsTabs = forwardRef(function EmployeeBenefitsTabs(
             {type === '1' && (
               <div className="space-y-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Tür:</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Tür:</label>
                   {isEditing && isManager ? (
                     <select
                       value={b.foodSupportType}
                       onChange={(e) => updateField(activeTab, 'foodSupportType', e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                      className="w-full px-4 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-gray-700 text-white"
                     >
                       <option value="">Seçiniz</option>
                       {FOOD_SUPPORT_TYPES.map((t) => (
@@ -416,8 +416,8 @@ const EmployeeBenefitsTabs = forwardRef(function EmployeeBenefitsTabs(
                       ))}
                     </select>
                   ) : (
-                    <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg min-h-[42px]">
-                      <span className="text-gray-900">
+                    <div className="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg min-h-[42px]">
+                      <span className="text-white">
                         {FOOD_SUPPORT_TYPES.find((t) => t.value.toString() === (b.foodSupportType || '').toString())
                           ?.label || ''}
                       </span>
@@ -426,51 +426,51 @@ const EmployeeBenefitsTabs = forwardRef(function EmployeeBenefitsTabs(
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Günlük Tutar:</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Günlük Tutar:</label>
                   {isEditing && isManager ? (
                     <input
                       type="text"
                       value={b.foodSupportDailyAmount}
                       onChange={(e) => handleCurrencyInput(activeTab, e.target.value, 'foodSupportDailyAmount')}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                      className="w-full px-4 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-gray-700 text-white"
                     />
                   ) : (
-                    <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg min-h-[42px]">
-                      <span className="text-gray-900">{formatCurrency(parseCurrencyValue(b.foodSupportDailyAmount))}</span>
+                    <div className="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg min-h-[42px]">
+                      <span className="text-white">{formatCurrency(parseCurrencyValue(b.foodSupportDailyAmount))}</span>
                     </div>
                   )}
                 </div>
 
                 {((isEditing && isManager && b.foodSupportType === '1') || (!isEditing && b.foodSupportType === '1')) && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Kart/Firma Bilgileri:</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Kart/Firma Bilgileri:</label>
                     {isEditing && isManager ? (
                       <input
                         type="text"
                         value={b.foodSupportCardCompanyInfo}
                         onChange={(e) => updateField(activeTab, 'foodSupportCardCompanyInfo', e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                        className="w-full px-4 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-gray-700 text-white"
                       />
                     ) : (
-                      <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg min-h-[42px]">
-                        <span className="text-gray-900">{b.foodSupportCardCompanyInfo || ''}</span>
+                      <div className="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg min-h-[42px]">
+                        <span className="text-white">{b.foodSupportCardCompanyInfo || ''}</span>
                       </div>
                     )}
                   </div>
                 )}
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Açıklama:</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Açıklama:</label>
                   {isEditing && isManager ? (
                     <textarea
                       value={b.foodSupportDescription}
                       onChange={(e) => updateField(activeTab, 'foodSupportDescription', e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                      className="w-full px-4 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-gray-700 text-white"
                       rows="2"
                     />
                   ) : (
-                    <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg min-h-[42px]">
-                      <span className="text-gray-900">{b.foodSupportDescription || ''}</span>
+                    <div className="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg min-h-[42px]">
+                      <span className="text-white">{b.foodSupportDescription || ''}</span>
                     </div>
                   )}
                 </div>
@@ -481,12 +481,12 @@ const EmployeeBenefitsTabs = forwardRef(function EmployeeBenefitsTabs(
             {type === '3' && (
               <div className="space-y-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Tür:</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Tür:</label>
                   {isEditing && isManager ? (
                     <select
                       value={b.bonusType}
                       onChange={(e) => updateField(activeTab, 'bonusType', e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                      className="w-full px-4 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-gray-700 text-white"
                     >
                       <option value="">Seçiniz</option>
                       {BONUS_TYPES.map((t) => (
@@ -496,8 +496,8 @@ const EmployeeBenefitsTabs = forwardRef(function EmployeeBenefitsTabs(
                       ))}
                     </select>
                   ) : (
-                    <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg min-h-[42px]">
-                      <span className="text-gray-900">
+                    <div className="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg min-h-[42px]">
+                      <span className="text-white">
                         {BONUS_TYPES.find((t) => t.value.toString() === (b.bonusType || '').toString())?.label || ''}
                       </span>
                     </div>
@@ -505,12 +505,12 @@ const EmployeeBenefitsTabs = forwardRef(function EmployeeBenefitsTabs(
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Ödeme Periyodu:</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Ödeme Periyodu:</label>
                   {isEditing && isManager ? (
                     <select
                       value={b.bonusPaymentPeriod}
                       onChange={(e) => updateField(activeTab, 'bonusPaymentPeriod', e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                      className="w-full px-4 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-gray-700 text-white"
                     >
                       <option value="">Seçiniz</option>
                       {PAYMENT_PERIODS.map((t) => (
@@ -520,8 +520,8 @@ const EmployeeBenefitsTabs = forwardRef(function EmployeeBenefitsTabs(
                       ))}
                     </select>
                   ) : (
-                    <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg min-h-[42px]">
-                      <span className="text-gray-900">
+                    <div className="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg min-h-[42px]">
+                      <span className="text-white">
                         {PAYMENT_PERIODS.find((t) => t.value.toString() === (b.bonusPaymentPeriod || '').toString())
                           ?.label || ''}
                       </span>
@@ -530,33 +530,33 @@ const EmployeeBenefitsTabs = forwardRef(function EmployeeBenefitsTabs(
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Tutar:</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Tutar:</label>
                   {isEditing && isManager ? (
                     <input
                       type="text"
                       value={b.bonusAmount}
                       onChange={(e) => handleCurrencyInput(activeTab, e.target.value, 'bonusAmount')}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                      className="w-full px-4 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-gray-700 text-white"
                     />
                   ) : (
-                    <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg min-h-[42px]">
-                      <span className="text-gray-900">{formatCurrency(parseCurrencyValue(b.bonusAmount))}</span>
+                    <div className="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg min-h-[42px]">
+                      <span className="text-white">{formatCurrency(parseCurrencyValue(b.bonusAmount))}</span>
                     </div>
                   )}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Açıklama:</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Açıklama:</label>
                   {isEditing && isManager ? (
                     <textarea
                       value={b.bonusDescription}
                       onChange={(e) => updateField(activeTab, 'bonusDescription', e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                      className="w-full px-4 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-gray-700 text-white"
                       rows="2"
                     />
                   ) : (
-                    <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg min-h-[42px]">
-                      <span className="text-gray-900">{b.bonusDescription || ''}</span>
+                    <div className="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg min-h-[42px]">
+                      <span className="text-white">{b.bonusDescription || ''}</span>
                     </div>
                   )}
                 </div>
@@ -567,29 +567,29 @@ const EmployeeBenefitsTabs = forwardRef(function EmployeeBenefitsTabs(
             {type === '4' && (
               <div className="space-y-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Diğer Hak Adı:</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Diğer Hak Adı:</label>
                   {isEditing && isManager ? (
                     <input
                       type="text"
                       value={b.customBenefitName}
                       onChange={(e) => updateField(activeTab, 'customBenefitName', e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                      className="w-full px-4 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-gray-700 text-white placeholder-gray-400"
                       placeholder="Örn: Sağlık Sigortası"
                     />
                   ) : (
-                    <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg min-h-[42px]">
-                      <span className="text-gray-900">{b.customBenefitName || ''}</span>
+                    <div className="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg min-h-[42px]">
+                      <span className="text-white">{b.customBenefitName || ''}</span>
                     </div>
                   )}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Ödeme Periyodu:</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Ödeme Periyodu:</label>
                   {isEditing && isManager ? (
                     <select
                       value={b.otherBenefitsPaymentPeriod}
                       onChange={(e) => updateField(activeTab, 'otherBenefitsPaymentPeriod', e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                      className="w-full px-4 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-gray-700 text-white"
                     >
                       <option value="">Seçiniz</option>
                       {PAYMENT_PERIODS.map((t) => (
@@ -599,8 +599,8 @@ const EmployeeBenefitsTabs = forwardRef(function EmployeeBenefitsTabs(
                       ))}
                     </select>
                   ) : (
-                    <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg min-h-[42px]">
-                      <span className="text-gray-900">
+                    <div className="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg min-h-[42px]">
+                      <span className="text-white">
                         {PAYMENT_PERIODS.find((t) => t.value.toString() === (b.otherBenefitsPaymentPeriod || '').toString())
                           ?.label || ''}
                       </span>
@@ -609,40 +609,40 @@ const EmployeeBenefitsTabs = forwardRef(function EmployeeBenefitsTabs(
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Tutar:</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Tutar:</label>
                   {isEditing && isManager ? (
                     <input
                       type="text"
                       value={b.otherBenefitsAmount}
                       onChange={(e) => handleCurrencyInput(activeTab, e.target.value, 'otherBenefitsAmount')}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                      className="w-full px-4 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-gray-700 text-white"
                     />
                   ) : (
-                    <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg min-h-[42px]">
-                      <span className="text-gray-900">{formatCurrency(parseCurrencyValue(b.otherBenefitsAmount))}</span>
+                    <div className="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg min-h-[42px]">
+                      <span className="text-white">{formatCurrency(parseCurrencyValue(b.otherBenefitsAmount))}</span>
                     </div>
                   )}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Açıklama:</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Açıklama:</label>
                   {isEditing && isManager ? (
                     <textarea
                       value={b.otherBenefitsDescription}
                       onChange={(e) => updateField(activeTab, 'otherBenefitsDescription', e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                      className="w-full px-4 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-gray-700 text-white"
                       rows="2"
                     />
                   ) : (
-                    <div className="px-4 py-2 bg-white border border-gray-300 rounded-lg min-h-[42px]">
-                      <span className="text-gray-900">{b.otherBenefitsDescription || ''}</span>
+                    <div className="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg min-h-[42px]">
+                      <span className="text-white">{b.otherBenefitsDescription || ''}</span>
                     </div>
                   )}
                 </div>
               </div>
             )}
 
-            {!type && <div className="text-sm text-gray-600">Bu tab için önce <span className="font-medium">Hak Türü</span> seçiniz.</div>}
+            {!type && <div className="text-sm text-gray-400">Bu tab için önce <span className="font-medium text-gray-300">Hak Türü</span> seçiniz.</div>}
           </div>
         )}
       </div>

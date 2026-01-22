@@ -326,22 +326,26 @@ public class LeaveService(ApplicationDbContext context, ILogger<LeaveService> lo
             {
                 if (rightsAndReceivables.UnusedAnnualLeaveDays.HasValue)
                 {
-                    var newDays = rightsAndReceivables.UnusedAnnualLeaveDays.Value - leaveRequest.Days.Value;
+                    var oldDays = rightsAndReceivables.UnusedAnnualLeaveDays.Value;
+                    var newDays = oldDays - leaveRequest.Days.Value;
                     if (newDays < 0)
                     {
                         return ApiResult<bool>.BadRequest("Yeterli yıllık izin günü bulunmamaktadır");
                     }
                     rightsAndReceivables.UnusedAnnualLeaveDays = newDays;
                     
-                    // Ücret hesaplaması (basit bir hesaplama - günlük ücret varsa)
-                    // Bu kısım iş kurallarına göre güncellenebilir
-                    if (rightsAndReceivables.UnusedAnnualLeaveAmount.HasValue && 
-                        rightsAndReceivables.UnusedAnnualLeaveDays.HasValue && 
-                        rightsAndReceivables.UnusedAnnualLeaveDays.Value > 0)
+                    // Ücret hesaplaması: Eğer toplam ücret varsa, günlük ücret hesapla ve yeni ücreti güncelle
+                    if (rightsAndReceivables.UnusedAnnualLeaveAmount.HasValue && oldDays > 0)
                     {
-                        var dailyAmount = rightsAndReceivables.UnusedAnnualLeaveAmount.Value / 
-                                         (rightsAndReceivables.UnusedAnnualLeaveDays.Value + leaveRequest.Days.Value);
+                        // Günlük ücret = toplam ücret / eski gün sayısı
+                        var dailyAmount = rightsAndReceivables.UnusedAnnualLeaveAmount.Value / oldDays;
+                        // Yeni ücret = günlük ücret * yeni gün sayısı
                         rightsAndReceivables.UnusedAnnualLeaveAmount = dailyAmount * newDays;
+                    }
+                    else if (newDays == 0)
+                    {
+                        // Eğer tüm izin kullanıldıysa ücreti 0 yap
+                        rightsAndReceivables.UnusedAnnualLeaveAmount = 0;
                     }
                 }
             }
@@ -392,11 +396,52 @@ public class LeaveService(ApplicationDbContext context, ILogger<LeaveService> lo
 
     public async Task<ApiResult<bool>> UpdateLeaveStatusAsync(int leaveRequestId, LeaveStatusEnum newStatus)
     {
-        var leaveRequest = await context.LeaveRequests.FindAsync(leaveRequestId);
+        var leaveRequest = await context.LeaveRequests
+            .Include(lr => lr.User)
+            .FirstOrDefaultAsync(lr => lr.Id == leaveRequestId);
 
         if (leaveRequest == null)
         {
             return ApiResult<bool>.NotFound("İzin talebi bulunamadı");
+        }
+
+        // Eğer status Approved'a çevriliyorsa ve daha önce Approved değilse, yıllık izin kontrolü yap
+        if (newStatus == LeaveStatusEnum.Approved && leaveRequest.Status != LeaveStatusEnum.Approved)
+        {
+            // Yıllık izin onaylandığında RightsAndReceivables'tan düş
+            if (leaveRequest.LeaveType == LeaveTypeEnum.Annual && leaveRequest.Days.HasValue)
+            {
+                var rightsAndReceivables = await context.RightsAndReceivables
+                    .FirstOrDefaultAsync(r => r.UserId == leaveRequest.UserId);
+
+                if (rightsAndReceivables != null)
+                {
+                    if (rightsAndReceivables.UnusedAnnualLeaveDays.HasValue)
+                    {
+                        var oldDays = rightsAndReceivables.UnusedAnnualLeaveDays.Value;
+                        var newDays = oldDays - leaveRequest.Days.Value;
+                        if (newDays < 0)
+                        {
+                            return ApiResult<bool>.BadRequest("Yeterli yıllık izin günü bulunmamaktadır");
+                        }
+                        rightsAndReceivables.UnusedAnnualLeaveDays = newDays;
+                        
+                        // Ücret hesaplaması: Eğer toplam ücret varsa, günlük ücret hesapla ve yeni ücreti güncelle
+                        if (rightsAndReceivables.UnusedAnnualLeaveAmount.HasValue && oldDays > 0)
+                        {
+                            // Günlük ücret = toplam ücret / eski gün sayısı
+                            var dailyAmount = rightsAndReceivables.UnusedAnnualLeaveAmount.Value / oldDays;
+                            // Yeni ücret = günlük ücret * yeni gün sayısı
+                            rightsAndReceivables.UnusedAnnualLeaveAmount = dailyAmount * newDays;
+                        }
+                        else if (newDays == 0)
+                        {
+                            // Eğer tüm izin kullanıldıysa ücreti 0 yap
+                            rightsAndReceivables.UnusedAnnualLeaveAmount = 0;
+                        }
+                    }
+                }
+            }
         }
 
         leaveRequest.Status = newStatus;

@@ -52,7 +52,7 @@ export default function Footer() {
                 Bağdat Caddesi No:200/6<br />
                 Kadıköy/İstanbul Türkiye
               </p>
-              <p>Telefon: <a href="tel:+905441572201" className="hover:text-orange-500 transition-colors">+90 (544) 157 22 01</a></p>
+              <p>Telefon: <a href="tel:05441572201" className="hover:text-orange-500 transition-colors">0544 157 22 01</a></p>
               <p>Email: <a href="mailto:info@zenaenerji.com" className="hover:text-orange-500 transition-colors">info@zenaenerji.com</a></p>
 
               {/* Sosyal medya ikonları */}

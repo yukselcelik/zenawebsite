@@ -206,6 +206,15 @@ export default function Dashboard({ isManager, stats, userDetail, onTabChange, m
     return normalized;
   }, [isManager, allRequests]);
 
+  // Beklemede durumundaki izin taleplerini say
+  const pendingLeaveCount = useMemo(() => {
+    if (!isManager || !unifiedAllRequests) return 0;
+    return unifiedAllRequests.filter(r => 
+      r.kindKey === 'leave' && 
+      (r.statusText === 'Beklemede' || r.statusRaw === 'Pending' || r.statusRaw === '0' || r.statusRaw === 0)
+    ).length;
+  }, [isManager, unifiedAllRequests]);
+
   const refreshRequests = async () => {
     if (onRequestsUpdated) {
       await onRequestsUpdated();
@@ -414,7 +423,7 @@ export default function Dashboard({ isManager, stats, userDetail, onTabChange, m
               transition={{ delay: 0.4, type: "spring" }}
               className="text-3xl font-bold text-yellow-400"
             >
-              {stats.pendingLeaves || 0}
+              {pendingLeaveCount}
             </motion.p>
             <p className="text-xs text-gray-400 mt-2 group-hover:text-yellow-400 transition-colors">Detayları görüntüle →</p>
           </motion.button>
@@ -488,7 +497,7 @@ export default function Dashboard({ isManager, stats, userDetail, onTabChange, m
                     whileHover={{ scale: 1.1 }}
                     className="text-xs px-2 py-1 rounded-full bg-orange-500/20 text-orange-400 border border-orange-500/50"
                   >
-                    Bekleyen İzin: {stats.pendingLeaves || 0}
+                    Bekleyen İzin: {pendingLeaveCount}
                   </motion.span>
                   <motion.span 
                     whileHover={{ scale: 1.1 }}

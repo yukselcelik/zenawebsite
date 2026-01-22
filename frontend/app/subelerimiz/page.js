@@ -13,35 +13,35 @@ const branches = [
     id: 0,
     name: 'İstanbul Merkez Şubesi',
     address: 'Fenerbahçe Mahallesi Bağdat Caddesi No:200/6 Kadıköy/İstanbul',
-    phone: '+90 (216) 606 44 58',
+    phone: '0544 157 22 01',
     coordinates: { lat: 40.97493589794215, lng: 29.05296105674061 }, 
   },
   {
     id: 1,
     name: 'İstanbul Çengelköy Ar-Ge Binası',
     address: 'Çengelköy Mah. Prf.Dr.Beynun Akyavaş Cad. No:90 Üsküdar / İstanbul',
-    phone: '+90 (216) 606 44 58',
+    phone: '0544 157 22 01',
     coordinates: { lat: 41.05237721470146, lng: 29.067600415461087 }, 
   },
   {
     id: 2,
     name: 'Boğaziçi Üniversitesi Teknopark',
     address: 'Boğaziçi Üniversitesi Güney Kampüsü, Bebek, 34342 Beşiktaş/İstanbul',
-    phone: '+90 (216) 606 44 58',
+    phone: '0544 157 22 01',
     coordinates: { lat: 41.0805, lng: 29.0444 }
   },
   {
     id: 3,
     name: 'Sivas Merkez Şubesi',
     address: 'SULARBAŞI MAH. 11-4 SK. NO:1/6 MERKEZ/SİVAS',
-    phone: '+90 (346) 123 45 67',
+    phone: '0544 157 22 01',
     coordinates: { lat: 39.752198171525286, lng: 37.0157534904467 }
   },
   {
     id: 4,
     name: 'Sivas Cumhuriyet Teknokent Şubesi',
     address: 'YENİŞEHİR MAH. KARDEŞLER CD. TEKNOKENT ARGE KAT: 1 OFİS NO: 111 MERKEZ / SİVAS',
-    phone: '+90 (346) 123 45 67',
+    phone: '0544 157 22 01',
     coordinates: { lat: 39.7023456, lng: 37.0223456 }
   }
 ];

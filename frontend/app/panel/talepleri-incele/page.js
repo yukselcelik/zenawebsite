@@ -207,6 +207,15 @@ export default function TalepleriIncelePage() {
     );
   };
 
+  const handleDownloadDocument = async (requestId) => {
+    try {
+      await ApiService.downloadExpenseRequestDocument(requestId);
+    } catch (error) {
+      console.error('Error downloading document:', error);
+      alert(error.message || 'Belge indirilirken hata oluştu');
+    }
+  };
+
   const renderExpenseRequests = () => {
     if (isLoading) {
       return <div className="text-center py-8 text-gray-300">Yükleniyor...</div>;
@@ -225,6 +234,8 @@ export default function TalepleriIncelePage() {
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Talep Tarihi</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Masraf Türü</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Tutar</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Açıklama</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Belge</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Durum</th>
             </tr>
           </thead>
@@ -249,6 +260,33 @@ export default function TalepleriIncelePage() {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-white font-medium">
                   {new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(request.requestedAmount)}
+                </td>
+                <td className="px-6 py-4 text-sm text-white">
+                  <div className="max-w-md">
+                    {request.description ? (
+                      <div className="text-sm text-gray-300" title={request.description}>
+                        {request.description}
+                      </div>
+                    ) : (
+                      <span className="text-xs text-gray-500">Açıklama yok</span>
+                    )}
+                  </div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  {request.documentPath ? (
+                    <button
+                      onClick={() => handleDownloadDocument(request.id)}
+                      className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-orange-400 bg-orange-900/20 border border-orange-700 rounded-lg hover:bg-orange-900/30 transition-colors cursor-pointer"
+                      title="Belgeyi İndir"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                      </svg>
+                      İndir
+                    </button>
+                  ) : (
+                    <span className="text-xs text-gray-500">Belge yok</span>
+                  )}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <select
