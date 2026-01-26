@@ -76,7 +76,7 @@ public class AuthService(ApplicationDbContext context, IConfiguration configurat
             return null;
         }
 
-        // İşten ayrılan personel kontrolü - OffBoardingDate varsa giriş yapamaz
+        // İşten ayrılan çalışan kontrolü - OffBoardingDate varsa giriş yapamaz
         if (user.OffBoarding != null && user.OffBoarding.OffBoardingDate.HasValue && !user.OffBoarding.isDeleted)
         {
             logger.LogWarning("Login attempt by terminated user: {Email}, OffBoardingDate: {Date}", 
@@ -123,7 +123,7 @@ public class AuthService(ApplicationDbContext context, IConfiguration configurat
         if (user == null)
             return ApiResult<MeDto>.NotFound("User not found");
 
-        // Personel kullanıcıların onay durumunu kontrol et
+        // Çalışan kullanıcıların onay durumunu kontrol et
         if (user.Role == UserRoleEnum.Personel && !user.IsApproved)
         {
             logger.LogWarning("Unauthorized access attempt by unapproved user: {UserId} - {Email}", userId, user.Email);
@@ -291,7 +291,7 @@ public class AuthService(ApplicationDbContext context, IConfiguration configurat
 
         if (user.Role != UserRoleEnum.Personel)
         {
-            return ApiResult<bool>.BadRequest("Sadece personel kullanıcılar onaylanabilir");
+            return ApiResult<bool>.BadRequest("Sadece çalışan kullanıcılar onaylanabilir");
         }
 
         if (user.IsApproved)
@@ -321,7 +321,7 @@ public class AuthService(ApplicationDbContext context, IConfiguration configurat
 
         if (user.Role != UserRoleEnum.Personel)
         {
-            return ApiResult<bool>.BadRequest("Sadece personel kullanıcılar reddedilebilir");
+            return ApiResult<bool>.BadRequest("Sadece çalışan kullanıcılar reddedilebilir");
         }
 
         if (user.IsApproved)
@@ -349,7 +349,7 @@ public class AuthService(ApplicationDbContext context, IConfiguration configurat
 
         if (user.Role != UserRoleEnum.Personel)
         {
-            return ApiResult<bool>.BadRequest("Sadece personel kullanıcıların onay durumu değiştirilebilir");
+            return ApiResult<bool>.BadRequest("Sadece çalışan kullanıcıların onay durumu değiştirilebilir");
         }
 
         user.IsApproved = isApproved;

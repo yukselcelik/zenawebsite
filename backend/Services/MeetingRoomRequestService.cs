@@ -22,6 +22,20 @@ public class MeetingRoomRequestService(ApplicationDbContext context, ILogger<Mee
             case "ataturk":
                 meetingRoom = MeetingRoomEnum.MustafaKemalAtaturk;
                 break;
+            case "fatihsultanmehmet":
+            case "fatih sultan mehmet":
+                meetingRoom = MeetingRoomEnum.FatihSultanMehmet;
+                break;
+            case "boğaziçiteknokent":
+            case "bogaziciteknokent":
+            case "boğaziçi teknokent":
+            case "bogazici teknokent":
+                meetingRoom = MeetingRoomEnum.BogaziciTeknokent;
+                break;
+            case "cumhuriyetteknopark":
+            case "cumhuriyet teknopark":
+                meetingRoom = MeetingRoomEnum.CumhuriyetTeknopark;
+                break;
             default:
                 return ApiResult<MeetingRoomRequestResponseDto>.BadRequest("Geçersiz toplantı salonu");
         }
@@ -107,7 +121,15 @@ public class MeetingRoomRequestService(ApplicationDbContext context, ILogger<Mee
             UserName = user?.Name ?? string.Empty,
             UserSurname = user?.Surname ?? string.Empty,
             UserEmail = user?.Email ?? string.Empty,
-            MeetingRoom = meetingRoom == MeetingRoomEnum.Tonyukuk ? "tonyukuk" : "atatürk",
+            MeetingRoom = meetingRoom switch
+            {
+                MeetingRoomEnum.Tonyukuk => "tonyukuk",
+                MeetingRoomEnum.MustafaKemalAtaturk => "atatürk",
+                MeetingRoomEnum.FatihSultanMehmet => "fatihsultanmehmet",
+                MeetingRoomEnum.BogaziciTeknokent => "boğaziçiteknokent",
+                MeetingRoomEnum.CumhuriyetTeknopark => "cumhuriyetteknopark",
+                _ => "tonyukuk"
+            },
             Date = meetingRoomRequest.Date,
             StartTime = $"{meetingRoomRequest.StartTime.Hours:D2}:{meetingRoomRequest.StartTime.Minutes:D2}",
             EndTime = $"{meetingRoomRequest.EndTime.Hours:D2}:{meetingRoomRequest.EndTime.Minutes:D2}",
@@ -143,7 +165,15 @@ public class MeetingRoomRequestService(ApplicationDbContext context, ILogger<Mee
             UserName = mrr.User.Name,
             UserSurname = mrr.User.Surname,
             UserEmail = mrr.User.Email,
-            MeetingRoom = mrr.MeetingRoom == MeetingRoomEnum.Tonyukuk ? "tonyukuk" : "atatürk",
+            MeetingRoom = mrr.MeetingRoom switch
+            {
+                MeetingRoomEnum.Tonyukuk => "tonyukuk",
+                MeetingRoomEnum.MustafaKemalAtaturk => "atatürk",
+                MeetingRoomEnum.FatihSultanMehmet => "fatihsultanmehmet",
+                MeetingRoomEnum.BogaziciTeknokent => "boğaziçiteknokent",
+                MeetingRoomEnum.CumhuriyetTeknopark => "cumhuriyetteknopark",
+                _ => "tonyukuk"
+            },
             Date = mrr.Date,
             StartTime = mrr.StartTime.ToString(@"hh\:mm"),
             EndTime = mrr.EndTime.ToString(@"hh\:mm"),
@@ -187,7 +217,15 @@ public class MeetingRoomRequestService(ApplicationDbContext context, ILogger<Mee
             UserName = mrr.User.Name,
             UserSurname = mrr.User.Surname,
             UserEmail = mrr.User.Email,
-            MeetingRoom = mrr.MeetingRoom == MeetingRoomEnum.Tonyukuk ? "tonyukuk" : "atatürk",
+            MeetingRoom = mrr.MeetingRoom switch
+            {
+                MeetingRoomEnum.Tonyukuk => "tonyukuk",
+                MeetingRoomEnum.MustafaKemalAtaturk => "atatürk",
+                MeetingRoomEnum.FatihSultanMehmet => "fatihsultanmehmet",
+                MeetingRoomEnum.BogaziciTeknokent => "boğaziçiteknokent",
+                MeetingRoomEnum.CumhuriyetTeknopark => "cumhuriyetteknopark",
+                _ => "tonyukuk"
+            },
             Date = mrr.Date,
             StartTime = mrr.StartTime.ToString(@"hh\:mm"),
             EndTime = mrr.EndTime.ToString(@"hh\:mm"),

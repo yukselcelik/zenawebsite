@@ -114,7 +114,7 @@ export default function PersonnelList({ onViewDetail }) {
             transition={{ delay: 0.1 }}
             className="mb-4"
           >
-            <h3 className="text-lg font-semibold text-white">Personeller</h3>
+            <h3 className="text-lg font-semibold text-white">Çalışanlar</h3>
           </motion.div>
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-700">
@@ -133,7 +133,7 @@ export default function PersonnelList({ onViewDetail }) {
                 {personnelList.length === 0 ? (
                   <tr>
                     <td colSpan="7" className="px-6 py-4 text-center text-gray-400">
-                      Personel bulunamadı
+                      Çalışan bulunamadı
                     </td>
                   </tr>
                 ) : (

@@ -22,6 +22,7 @@ public class ExpenseRequestDto
     public string? StatusName { get; set; }
     public DateTime? ApprovedAt { get; set; }
     public DateTime? RejectedAt { get; set; }
+    public string? RejectionReason { get; set; } // Reddetme nedeni
     public DateTime? PaidAt { get; set; }
     public int? PaymentMethod { get; set; }
     public string? PaymentMethodName { get; set; }

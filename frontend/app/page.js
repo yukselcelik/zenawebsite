@@ -324,7 +324,7 @@ export default function Home() {
               transition={{ duration: 0.5, ease: "easeOut" }}
             >
               <span className="w-12 h-px bg-gray-300" />
-              <h3 className="text-3xl md:text-4xl font-bold text-gray-900 uppercase">Hakkında</h3>
+              <h3 className="text-3xl md:text-4xl font-bold text-gray-900 uppercase">Hakkımızda</h3>
               <span className="w-12 h-px bg-gray-300" />
             </motion.div>
             <motion.div 
@@ -411,7 +411,7 @@ export default function Home() {
                   viewport={{ once: true, amount: 0.3 }}
                   transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
                 >
-                  <h3 className="text-3xl md:text-4xl font-bold text-white mb-[0.85rem]">Solar Güç Simulasyonu Hesabı</h3>
+                  <h3 className="text-3xl md:text-4xl font-bold text-white mb-[0.85rem]">Solar Güç Simülasyonu Hesabı</h3>
                   <p className="text-white/90 mb-[1.275rem]">Kurulu gücünüzü, panel sayınızı, kurtarılan ağaç sayınızı hesaplayabilirsiniz...</p>
                   <motion.a 
                     href="/simulasyon" 

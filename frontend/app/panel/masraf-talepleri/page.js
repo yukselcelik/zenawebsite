@@ -24,6 +24,7 @@ export default function MasrafTalepleriPage() {
   const [activeTab, setActiveTab] = useState('requests');
   const [editingData, setEditingData] = useState({});
   const [isProcessing, setIsProcessing] = useState(false);
+  const [rejectionReason, setRejectionReason] = useState('');
 
   useEffect(() => {
     // Admin kontrolü yap
@@ -170,6 +171,7 @@ export default function MasrafTalepleriPage() {
 
   const handleReject = (request) => {
     setSelectedRequest(request);
+    setRejectionReason('');
     setShowRejectModal(true);
   };
 
@@ -178,11 +180,12 @@ export default function MasrafTalepleriPage() {
 
     try {
       setIsProcessing(true);
-      const result = await ApiService.rejectExpenseRequest(selectedRequest.id);
+      const result = await ApiService.rejectExpenseRequest(selectedRequest.id, rejectionReason);
 
       if (result && result.success) {
         setShowRejectModal(false);
         setSelectedRequest(null);
+        setRejectionReason('');
         fetchExpenseRequests();
       } else {
         alert(result?.message || 'Reddetme işlemi başarısız oldu');
@@ -209,7 +212,7 @@ export default function MasrafTalepleriPage() {
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-800">Masraf Talepleri</h1>
         <p className="text-gray-600 mt-2">
-          Personel masraf taleplerini buradan görüntüleyebilir, onaylayabilir veya reddedebilirsiniz.
+          Çalışan masraf taleplerini buradan görüntüleyebilir, onaylayabilir veya reddedebilirsiniz.
         </p>
       </div>
 
@@ -331,9 +334,16 @@ export default function MasrafTalepleriPage() {
                       )}
                     </td>
                     <td className="px-3 py-4 whitespace-nowrap">
-                      <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadge(request.statusName)}`}>
-                        {request.statusName}
-                      </span>
+                      <div className="flex flex-col gap-1">
+                        <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadge(request.statusName)}`}>
+                          {request.statusName}
+                        </span>
+                        {request.statusName === 'Reddedildi' && request.rejectionReason && (
+                          <div className="mt-1 text-xs text-red-600 max-w-xs">
+                            <span className="font-medium">Neden:</span> {request.rejectionReason}
+                          </div>
+                        )}
+                      </div>
                     </td>
                     <td className="px-3 py-4 whitespace-nowrap text-sm font-medium space-x-1">
                       {request.documentPath && (
@@ -419,19 +429,76 @@ export default function MasrafTalepleriPage() {
       )}
 
       {/* Reddet Modal */}
-      <ConfirmDialog
-        open={showRejectModal}
-        onCancel={() => {
-          setShowRejectModal(false);
-          setSelectedRequest(null);
-        }}
-        onConfirm={confirmReject}
-        title="Masraf Talebini Reddet"
-        message="Bu masraf talebini reddetmek istediğinizden emin misiniz? Bu işlem geri alınamaz."
-        confirmText="Reddet"
-        cancelText="İptal"
-        loading={isProcessing}
-      />
+      {showRejectModal && (
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => {
+            if (!isProcessing) {
+              setShowRejectModal(false);
+              setSelectedRequest(null);
+              setRejectionReason('');
+            }
+          }} />
+          <div className="relative w-full max-w-md mx-4 rounded-2xl bg-white shadow-2xl ring-1 ring-black/5 overflow-hidden">
+            <div className="px-6 pt-6">
+              <div className="flex items-start gap-3">
+                <div className="shrink-0 rounded-full bg-red-100 p-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-red-600" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.518 11.59c.75 1.334-.213 2.985-1.743 2.985H3.482c-1.53 0-2.493-1.651-1.743-2.985l6.518-11.59zM11 14a1 1 0 10-2 0 1 1 0 002 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-base font-semibold text-gray-900">Masraf Talebini Reddet</h3>
+                  <p className="mt-1 text-sm text-gray-600 mb-4">
+                    Bu masraf talebini reddetmek istediğinizden emin misiniz? Lütfen reddetme nedenini açıklayın.
+                  </p>
+                  <div>
+                    <label htmlFor="rejectionReason" className="block text-sm font-medium text-gray-700 mb-2">
+                      Reddetme Nedeni <span className="text-red-500">*</span>
+                    </label>
+                    <textarea
+                      id="rejectionReason"
+                      value={rejectionReason}
+                      onChange={(e) => setRejectionReason(e.target.value)}
+                      placeholder="Reddetme nedeninizi yazın..."
+                      rows={4}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm text-gray-900"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="mt-6 bg-gray-50 px-6 py-4 flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  if (!isProcessing) {
+                    setShowRejectModal(false);
+                    setSelectedRequest(null);
+                    setRejectionReason('');
+                  }
+                }}
+                className="px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-700 text-sm hover:bg-gray-100 transition"
+                disabled={isProcessing}
+              >
+                İptal
+              </button>
+              <button
+                type="button"
+                onClick={confirmReject}
+                disabled={isProcessing || !rejectionReason.trim()}
+                className={`px-4 py-2 rounded-lg text-sm text-white transition ${
+                  isProcessing || !rejectionReason.trim()
+                    ? 'bg-gray-400 cursor-not-allowed'
+                    : 'bg-red-600 hover:bg-red-700 active:bg-red-800'
+                }`}
+              >
+                {isProcessing ? 'İşleniyor...' : 'Reddet'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
         </>
       )}
     </div>

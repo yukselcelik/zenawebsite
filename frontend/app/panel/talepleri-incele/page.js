@@ -22,6 +22,9 @@ export default function TalepleriIncelePage() {
   const [pageNumber, setPageNumber] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [showRejectModal, setShowRejectModal] = useState(false);
+  const [selectedExpenseRequest, setSelectedExpenseRequest] = useState(null);
+  const [rejectionReason, setRejectionReason] = useState('');
 
   const LEAVE_STATUS_OPTIONS = [
     { key: 'pending', label: 'Beklemede', api: 'Pending' },
@@ -98,7 +101,7 @@ export default function TalepleriIncelePage() {
   const getStatusBadge = (status) => getStatusBadgeClass(status);
   const getStatusText = (status) => getStatusTextTR(status);
 
-  const updateStatus = async (kind, id, apiStatus) => {
+  const updateStatus = async (kind, id, apiStatus, rejectionReason = null) => {
     setIsProcessing(true);
     try {
       if (kind === TABS.LEAVE) {
@@ -106,7 +109,12 @@ export default function TalepleriIncelePage() {
       } else if (kind === TABS.MEETING_ROOM) {
         await ApiService.updateMeetingRoomRequestStatus(id, apiStatus);
       } else if (kind === TABS.EXPENSE) {
-        await ApiService.updateExpenseRequestStatus(id, apiStatus);
+        if (apiStatus === 'Rejected') {
+          // Reddetme durumunda özel API kullan
+          await ApiService.rejectExpenseRequest(id, rejectionReason);
+        } else {
+          await ApiService.updateExpenseRequestStatus(id, apiStatus);
+        }
       }
       await fetchData();
     } catch (error) {
@@ -115,6 +123,40 @@ export default function TalepleriIncelePage() {
     } finally {
       setIsProcessing(false);
     }
+  };
+
+  const handleExpenseStatusChange = (request, nextKey, currentStatusKey) => {
+    const opt = EXPENSE_STATUS_OPTIONS.find(o => o.key === nextKey) || EXPENSE_STATUS_OPTIONS[0];
+    
+    // Eğer "Reddedildi" seçildiyse modal aç
+    if (opt.api === 'Rejected') {
+      setSelectedExpenseRequest({ ...request, previousStatusKey: currentStatusKey });
+      setRejectionReason('');
+      setShowRejectModal(true);
+    } else {
+      // Diğer durumlar için direkt güncelle
+      updateStatus(TABS.EXPENSE, request.id, opt.api);
+    }
+  };
+
+  const confirmRejectExpense = async () => {
+    if (!selectedExpenseRequest || !rejectionReason.trim()) {
+      alert('Lütfen reddetme nedenini yazın');
+      return;
+    }
+
+    await updateStatus(TABS.EXPENSE, selectedExpenseRequest.id, 'Rejected', rejectionReason);
+    setShowRejectModal(false);
+    setSelectedExpenseRequest(null);
+    setRejectionReason('');
+  };
+
+  const cancelRejectExpense = () => {
+    setShowRejectModal(false);
+    setSelectedExpenseRequest(null);
+    setRejectionReason('');
+    // Dropdown'ı eski değerine döndürmek için sayfayı yenile
+    fetchData();
   };
 
   const getLeaveTypeText = (type) => {
@@ -131,7 +173,11 @@ export default function TalepleriIncelePage() {
     const roomMap = {
       'tonyukuk': 'Tonyukuk Toplantı Salonu',
       'atatürk': 'Mustafa Kemal Atatürk Toplantı Salonu',
-      'ataturk': 'Mustafa Kemal Atatürk Toplantı Salonu'
+      'ataturk': 'Mustafa Kemal Atatürk Toplantı Salonu',
+      'fatihsultanmehmet': 'Fatih Sultan Mehmet Toplantı Salonu',
+      'boğaziçiteknokent': 'Boğaziçi Teknokent Toplantı Salonu',
+      'bogaziciteknokent': 'Boğaziçi Teknokent Toplantı Salonu',
+      'cumhuriyetteknopark': 'Cumhuriyet Teknopark Toplantı Salonu'
     };
     return roomMap[room] || room;
   };
@@ -150,7 +196,7 @@ export default function TalepleriIncelePage() {
         <table className="min-w-full divide-y divide-gray-700">
           <thead className="bg-gray-700/50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Personel</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Çalışan</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">İzin Türü</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Başlangıç</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Bitiş</th>
@@ -230,7 +276,7 @@ export default function TalepleriIncelePage() {
         <table className="min-w-full divide-y divide-gray-700">
           <thead className="bg-gray-700/50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Personel</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Çalışan</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Talep Tarihi</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Masraf Türü</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Tutar</th>
@@ -289,20 +335,27 @@ export default function TalepleriIncelePage() {
                   )}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <select
-                    value={normalizeStatusKey(request.statusName)}
-                    onChange={(e) => {
-                      const nextKey = e.target.value;
-                      const opt = EXPENSE_STATUS_OPTIONS.find(o => o.key === nextKey) || EXPENSE_STATUS_OPTIONS[0];
-                      updateStatus(TABS.EXPENSE, request.id, opt.api);
-                    }}
-                    disabled={isProcessing}
-                    className={`px-3 py-2 rounded-lg text-sm font-medium border border-gray-600 bg-gray-700 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-white cursor-pointer transition-colors ${getStatusBadge(request.statusName)}`}
-                  >
-                    {EXPENSE_STATUS_OPTIONS.map(o => (
-                      <option key={o.key} value={o.key} className="bg-gray-700">{o.label}</option>
-                    ))}
-                  </select>
+                  <div className="flex flex-col gap-1">
+                    <select
+                      value={normalizeStatusKey(request.statusName)}
+                      onChange={(e) => {
+                        const nextKey = e.target.value;
+                        const currentKey = normalizeStatusKey(request.statusName);
+                        handleExpenseStatusChange(request, nextKey, currentKey);
+                      }}
+                      disabled={isProcessing}
+                      className={`px-3 py-2 rounded-lg text-sm font-medium border border-gray-600 bg-gray-700 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-white cursor-pointer transition-colors ${getStatusBadge(request.statusName)}`}
+                    >
+                      {EXPENSE_STATUS_OPTIONS.map(o => (
+                        <option key={o.key} value={o.key} className="bg-gray-700">{o.label}</option>
+                      ))}
+                    </select>
+                    {request.statusName === 'Reddedildi' && request.rejectionReason && (
+                      <div className="mt-1 text-xs text-red-400 max-w-xs">
+                        <span className="font-medium">Neden:</span> {request.rejectionReason}
+                      </div>
+                    )}
+                  </div>
                 </td>
               </motion.tr>
             ))}
@@ -326,7 +379,7 @@ export default function TalepleriIncelePage() {
         <table className="min-w-full divide-y divide-gray-700">
           <thead className="bg-gray-700/50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Personel</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Çalışan</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Toplantı Salonu</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Tarih</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Saat</th>
@@ -393,7 +446,7 @@ export default function TalepleriIncelePage() {
         <table className="min-w-full divide-y divide-gray-700">
           <thead className="bg-gray-700/50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Personel</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Çalışan</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Başlık</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Açıklama</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Tarih</th>
@@ -452,7 +505,7 @@ export default function TalepleriIncelePage() {
       >
         <h1 className="text-2xl font-bold text-white">Talepleri İncele</h1>
         <p className="text-gray-400 mt-2">
-          Personel taleplerini buradan görüntüleyebilir, onaylayabilir veya reddedebilirsiniz.
+          Çalışan taleplerini buradan görüntüleyebilir, onaylayabilir veya reddedebilirsiniz.
         </p>
       </motion.div>
 
@@ -573,6 +626,70 @@ export default function TalepleriIncelePage() {
           </motion.div>
         )}
       </motion.div>
+
+      {/* Reddet Modal - Masraf Talepleri için */}
+      {showRejectModal && (
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => {
+            if (!isProcessing) {
+              cancelRejectExpense();
+            }
+          }} />
+          <div className="relative w-full max-w-md mx-4 rounded-2xl bg-white shadow-2xl ring-1 ring-black/5 overflow-hidden">
+            <div className="px-6 pt-6">
+              <div className="flex items-start gap-3">
+                <div className="shrink-0 rounded-full bg-red-100 p-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-red-600" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.518 11.59c.75 1.334-.213 2.985-1.743 2.985H3.482c-1.53 0-2.493-1.651-1.743-2.985l6.518-11.59zM11 14a1 1 0 10-2 0 1 1 0 002 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-base font-semibold text-gray-900">Masraf Talebini Reddet</h3>
+                  <p className="mt-1 text-sm text-gray-600 mb-4">
+                    Bu masraf talebini reddetmek istediğinizden emin misiniz? Lütfen reddetme nedenini açıklayın.
+                  </p>
+                  <div>
+                    <label htmlFor="rejectionReason" className="block text-sm font-medium text-gray-700 mb-2">
+                      Reddetme Nedeni <span className="text-red-500">*</span>
+                    </label>
+                    <textarea
+                      id="rejectionReason"
+                      value={rejectionReason}
+                      onChange={(e) => setRejectionReason(e.target.value)}
+                      placeholder="Reddetme nedeninizi yazın..."
+                      rows={4}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm text-gray-900"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="mt-6 bg-gray-50 px-6 py-4 flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={cancelRejectExpense}
+                className="px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-700 text-sm hover:bg-gray-100 transition"
+                disabled={isProcessing}
+              >
+                İptal
+              </button>
+              <button
+                type="button"
+                onClick={confirmRejectExpense}
+                disabled={isProcessing || !rejectionReason.trim()}
+                className={`px-4 py-2 rounded-lg text-sm text-white transition ${
+                  isProcessing || !rejectionReason.trim()
+                    ? 'bg-gray-400 cursor-not-allowed'
+                    : 'bg-red-600 hover:bg-red-700 active:bg-red-800'
+                }`}
+              >
+                {isProcessing ? 'İşleniyor...' : 'Reddet'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </motion.div>
   );

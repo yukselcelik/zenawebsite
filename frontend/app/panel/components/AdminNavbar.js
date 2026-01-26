@@ -21,8 +21,8 @@ export default function Navbar({ userData, onLogout, isManager }) {
     if (pathname?.includes('/talepleri-incele')) return 'Talepleri İncele';
     if (pathname?.includes('/masraf-talepleri')) return 'Masraf Talepleri';
     if (pathname?.includes('/odeme-takip')) return 'Ödeme Takip';
-    if (pathname?.includes('/personeller') && pathname?.match(/\/personeller\/\d+/)) return 'Personel Detayı';
-    if (pathname?.includes('/personeller')) return 'Personeller';
+    if (pathname?.includes('/personeller') && pathname?.match(/\/personeller\/\d+/)) return 'Çalışan Detayı';
+    if (pathname?.includes('/personeller')) return 'Çalışanlar';
     if (pathname?.includes('/is-basvurulari')) return 'İş/Staj Başvuruları';
     return 'Panel';
   };
@@ -65,7 +65,7 @@ export default function Navbar({ userData, onLogout, isManager }) {
             <motion.div 
               whileHover={{ scale: 1.05 }}
               className="flex items-center gap-1.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white px-2.5 py-1 rounded-full shadow-lg shadow-blue-500/50">
-              <span className="text-xs font-bold">Personel</span>
+              <span className="text-xs font-bold">Çalışan</span>
             </motion.div>
           )}
         </div>

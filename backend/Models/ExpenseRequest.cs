@@ -19,6 +19,7 @@ public class ExpenseRequest : BaseEntity
     public ExpenseStatusEnum Status { get; set; } = ExpenseStatusEnum.Pending;
     public DateTime? ApprovedAt { get; set; }
     public DateTime? RejectedAt { get; set; }
+    public string? RejectionReason { get; set; } // Reddetme nedeni
     public DateTime? PaidAt { get; set; }
     public PaymentMethodEnum? PaymentMethod { get; set; }
     public int? ApprovedByUserId { get; set; } // Onaylayan yönetici

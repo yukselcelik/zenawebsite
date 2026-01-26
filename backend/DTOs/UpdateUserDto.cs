@@ -6,9 +6,9 @@ public class UpdateUserDto
     public string? Surname { get; set; }
     public string? Phone { get; set; }
     public string? PhotoPath { get; set; }
-    public string? TcNo { get; set; } // Personel kendi TcNo bilgisini güncelleyebilir, yönetici herkes için güncelleyebilir
-    public string? BirthPlace { get; set; } // Personel kendi bilgisini güncelleyebilir, yönetici herkes için güncelleyebilir
-    public DateTime? BirthDate { get; set; } // Personel kendi bilgisini güncelleyebilir, yönetici herkes için güncelleyebilir
+    public string? TcNo { get; set; } // Çalışan kendi TcNo bilgisini güncelleyebilir, yönetici herkes için güncelleyebilir
+    public string? BirthPlace { get; set; } // Çalışan kendi bilgisini güncelleyebilir, yönetici herkes için güncelleyebilir
+    public DateTime? BirthDate { get; set; } // Çalışan kendi bilgisini güncelleyebilir, yönetici herkes için güncelleyebilir
     public string? Role { get; set; } // Sadece yönetici güncelleyebilir: "Manager" | "Personel"
     public string? SocialSecurityNumber { get; set; } // Sadece yönetici güncelleyebilir
     public string? TaxNumber { get; set; } // Sadece yönetici güncelleyebilir

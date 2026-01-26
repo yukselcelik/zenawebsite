@@ -6,12 +6,18 @@ import ApiService from '../../../../lib/api';
 
 const MEETING_ROOMS = {
   TONYUKUK: 'tonyukuk',
-  ATATURK: 'atatürk'
+  ATATURK: 'atatürk',
+  FATIHSULTANMEHMET: 'fatihsultanmehmet',
+  BOGAZICITEKNOKENT: 'boğaziçiteknokent',
+  CUMHURIYETTEKNOPARK: 'cumhuriyetteknopark'
 };
 
 const MEETING_ROOM_LABELS = {
   [MEETING_ROOMS.TONYUKUK]: 'Tonyukuk Toplantı Salonu',
-  [MEETING_ROOMS.ATATURK]: 'Mustafa Kemal Atatürk Toplantı Salonu'
+  [MEETING_ROOMS.ATATURK]: 'Mustafa Kemal Atatürk Toplantı Salonu',
+  [MEETING_ROOMS.FATIHSULTANMEHMET]: 'Fatih Sultan Mehmet Toplantı Salonu',
+  [MEETING_ROOMS.BOGAZICITEKNOKENT]: 'Boğaziçi Teknokent Toplantı Salonu',
+  [MEETING_ROOMS.CUMHURIYETTEKNOPARK]: 'Cumhuriyet Teknopark Toplantı Salonu'
 };
 
 export default function ToplantiOdasiTalepEtForm({ onSuccess, onCancel }) {
@@ -153,6 +159,9 @@ export default function ToplantiOdasiTalepEtForm({ onSuccess, onCancel }) {
             <option value="" className="bg-gray-700">Seçiniz</option>
             <option value={MEETING_ROOMS.TONYUKUK} className="bg-gray-700">{MEETING_ROOM_LABELS[MEETING_ROOMS.TONYUKUK]}</option>
             <option value={MEETING_ROOMS.ATATURK} className="bg-gray-700">{MEETING_ROOM_LABELS[MEETING_ROOMS.ATATURK]}</option>
+            <option value={MEETING_ROOMS.FATIHSULTANMEHMET} className="bg-gray-700">{MEETING_ROOM_LABELS[MEETING_ROOMS.FATIHSULTANMEHMET]}</option>
+            <option value={MEETING_ROOMS.BOGAZICITEKNOKENT} className="bg-gray-700">{MEETING_ROOM_LABELS[MEETING_ROOMS.BOGAZICITEKNOKENT]}</option>
+            <option value={MEETING_ROOMS.CUMHURIYETTEKNOPARK} className="bg-gray-700">{MEETING_ROOM_LABELS[MEETING_ROOMS.CUMHURIYETTEKNOPARK]}</option>
           </select>
           {errors.meetingRoom && <p className="text-xs text-red-400 mt-1">{errors.meetingRoom}</p>}
         </div>

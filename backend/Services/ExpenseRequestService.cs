@@ -194,7 +194,7 @@ public class ExpenseRequestService(ApplicationDbContext context, ILogger<Expense
         return ApiResult<ExpenseRequestDto>.Ok(result);
     }
 
-    public async Task<ApiResult<ExpenseRequestDto>> RejectExpenseRequestAsync(int id, int rejectedByUserId)
+    public async Task<ApiResult<ExpenseRequestDto>> RejectExpenseRequestAsync(int id, int rejectedByUserId, string? rejectionReason = null)
     {
         var expenseRequest = await context.ExpenseRequests
             .FirstOrDefaultAsync(er => er.Id == id);
@@ -212,11 +212,12 @@ public class ExpenseRequestService(ApplicationDbContext context, ILogger<Expense
         expenseRequest.Status = ExpenseStatusEnum.Rejected;
         expenseRequest.ApprovedByUserId = rejectedByUserId;
         expenseRequest.RejectedAt = DateTime.UtcNow;
+        expenseRequest.RejectionReason = rejectionReason;
         expenseRequest.UpdatedAt = DateTime.UtcNow;
 
         await context.SaveChangesAsync();
 
-        logger.LogInformation("Expense request rejected: {Id} by user {UserId}", id, rejectedByUserId);
+        logger.LogInformation("Expense request rejected: {Id} by user {UserId} with reason: {Reason}", id, rejectedByUserId, rejectionReason ?? "Neden belirtilmedi");
 
         var result = await MapToDtoAsync(expenseRequest);
         return ApiResult<ExpenseRequestDto>.Ok(result);
@@ -277,6 +278,7 @@ public class ExpenseRequestService(ApplicationDbContext context, ILogger<Expense
             expenseRequest.ApprovedAmount = null;
             expenseRequest.ApprovedAt = null;
             expenseRequest.RejectedAt = null;
+            expenseRequest.RejectionReason = null;
             expenseRequest.PaidAt = null;
             expenseRequest.PaymentMethod = null;
             expenseRequest.ApprovedByUserId = null;
@@ -286,6 +288,7 @@ public class ExpenseRequestService(ApplicationDbContext context, ILogger<Expense
             expenseRequest.ApprovedAmount ??= expenseRequest.RequestedAmount;
             expenseRequest.ApprovedAt ??= DateTime.UtcNow;
             expenseRequest.RejectedAt = null;
+            expenseRequest.RejectionReason = null;
             expenseRequest.PaidAt = null;
             expenseRequest.ApprovedByUserId = actingUserId;
         }
@@ -334,6 +337,7 @@ public class ExpenseRequestService(ApplicationDbContext context, ILogger<Expense
             StatusName = GetStatusName(er.Status),
             ApprovedAt = er.ApprovedAt,
             RejectedAt = er.RejectedAt,
+            RejectionReason = er.RejectionReason,
             PaidAt = er.PaidAt,
             PaymentMethod = er.PaymentMethod.HasValue ? (int?)er.PaymentMethod.Value : null,
             PaymentMethodName = er.PaymentMethod.HasValue ? GetPaymentMethodName(er.PaymentMethod.Value) : null,

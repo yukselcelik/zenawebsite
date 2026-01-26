@@ -1,7 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
 import ApiService from '../../../../lib/api';
 
 const EXPENSE_TYPES = [
@@ -153,33 +152,21 @@ export default function MasrafTalepEtForm({ onSuccess, onCancel }) {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-    >
+    <div>
       <div className="mb-6">
         <h2 className="text-xl font-bold text-white">Masraf Talep Et</h2>
       </div>
 
       {error && (
-        <motion.div 
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="mb-4 bg-red-900/50 border border-red-700 text-red-300 px-4 py-3 rounded-lg"
-        >
+        <div className="mb-4 bg-red-900/50 border border-red-700 text-red-300 px-4 py-3 rounded-lg">
           {error}
-        </motion.div>
+        </div>
       )}
 
       {success && (
-        <motion.div 
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="mb-4 bg-green-900/50 border border-green-700 text-green-300 px-4 py-3 rounded-lg"
-        >
+        <div className="mb-4 bg-green-900/50 border border-green-700 text-green-300 px-4 py-3 rounded-lg">
           {success}
-        </motion.div>
+        </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -192,9 +179,7 @@ export default function MasrafTalepEtForm({ onSuccess, onCancel }) {
                 Talep Tarihi <span className="text-red-400">*</span>
               </label>
               <div className="flex gap-2">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                <button
                   type="button"
                   onClick={() => {
                     const d = new Date();
@@ -206,10 +191,8 @@ export default function MasrafTalepEtForm({ onSuccess, onCancel }) {
                   className="text-xs px-2 py-1 rounded border border-gray-600 bg-gray-700 hover:bg-gray-600 text-gray-300 transition-colors"
                 >
                   Bugün
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                </button>
+                <button
                   type="button"
                   onClick={() => {
                     const d = new Date();
@@ -222,7 +205,7 @@ export default function MasrafTalepEtForm({ onSuccess, onCancel }) {
                   className="text-xs px-2 py-1 rounded border border-gray-600 bg-gray-700 hover:bg-gray-600 text-gray-300 transition-colors"
                 >
                   Dün
-                </motion.button>
+                </button>
               </div>
             </div>
             <input
@@ -323,15 +306,13 @@ export default function MasrafTalepEtForm({ onSuccess, onCancel }) {
                   <div className="font-medium text-white">Belge ekle (opsiyonel)</div>
                   <div className="text-xs text-gray-400">Sürükle-bırak yapın veya dosya seçin (PDF/JPG/PNG, max 10MB)</div>
                 </div>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                <button
                   type="button"
                   onClick={() => fileInputRef.current?.click?.()}
                   className="px-3 py-2 rounded-lg border border-gray-600 bg-gray-700 hover:bg-gray-600 text-sm text-gray-300 transition-colors"
                 >
                   Dosya Seç
-                </motion.button>
+                </button>
               </div>
             </div>
             {documentFile && (
@@ -356,18 +337,14 @@ export default function MasrafTalepEtForm({ onSuccess, onCancel }) {
 
         {/* Submit Button */}
         <div className="flex justify-end gap-3">
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+          <button
             type="button"
             onClick={onCancel}
             className="px-6 py-2 border border-gray-600 rounded-lg text-gray-300 bg-gray-700 hover:bg-gray-600 transition-colors"
           >
             İptal
-          </motion.button>
-          <motion.button
-            whileHover={{ scale: isLoading ? 1 : 1.05 }}
-            whileTap={{ scale: isLoading ? 1 : 0.95 }}
+          </button>
+          <button
             type="submit"
             disabled={isLoading}
             className={`px-6 py-2 rounded-lg text-white transition-all ${
@@ -377,10 +354,10 @@ export default function MasrafTalepEtForm({ onSuccess, onCancel }) {
             }`}
           >
             {isLoading ? 'Gönderiliyor...' : 'Talep Oluştur'}
-          </motion.button>
+          </button>
         </div>
       </form>
-    </motion.div>
+    </div>
   );
 }
 

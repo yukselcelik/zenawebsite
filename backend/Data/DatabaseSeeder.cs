@@ -56,7 +56,7 @@ public static class DatabaseSeeder
                 context.Users.Add(personel1);
                 await context.SaveChangesAsync();
                 
-                // Personel1 için ilişkili verileri oluştur
+                // Çalışan1 için ilişkili verileri oluştur
                 var contactInfo1 = new ContactInfo
                 {
                     UserId = personel1.Id,
@@ -97,7 +97,7 @@ public static class DatabaseSeeder
                 context.EducationInfos.Add(educationInfo1);
                 
                 await context.SaveChangesAsync();
-                logger.LogInformation("Dummy personel1 user created");
+                logger.LogInformation("Dummy çalışan1 user created");
             }
 
             if (!personel2Exists)
@@ -119,7 +119,7 @@ public static class DatabaseSeeder
                 context.Users.Add(personel2);
                 await context.SaveChangesAsync();
                 
-                // Personel2 için ilişkili verileri oluştur
+                // Çalışan2 için ilişkili verileri oluştur
                 var contactInfo2 = new ContactInfo
                 {
                     UserId = personel2.Id,
@@ -160,7 +160,7 @@ public static class DatabaseSeeder
                 context.EducationInfos.Add(educationInfo2);
                 
                 await context.SaveChangesAsync();
-                logger.LogInformation("Dummy personel2 user created");
+                logger.LogInformation("Dummy çalışan2 user created");
             }
             
             // İlişkili verileri sadece yoksa oluştur

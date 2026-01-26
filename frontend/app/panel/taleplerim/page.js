@@ -24,6 +24,8 @@ export default function TaleplerimPage() {
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [selectedExpenseDetail, setSelectedExpenseDetail] = useState(null);
 
   useEffect(() => {
     fetchData();
@@ -73,6 +75,20 @@ export default function TaleplerimPage() {
     });
   };
 
+  const handleDownloadDocument = async (requestId) => {
+    try {
+      await ApiService.downloadExpenseRequestDocument(requestId);
+    } catch (error) {
+      console.error('Error downloading document:', error);
+      alert(error.message || 'Belge indirilirken hata oluştu');
+    }
+  };
+
+  const handleShowDetails = (request) => {
+    setSelectedExpenseDetail(request);
+    setShowDetailModal(true);
+  };
+
   const handleCancel = async () => {
     if (!selectedRequest) return;
 
@@ -120,7 +136,11 @@ export default function TaleplerimPage() {
     const roomMap = {
       'tonyukuk': 'Tonyukuk Toplantı Salonu',
       'atatürk': 'Mustafa Kemal Atatürk Toplantı Salonu',
-      'ataturk': 'Mustafa Kemal Atatürk Toplantı Salonu'
+      'ataturk': 'Mustafa Kemal Atatürk Toplantı Salonu',
+      'fatihsultanmehmet': 'Fatih Sultan Mehmet Toplantı Salonu',
+      'boğaziçiteknokent': 'Boğaziçi Teknokent Toplantı Salonu',
+      'bogaziciteknokent': 'Boğaziçi Teknokent Toplantı Salonu',
+      'cumhuriyetteknopark': 'Cumhuriyet Teknopark Toplantı Salonu'
     };
     return roomMap[room] || room;
   };
@@ -205,7 +225,9 @@ export default function TaleplerimPage() {
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Talep Tarihi</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Masraf Türü</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Tutar</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Belge</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Durum</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Açıklama</th>
             </tr>
           </thead>
           <tbody className="bg-gray-800 divide-y divide-gray-700">
@@ -221,9 +243,44 @@ export default function TaleplerimPage() {
                   {new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(request.requestedAmount)}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
+                  {request.documentPath ? (
+                    <button
+                      onClick={() => handleDownloadDocument(request.id)}
+                      className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-orange-400 bg-orange-900/20 border border-orange-700 rounded-lg hover:bg-orange-900/30 transition-colors cursor-pointer"
+                      title="Belgeyi İndir"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                      </svg>
+                      Belgeyi İndir
+                    </button>
+                  ) : (
+                    <span className="text-xs text-gray-500">Belge yok</span>
+                  )}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
                   <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeClass(request.statusName)}`}>
                     {getStatusTextTR(request.statusName)}
                   </span>
+                </td>
+                <td className="px-6 py-4">
+                  {request.statusName === 'Reddedildi' && request.rejectionReason ? (
+                    <div className="bg-red-900/30 border-2 border-red-600 rounded-lg p-3 max-w-md">
+                      <div className="flex items-start gap-2">
+                        <svg className="w-5 h-5 text-red-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <div className="flex-1">
+                          <p className="text-xs font-semibold text-red-300 mb-1.5 uppercase tracking-wide">Açıklama</p>
+                          <p className="text-sm text-red-200 leading-relaxed">{request.rejectionReason}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ) : request.statusName === 'Reddedildi' && !request.rejectionReason ? (
+                    <span className="text-xs text-gray-500">-</span>
+                  ) : (
+                    <span className="text-xs text-gray-500">-</span>
+                  )}
                 </td>
               </tr>
             ))}
@@ -438,6 +495,72 @@ export default function TaleplerimPage() {
         loading={isProcessing}
         confirmButtonClass="bg-red-500 hover:bg-red-600 active:bg-red-700"
       />
+
+      {/* Detaylar Modal - Reddetme Nedeni */}
+      {showDetailModal && selectedExpenseDetail && (
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => {
+            setShowDetailModal(false);
+            setSelectedExpenseDetail(null);
+          }} />
+          <div className="relative w-full max-w-md mx-4 rounded-2xl bg-white shadow-2xl ring-1 ring-black/5 overflow-hidden">
+            <div className="px-6 pt-6">
+              <div className="flex items-start gap-3">
+                <div className="shrink-0 rounded-full bg-blue-100 p-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-600" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-base font-semibold text-gray-900">Masraf Talebi Detayları</h3>
+                  <div className="mt-4 space-y-3">
+                    <div>
+                      <p className="text-sm font-medium text-gray-700 mb-1">Masraf Türü:</p>
+                      <p className="text-sm text-gray-900">{selectedExpenseDetail.expenseTypeName}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-700 mb-1">Talep Edilen Tutar:</p>
+                      <p className="text-sm text-gray-900">
+                        {new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(selectedExpenseDetail.requestedAmount)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-700 mb-1">Talep Tarihi:</p>
+                      <p className="text-sm text-gray-900">{formatDate(selectedExpenseDetail.requestDate)}</p>
+                    </div>
+                    {selectedExpenseDetail.description && (
+                      <div>
+                        <p className="text-sm font-medium text-gray-700 mb-1">Açıklama:</p>
+                        <p className="text-sm text-gray-900">{selectedExpenseDetail.description}</p>
+                      </div>
+                    )}
+                    {selectedExpenseDetail.rejectionReason && (
+                      <div>
+                        <p className="text-sm font-medium text-red-700 mb-1">Reddetme Nedeni:</p>
+                        <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                          <p className="text-sm text-red-900">{selectedExpenseDetail.rejectionReason}</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="mt-6 bg-gray-50 px-6 py-4 flex justify-end">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowDetailModal(false);
+                  setSelectedExpenseDetail(null);
+                }}
+                className="px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-700 text-sm hover:bg-gray-100 transition"
+              >
+                Kapat
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

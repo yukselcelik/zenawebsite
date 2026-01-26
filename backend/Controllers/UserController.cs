@@ -321,7 +321,7 @@ public class UserController : ControllerBase
         if (!Enum.TryParse<UserRoleEnum>(roleClaim, out var requestingUserRole))
             return Ok(ApiResult<RightsAndReceivablesDto>.Unauthorized("Invalid role"));
 
-        // Personel sadece kendi bilgilerini görebilir, Yönetici herkesi görebilir
+        // Çalışan sadece kendi bilgilerini görebilir, Yönetici herkesi görebilir
         if (requestingUserRole != UserRoleEnum.Manager && userId != requestingUserId)
             return Ok(ApiResult<RightsAndReceivablesDto>.Unauthorized("Sadece kendi bilgilerinizi görüntüleyebilirsiniz"));
 
@@ -384,7 +384,7 @@ public class UserController : ControllerBase
         if (!Enum.TryParse<UserRoleEnum>(roleClaim, out var requestingUserRole))
             return Ok(ApiResult<List<EmployeeBenefitDto>>.Unauthorized("Invalid role"));
 
-        // Personel sadece kendi bilgilerini görebilir, Yönetici herkesi görebilir
+        // Çalışan sadece kendi bilgilerini görebilir, Yönetici herkesi görebilir
         if (requestingUserRole != UserRoleEnum.Manager && userId != requestingUserId)
             return Ok(ApiResult<List<EmployeeBenefitDto>>.Unauthorized("Sadece kendi bilgilerinizi görüntüleyebilirsiniz"));
 

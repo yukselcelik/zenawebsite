@@ -66,7 +66,11 @@ function getMeetingRoomText(room) {
   const roomMap = {
     tonyukuk: 'Tonyukuk Toplantı Salonu',
     atatürk: 'Mustafa Kemal Atatürk Toplantı Salonu',
-    ataturk: 'Mustafa Kemal Atatürk Toplantı Salonu'
+    ataturk: 'Mustafa Kemal Atatürk Toplantı Salonu',
+    fatihsultanmehmet: 'Fatih Sultan Mehmet Toplantı Salonu',
+    'boğaziçiteknokent': 'Boğaziçi Teknokent Toplantı Salonu',
+    bogaziciteknokent: 'Boğaziçi Teknokent Toplantı Salonu',
+    cumhuriyetteknopark: 'Cumhuriyet Teknopark Toplantı Salonu'
   };
   return roomMap[room] || room || 'Toplantı Salonu';
 }
@@ -373,7 +377,7 @@ export default function Dashboard({ isManager, stats, userDetail, onTabChange, m
             className="bg-gray-800 border border-gray-700 rounded-lg shadow-lg p-6 hover:shadow-xl hover:border-orange-500/50 transition-all duration-300 text-left w-full group cursor-pointer"
           >
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-lg font-semibold text-white group-hover:text-orange-400 transition-colors">Toplam Personel</h3>
+              <h3 className="text-lg font-semibold text-white group-hover:text-orange-400 transition-colors">Toplam Çalışanlar</h3>
               <motion.svg 
                 animate={{ rotate: [0, 10, -10, 0] }}
                 transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
@@ -545,7 +549,7 @@ export default function Dashboard({ isManager, stats, userDetail, onTabChange, m
                 <table className="min-w-full divide-y divide-gray-700">
                   <thead className="bg-gray-700/50">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Personel</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Çalışan</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Tür</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Tarih</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Özet</th>

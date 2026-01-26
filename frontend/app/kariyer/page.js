@@ -201,7 +201,7 @@ export default function Kariyer() {
                 <option value="">Pozisyon Seçiniz</option>
                 <option value="staj">Staj</option>
                 <option value="elektrik-muhendisi">Elektrik Mühendisi</option>
-                <option value="mekanik-muhendisi">Mekanik Mühendisi</option>
+                <option value="mekanik-muhendisi">Makine Mühendisi</option>
                 <option value="proje-muduru">Proje Müdürü</option>
                 <option value="tekniker">Tekniker</option>
                 <option value="saha-sorumlusu">Saha Sorumlusu</option>

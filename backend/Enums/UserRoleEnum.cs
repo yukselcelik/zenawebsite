@@ -4,7 +4,7 @@ namespace Zenabackend.Enums;
 
 public enum UserRoleEnum
 {
-    [Description("Personel")]
+    [Description("Çalışan")]
     Personel = 0,
     [Description("Yönetici")]
     Manager = 1

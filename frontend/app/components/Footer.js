@@ -52,7 +52,7 @@ export default function Footer() {
                 Bağdat Caddesi No:200/6<br />
                 Kadıköy/İstanbul Türkiye
               </p>
-              <p>Telefon: <a href="tel:05441572201" className="hover:text-orange-500 transition-colors">0544 157 22 01</a></p>
+              <p>Telefon: <a href="tel:+902166064458" className="hover:text-orange-500 transition-colors">+90 (216) 606 44 58</a></p>
               <p>Email: <a href="mailto:info@zenaenerji.com" className="hover:text-orange-500 transition-colors">info@zenaenerji.com</a></p>
 
               {/* Sosyal medya ikonları */}
@@ -111,11 +111,11 @@ export default function Footer() {
               <h3 className="text-lg font-semibold text-white mt-2 text-center">ÇALIŞMA SAATLERİMİZ</h3>
             </div>
             <ul className="space-y-2 text-gray-300 text-sm text-center">
-              <li>Pazartesi 08:00-18:00</li>
-              <li>Salı 08:00-18:00</li>
-              <li>Çarşamba 08:00-18:00</li>
-              <li>Perşembe 08:00-18:00</li>
-              <li>Cuma 08:00-18:00</li>
+              <li>Pazartesi 09:00-18:00</li>
+              <li>Salı 09:00-18:00</li>
+              <li>Çarşamba 09:00-18:00</li>
+              <li>Perşembe 09:00-18:00</li>
+              <li>Cuma 09:00-18:00</li>
               <li>Cumartesi Kapalı</li>
               <li>Pazar Kapalı</li>
             </ul>

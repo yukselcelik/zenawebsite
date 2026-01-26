@@ -908,10 +908,13 @@ class ApiService {
     return this.handleResponse(response);
   }
 
-  static async rejectExpenseRequest(id) {
+  static async rejectExpenseRequest(id, rejectionReason = null) {
     const response = await fetch(`${API_BASE_URL}/api/expenserequest/${id}/reject`, {
       method: 'PUT',
       headers: this.getHeaders(),
+      body: JSON.stringify({
+        rejectionReason: rejectionReason || null
+      }),
     });
 
     return this.handleResponse(response);
@@ -1078,6 +1081,74 @@ class ApiService {
     });
 
     return this.handleResponse(response);
+  }
+
+  // Archive API methods
+  static async getAllArchiveDocuments() {
+    const response = await fetch(`${API_BASE_URL}/api/archive/all`, {
+      method: 'GET',
+      headers: this.getHeaders(),
+    });
+
+    return this.handleResponse(response);
+  }
+
+  static async getArchiveDocumentByType(documentType) {
+    const response = await fetch(`${API_BASE_URL}/api/archive/by-type/${documentType}`, {
+      method: 'GET',
+      headers: this.getHeaders(),
+    });
+
+    return this.handleResponse(response);
+  }
+
+  static async uploadArchiveDocument(document, documentType) {
+    const formData = new FormData();
+    formData.append('document', document);
+    formData.append('documentType', documentType.toString());
+
+    const token = this.getToken();
+    const headers = {};
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
+    const response = await fetch(`${API_BASE_URL}/api/archive/upload`, {
+      method: 'POST',
+      headers: headers,
+      body: formData,
+    });
+
+    return this.handleResponse(response);
+  }
+
+  static async deleteArchiveDocument(id) {
+    const response = await fetch(`${API_BASE_URL}/api/archive/${id}`, {
+      method: 'DELETE',
+      headers: this.getHeaders(),
+    });
+
+    return this.handleResponse(response);
+  }
+
+  static async downloadArchiveDocument(id) {
+    const token = this.getToken();
+    const headers = {};
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
+    const response = await fetch(`${API_BASE_URL}/api/archive/${id}/document`, {
+      method: 'GET',
+      headers: headers,
+    });
+
+    if (!response.ok) {
+      throw new Error('Belge indirilemedi');
+    }
+
+    const blob = await response.blob();
+    return blob;
   }
 }
 

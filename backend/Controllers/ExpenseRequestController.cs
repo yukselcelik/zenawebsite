@@ -160,10 +160,12 @@ public class ExpenseRequestController(ExpenseRequestService expenseRequestServic
 
     [HttpPut("{id:int}/reject")]
     [Authorize(Roles = "Manager")]
-    public async Task<ActionResult<ApiResult<ExpenseRequestDto>>> RejectExpenseRequest(int id)
+    public async Task<ActionResult<ApiResult<ExpenseRequestDto>>> RejectExpenseRequest(
+        int id, [FromBody] RejectExpenseRequestDto? dto = null)
     {
         var rejectedByUserId = GetUserId();
-        var result = await expenseRequestService.RejectExpenseRequestAsync(id, rejectedByUserId);
+        var rejectionReason = dto?.RejectionReason;
+        var result = await expenseRequestService.RejectExpenseRequestAsync(id, rejectedByUserId, rejectionReason);
         return Ok(result);
     }
 
