@@ -115,7 +115,7 @@ export default function InternshipApplications() {
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="bg-gray-800 border border-gray-700 rounded-lg shadow-lg p-6"
+        className="p-6"
       >
         <div className="text-center py-8">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500 mx-auto mb-4"></div>
@@ -130,9 +130,9 @@ export default function InternshipApplications() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="bg-gray-800 border border-gray-700 rounded-lg shadow-lg overflow-hidden"
+      className="overflow-hidden"
     >
-      <div className="p-6">
+      <div className="">
         <div className="space-y-4">
           {applications.length === 0 ? (
             <p className="text-gray-400 text-center py-8">Henüz iş/staj başvurusu bulunmamaktadır.</p>

@@ -107,7 +107,7 @@ export default function PersonnelList({ onViewDetail }) {
         transition={{ duration: 0.3 }}
         className="bg-gray-800 border border-gray-700 rounded-lg shadow-lg overflow-hidden"
       >
-        <div className="p-6">
+        <div className="">
           <motion.div 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}

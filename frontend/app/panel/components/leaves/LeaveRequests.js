@@ -111,7 +111,7 @@ export default function LeaveRequests({ isManager, onLeaveRequestsChange, onCrea
       )}
 
       <div className="bg-gray-800 border border-gray-700 rounded-lg shadow-lg overflow-hidden">
-        <div className="p-6">
+        <div className="">
           {!isManager && (
             <div className="flex justify-end items-center mb-4">
               <button

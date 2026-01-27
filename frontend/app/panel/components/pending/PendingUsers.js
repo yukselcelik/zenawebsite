@@ -81,7 +81,7 @@ export default function PendingUsers() {
 
   return (
       <div className="bg-gray-800 border border-gray-700 rounded-lg shadow-lg overflow-hidden">
-        <div className="p-6">
+        <div className="">
           <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-700">
             <thead className="bg-gray-700/50">

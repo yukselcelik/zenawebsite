@@ -561,20 +561,8 @@ export default function TalepleriIncelePage() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
-      className="p-6"
+      className=""
     >
-      <motion.div 
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.1 }}
-        className="mb-6"
-      >
-        <h1 className="text-2xl font-bold text-white">Talepleri İncele</h1>
-        <p className="text-gray-400 mt-2">
-          Çalışan taleplerini buradan görüntüleyebilir, onaylayabilir veya reddedebilirsiniz.
-        </p>
-      </motion.div>
-
       {/* Tabs */}
       <motion.div 
         initial={{ y: -10, opacity: 0 }}
