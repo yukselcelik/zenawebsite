@@ -25,6 +25,34 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+@layer components {
+  /* Admin panel select/dropdown styles (remove default native look) */
+  .panel-root select {
+    @apply appearance-none rounded-lg border border-gray-600 bg-gray-700 px-3 py-2 text-sm font-medium text-white transition-colors;
+    @apply focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500;
+    @apply disabled:opacity-60 disabled:cursor-not-allowed;
+
+    -webkit-appearance: none;
+    appearance: none;
+    color-scheme: dark;
+
+    padding-right: 2.5rem !important; /* room for custom chevron (override px-* utilities) */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='M6 8l4 4 4-4' stroke='%23CBD5E1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1.1rem 1.1rem;
+  }
+
+  .panel-root select option {
+    @apply bg-gray-800 text-white;
+  }
+
+  /* legacy (harmless in modern browsers) */
+  .panel-root select::-ms-expand {
+    display: none;
+  }
+}
+
 /* Global pointer cursor for clickable elements */
 button:hover,
 a[href]:hover,

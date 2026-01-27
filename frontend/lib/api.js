@@ -1118,6 +1118,16 @@ class ApiService {
     return this.handleResponse(response);
   }
 
+  static async updateOtherRequestStatus(id, status) {
+    const response = await fetch(`${API_BASE_URL}/api/otherrequest/${id}/status`, {
+      method: 'PUT',
+      headers: this.getHeaders(),
+      body: JSON.stringify({ status }),
+    });
+
+    return this.handleResponse(response);
+  }
+
   // Archive API methods
   static async getAllArchiveDocuments() {
     const response = await fetch(`${API_BASE_URL}/api/archive/all`, {

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Zenabackend.Common;
 using Zenabackend.DTOs;
+using Zenabackend.Enums;
 using Zenabackend.Services;
 
 namespace Zenabackend.Controllers;
@@ -58,6 +59,19 @@ public class OtherRequestController(OtherRequestService otherRequestService) : C
         var userId = GetUserId();
         var isManager = IsManager();
         var result = await otherRequestService.DeleteOtherRequestAsync(id, userId, isManager);
+        return Ok(result);
+    }
+
+    [HttpPut("{id:int}/status")]
+    [Authorize(Roles = "Manager")]
+    public async Task<ActionResult<ApiResult<bool>>> UpdateOtherRequestStatus(int id, [FromBody] UpdateLeaveStatusDto dto)
+    {
+        if (!Enum.TryParse<LeaveStatusEnum>(dto.Status, out var status))
+        {
+            return Ok(ApiResult<bool>.BadRequest("Geçersiz durum"));
+        }
+
+        var result = await otherRequestService.UpdateOtherRequestStatusAsync(id, status);
         return Ok(result);
     }
 }

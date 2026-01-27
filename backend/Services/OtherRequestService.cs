@@ -157,5 +157,21 @@ public class OtherRequestService(ApplicationDbContext context, ILogger<OtherRequ
         logger.LogInformation("Other request deleted: {Id} by user {UserId} (isManager={IsManager})", requestId, actingUserId, isManager);
         return ApiResult<bool>.Ok(true);
     }
+
+    public async Task<ApiResult<bool>> UpdateOtherRequestStatusAsync(int requestId, LeaveStatusEnum newStatus)
+    {
+        var req = await context.OtherRequests.FirstOrDefaultAsync(r => r.Id == requestId && !r.isDeleted);
+        if (req == null)
+        {
+            return ApiResult<bool>.NotFound("Diğer talep bulunamadı");
+        }
+
+        req.Status = newStatus;
+        req.UpdatedAt = DateTime.UtcNow;
+        await context.SaveChangesAsync();
+
+        logger.LogInformation("Other request status updated: {Id} -> {Status}", requestId, newStatus);
+        return ApiResult<bool>.Ok(true);
+    }
 }
 

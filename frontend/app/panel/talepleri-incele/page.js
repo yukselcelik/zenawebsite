@@ -115,6 +115,8 @@ export default function TalepleriIncelePage() {
         } else {
           await ApiService.updateExpenseRequestStatus(id, apiStatus);
         }
+      } else if (kind === TABS.OTHER) {
+        await ApiService.updateOtherRequestStatus(id, apiStatus);
       }
       await fetchData();
     } catch (error) {
@@ -534,9 +536,20 @@ export default function TalepleriIncelePage() {
                   {formatDate(request.createdAt)}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadge(request.status)}`}>
-                    {getStatusText(request.status)}
-                  </span>
+                  <select
+                    value={normalizeStatusKey(request.status)}
+                    onChange={(e) => {
+                      const nextKey = e.target.value;
+                      const opt = LEAVE_STATUS_OPTIONS.find(o => o.key === nextKey) || LEAVE_STATUS_OPTIONS[0];
+                      updateStatus(TABS.OTHER, request.id, opt.api);
+                    }}
+                    disabled={isProcessing}
+                    className={`px-3 py-2 rounded-lg text-sm font-medium border border-gray-600 bg-gray-700 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-white cursor-pointer transition-colors ${getStatusBadge(request.status)}`}
+                  >
+                    {LEAVE_STATUS_OPTIONS.map(o => (
+                      <option key={o.key} value={o.key} className="bg-gray-700">{o.label}</option>
+                    ))}
+                  </select>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <button

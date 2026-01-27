@@ -176,7 +176,7 @@ export default function PanelLayout({ children }) {
   }
 
   return (
-    <div className="h-screen bg-gray-900 flex overflow-hidden">
+    <div className="panel-root h-screen bg-gray-900 flex overflow-hidden">
       {/* Sol Sidebar */}
       <Sidebar 
         isManager={isManager}
