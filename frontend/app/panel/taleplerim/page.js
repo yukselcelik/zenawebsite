@@ -98,13 +98,11 @@ export default function TaleplerimPage() {
       if (activeTab === TABS.LEAVE) {
         result = await ApiService.deleteLeaveRequest(selectedRequest.id);
       } else if (activeTab === TABS.EXPENSE) {
-        // Expense request cancellation - API endpoint kontrol et
-        alert('Masraf talebi iptal işlemi henüz desteklenmiyor');
-        return;
+        result = await ApiService.deleteExpenseRequest(selectedRequest.id);
       } else if (activeTab === TABS.MEETING_ROOM) {
-        // Meeting room request cancellation - API endpoint kontrol et
-        alert('Toplantı odası talebi iptal işlemi henüz desteklenmiyor');
-        return;
+        result = await ApiService.deleteMeetingRoomRequest(selectedRequest.id);
+      } else if (activeTab === TABS.OTHER) {
+        result = await ApiService.deleteOtherRequest(selectedRequest.id);
       }
 
       if (result && result.success) {
@@ -228,6 +226,7 @@ export default function TaleplerimPage() {
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Belge</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Durum</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Açıklama</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">İşlemler</th>
             </tr>
           </thead>
           <tbody className="bg-gray-800 divide-y divide-gray-700">
@@ -282,6 +281,27 @@ export default function TaleplerimPage() {
                     <span className="text-xs text-gray-500">-</span>
                   )}
                 </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleShowDetails(request)}
+                      className="px-3 py-1 border border-gray-600 bg-gray-700 text-gray-200 hover:bg-gray-600 rounded text-sm transition-colors cursor-pointer"
+                    >
+                      Detay
+                    </button>
+                    {isPendingStatus(request.statusName) && (
+                      <button
+                        onClick={() => {
+                          setSelectedRequest(request);
+                          setShowCancelModal(true);
+                        }}
+                        className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded text-sm font-medium transition-colors cursor-pointer"
+                      >
+                        Sil
+                      </button>
+                    )}
+                  </div>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -308,6 +328,7 @@ export default function TaleplerimPage() {
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Tarih</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Saat</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Durum</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">İşlemler</th>
             </tr>
           </thead>
           <tbody className="bg-gray-800 divide-y divide-gray-700">
@@ -326,6 +347,19 @@ export default function TaleplerimPage() {
                   <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeClass(request.status)}`}>
                     {getStatusTextTR(request.status)}
                   </span>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  {isPendingStatus(request.status) && (
+                    <button
+                      onClick={() => {
+                        setSelectedRequest(request);
+                        setShowCancelModal(true);
+                      }}
+                      className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded text-sm font-medium transition-colors cursor-pointer"
+                    >
+                      Sil
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}
@@ -353,6 +387,7 @@ export default function TaleplerimPage() {
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Açıklama</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Tarih</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Durum</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">İşlemler</th>
             </tr>
           </thead>
           <tbody className="bg-gray-800 divide-y divide-gray-700">
@@ -371,6 +406,19 @@ export default function TaleplerimPage() {
                   <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeClass(request.status)}`}>
                     {getStatusTextTR(request.status)}
                   </span>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  {isPendingStatus(request.status) && (
+                    <button
+                      onClick={() => {
+                        setSelectedRequest(request);
+                        setShowCancelModal(true);
+                      }}
+                      className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded text-sm font-medium transition-colors cursor-pointer"
+                    >
+                      Sil
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}
@@ -488,9 +536,11 @@ export default function TaleplerimPage() {
           setSelectedRequest(null);
         }}
         onConfirm={handleCancel}
-        title="Talebi İptal Et"
-        message="Bu talebi iptal etmek istediğinizden emin misiniz? Bu işlem geri alınamaz."
-        confirmText="Evet, İptal Et"
+        title={activeTab === TABS.LEAVE ? 'Talebi İptal Et' : 'Talebi Sil'}
+        message={activeTab === TABS.LEAVE
+          ? 'Bu talebi iptal etmek istediğinizden emin misiniz? Bu işlem geri alınamaz.'
+          : 'Bu talebi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.'}
+        confirmText={activeTab === TABS.LEAVE ? 'Evet, İptal Et' : 'Evet, Sil'}
         cancelText="Vazgeç"
         loading={isProcessing}
         confirmButtonClass="bg-red-500 hover:bg-red-600 active:bg-red-700"

@@ -129,5 +129,33 @@ public class OtherRequestService(ApplicationDbContext context, ILogger<OtherRequ
 
         return ApiResult<PagedResultDto<OtherRequestResponseDto>>.Ok(response);
     }
+
+    public async Task<ApiResult<bool>> DeleteOtherRequestAsync(int requestId, int actingUserId, bool isManager)
+    {
+        var req = await context.OtherRequests.FirstOrDefaultAsync(r => r.Id == requestId && !r.isDeleted);
+        if (req == null)
+        {
+            return ApiResult<bool>.NotFound("Diğer talep bulunamadı");
+        }
+
+        if (!isManager && req.UserId != actingUserId)
+        {
+            return ApiResult<bool>.Forbidden("Bu talebi silme yetkiniz yok");
+        }
+
+        // Personel sadece bekleyen talebini silebilsin
+        if (!isManager && req.Status != LeaveStatusEnum.Pending)
+        {
+            return ApiResult<bool>.BadRequest("Sadece beklemede olan talepler silinebilir");
+        }
+
+        req.isDeleted = true;
+        req.Status = LeaveStatusEnum.Cancelled;
+        req.UpdatedAt = DateTime.UtcNow;
+        await context.SaveChangesAsync();
+
+        logger.LogInformation("Other request deleted: {Id} by user {UserId} (isManager={IsManager})", requestId, actingUserId, isManager);
+        return ApiResult<bool>.Ok(true);
+    }
 }
 

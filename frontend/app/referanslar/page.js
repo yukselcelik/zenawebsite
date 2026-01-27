@@ -454,7 +454,6 @@ export default function ReferanslarPage() {
             <motion.a
               href="/iletisim"
               className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-orange-500 hover:bg-orange-600 text-white font-semibold text-lg transition shadow-lg shadow-orange-500/30"
-              whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
               İletişime Geçin

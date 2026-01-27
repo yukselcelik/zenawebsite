@@ -357,7 +357,6 @@ export default function Home() {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.5, delay: 0.4, ease: "easeOut" }}
-              whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
               Daha Fazla Bilgi
@@ -416,7 +415,6 @@ export default function Home() {
                   <motion.a 
                     href="/simulasyon" 
                     className="inline-block bg-orange-500 hover:bg-orange-600 text-white font-semibold py-[0.6375rem] px-6 rounded-lg"
-                    whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
                     Şimdi Hesapla
@@ -461,7 +459,6 @@ export default function Home() {
                   <motion.a
                     href="/iletisim"
                     className="inline-flex items-center gap-[0.36rem] px-[0.9rem] py-[0.45rem] rounded-full bg-orange-500 hover:bg-orange-600 text-white text-[0.63rem] font-semibold transition shadow-lg shadow-orange-500/30"
-                    whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
                     Bize Ulaşın

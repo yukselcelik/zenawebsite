@@ -132,7 +132,7 @@ public class LeaveService(ApplicationDbContext context, ILogger<LeaveService> lo
         var query = context.LeaveRequests
             .AsNoTracking()
             .Include(lr => lr.User)
-            .Where(lr => lr.UserId == userId)
+            .Where(lr => lr.UserId == userId && !lr.isDeleted)
             .OrderByDescending(lr => lr.CreatedAt);
 
         var totalCount = await query.CountAsync();
@@ -178,6 +178,7 @@ public class LeaveService(ApplicationDbContext context, ILogger<LeaveService> lo
         var query = context.LeaveRequests
             .AsNoTracking()
             .Include(lr => lr.User)
+            .Where(lr => !lr.isDeleted)
             .AsQueryable();
 
         // Manager değilse sadece kendi izin taleplerini göster
@@ -231,6 +232,7 @@ public class LeaveService(ApplicationDbContext context, ILogger<LeaveService> lo
         var query = context.LeaveRequests
             .AsNoTracking()
             .Include(lr => lr.User)
+            .Where(lr => !lr.isDeleted)
             .OrderByDescending(lr => lr.CreatedAt);
 
         var totalCount = await query.CountAsync();
@@ -280,22 +282,30 @@ public class LeaveService(ApplicationDbContext context, ILogger<LeaveService> lo
             return ApiResult<bool>.NotFound("İzin talebi bulunamadı");
         }
 
+        if (leaveRequest.isDeleted)
+        {
+            return ApiResult<bool>.NotFound("İzin talebi bulunamadı");
+        }
+
         if (!isManager && leaveRequest.UserId != userId)
         {
             return ApiResult<bool>.Forbidden("Bu izin talebini iptal etme yetkiniz yok");
         }
 
-        if (leaveRequest.Status != LeaveStatusEnum.Pending)
+        // Personel sadece bekleyen izin talebini silebilsin/iptal edebilsin
+        if (!isManager && leaveRequest.Status != LeaveStatusEnum.Pending)
         {
-            return ApiResult<bool>.BadRequest("Sadece bekleyen izin talepleri iptal edilebilir");
+            return ApiResult<bool>.BadRequest("Sadece bekleyen izin talepleri silinebilir");
         }
 
+        // Admin her talebi silebilsin (soft delete)
+        leaveRequest.isDeleted = true;
         leaveRequest.Status = LeaveStatusEnum.Cancelled;
         leaveRequest.UpdatedAt = DateTime.UtcNow;
 
         await context.SaveChangesAsync();
 
-        logger.LogInformation("Leave request cancelled: {Id} by user {UserId}", leaveRequestId, userId);
+        logger.LogInformation("Leave request deleted/cancelled: {Id} by user {UserId} (isManager={IsManager})", leaveRequestId, userId, isManager);
 
         return ApiResult<bool>.Ok(true);
     }

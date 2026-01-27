@@ -78,7 +78,7 @@ public class ExpenseRequestService(ApplicationDbContext context, ILogger<Expense
         var query = context.ExpenseRequests
             .AsNoTracking()
             .Include(er => er.User)
-            .Where(er => er.UserId == userId)
+            .Where(er => er.UserId == userId && !er.isDeleted)
             .OrderByDescending(er => er.CreatedAt);
 
         var totalCount = await query.CountAsync();
@@ -113,6 +113,7 @@ public class ExpenseRequestService(ApplicationDbContext context, ILogger<Expense
             .AsNoTracking()
             .Include(er => er.User)
             .Include(er => er.ApprovedByUser)
+            .Where(er => !er.isDeleted)
             .OrderByDescending(er => er.CreatedAt);
 
         var totalCount = await query.CountAsync();
@@ -147,7 +148,7 @@ public class ExpenseRequestService(ApplicationDbContext context, ILogger<Expense
             .AsNoTracking()
             .Include(er => er.User)
             .Include(er => er.ApprovedByUser)
-            .FirstOrDefaultAsync(er => er.Id == id);
+            .FirstOrDefaultAsync(er => er.Id == id && !er.isDeleted);
 
         if (expenseRequest == null)
         {
@@ -156,6 +157,33 @@ public class ExpenseRequestService(ApplicationDbContext context, ILogger<Expense
 
         var result = await MapToDtoAsync(expenseRequest);
         return ApiResult<ExpenseRequestDto>.Ok(result);
+    }
+
+    public async Task<ApiResult<bool>> DeleteExpenseRequestAsync(int id, int actingUserId, bool isManager)
+    {
+        var expenseRequest = await context.ExpenseRequests.FirstOrDefaultAsync(er => er.Id == id && !er.isDeleted);
+        if (expenseRequest == null)
+        {
+            return ApiResult<bool>.NotFound("Masraf talebi bulunamadı");
+        }
+
+        if (!isManager && expenseRequest.UserId != actingUserId)
+        {
+            return ApiResult<bool>.Forbidden("Bu masraf talebini silme yetkiniz yok");
+        }
+
+        // Personel sadece bekleyen talebini silebilsin
+        if (!isManager && expenseRequest.Status != ExpenseStatusEnum.Pending)
+        {
+            return ApiResult<bool>.BadRequest("Sadece beklemede olan masraf talepleri silinebilir");
+        }
+
+        expenseRequest.isDeleted = true;
+        expenseRequest.UpdatedAt = DateTime.UtcNow;
+        await context.SaveChangesAsync();
+
+        logger.LogInformation("Expense request deleted: {Id} by user {UserId} (isManager={IsManager})", id, actingUserId, isManager);
+        return ApiResult<bool>.Ok(true);
     }
 
     public async Task<ApiResult<ExpenseRequestDto>> ApproveExpenseRequestAsync(int id, int approvedByUserId, UpdateExpenseRequestDto dto)

@@ -127,7 +127,6 @@ export default function ContactInfoSection({ contactInfos, userId, onUpdate, isA
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-lg font-semibold text-white">İletişim Bilgileri</h3>
         <motion.button
-          whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => {
             if (canAdd) {
@@ -186,7 +185,6 @@ export default function ContactInfoSection({ contactInfos, userId, onUpdate, isA
           </div>
           <div className="flex justify-end space-x-3">
             <motion.button
-              whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               type="button"
               onClick={() => {
@@ -199,7 +197,6 @@ export default function ContactInfoSection({ contactInfos, userId, onUpdate, isA
               İptal
             </motion.button>
             <motion.button
-              whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               type="submit"
               disabled={!isApproved}
@@ -233,7 +230,6 @@ export default function ContactInfoSection({ contactInfos, userId, onUpdate, isA
                 </div>
                 <div className="flex space-x-2">
                   <motion.button
-                    whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => handleEdit(contact)}
                     disabled={!canEdit}
@@ -246,7 +242,6 @@ export default function ContactInfoSection({ contactInfos, userId, onUpdate, isA
                     Düzenle
                   </motion.button>
                   <motion.button
-                    whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={handleDelete}
                     disabled={!canDelete}

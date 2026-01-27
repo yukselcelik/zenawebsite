@@ -149,7 +149,6 @@ export default function InternshipApplications() {
                 >
                   {/* Header - Tıklanabilir */}
                   <motion.button
-                    whileHover={{ scale: 1.01 }}
                     onClick={() => toggleApplication(application.id)}
                     className="w-full p-4 flex justify-between items-center hover:bg-gray-700/50 transition-colors text-left"
                   >
@@ -234,7 +233,6 @@ export default function InternshipApplications() {
                             <div className="flex gap-2 mt-4">
                               {application.cvFilePath && (
                                 <motion.button
-                                  whileHover={{ scale: 1.05 }}
                                   whileTap={{ scale: 0.95 }}
                                   onClick={(e) => {
                                     e.stopPropagation();
@@ -266,7 +264,7 @@ export default function InternshipApplications() {
                                 </motion.button>
                               )}
                               <motion.button
-                                whileHover={{ scale: 1.05 }}
+                                
                                 whileTap={{ scale: 0.95 }}
                                 onClick={(e) => {
                                   e.stopPropagation();
@@ -304,7 +302,6 @@ export default function InternshipApplications() {
             </div>
             <div className="flex space-x-2">
               <motion.button
-                whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setPagination({ ...pagination, pageNumber: pagination.pageNumber - 1 })}
                 disabled={pagination.pageNumber === 1}
@@ -313,7 +310,6 @@ export default function InternshipApplications() {
                 Önceki
               </motion.button>
               <motion.button
-                whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setPagination({ ...pagination, pageNumber: pagination.pageNumber + 1 })}
                 disabled={pagination.pageNumber >= pagination.totalPages}

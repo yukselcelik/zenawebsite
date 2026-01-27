@@ -244,7 +244,6 @@ export default function IzinTalepEtForm({ onSuccess, onCancel }) {
       <div className="mb-6">
         <div className="flex items-center gap-4 mb-4">
           <motion.button
-            whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={() => setSelectedLeaveType(null)}
             className="text-gray-400 hover:text-white transition-colors cursor-pointer"

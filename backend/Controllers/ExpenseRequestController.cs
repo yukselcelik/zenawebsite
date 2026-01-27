@@ -236,5 +236,14 @@ public class ExpenseRequestController(ExpenseRequestService expenseRequestServic
 
         return File(fileBytes, contentType, expenseRequest.Data.OriginalFileName ?? "document");
     }
+
+    [HttpDelete("{id:int}")]
+    public async Task<ActionResult<ApiResult<bool>>> DeleteExpenseRequest(int id)
+    {
+        var userId = GetUserId();
+        var isManager = IsManager();
+        var result = await expenseRequestService.DeleteExpenseRequestAsync(id, userId, isManager);
+        return Ok(result);
+    }
 }
 

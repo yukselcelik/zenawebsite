@@ -125,6 +125,28 @@ export default function TalepleriIncelePage() {
     }
   };
 
+  const deleteRequest = async (kind, id) => {
+    if (!confirm('Bu talebi silmek istediğinize emin misiniz? Bu işlem geri alınamaz.')) return;
+    setIsProcessing(true);
+    try {
+      if (kind === TABS.LEAVE) {
+        await ApiService.deleteLeaveRequest(id);
+      } else if (kind === TABS.MEETING_ROOM) {
+        await ApiService.deleteMeetingRoomRequest(id);
+      } else if (kind === TABS.EXPENSE) {
+        await ApiService.deleteExpenseRequest(id);
+      } else if (kind === TABS.OTHER) {
+        await ApiService.deleteOtherRequest(id);
+      }
+      await fetchData();
+    } catch (error) {
+      console.error('Error deleting request:', error);
+      alert(error.message || 'Talep silinirken hata oluştu');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
   const handleExpenseStatusChange = (request, nextKey, currentStatusKey) => {
     const opt = EXPENSE_STATUS_OPTIONS.find(o => o.key === nextKey) || EXPENSE_STATUS_OPTIONS[0];
     
@@ -202,6 +224,7 @@ export default function TalepleriIncelePage() {
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Bitiş</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Gün/Saat</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Durum</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Sil</th>
             </tr>
           </thead>
           <tbody className="bg-gray-800 divide-y divide-gray-700">
@@ -245,6 +268,16 @@ export default function TalepleriIncelePage() {
                     ))}
                   </select>
                 </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <button
+                    type="button"
+                    onClick={() => deleteRequest(TABS.LEAVE, request.id)}
+                    disabled={isProcessing}
+                    className="inline-flex items-center px-3 py-2 rounded-lg text-sm font-medium border border-red-700 text-red-200 hover:bg-red-900/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                  >
+                    Sil
+                  </button>
+                </td>
               </motion.tr>
             ))}
           </tbody>
@@ -283,6 +316,7 @@ export default function TalepleriIncelePage() {
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Açıklama</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Belge</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Durum</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Sil</th>
             </tr>
           </thead>
           <tbody className="bg-gray-800 divide-y divide-gray-700">
@@ -357,6 +391,16 @@ export default function TalepleriIncelePage() {
                     )}
                   </div>
                 </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <button
+                    type="button"
+                    onClick={() => deleteRequest(TABS.EXPENSE, request.id)}
+                    disabled={isProcessing}
+                    className="inline-flex items-center px-3 py-2 rounded-lg text-sm font-medium border border-red-700 text-red-200 hover:bg-red-900/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                  >
+                    Sil
+                  </button>
+                </td>
               </motion.tr>
             ))}
           </tbody>
@@ -384,6 +428,7 @@ export default function TalepleriIncelePage() {
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Tarih</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Saat</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Durum</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Sil</th>
             </tr>
           </thead>
           <tbody className="bg-gray-800 divide-y divide-gray-700">
@@ -424,6 +469,16 @@ export default function TalepleriIncelePage() {
                     ))}
                   </select>
                 </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <button
+                    type="button"
+                    onClick={() => deleteRequest(TABS.MEETING_ROOM, request.id)}
+                    disabled={isProcessing}
+                    className="inline-flex items-center px-3 py-2 rounded-lg text-sm font-medium border border-red-700 text-red-200 hover:bg-red-900/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                  >
+                    Sil
+                  </button>
+                </td>
               </motion.tr>
             ))}
           </tbody>
@@ -451,6 +506,7 @@ export default function TalepleriIncelePage() {
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Açıklama</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Tarih</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Durum</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Sil</th>
             </tr>
           </thead>
           <tbody className="bg-gray-800 divide-y divide-gray-700">
@@ -481,6 +537,16 @@ export default function TalepleriIncelePage() {
                   <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadge(request.status)}`}>
                     {getStatusText(request.status)}
                   </span>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <button
+                    type="button"
+                    onClick={() => deleteRequest(TABS.OTHER, request.id)}
+                    disabled={isProcessing}
+                    className="inline-flex items-center px-3 py-2 rounded-lg text-sm font-medium border border-red-700 text-red-200 hover:bg-red-900/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                  >
+                    Sil
+                  </button>
                 </td>
               </motion.tr>
             ))}
@@ -518,7 +584,6 @@ export default function TalepleriIncelePage() {
       >
         <nav className="-mb-px flex space-x-8">
           <motion.button
-            whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => {
               setActiveTab(TABS.LEAVE);
@@ -533,7 +598,6 @@ export default function TalepleriIncelePage() {
             İzin Talepleri
           </motion.button>
           <motion.button
-            whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => {
               setActiveTab(TABS.EXPENSE);
@@ -548,7 +612,6 @@ export default function TalepleriIncelePage() {
             Masraf Talepleri
           </motion.button>
           <motion.button
-            whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => {
               setActiveTab(TABS.MEETING_ROOM);
@@ -563,7 +626,6 @@ export default function TalepleriIncelePage() {
             Toplantı Odası Talepleri
           </motion.button>
           <motion.button
-            whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => {
               setActiveTab(TABS.OTHER);
@@ -605,7 +667,6 @@ export default function TalepleriIncelePage() {
             </div>
             <div className="flex gap-2">
               <motion.button
-                whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setPageNumber(p => Math.max(1, p - 1))}
                 disabled={pageNumber === 1}
@@ -614,7 +675,6 @@ export default function TalepleriIncelePage() {
                 Önceki
               </motion.button>
               <motion.button
-                whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setPageNumber(p => Math.min(totalPages, p + 1))}
                 disabled={pageNumber === totalPages}

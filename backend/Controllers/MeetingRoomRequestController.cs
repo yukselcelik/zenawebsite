@@ -81,5 +81,14 @@ public class MeetingRoomRequestController(MeetingRoomRequestService meetingRoomR
         var result = await meetingRoomRequestService.UpdateMeetingRoomRequestStatusAsync(id, status);
         return Ok(result);
     }
+
+    [HttpDelete("{id:int}")]
+    public async Task<ActionResult<ApiResult<bool>>> DeleteMeetingRoomRequest(int id)
+    {
+        var userId = GetUserId();
+        var isManager = IsManager();
+        var result = await meetingRoomRequestService.DeleteMeetingRoomRequestAsync(id, userId, isManager);
+        return Ok(result);
+    }
 }
 

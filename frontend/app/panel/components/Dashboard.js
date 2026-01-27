@@ -238,11 +238,38 @@ export default function Dashboard({ isManager, stats, userDetail, onTabChange, m
       } else if (row.kindKey === 'expense') {
         // Expense uses ExpenseStatusEnum strings
         await ApiService.updateExpenseRequestStatus(row.rawId, nextStatus);
+      } else if (row.kindKey === 'other') {
+        // Other requests currently have no status update here (handled in TalepleriIncele page)
       }
 
       await refreshRequests();
     } catch (e) {
       alert(e.message || 'Durum güncellenirken hata oluştu');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleManagerDeleteRequest = async (row) => {
+    if (!row || actionLoading) return;
+    if (!confirm('Bu talebi silmek istediğinize emin misiniz? Bu işlem geri alınamaz.')) return;
+
+    try {
+      setActionLoading(true);
+
+      if (row.kindKey === 'leave') {
+        await ApiService.deleteLeaveRequest(row.rawId);
+      } else if (row.kindKey === 'meetingRoom') {
+        await ApiService.deleteMeetingRoomRequest(row.rawId);
+      } else if (row.kindKey === 'expense') {
+        await ApiService.deleteExpenseRequest(row.rawId);
+      } else if (row.kindKey === 'other') {
+        await ApiService.deleteOtherRequest(row.rawId);
+      }
+
+      await refreshRequests();
+    } catch (e) {
+      alert(e.message || 'Talep silinirken hata oluştu');
     } finally {
       setActionLoading(false);
     }
@@ -301,7 +328,7 @@ export default function Dashboard({ isManager, stats, userDetail, onTabChange, m
                 İzin, masraf ve toplantı odası taleplerinizin son durumunu burada görebilirsiniz.
               </p>
             </div>
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <motion.div whileTap={{ scale: 0.95 }}>
               <Link
                 href="/panel/talep-et"
                 className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-orange-500 to-orange-600 px-4 py-2 text-sm font-medium text-white hover:from-orange-600 hover:to-orange-700 transition shadow-lg shadow-orange-500/50 cursor-pointer"
@@ -498,19 +525,16 @@ export default function Dashboard({ isManager, stats, userDetail, onTabChange, m
               {stats && (
                 <div className="mt-2 flex flex-wrap gap-2">
                   <motion.span 
-                    whileHover={{ scale: 1.1 }}
                     className="text-xs px-2 py-1 rounded-full bg-orange-500/20 text-orange-400 border border-orange-500/50"
                   >
                     Bekleyen İzin: {pendingLeaveCount}
                   </motion.span>
                   <motion.span 
-                    whileHover={{ scale: 1.1 }}
                     className="text-xs px-2 py-1 rounded-full bg-orange-500/20 text-orange-400 border border-orange-500/50"
                   >
                     Bekleyen Masraf: {stats.pendingExpenses || 0}
                   </motion.span>
                   <motion.span 
-                    whileHover={{ scale: 1.1 }}
                     className="text-xs px-2 py-1 rounded-full bg-orange-500/20 text-orange-400 border border-orange-500/50"
                   >
                     Bekleyen Toplantı: {stats.pendingMeetingRooms || 0}
@@ -520,7 +544,7 @@ export default function Dashboard({ isManager, stats, userDetail, onTabChange, m
             </div>
 
             <div className="flex gap-2">
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <motion.div whileTap={{ scale: 0.95 }}>
                 <Link
                   href="/panel/talepleri-incele"
                   className="inline-flex items-center gap-2 rounded-lg border border-gray-600 bg-gray-700 px-4 py-2 text-sm font-medium text-white hover:bg-gray-600 transition cursor-pointer"
@@ -528,7 +552,7 @@ export default function Dashboard({ isManager, stats, userDetail, onTabChange, m
                   Talepleri İncele
                 </Link>
               </motion.div>
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <motion.div whileTap={{ scale: 0.95 }}>
                 <Link
                   href="/panel/talep-et"
                   className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-orange-500 to-orange-600 px-4 py-2 text-sm font-medium text-white hover:from-orange-600 hover:to-orange-700 transition shadow-lg shadow-orange-500/50 cursor-pointer"
@@ -554,6 +578,7 @@ export default function Dashboard({ isManager, stats, userDetail, onTabChange, m
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Tarih</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Özet</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Durum</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">İşlem</th>
                     </tr>
                   </thead>
                   <tbody className="bg-gray-800 divide-y divide-gray-700">
@@ -623,6 +648,16 @@ export default function Dashboard({ isManager, stats, userDetail, onTabChange, m
                               <option className="bg-gray-700">İptal Edildi</option>
                             </select>
                           )}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <button
+                            type="button"
+                            onClick={() => handleManagerDeleteRequest(r)}
+                            disabled={actionLoading}
+                            className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium border border-red-700 text-red-200 hover:bg-red-900/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                          >
+                            Sil
+                          </button>
                         </td>
                       </motion.tr>
                     ))}

@@ -114,7 +114,6 @@ export default function PersonnelList({ onViewDetail }) {
             transition={{ delay: 0.1 }}
             className="mb-4"
           >
-            <h3 className="text-lg font-semibold text-white">Çalışanlar</h3>
           </motion.div>
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-700">
@@ -148,7 +147,6 @@ export default function PersonnelList({ onViewDetail }) {
                       <td className="px-6 py-4 whitespace-nowrap">
                         {personnel.photoPath ? (
                           <motion.img
-                            whileHover={{ scale: 1.1 }}
                             src={personnel.photoPath}
                             alt={`${personnel.name} ${personnel.surname}`}
                             className="w-10 h-10 rounded-full object-cover ring-2 ring-gray-600"
@@ -192,7 +190,6 @@ export default function PersonnelList({ onViewDetail }) {
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <div className="flex items-center space-x-3">
                           <motion.button
-                            whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             onClick={() => handleViewDetail(personnel.id)}
                             className="text-orange-400 hover:text-orange-300 cursor-pointer px-2 py-1 rounded hover:bg-orange-900/30 transition-colors"
@@ -200,7 +197,6 @@ export default function PersonnelList({ onViewDetail }) {
                             Detay
                           </motion.button>
                           <motion.button
-                            whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             onClick={() => handleDelete(personnel.id)}
                             className="text-red-400 hover:text-red-300 px-2 py-1 rounded border border-red-700 hover:bg-red-900/30 transition-colors cursor-pointer"
@@ -229,7 +225,6 @@ export default function PersonnelList({ onViewDetail }) {
               </div>
               <div className="flex space-x-2">
                 <motion.button
-                  whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setPagination({ ...pagination, pageNumber: pagination.pageNumber - 1 })}
                   disabled={pagination.pageNumber === 1}
@@ -238,7 +233,6 @@ export default function PersonnelList({ onViewDetail }) {
                   Önceki
                 </motion.button>
                 <motion.button
-                  whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setPagination({ ...pagination, pageNumber: pagination.pageNumber + 1 })}
                   disabled={pagination.pageNumber >= pagination.totalPages}
@@ -271,7 +265,6 @@ export default function PersonnelList({ onViewDetail }) {
               <p className="text-sm text-gray-400 mb-4">Bu işlem geri alınamaz.</p>
               <div className="flex justify-end gap-2">
                 <motion.button
-                  whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   disabled={confirmLoading}
                   onClick={() => { setConfirmOpen(false); setUserToDelete(null); }}
@@ -280,7 +273,6 @@ export default function PersonnelList({ onViewDetail }) {
                   Vazgeç
                 </motion.button>
                 <motion.button
-                  whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   disabled={confirmLoading}
                   onClick={handleConfirmDelete}

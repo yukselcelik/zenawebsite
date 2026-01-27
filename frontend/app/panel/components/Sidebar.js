@@ -175,9 +175,9 @@ export default function Sidebar({ isManager, pendingCount, pendingLeaveCount }) 
             return (
               <motion.div
                 key={item.id}
-                initial={{ x: -20, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: 0.1 + index * 0.05 }}
+                // initial={{ x: -20, opacity: 0 }}
+                // animate={{ x: 0, opacity: 1 }}
+                // transition={{ delay: 0.1 + index * 0.05 }}
               >
                 <Link
                   href={item.href}
@@ -188,7 +188,7 @@ export default function Sidebar({ isManager, pendingCount, pendingLeaveCount }) 
                   }`}
                 >
                   <motion.div 
-                    whileHover={{ x: 5 }}
+                    // whileHover={{ x: 5 }}
                     className="flex items-center space-x-3"
                   >
                     {item.icon}

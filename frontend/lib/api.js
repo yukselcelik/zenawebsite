@@ -928,6 +928,15 @@ class ApiService {
     return this.handleResponse(response);
   }
 
+  static async deleteExpenseRequest(id) {
+    const response = await fetch(`${API_BASE_URL}/api/expenserequest/${id}`, {
+      method: 'DELETE',
+      headers: this.getHeaders(),
+    });
+
+    return this.handleResponse(response);
+  }
+
   static async markExpenseRequestAsPaid(id, data) {
     const response = await fetch(`${API_BASE_URL}/api/expenserequest/${id}/mark-paid`, {
       method: 'PUT',
@@ -1047,6 +1056,15 @@ class ApiService {
     return this.handleResponse(response);
   }
 
+  static async deleteMeetingRoomRequest(id) {
+    const response = await fetch(`${API_BASE_URL}/api/meetingroomrequest/${id}`, {
+      method: 'DELETE',
+      headers: this.getHeaders(),
+    });
+
+    return this.handleResponse(response);
+  }
+
   static async updateExpenseRequestStatus(id, status) {
     const response = await fetch(`${API_BASE_URL}/api/expenserequest/${id}/status`, {
       method: 'PUT',
@@ -1085,6 +1103,15 @@ class ApiService {
   static async getAllOtherRequests(pageNumber = 1, pageSize = 10) {
     const response = await fetch(`${API_BASE_URL}/api/otherrequest/all-requests?pageNumber=${pageNumber}&pageSize=${pageSize}`, {
       method: 'GET',
+      headers: this.getHeaders(),
+    });
+
+    return this.handleResponse(response);
+  }
+
+  static async deleteOtherRequest(id) {
+    const response = await fetch(`${API_BASE_URL}/api/otherrequest/${id}`, {
+      method: 'DELETE',
       headers: this.getHeaders(),
     });
 

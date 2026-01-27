@@ -276,7 +276,6 @@ function HaberlerContent() {
                     alt={item.title}
                     className="w-full h-full object-cover"
                     style={item.id === 15 ? { objectPosition: 'center bottom' } : {}}
-                    whileHover={{ scale: 1.1 }}
                     transition={{ duration: 0.5 }}
                   />
                   {/* Koyu overlay - normal durum */}

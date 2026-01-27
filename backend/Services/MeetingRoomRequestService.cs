@@ -82,6 +82,7 @@ public class MeetingRoomRequestService(ApplicationDbContext context, ILogger<Mee
         var conflictingRequest = await context.MeetingRoomRequests
             .Where(mrr => mrr.MeetingRoom == meetingRoom &&
                          mrr.Date.Date == date &&
+                         !mrr.isDeleted &&
                          mrr.Status == LeaveStatusEnum.Pending &&
                          ((mrr.StartTime <= startTime && mrr.EndTime > startTime) ||
                           (mrr.StartTime < endTime && mrr.EndTime >= endTime) ||
@@ -147,7 +148,7 @@ public class MeetingRoomRequestService(ApplicationDbContext context, ILogger<Mee
         var query = context.MeetingRoomRequests
             .AsNoTracking()
             .Include(mrr => mrr.User)
-            .Where(mrr => mrr.UserId == userId)
+            .Where(mrr => mrr.UserId == userId && !mrr.isDeleted)
             .OrderByDescending(mrr => mrr.CreatedAt);
 
         var totalCount = await query.CountAsync();
@@ -200,6 +201,7 @@ public class MeetingRoomRequestService(ApplicationDbContext context, ILogger<Mee
         var query = context.MeetingRoomRequests
             .AsNoTracking()
             .Include(mrr => mrr.User)
+            .Where(mrr => !mrr.isDeleted)
             .OrderByDescending(mrr => mrr.CreatedAt);
 
         var totalCount = await query.CountAsync();
@@ -297,7 +299,7 @@ public class MeetingRoomRequestService(ApplicationDbContext context, ILogger<Mee
 
     public async Task<ApiResult<bool>> UpdateMeetingRoomRequestStatusAsync(int requestId, LeaveStatusEnum newStatus)
     {
-        var request = await context.MeetingRoomRequests.FirstOrDefaultAsync(r => r.Id == requestId);
+        var request = await context.MeetingRoomRequests.FirstOrDefaultAsync(r => r.Id == requestId && !r.isDeleted);
         if (request == null)
         {
             return ApiResult<bool>.NotFound("Toplantı odası talebi bulunamadı");
@@ -310,6 +312,7 @@ public class MeetingRoomRequestService(ApplicationDbContext context, ILogger<Mee
                 .Where(mrr => mrr.Id != request.Id &&
                              mrr.MeetingRoom == request.MeetingRoom &&
                              mrr.Date.Date == request.Date.Date &&
+                             !mrr.isDeleted &&
                              mrr.Status == LeaveStatusEnum.Pending &&
                              ((mrr.StartTime <= request.StartTime && mrr.EndTime > request.StartTime) ||
                               (mrr.StartTime < request.EndTime && mrr.EndTime >= request.EndTime) ||
@@ -327,6 +330,34 @@ public class MeetingRoomRequestService(ApplicationDbContext context, ILogger<Mee
         await context.SaveChangesAsync();
 
         logger.LogInformation("Meeting room request status updated: {Id} -> {Status}", requestId, newStatus);
+        return ApiResult<bool>.Ok(true);
+    }
+
+    public async Task<ApiResult<bool>> DeleteMeetingRoomRequestAsync(int requestId, int actingUserId, bool isManager)
+    {
+        var request = await context.MeetingRoomRequests.FirstOrDefaultAsync(r => r.Id == requestId && !r.isDeleted);
+        if (request == null)
+        {
+            return ApiResult<bool>.NotFound("Toplantı odası talebi bulunamadı");
+        }
+
+        if (!isManager && request.UserId != actingUserId)
+        {
+            return ApiResult<bool>.Forbidden("Bu toplantı odası talebini silme yetkiniz yok");
+        }
+
+        // Personel sadece bekleyen talebini silebilsin
+        if (!isManager && request.Status != LeaveStatusEnum.Pending)
+        {
+            return ApiResult<bool>.BadRequest("Sadece beklemede olan toplantı odası talepleri silinebilir");
+        }
+
+        request.isDeleted = true;
+        request.Status = LeaveStatusEnum.Cancelled;
+        request.UpdatedAt = DateTime.UtcNow;
+        await context.SaveChangesAsync();
+
+        logger.LogInformation("Meeting room request deleted: {Id} by user {UserId} (isManager={IsManager})", requestId, actingUserId, isManager);
         return ApiResult<bool>.Ok(true);
     }
 }

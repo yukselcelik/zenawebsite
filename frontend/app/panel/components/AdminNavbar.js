@@ -44,17 +44,8 @@ export default function Navbar({ userData, onLogout, isManager }) {
           >
             {getTitle()}
           </motion.h1>
-          {/* {isManager && (
-            <div className="flex items-center gap-1.5 bg-gradient-to-r from-orange-500 to-orange-600 text-white px-2.5 py-1 rounded-full shadow-sm">
-              <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-              </svg>
-              <span className="text-xs font-bold">Yönetici</span>
-            </div>
-          )} */}
           {isManager ? (
             <motion.div 
-              whileHover={{ scale: 1.05 }}
               className="flex items-center gap-1.5 bg-gradient-to-r from-orange-500 to-orange-600 text-white px-2.5 py-1 rounded-full shadow-lg shadow-orange-500/50">
               <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
@@ -63,7 +54,6 @@ export default function Navbar({ userData, onLogout, isManager }) {
             </motion.div>
           ) : (
             <motion.div 
-              whileHover={{ scale: 1.05 }}
               className="flex items-center gap-1.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white px-2.5 py-1 rounded-full shadow-lg shadow-blue-500/50">
               <span className="text-xs font-bold">Çalışan</span>
             </motion.div>
@@ -73,20 +63,18 @@ export default function Navbar({ userData, onLogout, isManager }) {
         <div className="flex items-center gap-3">
           {/* Kullanıcı Bilgisi */}
           <motion.div 
-            whileHover={{ scale: 1.05 }}
-            className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl border bg-gray-700 border-gray-600 hover:bg-gray-600 transition-all duration-300"
+            className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl transition-all duration-300"
           >
             {userData?.photoPath ? (
               <motion.div 
-                whileHover={{ scale: 1.1 }}
                 className="relative"
               >
                 <img
                   src={userData.photoPath}
-                  className="w-10 h-10 rounded-full object-cover ring-2 ring-gray-600 shadow-sm"
+                  className="w-10 h-10 border border-gray-600 rounded-full object-cover ring-2 ring-gray-600 shadow-sm"
                   alt="Profil"
                 />
-                <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-gray-700"></div>
+                
               </motion.div>
             ) : (
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center ring-2 ring-gray-600 shadow-sm">
@@ -106,7 +94,7 @@ export default function Navbar({ userData, onLogout, isManager }) {
           </motion.div>
 
           {/* Ana Sayfa Butonu */}
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <motion.div whileTap={{ scale: 0.95 }}>
             <Link
               href="/"
               className="group relative inline-flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl shadow-lg shadow-blue-500/50 hover:shadow-xl transition-all duration-300 text-sm font-bold cursor-pointer overflow-hidden"
@@ -127,16 +115,16 @@ export default function Navbar({ userData, onLogout, isManager }) {
           </motion.div>
 
           {/* Çıkış Butonu */}
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <motion.div whileTap={{ scale: 0.95 }}>
             <button
               onClick={onLogout}
               className="group relative inline-flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-xl shadow-lg shadow-red-500/50 hover:shadow-xl transition-all duration-300 text-sm font-bold cursor-pointer overflow-hidden"
             >
               <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
               <motion.svg 
-                animate={{ x: [0, 3, 0] }}
-                transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 2 }}
-                className="w-4.5 h-4.5 relative z-10 transition-transform duration-300 group-hover:translate-x-0.5" 
+                // animate={{ x: [0, 3, 0] }}
+                // transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 2 }}
+                className="w-4.5 h-4.5 relative z-10 " 
                 fill="none" 
                 stroke="currentColor" 
                 viewBox="0 0 24 24"

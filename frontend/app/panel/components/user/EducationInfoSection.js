@@ -57,7 +57,6 @@ export default function EducationInfoSection({ educationInfos, userId, onUpdate 
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-lg font-semibold text-white">Eğitim Bilgileri</h3>
         <motion.button
-          whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => setShowForm(!showForm)}
           className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-4 py-2 rounded-lg text-sm cursor-pointer shadow-lg shadow-orange-500/50 transition-all"
@@ -112,7 +111,6 @@ export default function EducationInfoSection({ educationInfos, userId, onUpdate 
           </div>
           <div className="flex justify-end space-x-3">
             <motion.button
-              whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               type="button"
               onClick={() => {
@@ -124,7 +122,6 @@ export default function EducationInfoSection({ educationInfos, userId, onUpdate 
               İptal
             </motion.button>
             <motion.button
-              whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               type="submit"
               className="px-4 py-2 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-lg cursor-pointer shadow-lg shadow-orange-500/50 transition-all"

@@ -151,7 +151,6 @@ export default function UserProfile({ userDetail, onUpdate, onUserDetailUpdate }
         <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
           <div className="relative w-28 h-28">
             <motion.div 
-              whileHover={{ scale: 1.05 }}
               className="w-28 h-28 rounded-full overflow-hidden bg-gray-700 ring-2 ring-gray-600 shadow-lg"
             >
               {(previewUrl || userDetail?.photoPath) ? (
@@ -175,7 +174,6 @@ export default function UserProfile({ userDetail, onUpdate, onUserDetailUpdate }
             <div className="rounded-lg border-2 border-dashed border-gray-600 bg-gray-800 px-4 py-5">
               <div className="flex flex-col sm:flex-row items-center gap-3">
                 <motion.label
-                  whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   htmlFor="photo-upload-input"
                   className="inline-flex items-center gap-2 cursor-pointer rounded-lg border border-gray-600 bg-gray-700 px-4 py-2 text-sm font-medium text-white hover:bg-gray-600 active:bg-gray-500 transition"
@@ -191,7 +189,6 @@ export default function UserProfile({ userDetail, onUpdate, onUserDetailUpdate }
                   className="hidden"
                 />
                 <motion.button
-                  whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   disabled={!selectedPhoto || uploading}
                   onClick={handlePhotoUpload}
@@ -214,7 +211,6 @@ export default function UserProfile({ userDetail, onUpdate, onUserDetailUpdate }
                   )}
                 </motion.button>
                 <motion.button
-                  whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   type="button"
                   onClick={() => {
@@ -276,7 +272,6 @@ export default function UserProfile({ userDetail, onUpdate, onUserDetailUpdate }
       >
         <div className="flex justify-end items-center mb-6">
           <motion.button
-            whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => isEditing ? handleSave() : setIsEditing(true)}
             className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-4 py-2 rounded-lg text-sm cursor-pointer shadow-lg shadow-orange-500/50 transition-all"
