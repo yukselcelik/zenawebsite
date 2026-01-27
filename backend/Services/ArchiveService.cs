@@ -28,12 +28,12 @@ public class ArchiveService(ApplicationDbContext context, ILogger<ArchiveService
                 DocumentPath = d.DocumentPath,
                 OriginalFileName = d.OriginalFileName,
                 UploadedByUserId = d.UploadedByUserId,
-                UploadedByUserName = d.UploadedByUser?.FirstName + " " + d.UploadedByUser?.LastName,
+                UploadedByUserName = d.UploadedByUser != null ? $"{d.UploadedByUser.Name} {d.UploadedByUser.Surname}" : null,
                 CreatedAt = d.CreatedAt,
                 UpdatedAt = d.UpdatedAt
             }).ToList();
 
-            return ApiResult<List<ArchiveDocumentDto>>.Success(documentDtos);
+            return ApiResult<List<ArchiveDocumentDto>>.Ok(documentDtos);
         }
         catch (Exception ex)
         {
@@ -65,12 +65,12 @@ public class ArchiveService(ApplicationDbContext context, ILogger<ArchiveService
                 DocumentPath = document.DocumentPath,
                 OriginalFileName = document.OriginalFileName,
                 UploadedByUserId = document.UploadedByUserId,
-                UploadedByUserName = document.UploadedByUser?.FirstName + " " + document.UploadedByUser?.LastName,
+                UploadedByUserName = document.UploadedByUser != null ? $"{document.UploadedByUser.Name} {document.UploadedByUser.Surname}" : null,
                 CreatedAt = document.CreatedAt,
                 UpdatedAt = document.UpdatedAt
             };
 
-            return ApiResult<ArchiveDocumentDto>.Success(dto);
+            return ApiResult<ArchiveDocumentDto>.Ok(dto);
         }
         catch (Exception ex)
         {
@@ -183,7 +183,7 @@ public class ArchiveService(ApplicationDbContext context, ILogger<ArchiveService
 
             await context.SaveChangesAsync();
 
-            return ApiResult<bool>.Success(true);
+            return ApiResult<bool>.Ok(true);
         }
         catch (Exception ex)
         {
@@ -214,6 +214,12 @@ public class ArchiveService(ApplicationDbContext context, ILogger<ArchiveService
             ArchiveDocumentTypeEnum.IsGelistirmeCalismaRaporu => "İş Geliştirme Çalışma Raporu",
             ArchiveDocumentTypeEnum.YatirimCalismaRaporu => "Yatırım Çalışma Raporu",
             ArchiveDocumentTypeEnum.IsgRaporu => "İSG Raporu",
+            ArchiveDocumentTypeEnum.Sozlesmeler => "Sözleşmeler",
+            ArchiveDocumentTypeEnum.AvansFormuTaslak => "Avans Formu",
+            ArchiveDocumentTypeEnum.FinansRaporu => "Finans Raporu",
+            ArchiveDocumentTypeEnum.MuhasebeRaporu => "Muhasebe Raporu",
+            ArchiveDocumentTypeEnum.AracRaporu => "Araç Raporu",
+            ArchiveDocumentTypeEnum.TasinmazRaporu => "Taşınmaz Raporu",
             _ => "Bilinmeyen"
         };
     }

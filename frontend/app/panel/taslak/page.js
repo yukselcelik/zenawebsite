@@ -4,35 +4,36 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import ApiService from '../../../lib/api';
 
-const DOCUMENT_TYPES = [
-  { id: 1, name: 'Diploma' },
-  { id: 2, name: 'Bordro' },
-  { id: 3, name: 'Avans Formu' },
-  { id: 4, name: 'Fiş Formu' },
-  { id: 5, name: 'Noter Belgeleri' },
-  { id: 6, name: 'Vekaletname' },
-  { id: 7, name: 'Bilanço' },
-  { id: 8, name: 'Gelir Tablosu' },
-  { id: 9, name: 'İş Sözleşmesi' },
-  { id: 10, name: 'İş Kuralları' },
-  { id: 11, name: 'Organizasyon Şeması' },
-  { id: 12, name: 'İş Akış Çizelgesi' },
-  { id: 13, name: 'Toplantı Notları' },
-  { id: 14, name: 'ARGE Çalışma Raporu' },
-  { id: 15, name: 'Proje - Proje Geliştirme Çalışma Raporu' },
-  { id: 16, name: 'İş Geliştirme Çalışma Raporu' },
-  { id: 17, name: 'Yatırım Çalışma Raporu' },
-  { id: 18, name: 'İSG Raporu' }
+const DRAFT_DOCUMENT_TYPES = [
+  { id: 19, name: 'Sözleşmeler' },
+  { id: 20, name: 'Avans Formu' },
+  { id: 21, name: 'Finans Raporu' },
+  { id: 22, name: 'Muhasebe Raporu' },
+  { id: 23, name: 'Araç Raporu' },
+  { id: 24, name: 'Taşınmaz Raporu' }
 ];
 
-export default function ArsivPage() {
+export default function TaslakPage() {
   const [documents, setDocuments] = useState({});
   const [uploading, setUploading] = useState({});
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [isManager, setIsManager] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
+    // Kullanıcı rolünü kontrol et
+    const checkUserRole = async () => {
+      try {
+        const profile = await ApiService.getProfile();
+        if (profile?.data?.role === 'Manager') {
+          setIsManager(true);
+        }
+      } catch (error) {
+        console.error('Error checking user role:', error);
+      }
+    };
+    checkUserRole();
     loadDocuments();
   }, []);
 
@@ -40,6 +41,14 @@ export default function ArsivPage() {
     try {
       setError('');
       const result = await ApiService.getAllArchiveDocuments();
+      
+      // Boş response veya null kontrolü
+      if (!result) {
+        console.warn('API returned null or undefined');
+        setDocuments({});
+        return;
+      }
+      
       if (result && result.success) {
         const docsMap = {};
         // Boş liste de normal bir durum, hata değil
@@ -53,29 +62,40 @@ export default function ArsivPage() {
         // API başarısız oldu
         const errorMessage = result?.message || 'Belgeler yüklenirken hata oluştu';
         console.error('API Error:', errorMessage, result);
-        setError(errorMessage);
+        // Eğer yetkilendirme hatası ise, kullanıcıya bilgi ver
+        if (errorMessage.includes('401') || errorMessage.includes('Unauthorized') || errorMessage.includes('yetki')) {
+          setError('Bu sayfayı görüntülemek için yetkiniz bulunmamaktadır.');
+        } else {
+          setError(errorMessage);
+        }
         setTimeout(() => setError(''), 5000);
       }
     } catch (error) {
       console.error('Error loading documents:', error);
-      setError(error.message || 'Belgeler yüklenirken hata oluştu');
-      setTimeout(() => setError(''), 5000);
+      const errorMessage = error.message || 'Belgeler yüklenirken hata oluştu';
+      // Eğer yetkilendirme hatası ise
+      if (errorMessage.includes('401') || errorMessage.includes('Unauthorized') || errorMessage.includes('yetki') || errorMessage.includes('yetkiniz')) {
+        setError('Bu sayfayı görüntülemek için yetkiniz bulunmamaktadır.');
+      } else if (errorMessage.includes('Sunucudan yanıt alınamadı')) {
+        // Boş response durumu - normal kabul et
+        setDocuments({});
+      } else {
+        setError(errorMessage);
+        setTimeout(() => setError(''), 5000);
+      }
     }
   };
 
-  const handleFileUpload = async (documentType, file, allowExcel = false) => {
+  const handleFileUpload = async (documentType, file) => {
     if (!file) return;
 
-    // PDF ve Excel dosyaları kabul et (taslak belgeleri için Excel de kabul edilir)
-    const allowedTypes = allowExcel 
-      ? ['application/pdf', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel']
-      : ['application/pdf'];
-    
+    // PDF ve Excel dosyaları kabul et
+    const allowedTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel'];
     const fileExtension = file.name.split('.').pop()?.toLowerCase();
-    const allowedExtensions = allowExcel ? ['pdf', 'xlsx', 'xls'] : ['pdf'];
+    const allowedExtensions = ['pdf', 'xlsx', 'xls'];
     
     if (!allowedTypes.includes(file.type) && !allowedExtensions.includes(fileExtension)) {
-      setError(allowExcel ? 'Sadece PDF ve Excel dosyaları yüklenebilir' : 'Sadece PDF dosyaları yüklenebilir');
+      setError('Sadece PDF ve Excel dosyaları yüklenebilir');
       setTimeout(() => setError(''), 3000);
       return;
     }
@@ -87,7 +107,7 @@ export default function ArsivPage() {
     try {
       const result = await ApiService.uploadArchiveDocument(file, documentType);
       if (result.success) {
-        const docName = DOCUMENT_TYPES.find(d => d.id === documentType)?.name || 'Belge';
+        const docName = DRAFT_DOCUMENT_TYPES.find(d => d.id === documentType)?.name || 'Belge';
         setSuccess(`${docName} başarıyla yüklendi`);
         setTimeout(() => setSuccess(''), 3000);
         await loadDocuments();
@@ -147,8 +167,8 @@ export default function ArsivPage() {
   return (
     <div className="p-6">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-white mb-2">Arşiv Yönetimi</h1>
-        <p className="text-gray-400">Belgeleri yükleyin, görüntüleyin ve yönetin</p>
+        <h1 className="text-3xl font-bold text-white mb-2">Taslak Yönetimi</h1>
+        <p className="text-gray-400">PDF ve Excel formatında belgeleri yükleyin, görüntüleyin ve yönetin</p>
       </div>
 
       {error && (
@@ -164,7 +184,7 @@ export default function ArsivPage() {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {DOCUMENT_TYPES.map((docType) => {
+        {DRAFT_DOCUMENT_TYPES.map((docType) => {
           const document = documents[docType.id];
           const isUploading = uploading[docType.id];
 
@@ -203,59 +223,67 @@ export default function ArsivPage() {
                     >
                       İndir
                     </button>
-                    <button
-                      onClick={() => handleDelete(document.id, docType.id)}
-                      className="flex-1 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
-                    >
-                      Sil
-                    </button>
+                    {isManager && (
+                      <button
+                        onClick={() => handleDelete(document.id, docType.id)}
+                        className="flex-1 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
+                      >
+                        Sil
+                      </button>
+                    )}
                   </div>
                 </div>
               ) : (
-                <div className="space-y-3">
-                  <label className="block cursor-pointer">
-                    <input
-                      type="file"
-                      accept=".pdf"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) {
-                          handleFileUpload(docType.id, file, false);
-                        }
-                      }}
-                      className="hidden"
-                      disabled={isUploading}
-                      id={`file-input-new-${docType.id}`}
-                    />
-                    <div className="border-2 border-dashed border-gray-600 rounded-lg p-6 text-center hover:border-gray-500 transition-colors">
-                      {isUploading ? (
-                        <div className="flex flex-col items-center gap-2">
-                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
-                          <span className="text-gray-400 text-sm">Yükleniyor...</span>
-                        </div>
-                      ) : (
-                        <div className="flex flex-col items-center gap-2">
-                          <svg className="w-10 h-10 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                          </svg>
-                          <span className="text-gray-400 text-sm">PDF Yükle</span>
-                        </div>
-                      )}
-                    </div>
-                  </label>
-                </div>
+                isManager ? (
+                  <div className="space-y-3">
+                    <label className="block cursor-pointer">
+                      <input
+                        type="file"
+                        accept=".pdf,.xlsx,.xls"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            handleFileUpload(docType.id, file);
+                          }
+                        }}
+                        className="hidden"
+                        disabled={isUploading}
+                        id={`file-input-new-${docType.id}`}
+                      />
+                      <div className="border-2 border-dashed border-gray-600 rounded-lg p-6 text-center hover:border-gray-500 transition-colors">
+                        {isUploading ? (
+                          <div className="flex flex-col items-center gap-2">
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
+                            <span className="text-gray-400 text-sm">Yükleniyor...</span>
+                          </div>
+                        ) : (
+                          <div className="flex flex-col items-center gap-2">
+                            <svg className="w-10 h-10 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                            </svg>
+                            <span className="text-gray-400 text-sm">PDF/Excel Yükle</span>
+                          </div>
+                        )}
+                      </div>
+                    </label>
+                  </div>
+                ) : (
+                  <div className="text-center py-6 text-gray-400 text-sm">
+                    Henüz belge yüklenmemiş
+                  </div>
+                )
               )}
 
-              {document && document.documentPath && (
+              {document && document.documentPath && isManager && (
                 <div className="mt-3">
                   <label className="block cursor-pointer">
                     <input
                       type="file"
-                      accept=".pdf"
+                      accept=".pdf,.xlsx,.xls"
                       onChange={(e) => {
                         const file = e.target.files?.[0];
                         if (file) {
-                          handleFileUpload(docType.id, file, false);
+                          handleFileUpload(docType.id, file);
                         }
                       }}
                       className="hidden"

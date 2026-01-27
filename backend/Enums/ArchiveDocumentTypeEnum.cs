@@ -19,6 +19,13 @@ public enum ArchiveDocumentTypeEnum
     ProjeProjeGelistirmeCalismaRaporu = 15,
     IsGelistirmeCalismaRaporu = 16,
     YatirimCalismaRaporu = 17,
-    IsgRaporu = 18
+    IsgRaporu = 18,
+    // Taslak belgeleri
+    Sozlesmeler = 19,
+    AvansFormuTaslak = 20,
+    FinansRaporu = 21,
+    MuhasebeRaporu = 22,
+    AracRaporu = 23,
+    TasinmazRaporu = 24
 }
 

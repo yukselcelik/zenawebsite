@@ -70,12 +70,20 @@ class ApiService {
     // Response'u text olarak oku (sadece bir kez)
     const text = await response.text();
     
-    // Boş response kontrolü
+    // Boş response kontrolü - 200 OK ise boş response kabul edilebilir
     if (!text || text.trim() === '') {
       if (!response.ok) {
+        // 401 veya 403 hatası için özel mesaj
+        if (response.status === 401) {
+          throw new Error('Oturum süreniz dolmuş. Lütfen tekrar giriş yapın.');
+        }
+        if (response.status === 403) {
+          throw new Error('Bu işlem için yetkiniz bulunmamaktadır.');
+        }
         throw new Error('Bir hata oluştu. Lütfen daha sonra tekrar deneyin.');
       }
-      throw new Error('Sunucudan yanıt alınamadı');
+      // 200 OK ama boş response - bu normal olabilir (boş liste gibi)
+      return { success: true, data: null };
     }
 
     // JSON parse et

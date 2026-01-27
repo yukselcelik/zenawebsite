@@ -25,7 +25,7 @@ public class ArchiveController(ArchiveService archiveService, ILogger<ArchiveCon
     }
 
     [HttpGet("all")]
-    [Authorize(Roles = "Manager")]
+    // Controller seviyesinde [Authorize] var, tüm authenticated kullanıcılar erişebilir
     public async Task<ActionResult<ApiResult<List<ArchiveDocumentDto>>>> GetAllArchiveDocuments()
     {
         var result = await archiveService.GetAllArchiveDocumentsAsync();
@@ -53,11 +53,12 @@ public class ArchiveController(ArchiveService archiveService, ILogger<ArchiveCon
                 return Ok(ApiResult<ArchiveDocumentDto>.BadRequest("Dosya seçilmedi"));
             }
 
-            // Sadece PDF dosyaları kabul et
+            // PDF ve Excel dosyaları kabul et
             var fileExtension = Path.GetExtension(document.FileName).ToLowerInvariant();
-            if (fileExtension != ".pdf")
+            var allowedExtensions = new[] { ".pdf", ".xlsx", ".xls" };
+            if (!allowedExtensions.Contains(fileExtension))
             {
-                return Ok(ApiResult<ArchiveDocumentDto>.BadRequest("Sadece PDF dosyaları yüklenebilir"));
+                return Ok(ApiResult<ArchiveDocumentDto>.BadRequest("Sadece PDF ve Excel dosyaları yüklenebilir"));
             }
 
             var userId = GetUserId();
@@ -105,7 +106,7 @@ public class ArchiveController(ArchiveService archiveService, ILogger<ArchiveCon
     }
 
     [HttpGet("{id:int}/document")]
-    [Authorize(Roles = "Manager")]
+    // Controller seviyesinde [Authorize] var, tüm authenticated kullanıcılar erişebilir
     public async Task<IActionResult> GetDocument(int id)
     {
         var allDocuments = await archiveService.GetAllArchiveDocumentsAsync();
@@ -129,9 +130,26 @@ public class ArchiveController(ArchiveService archiveService, ILogger<ArchiveCon
         }
 
         var fileBytes = await System.IO.File.ReadAllBytesAsync(fullPath);
-        var contentType = "application/pdf";
         
-        return File(fileBytes, contentType, document.OriginalFileName ?? "document.pdf");
+        // Dosya uzantısına göre content type belirle
+        var fileExtension = Path.GetExtension(document.DocumentPath).ToLowerInvariant();
+        var contentType = fileExtension switch
+        {
+            ".pdf" => "application/pdf",
+            ".xlsx" => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            ".xls" => "application/vnd.ms-excel",
+            _ => "application/octet-stream"
+        };
+        
+        var defaultFileName = fileExtension switch
+        {
+            ".pdf" => "document.pdf",
+            ".xlsx" => "document.xlsx",
+            ".xls" => "document.xls",
+            _ => "document"
+        };
+        
+        return File(fileBytes, contentType, document.OriginalFileName ?? defaultFileName);
     }
 }
 
