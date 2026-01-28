@@ -1195,6 +1195,75 @@ class ApiService {
     const blob = await response.blob();
     return blob;
   }
+
+  // Reports API methods
+  static async getAllReports() {
+    const response = await fetch(`${API_BASE_URL}/api/reports/all`, {
+      method: 'GET',
+      headers: this.getHeaders(),
+    });
+
+    return this.handleResponse(response);
+  }
+
+  static async getMyReports(userId) {
+    const response = await fetch(`${API_BASE_URL}/api/reports/my-reports/${userId}`, {
+      method: 'GET',
+      headers: this.getHeaders(),
+    });
+
+    return this.handleResponse(response);
+  }
+
+  static async uploadReport(reportType, file, userId) {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('reportType', reportType.toString());
+    formData.append('userId', userId.toString());
+
+    const token = this.getToken();
+    const headers = {};
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
+    const response = await fetch(`${API_BASE_URL}/api/reports/upload`, {
+      method: 'POST',
+      headers: headers,
+      body: formData,
+    });
+
+    return this.handleResponse(response);
+  }
+
+  static async downloadReport(reportId) {
+    const token = this.getToken();
+    const headers = {};
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
+    const response = await fetch(`${API_BASE_URL}/api/reports/${reportId}/download`, {
+      method: 'GET',
+      headers: headers,
+    });
+
+    if (!response.ok) {
+      throw new Error('Rapor indirilemedi');
+    }
+
+    const blob = await response.blob();
+    return blob;
+  }
+
+  static async deleteReport(reportId) {
+    const response = await fetch(`${API_BASE_URL}/api/reports/${reportId}`, {
+      method: 'DELETE',
+      headers: this.getHeaders(),
+    });
+
+    return this.handleResponse(response);
+  }
 }
 
 export default ApiService;

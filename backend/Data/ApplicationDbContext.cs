@@ -27,6 +27,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<MeetingRoomRequest> MeetingRoomRequests { get; set; }
     public DbSet<OtherRequest> OtherRequests { get; set; }
     public DbSet<ArchiveDocument> ArchiveDocuments { get; set; }
+    public DbSet<Report> Reports { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
